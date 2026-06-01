@@ -349,15 +349,19 @@ startGameBtn.addEventListener("click", async () => {
   if (!okay) return;
 
   renderFixtures();
+  showPredictions();
 
-  const alreadySubmitted = await hasAlreadySubmitted(username);
+  try {
+    const alreadySubmitted = await hasAlreadySubmitted(username);
 
-  if (alreadySubmitted) {
-    alert("You have already submitted predictions. Showing leaderboard.");
-    await renderLeaderboard();
-    showLeaderboard();
-  } else {
-    showPredictions();
+    if (alreadySubmitted) {
+      alert("You have already submitted predictions. Showing leaderboard.");
+      await renderLeaderboard();
+      showLeaderboard();
+    }
+  } catch (error) {
+    console.error("Firestore check failed:", error);
+    alert("Predictions page loaded, but Firestore connection needs checking.");
   }
 });
 
