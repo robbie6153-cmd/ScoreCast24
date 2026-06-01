@@ -1,35 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ScoreCast24</title>
-
-  <style>
-    body {
-      margin: 0;
-      background: black;
-    }
-
-    .homepage-container {
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .homepage-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+  <div class="page">
 
-  <div class="homepage-container">
-    <img src="homepage.jpg" alt="ScoreCast24 Homepage">
+    <header class="top-bar">
+      <div class="logo-text">ScoreCast24</div>
+      <button class="menu-btn">☰</button>
+    </header>
+
+    <main id="homePage" class="home-page">
+      <img src="homepage.jpg" alt="ScoreCast24 homepage" class="home-image" />
+
+      <button id="startGameBtn" class="start-btn">
+        Go to This Week’s ScoreCast
+      </button>
+    </main>
+
+    <section id="predictionsPage" class="predictions-page hidden">
+      <h1>This Week’s ScoreCast</h1>
+      <p class="subheading">Enter your predicted scores below.</p>
+
+      <div id="fixturesContainer"></div>
+
+      <button id="submitPredictionsBtn" class="main-btn">
+        Submit Predictions
+      </button>
+
+      <button id="backHomeBtn" class="secondary-btn">
+        Back to Home
+      </button>
+    </section>
+
+    <section id="leaderboardPage" class="leaderboard-page hidden">
+      <h1>Leaderboard</h1>
+
+      <div id="leaderboardContainer"></div>
+
+      <button id="backToPredictionsBtn" class="secondary-btn">
+        Back to Predictions
+      </button>
+    </section>
+
   </div>
 
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-box">
+      <h2>Submit predictions?</h2>
+      <p>Once submitted, you cannot make changes to your scores.</p>
+
+      <div class="modal-buttons">
+        <button id="confirmSubmitBtn" class="main-btn">Okay</button>
+        <button id="cancelSubmitBtn" class="secondary-btn">Back to predictions</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="index.js"></script>
 </body>
 </html>

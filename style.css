@@ -1,0 +1,260 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #061b08;
+  color: white;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 30px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.top-bar {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ffd21a;
+  text-shadow: 2px 2px 4px #000;
+}
+
+.menu-btn {
+  font-size: 30px;
+  background: rgba(0, 0, 0, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  padding: 8px 16px;
+}
+
+.home-page {
+  position: relative;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.home-image {
+  width: 100%;
+  min-height: 100vh;
+  object-fit: cover;
+  display: block;
+}
+
+.start-btn {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translateX(-50%);
+  width: 65%;
+  max-width: 560px;
+  padding: 16px 18px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(#ffd34d, #d89400);
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  box-shadow: 0 0 18px rgba(255, 213, 0, 0.8);
+}
+
+.predictions-page,
+.leaderboard-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 95px 18px 30px;
+}
+
+h1 {
+  text-align: center;
+  color: #ffd21a;
+  margin-bottom: 8px;
+}
+
+.subheading {
+  text-align: center;
+  color: #e8f6e8;
+  margin-bottom: 25px;
+}
+
+.username-box {
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.username-box label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.username-box input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #bbb;
+  font-size: 16px;
+}
+
+.fixture-card {
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.fixture-teams {
+  display: grid;
+  grid-template-columns: 1fr 60px 40px 60px 1fr;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+}
+
+.team-name {
+  font-weight: bold;
+  font-size: 17px;
+}
+
+.score-input {
+  width: 60px;
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+}
+
+.vs {
+  font-weight: bold;
+  color: #176c1c;
+}
+
+.fixture-date {
+  margin-top: 10px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+}
+
+.main-btn,
+.secondary-btn {
+  width: 100%;
+  max-width: 500px;
+  display: block;
+  margin: 18px auto 0;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.main-btn {
+  background: linear-gradient(#ffd34d, #d89400);
+  color: white;
+  border: none;
+}
+
+.secondary-btn {
+  background: white;
+  color: #124e15;
+  border: 2px solid #124e15;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 90px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.leaderboard-points {
+  font-weight: bold;
+  color: #176c1c;
+  text-align: right;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-box {
+  background: white;
+  color: #111;
+  max-width: 420px;
+  width: 100%;
+  border-radius: 18px;
+  padding: 22px;
+  text-align: center;
+}
+
+.modal-box h2 {
+  margin-top: 0;
+  color: #124e15;
+}
+
+.modal-buttons {
+  margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+  .logo-text {
+    font-size: 22px;
+  }
+
+  .start-btn {
+    top: 58%;
+    width: 72%;
+    font-size: 17px;
+    padding: 13px 12px;
+  }
+
+  .fixture-teams {
+    grid-template-columns: 1fr 48px 28px 48px 1fr;
+    gap: 5px;
+  }
+
+  .score-input {
+    width: 48px;
+    font-size: 16px;
+  }
+
+  .team-name {
+    font-size: 14px;
+  }
+}
