@@ -15,14 +15,35 @@
       <button class="menu-btn">☰</button>
     </header>
 
-    <main id="homePage" class="home-page">
-      <img src="homepage.jpg" alt="ScoreCast24 homepage" class="home-image" />
+   <main id="homePage" class="home-page">
+  <img src="homepage.jpg" alt="ScoreCast24 homepage" class="home-image" />
 
-      <button id="startGameBtn" class="start-btn">
-        Go to This Week’s ScoreCast
-      </button>
-    </main>
+  <button id="startGameBtn" class="start-btn">
+    Go to This Week’s ScoreCast
+  </button>
+<div class="home-boxes">
 
+  <a href="leaderboard.html" class="home-card">
+    <h2>🏆 Current Standings</h2>
+
+    <div id="homeLeaderboardPreview">
+      Loading standings...
+    </div>
+  </a>
+
+  <a href="fixtures.html" class="home-card">
+    <h2>⚽ Next Games</h2>
+
+    <div id="homeFixturesPreview">
+      Loading games...
+    </div>
+  </a>
+
+</div>
+  <a href="leaderboard.html" class="home-link-box">
+    Current Leaderboard
+  </a>
+</main>
     <section id="predictionsPage" class="predictions-page hidden">
       <h1>This Week’s ScoreCast</h1>
       <p class="subheading">Enter your predicted scores below.</p>

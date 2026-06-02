@@ -73,6 +73,10 @@ const cancelSubmitBtn = document.getElementById("cancelSubmitBtn");
 
 let username = localStorage.getItem("scorecast24Username");
 
+function cleanUsername(name) {
+  return name.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
 function askForUsername() {
   while (!username || username.trim().length < 2) {
     username = prompt("Choose a username for ScoreCast24:");
@@ -160,7 +164,7 @@ function renderFixtures() {
 ========================= */
 
 async function hasAlreadySubmitted(savedUsername) {
-  const predictionRef = doc(db, "scorecast24_predictions", savedUsername.toLowerCase());
+  const predictionRef = doc(db, "scorecast24_predictions", cleanUsername(savedUsername));
   const predictionSnap = await getDoc(predictionRef);
   return predictionSnap.exists();
 }
@@ -203,20 +207,24 @@ submitPredictionsBtn.addEventListener("click", async () => {
 
   localStorage.setItem("scorecast24Username", username);
 
-  const alreadySubmitted = await hasAlreadySubmitted(username);
+  try {
+    const alreadySubmitted = await hasAlreadySubmitted(username);
 
-  if (alreadySubmitted) {
-    alert("You have already submitted predictions. You cannot change them.");
-    await renderLeaderboard();
-    showLeaderboard();
-    return;
+    if (alreadySubmitted) {
+      alert("You have already submitted predictions. You cannot change them.");
+      await renderLeaderboard();
+      showLeaderboard();
+      return;
+    }
+
+    const predictions = getPredictionsFromPage();
+    if (!predictions) return;
+
+    confirmModal.classList.remove("hidden");
+  } catch (error) {
+    console.error("Submit check failed:", error);
+    alert("There was a problem checking your submission. Please try again.");
   }
-
-  const predictions = getPredictionsFromPage();
-
-  if (!predictions) return;
-
-  confirmModal.classList.remove("hidden");
 });
 
 cancelSubmitBtn.addEventListener("click", () => {
@@ -229,20 +237,26 @@ confirmSubmitBtn.addEventListener("click", async () => {
   const predictions = getPredictionsFromPage();
   if (!predictions) return;
 
-  const predictionRef = doc(db, "scorecast24_predictions", username.toLowerCase());
+  try {
+    const predictionRef = doc(db, "scorecast24_predictions", cleanUsername(username));
 
-  await setDoc(predictionRef, {
-    username,
-    predictions,
-    round: "Round One",
-    submittedAt: serverTimestamp(),
-    points: 0
-  });
+    await setDoc(predictionRef, {
+      username,
+      predictions,
+      round: "Round One",
+      submittedAt: serverTimestamp(),
+      status: "Score pending match results",
+      points: null
+    });
 
-  alert("Predictions submitted!");
+    alert("Predictions submitted!");
 
-  await renderLeaderboard();
-  showLeaderboard();
+    await renderLeaderboard();
+    showLeaderboard();
+  } catch (error) {
+    console.error("Submission failed:", error);
+    alert("Submission failed. Check Firestore rules or console errors.");
+  }
 });
 
 /* =========================
@@ -260,7 +274,7 @@ function calculatePoints(prediction, fixture) {
   const actualAway = fixture.awayScore;
 
   if (actualHome === null || actualAway === null) {
-    return 0;
+    return null;
   }
 
   const predictedHome = prediction.predictedHome;
@@ -288,6 +302,10 @@ function calculatePoints(prediction, fixture) {
   return 0;
 }
 
+function haveAnyResultsBeenAdded() {
+  return fixtures.some(fixture => fixture.homeScore !== null && fixture.awayScore !== null);
+}
+
 /* =========================
    LEADERBOARD
 ========================= */
@@ -295,49 +313,66 @@ function calculatePoints(prediction, fixture) {
 async function renderLeaderboard() {
   leaderboardContainer.innerHTML = "Loading leaderboard...";
 
-  const predictionsSnap = await getDocs(collection(db, "scorecast24_predictions"));
+  try {
+    const predictionsSnap = await getDocs(collection(db, "scorecast24_predictions"));
+    const rows = [];
+    const resultsStarted = haveAnyResultsBeenAdded();
 
-  const rows = [];
+    predictionsSnap.forEach((docSnap) => {
+      const data = docSnap.data();
 
-  predictionsSnap.forEach((docSnap) => {
-    const data = docSnap.data();
+      let totalPoints = 0;
+      let hasScoredFixture = false;
 
-    let totalPoints = 0;
+      if (data.predictions && Array.isArray(data.predictions)) {
+        data.predictions.forEach((prediction) => {
+          const fixture = fixtures.find(f => f.id === prediction.fixtureId);
 
-    data.predictions.forEach((prediction) => {
-      const fixture = fixtures.find(f => f.id === prediction.fixtureId);
-      if (fixture) {
-        totalPoints += calculatePoints(prediction, fixture);
+          if (fixture) {
+            const points = calculatePoints(prediction, fixture);
+
+            if (points !== null) {
+              totalPoints += points;
+              hasScoredFixture = true;
+            }
+          }
+        });
       }
+
+      rows.push({
+        username: data.username,
+        points: totalPoints,
+        status: resultsStarted && hasScoredFixture
+          ? `${totalPoints} pts`
+          : "Score pending match results"
+      });
     });
 
-    rows.push({
-      username: data.username,
-      points: totalPoints
+    rows.sort((a, b) => b.points - a.points);
+
+    if (rows.length === 0) {
+      leaderboardContainer.innerHTML = "<p>No predictions submitted yet.</p>";
+      return;
+    }
+
+    leaderboardContainer.innerHTML = "";
+
+    rows.forEach((row, index) => {
+      const div = document.createElement("div");
+      div.className = "leaderboard-row";
+
+      div.innerHTML = `
+        <div>#${index + 1}</div>
+        <div>${row.username}</div>
+        <div class="leaderboard-points">${row.status}</div>
+      `;
+
+      leaderboardContainer.appendChild(div);
     });
-  });
-
-  rows.sort((a, b) => b.points - a.points);
-
-  if (rows.length === 0) {
-    leaderboardContainer.innerHTML = "<p>No predictions submitted yet.</p>";
-    return;
+  } catch (error) {
+    console.error("Leaderboard failed:", error);
+    leaderboardContainer.innerHTML = "<p>Could not load leaderboard.</p>";
   }
-
-  leaderboardContainer.innerHTML = "";
-
-  rows.forEach((row, index) => {
-    const div = document.createElement("div");
-    div.className = "leaderboard-row";
-
-    div.innerHTML = `
-      <div>#${index + 1}</div>
-      <div>${row.username}</div>
-      <div class="leaderboard-points">${row.points} pts</div>
-    `;
-
-    leaderboardContainer.appendChild(div);
-  });
 }
 
 /* =========================
@@ -368,19 +403,129 @@ startGameBtn.addEventListener("click", async () => {
 backHomeBtn.addEventListener("click", showHome);
 
 backToPredictionsBtn.addEventListener("click", async () => {
-  const alreadySubmitted = await hasAlreadySubmitted(username);
+  try {
+    const alreadySubmitted = await hasAlreadySubmitted(username);
 
-  if (alreadySubmitted) {
-    alert("You have already submitted predictions. You cannot change them.");
+    if (alreadySubmitted) {
+      alert("You have already submitted predictions. You cannot change them.");
+      return;
+    }
+
+    renderFixtures();
+    showPredictions();
+  } catch (error) {
+    console.error("Back to predictions failed:", error);
+    alert("Could not check your submission status.");
+  }
+});
+/* =========================
+   HOME PAGE PREVIEWS
+========================= */
+
+const homeLeaderboardPreview = document.getElementById("homeLeaderboardPreview");
+const homeFixturesPreview = document.getElementById("homeFixturesPreview");
+
+async function renderHomeLeaderboardPreview() {
+  if (!homeLeaderboardPreview) return;
+
+  homeLeaderboardPreview.innerHTML = "Loading standings...";
+
+  try {
+    const predictionsSnap = await getDocs(collection(db, "scorecast24_predictions"));
+    const rows = [];
+
+    predictionsSnap.forEach((docSnap) => {
+      const data = docSnap.data();
+
+      rows.push({
+        username: data.username || "?????",
+        points: data.points
+      });
+    });
+
+    if (rows.length === 0) {
+      homeLeaderboardPreview.innerHTML = `
+        <div class="preview-row">
+          <span>No entries yet</span>
+          <span class="preview-points">Pending</span>
+        </div>
+      `;
+      return;
+    }
+
+    rows.sort((a, b) => (b.points || 0) - (a.points || 0));
+
+    homeLeaderboardPreview.innerHTML = "";
+
+    rows.slice(0, 3).forEach((row, index) => {
+      const div = document.createElement("div");
+      div.className = "preview-row";
+
+      div.innerHTML = `
+        <span>${index + 1}. ${row.username}</span>
+        <span class="preview-points">
+          ${
+            row.points === null || row.points === undefined
+              ? "Pending"
+              : `${row.points} pts`
+          }
+        </span>
+      `;
+
+      homeLeaderboardPreview.appendChild(div);
+    });
+  } catch (error) {
+    console.error("Home leaderboard preview failed:", error);
+    homeLeaderboardPreview.innerHTML = `
+      <div class="preview-row">
+        <span>Could not load</span>
+        <span class="preview-points">—</span>
+      </div>
+    `;
+  }
+}
+
+function renderHomeFixturesPreview() {
+  if (!homeFixturesPreview) return;
+
+  const latestResults = fixtures.filter(
+    fixture => fixture.homeScore !== null && fixture.awayScore !== null
+  );
+
+  homeFixturesPreview.innerHTML = "";
+
+  if (latestResults.length > 0) {
+    latestResults.slice(-2).reverse().forEach((fixture) => {
+      const div = document.createElement("div");
+      div.className = "preview-row";
+
+      div.innerHTML = `
+        <span>${fixture.home} ${fixture.homeScore}-${fixture.awayScore} ${fixture.away}</span>
+        <span>›</span>
+      `;
+
+      homeFixturesPreview.appendChild(div);
+    });
+
     return;
   }
 
-  renderFixtures();
-  showPredictions();
-});
+  fixtures.slice(0, 2).forEach((fixture) => {
+    const div = document.createElement("div");
+    div.className = "preview-row";
 
+    div.innerHTML = `
+      <span>${fixture.home} v ${fixture.away}</span>
+      <span>›</span>
+    `;
+
+    homeFixturesPreview.appendChild(div);
+  });
+}
 /* =========================
    START
 ========================= */
 
 showHome();
+renderHomeLeaderboardPreview();
+renderHomeFixturesPreview();
