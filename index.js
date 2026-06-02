@@ -164,7 +164,16 @@ function renderFixtures() {
 ========================= */
 
 async function hasAlreadySubmitted(savedUsername) {
-  const predictionRef = doc(db, "scorecast24_predictions", cleanUsername(savedUsername));
+  if (!savedUsername || savedUsername.trim().length < 2) {
+    return false;
+  }
+
+  const predictionRef = doc(
+    db,
+    "scorecast24_predictions",
+    cleanUsername(savedUsername)
+  );
+
   const predictionSnap = await getDoc(predictionRef);
   return predictionSnap.exists();
 }
@@ -222,9 +231,13 @@ submitPredictionsBtn.addEventListener("click", async () => {
 
     confirmModal.classList.remove("hidden");
   } catch (error) {
-    console.error("Submit check failed:", error);
-    alert("There was a problem checking your submission. Please try again.");
-  }
+  console.error("Submit check failed:", error);
+
+  alert(
+    "Submit check failed:\n\n" +
+    error.message
+  );
+}
 });
 
 cancelSubmitBtn.addEventListener("click", () => {
