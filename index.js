@@ -57,7 +57,7 @@ const leaderboardPage = document.getElementById("leaderboardPage");
 const startGameBtn = document.getElementById("startGameBtn");
 const backHomeBtn = document.getElementById("backHomeBtn");
 const backToPredictionsBtn = document.getElementById("backToPredictionsBtn");
-
+const leaderboardHomeBtn = document.getElementById("leaderboardHomeBtn");
 const fixturesContainer = document.getElementById("fixturesContainer");
 const leaderboardContainer = document.getElementById("leaderboardContainer");
 
@@ -414,7 +414,7 @@ startGameBtn.addEventListener("click", async () => {
 });
 
 backHomeBtn.addEventListener("click", showHome);
-
+leaderboardHomeBtn.addEventListener("click", showHome);
 backToPredictionsBtn.addEventListener("click", async () => {
   try {
     const alreadySubmitted = await hasAlreadySubmitted(username);
