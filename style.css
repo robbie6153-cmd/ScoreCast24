@@ -300,3 +300,26 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+.info-page {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.info-box {
+  background: rgba(255,255,255,0.95);
+  color: #111;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.info-box h2 {
+  margin-top: 25px;
+}
+
+.info-box a {
+  color: #0066cc;
+  font-weight: bold;
+}
