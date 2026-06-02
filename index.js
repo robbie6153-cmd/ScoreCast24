@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { db } from "./firebase.js?v=3";
 
 import {
   collection,
@@ -7,7 +7,7 @@ import {
   getDocs,
   setDoc,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 /* =========================
    ROUND ONE FIXTURES
