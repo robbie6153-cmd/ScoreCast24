@@ -323,11 +323,12 @@ function haveAnyResultsBeenAdded() {
    LEADERBOARD
 ========================= */
 
-async function renderLeaderboard() {
+ async function renderLeaderboard() {
   leaderboardContainer.innerHTML = "Loading leaderboard...";
 
   try {
     const predictionsSnap = await getDocs(collection(db, "scorecast24_predictions"));
+
     const rows = [];
     const resultsStarted = haveAnyResultsBeenAdded();
 
@@ -353,7 +354,8 @@ async function renderLeaderboard() {
       }
 
       rows.push({
-        username: data.username,
+        id: docSnap.id,
+        username: data.username || "Unknown",
         points: totalPoints,
         status: resultsStarted && hasScoredFixture
           ? `${totalPoints} pts`
@@ -376,12 +378,24 @@ async function renderLeaderboard() {
 
       div.innerHTML = `
         <div>#${index + 1}</div>
-        <div>${row.username}</div>
+
+        <div>
+          <div>${row.username}</div>
+          <div class="view-predictions-text">View predictions</div>
+        </div>
+
         <div class="leaderboard-points">${row.status}</div>
       `;
 
+      div.addEventListener("click", () => {
+        localStorage.setItem("viewPredictionId", row.id);
+        localStorage.setItem("viewPredictionUsername", row.username);
+        window.location.href = "view-predictions.html";
+      });
+
       leaderboardContainer.appendChild(div);
     });
+
   } catch (error) {
     console.error("Leaderboard failed:", error);
     leaderboardContainer.innerHTML = "<p>Could not load leaderboard.</p>";
