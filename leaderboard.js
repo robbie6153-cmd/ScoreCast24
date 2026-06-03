@@ -6,11 +6,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const leaderboardContainer = document.getElementById("leaderboardContainer");
+console.time("Leaderboard total load");
 
 async function renderLeaderboard() {
   leaderboardContainer.innerHTML = "Loading leaderboard...";
 
   try {
+    console.time("Leaderboard total load");
     const predictionsSnap = await getDocs(
       collection(db, "scorecast24_predictions")
     );
