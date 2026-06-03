@@ -62,7 +62,7 @@ body {
 .start-btn {
   position: absolute;
   left: 50%;
-  top: 35%;
+  top: 43%;
   transform: translateX(-50%);
   width: 65%;
   max-width: 560px;
@@ -74,6 +74,7 @@ body {
   font-size: 22px;
   font-weight: bold;
   box-shadow: 0 0 18px rgba(255, 213, 0, 0.8);
+  z-index: 5;
 }
 
 .predictions-page,
