@@ -1,4 +1,4 @@
-* {
+ * {
   box-sizing: border-box;
 }
 
@@ -395,4 +395,11 @@ h1 {
 
 .hidden {
   display: none;
+}
+.fixtures-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 20px auto;
 }
