@@ -21,11 +21,11 @@ async function renderLeaderboard() {
       const data = docSnap.data();
 
       rows.push({
-        username: data.username || "Unknown",
-        status: data.status || "Score pending match results",
-        points: data.points
-      });
-    });
+  id: docSnap.id,
+  username: data.username || "Unknown",
+  status: data.status || "Score pending match results",
+  points: data.points
+});
 
     rows.sort((a, b) => (b.points || 0) - (a.points || 0));
 
@@ -42,19 +42,28 @@ async function renderLeaderboard() {
 
       div.className = "leaderboard-row";
 
-      div.innerHTML = `
-        <div>#${index + 1}</div>
-        <div>${row.username}</div>
-        <div class="leaderboard-points">
-          ${
-            row.points === null ||
-            row.points === undefined
-              ? "Score pending match results"
-              : `${row.points} pts`
-          }
-        </div>
-      `;
+  div.innerHTML = `
+  <div>#${index + 1}</div>
 
+  <div>
+    <div>${row.username}</div>
+    <div class="view-predictions-text">View predictions</div>
+  </div>
+
+  <div class="leaderboard-points">
+    ${
+      row.points === null ||
+      row.points === undefined
+        ? "Score pending match results"
+        : `${row.points} pts`
+    }
+  </div>
+`;
+div.addEventListener("click", () => {
+  localStorage.setItem("viewPredictionId", row.id);
+  localStorage.setItem("viewPredictionUsername", row.username);
+  window.location.href = "view-predictions.html";
+});
       leaderboardContainer.appendChild(div);
     });
 

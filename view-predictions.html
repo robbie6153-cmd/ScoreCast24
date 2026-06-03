@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ScoreCast24 Leaderboard</title>
+  <title>View Predictions - ScoreCast24</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -12,26 +12,23 @@
 
     <header class="top-bar">
       <div class="logo-text">ScoreCast24</div>
-      <a href="index.html" class="menu-btn">⌂</a>
+      <a href="leaderboard.html" class="menu-btn">←</a>
     </header>
 
     <main class="leaderboard-page">
-      <h1>Leaderboard</h1>
-      <p class="leaderboard-hint">
-  Tap a player to view their predictions.
-</p>
+      <h1 id="predictionTitle">Predictions</h1>
 
-      <div id="leaderboardContainer">
-        Loading leaderboard...
+      <div id="predictionContainer">
+        Loading predictions...
       </div>
 
-      <a href="index.html" class="secondary-btn">
-        Back to Home
+      <a href="leaderboard.html" class="secondary-btn">
+        Back to Leaderboard
       </a>
     </main>
 
   </div>
 
-  <script type="module" src="leaderboard.js"></script>
+  <script type="module" src="view-predictions.js?v=1"></script>
 </body>
 </html>
