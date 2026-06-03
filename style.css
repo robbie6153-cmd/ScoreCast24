@@ -366,3 +366,33 @@ h1 {
   font-size: 1.1rem;
   font-weight: bold;
 }
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background: #111;
+  border: 2px solid #f4c542;
+  border-radius: 10px;
+  min-width: 220px;
+  z-index: 1000;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px solid #333;
+}
+
+.dropdown-menu a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu a:hover {
+  background: #222;
+}
+
+.hidden {
+  display: none;
+}

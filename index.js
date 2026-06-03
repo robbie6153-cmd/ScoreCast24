@@ -552,7 +552,23 @@ function renderHomeFixturesPreview() {
 /* =========================
    START
 ========================= */
+const menuToggle = document.getElementById("menuToggle");
+const dropdownMenu = document.getElementById("dropdownMenu");
 
+if (menuToggle && dropdownMenu) {
+  menuToggle.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (
+      !menuToggle.contains(e.target) &&
+      !dropdownMenu.contains(e.target)
+    ) {
+      dropdownMenu.classList.add("hidden");
+    }
+  });
+}
 showHome();
 renderHomeLeaderboardPreview();
 renderHomeFixturesPreview();
