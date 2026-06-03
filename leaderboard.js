@@ -1,4 +1,4 @@
-alert("leaderboard.js loaded");
+
 import { db } from "./firebase.js?v=3";
 
 import {
