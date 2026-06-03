@@ -62,7 +62,7 @@ body {
 .start-btn {
   position: absolute;
   left: 50%;
-  top: 48vh !important;
+  top: 75vh !important;
   transform: translateX(-50%);
   width: 65%;
   max-width: 560px;
