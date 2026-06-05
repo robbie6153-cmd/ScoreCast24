@@ -396,6 +396,30 @@ h1 {
 .hidden {
   display: none;
 }
+.menu-dropdown {
+  padding: 0;
+}
+
+.menu-dropdown > a {
+  display: block;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px solid #333;
+}
+
+.menu-dropdown-content {
+  display: none;
+  background: #1a1a1a;
+}
+
+.menu-dropdown-content a {
+  padding-left: 25px;
+}
+
+.menu-dropdown:hover .menu-dropdown-content {
+  display: block;
+}
 .fixtures-image {
   width: 100%;
   height: auto;
