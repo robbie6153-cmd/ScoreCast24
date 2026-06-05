@@ -12,7 +12,11 @@ import {
 /* =========================
    ROUND ONE FIXTURES
 ========================= */
+const predictionsDeadline = new Date("2026-06-11T19:00:00Z");
 
+function predictionsAreClosed() {
+  return new Date() >= predictionsDeadline;
+}
 const fixtures = [
   { id: "1", date: "Thu 11 Jun 2026", group: "Group A", home: "Mexico", away: "South Africa", venue: "Mexico City Stadium", homeScore: null, awayScore: null },
   { id: "2", date: "Thu 11 Jun 2026", group: "Group A", home: "Korea Republic", away: "Czechia", venue: "Estadio Guadalajara", homeScore: null, awayScore: null },
@@ -206,6 +210,10 @@ function getPredictionsFromPage() {
 }
 
 submitPredictionsBtn.addEventListener("click", async () => {
+    if (predictionsAreClosed()) {
+    alert("Predictions are now closed.");
+    return;
+  }
   const usernameInput = document.getElementById("usernameInput");
   username = usernameInput.value.trim();
 
@@ -245,6 +253,11 @@ cancelSubmitBtn.addEventListener("click", () => {
 });
 
 confirmSubmitBtn.addEventListener("click", async () => {
+    if (predictionsAreClosed()) {
+    confirmModal.classList.add("hidden");
+    alert("Predictions are now closed.");
+    return;
+  }
   confirmModal.classList.add("hidden");
 
   const predictions = getPredictionsFromPage();
@@ -515,27 +528,32 @@ async function renderHomeLeaderboardPreview() {
 function renderHomeFixturesPreview() {
   if (!homeFixturesPreview) return;
 
-  const latestResults = fixtures.filter(
-    fixture => fixture.homeScore !== null && fixture.awayScore !== null
-  );
+  const now = new Date();
+  const timeLeft = predictionsDeadline - now;
 
   homeFixturesPreview.innerHTML = "";
 
-  if (latestResults.length > 0) {
-    latestResults.slice(-2).reverse().forEach((fixture) => {
-      const div = document.createElement("div");
-      div.className = "preview-row";
+  const countdownDiv = document.createElement("div");
+  countdownDiv.className = "preview-row";
 
-      div.innerHTML = `
-        <span>${fixture.home} ${fixture.homeScore}-${fixture.awayScore} ${fixture.away}</span>
-        <span>›</span>
-      `;
+  if (timeLeft <= 0) {
+    countdownDiv.innerHTML = `
+      <span>Predictions closed</span>
+      <span>Locked</span>
+    `;
+  } else {
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+    const seconds = Math.floor((timeLeft / 1000) % 60);
 
-      homeFixturesPreview.appendChild(div);
-    });
-
-    return;
+    countdownDiv.innerHTML = `
+      <span>Predictions close in</span>
+      <span>${days}d ${hours}h ${minutes}m ${seconds}s</span>
+    `;
   }
+
+  homeFixturesPreview.appendChild(countdownDiv);
 
   fixtures.slice(0, 2).forEach((fixture) => {
     const div = document.createElement("div");
@@ -549,6 +567,7 @@ function renderHomeFixturesPreview() {
     homeFixturesPreview.appendChild(div);
   });
 }
+     
 /* =========================
    START
 ========================= */
@@ -572,3 +591,4 @@ if (menuToggle && dropdownMenu) {
 showHome();
 renderHomeLeaderboardPreview();
 renderHomeFixturesPreview();
+setInterval(renderHomeFixturesPreview, 1000);
