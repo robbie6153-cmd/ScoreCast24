@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
-
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
 const firebaseConfig = {
   apiKey: "AIzaSyCzevzy5fy0karxUfs2GOStF8YoNSlUARg",
   authDomain: "scorecast24.firebaseapp.com",
@@ -12,4 +12,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+const analytics = getAnalytics(app);
+
 export const db = getFirestore(app);
+export { analytics };
