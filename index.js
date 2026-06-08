@@ -1,4 +1,4 @@
-import { db, analytics } from "./firebase.js?v=7";
+import { db } from "./firebase.js?v=7";
 import {
   collection,
   doc,
@@ -276,10 +276,19 @@ await setDoc(predictionRef, {
 
 
 alert("Predictions submitted!");
+
+await renderLeaderboard();
+showLeaderboard();
+
+  } catch (error) {
+    console.error("Submission failed:", error);
+    alert("Submission failed. Check Firestore rules or console errors.");
+  }
+});
+
 /* =========================
    SCORING SYSTEM
 ========================= */
-
 function getResultType(home, away) {
   if (home > away) return "home";
   if (away > home) return "away";
