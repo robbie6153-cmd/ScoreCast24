@@ -1,5 +1,5 @@
-import { db } from "./firebase.js?v=3";
-
+import { db, analytics } from "./firebase.js?v=3";
+import { logEvent } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
 import {
   collection,
   doc,
@@ -266,25 +266,18 @@ confirmSubmitBtn.addEventListener("click", async () => {
   try {
     const predictionRef = doc(db, "scorecast24_predictions", cleanUsername(username));
 
-    await setDoc(predictionRef, {
-      username,
-      predictions,
-      round: "Round One",
-      submittedAt: serverTimestamp(),
-      status: "Score pending match results",
-      points: null
-    });
-
-    alert("Predictions submitted!");
-
-    await renderLeaderboard();
-    showLeaderboard();
-  } catch (error) {
-    console.error("Submission failed:", error);
-    alert("Submission failed. Check Firestore rules or console errors.");
-  }
+await setDoc(predictionRef, {
+  username,
+  predictions,
+  round: "Round One",
+  submittedAt: serverTimestamp(),
+  status: "Score pending match results",
+  points: null
 });
 
+logEvent(analytics, "prediction_submitted");
+
+alert("Predictions submitted!");
 /* =========================
    SCORING SYSTEM
 ========================= */
