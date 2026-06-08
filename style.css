@@ -489,3 +489,30 @@ h1 {
   border-radius: 10px;
   color: #111;
 }
+
+.about-page h1,
+.contact-page h1 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.about-page p,
+.contact-page p {
+  margin-bottom: 18px;
+}
+
+.about-page a,
+.contact-page a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.about-page a:hover,
+.contact-page a:hover {
+  text-decoration: underline;
+}
+
+.about-page hr,
+.contact-page hr {
+  margin: 30px 0;
+}
