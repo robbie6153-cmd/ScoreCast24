@@ -1,4 +1,4 @@
-import { db, analytics } from "./firebase.js?v=3";
+import { db, analytics } from "./firebase.js?v=7";
 import { logEvent } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
 import {
   collection,
