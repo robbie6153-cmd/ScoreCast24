@@ -13,7 +13,7 @@ function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
 
-const currentRound = predictionsAreClosed() ? "Round Two" : "Round One";
+let selectedRound = predictionsAreClosed() ? "Round Two" : "Round One";
 function timeoutPromise(ms) {
   return new Promise((_, reject) =>
     setTimeout(() => reject(new Error("Leaderboard load timed out")), ms)
@@ -48,7 +48,7 @@ async function renderLeaderboard() {
     rows.sort((a, b) => (b.points || 0) - (a.points || 0));
 
     if (rows.length === 0) {
-     leaderboardContainer.innerHTML = `<p>No predictions submitted yet for ${currentRound}.</p>`;
+   leaderboardContainer.innerHTML = `<p>No predictions submitted yet for ${selectedRound}.</p>`;
       return;
     }
 
