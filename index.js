@@ -16,7 +16,7 @@ const predictionsDeadline = new Date("2026-06-11T19:00:00Z");
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
-const fixtures = [
+const roundOneFixtures = [
   { id: "1", date: "Thu 11 Jun 2026", group: "Group A", home: "Mexico", away: "South Africa", venue: "Mexico City Stadium", homeScore: null, awayScore: null },
   { id: "2", date: "Thu 11 Jun 2026", group: "Group A", home: "Korea Republic", away: "Czechia", venue: "Estadio Guadalajara", homeScore: null, awayScore: null },
 
@@ -49,6 +49,40 @@ const fixtures = [
   { id: "24", date: "Wed 17 Jun 2026", group: "Group K", home: "Uzbekistan", away: "Colombia", venue: "Mexico City Stadium", homeScore: null, awayScore: null }
 ];
 
+const roundTwoFixtures = [
+  { id: "25", date: "Thu 18 Jun 2026, 17:00", group: "Group A", home: "Czechia", away: "South Africa", venue: "Mercedes-Benz Stadium, Atlanta", homeScore: null, awayScore: null },
+  { id: "26", date: "Thu 18 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Bosnia & Herzegovina", venue: "SoFi Stadium, Los Angeles", homeScore: null, awayScore: null },
+  { id: "27", date: "Thu 18 Jun 2026, 23:00", group: "Group B", home: "Canada", away: "Qatar", venue: "BC Place, Vancouver", homeScore: null, awayScore: null },
+  { id: "28", date: "Fri 19 Jun 2026, 02:00", group: "Group A", home: "Mexico", away: "South Korea", venue: "Estadio Akron, Guadalajara", homeScore: null, awayScore: null },
+
+  { id: "29", date: "Fri 19 Jun 2026, 20:00", group: "Group D", home: "USA", away: "Australia", venue: "Lumen Field, Seattle", homeScore: null, awayScore: null },
+  { id: "30", date: "Fri 19 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Morocco", venue: "Gillette Stadium, Boston", homeScore: null, awayScore: null },
+  { id: "31", date: "Sat 20 Jun 2026, 01:30", group: "Group C", home: "Brazil", away: "Haiti", venue: "Lincoln Financial Field, Philadelphia", homeScore: null, awayScore: null },
+  { id: "32", date: "Sat 20 Jun 2026, 04:00", group: "Group D", home: "Türkiye", away: "Paraguay", venue: "Levi's Stadium, San Francisco Bay Area", homeScore: null, awayScore: null },
+
+  { id: "33", date: "Sat 20 Jun 2026, 18:00", group: "Group F", home: "Netherlands", away: "Sweden", venue: "NRG Stadium, Houston", homeScore: null, awayScore: null },
+  { id: "34", date: "Sat 20 Jun 2026, 21:00", group: "Group E", home: "Germany", away: "Ivory Coast", venue: "BMO Field, Toronto", homeScore: null, awayScore: null },
+  { id: "35", date: "Sun 21 Jun 2026, 01:00", group: "Group E", home: "Ecuador", away: "Curaçao", venue: "Arrowhead Stadium, Kansas City", homeScore: null, awayScore: null },
+  { id: "36", date: "Sun 21 Jun 2026, 05:00", group: "Group F", home: "Tunisia", away: "Japan", venue: "Estadio BBVA, Monterrey", homeScore: null, awayScore: null },
+
+  { id: "37", date: "Sun 21 Jun 2026, 17:00", group: "Group H", home: "Spain", away: "Saudi Arabia", venue: "Atlanta Stadium, Atlanta", homeScore: null, awayScore: null },
+  { id: "38", date: "Sun 21 Jun 2026, 20:00", group: "Group G", home: "Belgium", away: "IR Iran", venue: "SoFi Stadium, Los Angeles", homeScore: null, awayScore: null },
+  { id: "39", date: "Sun 21 Jun 2026, 23:00", group: "Group H", home: "Uruguay", away: "Cape Verde", venue: "Hard Rock Stadium, Miami", homeScore: null, awayScore: null },
+  { id: "40", date: "Mon 22 Jun 2026, 02:00", group: "Group G", home: "New Zealand", away: "Egypt", venue: "BC Place, Vancouver", homeScore: null, awayScore: null },
+
+  { id: "41", date: "Mon 22 Jun 2026, 18:00", group: "Group J", home: "Argentina", away: "Austria", venue: "AT&T Stadium, Dallas", homeScore: null, awayScore: null },
+  { id: "42", date: "Mon 22 Jun 2026, 22:00", group: "Group I", home: "France", away: "Iraq", venue: "Lincoln Financial Field, Philadelphia", homeScore: null, awayScore: null },
+  { id: "43", date: "Tue 23 Jun 2026, 01:00", group: "Group I", home: "Norway", away: "Senegal", venue: "MetLife Stadium, New York/New Jersey", homeScore: null, awayScore: null },
+  { id: "44", date: "Tue 23 Jun 2026, 04:00", group: "Group J", home: "Jordan", away: "Algeria", venue: "Levi's Stadium, San Francisco Bay Area", homeScore: null, awayScore: null },
+
+  { id: "45", date: "Tue 23 Jun 2026, 18:00", group: "Group K", home: "Portugal", away: "Uzbekistan", venue: "NRG Stadium, Houston", homeScore: null, awayScore: null },
+  { id: "46", date: "Tue 23 Jun 2026, 21:00", group: "Group L", home: "England", away: "Ghana", venue: "Gillette Stadium, Boston", homeScore: null, awayScore: null },
+  { id: "47", date: "Wed 24 Jun 2026, 00:00", group: "Group L", home: "Panama", away: "Croatia", venue: "BMO Field, Toronto", homeScore: null, awayScore: null },
+  { id: "48", date: "Wed 24 Jun 2026, 03:00", group: "Group K", home: "Colombia", away: "DR Congo", venue: "Estadio Akron, Guadalajara", homeScore: null, awayScore: null }
+];
+
+const fixtures = predictionsAreClosed() ? roundTwoFixtures : roundOneFixtures;
+const currentRound = predictionsAreClosed() ? "Round Two" : "Round One";
 /* =========================
    PAGE ELEMENTS
 ========================= */
@@ -79,7 +113,9 @@ let username = localStorage.getItem("scorecast24Username");
 function cleanUsername(name) {
   return name.trim().toLowerCase().replace(/\s+/g, "-");
 }
-
+function getPredictionDocId(savedUsername) {
+  return `${cleanUsername(savedUsername)}-${currentRound.toLowerCase().replace(/\s+/g, "-")}`;
+}
 function askForUsername() {
   while (!username || username.trim().length < 2) {
     username = prompt("Choose a username for ScoreCast24:");
@@ -171,11 +207,11 @@ async function hasAlreadySubmitted(savedUsername) {
     return false;
   }
 
-  const predictionRef = doc(
-    db,
-    "scorecast24_predictions",
-    cleanUsername(savedUsername)
-  );
+const predictionRef = doc(
+  db,
+  "scorecast24_predictions",
+  getPredictionDocId(savedUsername)
+);
 
   const predictionSnap = await getDoc(predictionRef);
   return predictionSnap.exists();
@@ -208,11 +244,8 @@ function getPredictionsFromPage() {
   return predictions;
 }
 
+
 submitPredictionsBtn.addEventListener("click", async () => {
-    if (predictionsAreClosed()) {
-    alert("Predictions are now closed.");
-    return;
-  }
   const usernameInput = document.getElementById("usernameInput");
   username = usernameInput.value.trim();
 
@@ -227,7 +260,7 @@ submitPredictionsBtn.addEventListener("click", async () => {
     const alreadySubmitted = await hasAlreadySubmitted(username);
 
     if (alreadySubmitted) {
-      alert("You have already submitted predictions. You cannot change them.");
+      alert("You have already submitted predictions for this round. You cannot change them.");
       await renderLeaderboard();
       showLeaderboard();
       return;
@@ -238,13 +271,9 @@ submitPredictionsBtn.addEventListener("click", async () => {
 
     confirmModal.classList.remove("hidden");
   } catch (error) {
-  console.error("Submit check failed:", error);
-
-  alert(
-    "Submit check failed:\n\n" +
-    error.message
-  );
-}
+    console.error("Submit check failed:", error);
+    alert("Submit check failed:\n\n" + error.message);
+  }
 });
 
 cancelSubmitBtn.addEventListener("click", () => {
@@ -252,33 +281,31 @@ cancelSubmitBtn.addEventListener("click", () => {
 });
 
 confirmSubmitBtn.addEventListener("click", async () => {
-    if (predictionsAreClosed()) {
-    confirmModal.classList.add("hidden");
-    alert("Predictions are now closed.");
-    return;
-  }
   confirmModal.classList.add("hidden");
 
   const predictions = getPredictionsFromPage();
   if (!predictions) return;
 
   try {
-    const predictionRef = doc(db, "scorecast24_predictions", cleanUsername(username));
+    const predictionRef = doc(
+      db,
+      "scorecast24_predictions",
+      getPredictionDocId(username)
+    );
 
-await setDoc(predictionRef, {
-  username,
-  predictions,
-  round: "Round One",
-  submittedAt: serverTimestamp(),
-  status: "Score pending match results",
-  points: null
-});
+    await setDoc(predictionRef, {
+      username,
+      predictions,
+      round: currentRound,
+      submittedAt: serverTimestamp(),
+      status: "Score pending match results",
+      points: null
+    });
 
+    alert("Predictions submitted!");
 
-alert("Predictions submitted!");
-
-await renderLeaderboard();
-showLeaderboard();
+    await renderLeaderboard();
+    showLeaderboard();
 
   } catch (error) {
     console.error("Submission failed:", error);
@@ -345,10 +372,14 @@ function haveAnyResultsBeenAdded() {
     const rows = [];
     const resultsStarted = haveAnyResultsBeenAdded();
 
-    predictionsSnap.forEach((docSnap) => {
-      const data = docSnap.data();
+ predictionsSnap.forEach((docSnap) => {
+  const data = docSnap.data();
 
-      let totalPoints = 0;
+  if (data.round !== currentRound) {
+    return;
+  }
+
+  let totalPoints = 0;
       let hasScoredFixture = false;
 
       if (data.predictions && Array.isArray(data.predictions)) {
@@ -474,14 +505,18 @@ async function renderHomeLeaderboardPreview() {
     const predictionsSnap = await getDocs(collection(db, "scorecast24_predictions"));
     const rows = [];
 
-    predictionsSnap.forEach((docSnap) => {
-      const data = docSnap.data();
+predictionsSnap.forEach((docSnap) => {
+  const data = docSnap.data();
 
-      rows.push({
-        username: data.username || "?????",
-        points: data.points
-      });
-    });
+  if (data.round !== currentRound) {
+    return;
+  }
+
+  rows.push({
+    username: data.username || "?????",
+    points: data.points
+  });
+});
 
     if (rows.length === 0) {
       homeLeaderboardPreview.innerHTML = `
@@ -536,12 +571,12 @@ function renderHomeFixturesPreview() {
   const countdownDiv = document.createElement("div");
   countdownDiv.className = "preview-row";
 
-  if (timeLeft <= 0) {
-    countdownDiv.innerHTML = `
-      <span>Predictions closed</span>
-      <span>Locked</span>
-    `;
-  } else {
+if (timeLeft <= 0) {
+  countdownDiv.innerHTML = `
+    <span>${currentRound} now open</span>
+    <span>Enter now</span>
+  `;
+} else {
     const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
     const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);

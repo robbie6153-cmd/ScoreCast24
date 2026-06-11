@@ -29,6 +29,7 @@ async function loadPredictions() {
     }
 
     const data = predictionSnap.data();
+    predictionTitle.textContent = `${predictionUsername || data.username || "User"}'s ${data.round || ""} Predictions`;
     const predictions = data.predictions || [];
 
     if (predictions.length === 0) {

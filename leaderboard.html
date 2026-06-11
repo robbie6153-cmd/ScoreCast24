@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ScoreCast24 Leaderboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=11" />
 </head>
 
 <body>
@@ -17,9 +17,20 @@
 
     <main class="leaderboard-page">
       <h1>Leaderboard</h1>
+
       <p class="leaderboard-hint">
-  Tap a player to view their predictions.
-</p>
+        Tap a player to view their predictions.
+      </p>
+
+      <div class="round-tabs">
+        <button id="roundOneTab" class="round-tab">
+          Round One
+        </button>
+
+        <button id="roundTwoTab" class="round-tab">
+          Round Two
+        </button>
+      </div>
 
       <div id="leaderboardContainer">
         Loading leaderboard...
@@ -32,6 +43,6 @@
 
   </div>
 
-  <script type="module" src="leaderboard.js?v=5"></script>
+  <script type="module" src="leaderboard.js?v=6"></script>
 </body>
 </html>
