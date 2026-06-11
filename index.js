@@ -495,8 +495,15 @@ backToPredictionsBtn.addEventListener("click", async () => {
 
 const homeLeaderboardPreview = document.getElementById("homeLeaderboardPreview");
 const homeFixturesPreview = document.getElementById("homeFixturesPreview");
+if (homeLeaderboardPreview) {
+  homeLeaderboardPreview.style.cursor = "pointer";
 
-async function renderHomeLeaderboardPreview() {
+  homeLeaderboardPreview.addEventListener("click", () => {
+    window.location.href = "leaderboard.html";
+  });
+}
+
+     async function renderHomeLeaderboardPreview() {
   if (!homeLeaderboardPreview) return;
 
   homeLeaderboardPreview.innerHTML = "Loading standings...";
@@ -505,18 +512,37 @@ async function renderHomeLeaderboardPreview() {
     const predictionsSnap = await getDocs(collection(db, "scorecast24_predictions"));
     const rows = [];
 
-predictionsSnap.forEach((docSnap) => {
-  const data = docSnap.data();
+    predictionsSnap.forEach((docSnap) => {
+      const data = docSnap.data();
 
-  if (data.round !== currentRound) {
-    return;
-  }
+      if (data.round !== "Round One") {
+        return;
+      }
 
-  rows.push({
-    username: data.username || "?????",
-    points: data.points
-  });
-});
+      let totalPoints = 0;
+      let hasScoredFixture = false;
+
+      if (data.predictions && Array.isArray(data.predictions)) {
+        data.predictions.forEach((prediction) => {
+          const fixture = roundOneFixtures.find(f => f.id === prediction.fixtureId);
+
+          if (fixture) {
+            const points = calculatePoints(prediction, fixture);
+
+            if (points !== null) {
+              totalPoints += points;
+              hasScoredFixture = true;
+            }
+          }
+        });
+      }
+
+      rows.push({
+        username: data.username || "?????",
+        points: totalPoints,
+        status: hasScoredFixture ? `${totalPoints} pts` : "Pending"
+      });
+    });
 
     if (rows.length === 0) {
       homeLeaderboardPreview.innerHTML = `
@@ -528,7 +554,7 @@ predictionsSnap.forEach((docSnap) => {
       return;
     }
 
-    rows.sort((a, b) => (b.points || 0) - (a.points || 0));
+    rows.sort((a, b) => b.points - a.points);
 
     homeLeaderboardPreview.innerHTML = "";
 
@@ -538,17 +564,12 @@ predictionsSnap.forEach((docSnap) => {
 
       div.innerHTML = `
         <span>${index + 1}. ${row.username}</span>
-        <span class="preview-points">
-          ${
-            row.points === null || row.points === undefined
-              ? "Pending"
-              : `${row.points} pts`
-          }
-        </span>
+        <span class="preview-points">${row.status}</span>
       `;
 
       homeLeaderboardPreview.appendChild(div);
     });
+
   } catch (error) {
     console.error("Home leaderboard preview failed:", error);
     homeLeaderboardPreview.innerHTML = `
@@ -559,7 +580,6 @@ predictionsSnap.forEach((docSnap) => {
     `;
   }
 }
-
 function renderHomeFixturesPreview() {
   if (!homeFixturesPreview) return;
 
