@@ -1,4 +1,3 @@
-
 import { db } from "./firebase.js?v=3";
 
 import {
@@ -9,19 +8,63 @@ import {
 const leaderboardContainer = document.getElementById("leaderboardContainer");
 const predictionsDeadline = new Date("2026-06-11T19:00:00Z");
 
+const results = {
+  1: { homeScore: 2, awayScore: 0 } // Mexico 2 South Africa 0
+};
+
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
 
 let selectedRound = predictionsAreClosed() ? "Round Two" : "Round One";
+
 function timeoutPromise(ms) {
   return new Promise((_, reject) =>
     setTimeout(() => reject(new Error("Leaderboard load timed out")), ms)
   );
 }
 
+function calculatePoints(predictions = []) {
+  let total = 0;
+  let hasAnyResult = false;
+
+  predictions.forEach((prediction) => {
+    const result = results[prediction.fixtureId];
+
+    if (!result) return;
+
+    hasAnyResult = true;
+
+    const predictedHome = Number(prediction.predictedHome);
+    const predictedAway = Number(prediction.predictedAway);
+    const actualHome = Number(result.homeScore);
+    const actualAway = Number(result.awayScore);
+
+    if (predictedHome === actualHome && predictedAway === actualAway) {
+      total += 5;
+    } else if (
+      predictedHome === predictedAway &&
+      actualHome === actualAway
+    ) {
+      total += 3;
+    } else if (
+      predictedHome > predictedAway &&
+      actualHome > actualAway
+    ) {
+      total += 1;
+    } else if (
+      predictedHome < predictedAway &&
+      actualHome < actualAway
+    ) {
+      total += 2;
+    }
+  });
+
+  return hasAnyResult ? total : null;
+}
+
 async function renderLeaderboard() {
- leaderboardContainer.innerHTML = `Loading ${selectedRound} leaderboard...`;
+  leaderboardContainer.innerHTML = `Loading ${selectedRound} leaderboard...`;
 
   try {
     const predictionsSnap = await Promise.race([
@@ -31,24 +74,24 @@ async function renderLeaderboard() {
 
     const rows = [];
 
- predictionsSnap.forEach((docSnap) => {
-  const data = docSnap.data();
+    predictionsSnap.forEach((docSnap) => {
+      const data = docSnap.data();
 
-  if (data.round !== selectedRound) {
-    return;
-  }
+      if (data.round !== selectedRound) {
+        return;
+      }
 
-  rows.push({
+      rows.push({
         id: docSnap.id,
         username: data.username || "Unknown",
-        points: data.points
+        points: calculatePoints(data.predictions)
       });
     });
 
     rows.sort((a, b) => (b.points || 0) - (a.points || 0));
 
     if (rows.length === 0) {
-   leaderboardContainer.innerHTML = `<p>No predictions submitted yet for ${selectedRound}.</p>`;
+      leaderboardContainer.innerHTML = `<p>No predictions submitted yet for ${selectedRound}.</p>`;
       return;
     }
 
@@ -83,13 +126,13 @@ async function renderLeaderboard() {
 
       leaderboardContainer.appendChild(div);
     });
-
   } catch (error) {
     console.error("Leaderboard error:", error);
     leaderboardContainer.innerHTML =
       "<p>Could not load leaderboard. Please refresh and try again.</p>";
   }
 }
+
 const roundOneTab = document.getElementById("roundOneTab");
 const roundTwoTab = document.getElementById("roundTwoTab");
 
