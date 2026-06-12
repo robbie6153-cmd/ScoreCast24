@@ -18,7 +18,7 @@ function predictionsAreClosed() {
 }
 const roundOneFixtures = [
   { id: "1", date: "Thu 11 Jun 2026", group: "Group A", home: "Mexico", away: "South Africa", venue: "Mexico City Stadium", homeScore: 2, awayScore: 0 },
-  { id: "2", date: "Thu 11 Jun 2026", group: "Group A", home: "Korea Republic", away: "Czechia", venue: "Estadio Guadalajara", homeScore: null, awayScore: null },
+  { id: "2", date: "Thu 11 Jun 2026", group: "Group A", home: "Korea Republic", away: "Czechia", venue: "Estadio Guadalajara", homeScore: 2, awayScore: 1 },
 
   { id: "3", date: "Fri 12 Jun 2026", group: "Group B", home: "Canada", away: "Bosnia and Herzegovina", venue: "Toronto Stadium", homeScore: null, awayScore: null },
   { id: "4", date: "Fri 12 Jun 2026", group: "Group D", home: "USA", away: "Paraguay", venue: "Los Angeles Stadium", homeScore: null, awayScore: null },
