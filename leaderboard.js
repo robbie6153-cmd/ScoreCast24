@@ -19,7 +19,7 @@ function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
 
-let selectedRound = predictionsAreClosed() ? "Round Two" : "Round One";
+let selectedRound = "Round One";
 
 function timeoutPromise(ms) {
   return new Promise((_, reject) =>
@@ -72,7 +72,7 @@ async function renderLeaderboard() {
   try {
     const predictionsSnap = await Promise.race([
       getDocs(collection(db, "scorecast24_predictions")),
-      timeoutPromise(8000)
+      timeoutPromise(3000)
     ]);
 
     const rows = [];
