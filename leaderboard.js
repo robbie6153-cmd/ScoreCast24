@@ -9,9 +9,9 @@ const leaderboardContainer = document.getElementById("leaderboardContainer");
 const predictionsDeadline = new Date("2026-06-11T19:00:00Z");
 
 const results = {
-  1: { homeScore: 2, awayScore: 0 } // Mexico 2 South Africa 0
+  1: { homeScore: 2, awayScore: 0 }, // Mexico 2 South Africa 0
+  2: { homeScore: 2, awayScore: 1 }  // Korea Republic v Czechia
 };
-
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
