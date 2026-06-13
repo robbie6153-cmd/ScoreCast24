@@ -21,7 +21,7 @@ const roundOneFixtures = [
   { id: "2", date: "Thu 11 Jun 2026", group: "Group A", home: "Korea Republic", away: "Czechia", venue: "Estadio Guadalajara", homeScore: 2, awayScore: 1 },
 
   { id: "3", date: "Fri 12 Jun 2026", group: "Group B", home: "Canada", away: "Bosnia and Herzegovina", venue: "Toronto Stadium", homeScore: 1, awayScore: 1 },
-  { id: "4", date: "Fri 12 Jun 2026", group: "Group D", home: "USA", away: "Paraguay", venue: "Los Angeles Stadium", homeScore: null, awayScore: null },
+  { id: "4", date: "Fri 12 Jun 2026", group: "Group D", home: "USA", away: "Paraguay", venue: "Los Angeles Stadium", homeScore: 4, awayScore: 1 },
 
   { id: "5", date: "Sat 13 Jun 2026", group: "Group C", home: "Haiti", away: "Scotland", venue: "Boston Stadium", homeScore: null, awayScore: null },
   { id: "6", date: "Sat 13 Jun 2026", group: "Group D", home: "Australia", away: "Türkiye", venue: "BC Place Vancouver", homeScore: null, awayScore: null },
