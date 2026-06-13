@@ -13,6 +13,7 @@ const results = {
   2: { homeScore: 2, awayScore: 1 }, // Korea Republic v Czechia
   3: { homeScore: 1, awayScore: 1 }, // Canada 1 Bosnia & Herzegovina 1
   4: { homeScore: 4, awayScore: 1 }, // USA 4 Paraguay 1
+  5: { homeScore: 1, awayScore: 1 }, // Qatar 1 Switzerland 1
 };
   
 
