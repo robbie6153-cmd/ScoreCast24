@@ -1,90 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-<url>
-  <loc>https://scorecast24.com/</loc>
-</url>
+  <url><loc>https://scorecast24.com/</loc></url>
+  <url><loc>https://scorecast24.com/index.html</loc></url>
+  <url><loc>https://scorecast24.com/howtoplay.html</loc></url>
+  <url><loc>https://scorecast24.com/fixtures.html</loc></url>
+  <url><loc>https://scorecast24.com/leaderboard.html</loc></url>
+  <url><loc>https://scorecast24.com/view-predictions.html</loc></url>
+  <url><loc>https://scorecast24.com/news.html</loc></url>
+  <url><loc>https://scorecast24.com/rules.html</loc></url>
+  <url><loc>https://scorecast24.com/terms.html</loc></url>
+  <url><loc>https://scorecast24.com/privacy.html</loc></url>
+  <url><loc>https://scorecast24.com/guide.html</loc></url>
+  <url><loc>https://scorecast24.com/outsiders.html</loc></url>
+  <url><loc>https://scorecast24.com/home-nations.html</loc></url>
+  <url><loc>https://scorecast24.com/golden.html</loc></url>
+  <url><loc>https://scorecast24.com/about.html</loc></url>
+  <url><loc>https://scorecast24.com/contact.html</loc></url>
+  <url><loc>https://scorecast24.com/watch.html</loc></url>
+  <url><loc>https://scorecast24.com/hosts.html</loc></url>
+  <url><loc>https://scorecast24.com/stories.html</loc></url>
+  <url><loc>https://scorecast24.com/italy-1934.html</loc></url>
+  <url><loc>https://scorecast24.com/lost-1942-world-cup.html</loc></url>
+  <url><loc>https://scorecast24.com/cuba-indonesia.html</loc></url>
+  <url><loc>https://scorecast24.com/battle.html</loc></url>
+  <url><loc>https://scorecast24.com/ten.html</loc></url>
+  <url><loc>https://scorecast24.com/first.html</loc></url>
+  <url><loc>https://scorecast24.com/kk.html</loc></url>
 
-<url>
-  <loc>https://scorecast24.com/howtoplay.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/leaderboard.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/view-predictions.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/fixtures.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/news.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/rules.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/battle.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/terms.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/privacy.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/guide.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/outsiders.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/home-nations.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/golden.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/about.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/hosts.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/contact.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/stories.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/italy-1934.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/lost-1942-world-cup.html</loc>
-</url>
-
-<url>
-  <loc>https://scorecast24.com/cuba-indonesia.html</loc>
-</url>
-<url>
-  <loc>https://scorecast24.com/watch.html</loc>
-</url>
 </urlset>
