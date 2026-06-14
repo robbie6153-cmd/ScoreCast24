@@ -9,12 +9,12 @@ const leaderboardContainer = document.getElementById("leaderboardContainer");
 const predictionsDeadline = new Date("2026-06-11T19:00:00Z");
 
 const results = {
-  1: { homeScore: 2, awayScore: 0 }, // Mexico 2 South Africa 0
-  2: { homeScore: 2, awayScore: 1 }, // Korea Republic v Czechia
-  3: { homeScore: 1, awayScore: 1 }, // Canada 1 Bosnia & Herzegovina 1
-  4: { homeScore: 4, awayScore: 1 }, // USA 4 Paraguay 1
-  5: { homeScore: 1, awayScore: 1 }, // Qatar 1 Switzerland 1
-  6: { homeScore: 0, awayScore: 1 }, // Haiti 0 Scotland 1
+  1: { homeScore: 2, awayScore: 0 },
+  2: { homeScore: 2, awayScore: 1 },
+  3: { homeScore: 1, awayScore: 1 },
+  4: { homeScore: 4, awayScore: 1 },
+  5: { homeScore: 0, awayScore: 1 },
+  8: { homeScore: 1, awayScore: 1 }
 };
   
 
