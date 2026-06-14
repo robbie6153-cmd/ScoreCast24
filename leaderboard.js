@@ -75,10 +75,10 @@ async function renderLeaderboard() {
   leaderboardContainer.innerHTML = `Loading ${selectedRound} leaderboard...`;
 
   try {
-    const predictionsSnap = await Promise.race([
-      getDocs(collection(db, "scorecast24_predictions")),
-      timeoutPromise(3000)
-    ]);
+ const predictionsSnap = await Promise.race([
+  getDocs(collection(db, "scorecast24_predictions")),
+  timeoutPromise(20000)
+]);
 
     const rows = [];
 
@@ -136,8 +136,18 @@ async function renderLeaderboard() {
     });
   } catch (error) {
     console.error("Leaderboard error:", error);
-    leaderboardContainer.innerHTML =
-      "<p>Could not load leaderboard. Please refresh and try again.</p>";
+   leaderboardContainer.innerHTML = `
+  <div class="leaderboard-info">
+    <h2>ScoreCast24 World Cup 2026 Leaderboard</h2>
+    <p>
+      The leaderboard updates as World Cup results are added.
+      If the live rankings do not appear immediately, please refresh the page shortly.
+    </p>
+    <p>
+      Players earn points for correct scores, draws, away wins and home wins.
+    </p>
+  </div>
+`;
   }
 }
 
