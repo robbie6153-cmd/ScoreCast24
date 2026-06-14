@@ -564,3 +564,15 @@ h1 {
   border-color: #ffd34d;
   color: black;
 }
+.countdown-box {
+  margin-top: 10px;
+  font-size: 1rem;
+  text-align: center;
+  color: #ffd700;
+}
+
+.countdown-box strong {
+  display: block;
+  font-size: 1.2rem;
+  margin-top: 4px;
+}
