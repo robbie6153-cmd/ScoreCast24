@@ -673,6 +673,42 @@ if (menuToggle && dropdownMenu) {
     }
   });
 }
+
+
+/* =========================
+   ROUND TWO COUNTDOWN
+========================= */
+
+const roundTwoDeadline = new Date("2026-06-18T17:00:00+01:00");
+
+function updateRoundTwoCountdown() {
+  const countdownBox = document.getElementById("roundTwoCountdown");
+
+  if (!countdownBox) return;
+
+  const now = new Date();
+  const timeLeft = roundTwoDeadline - now;
+
+  if (timeLeft <= 0) {
+    countdownBox.innerHTML = "Round Two predictions are now closed.";
+    return;
+  }
+
+  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+  const seconds = Math.floor((timeLeft / 1000) % 60);
+
+  countdownBox.innerHTML =
+    `Round Two closes in: <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
+}
+
+setInterval(updateRoundTwoCountdown, 1000);
+
+/* =========================
+   START
+========================= */
+
 showHome();
 renderHomeLeaderboardPreview();
 renderHomeFixturesPreview();
