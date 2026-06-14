@@ -14,6 +14,7 @@ const results = {
   3: { homeScore: 1, awayScore: 1 }, // Canada 1 Bosnia & Herzegovina 1
   4: { homeScore: 4, awayScore: 1 }, // USA 4 Paraguay 1
   5: { homeScore: 1, awayScore: 1 }, // Qatar 1 Switzerland 1
+  6: { homeScore: 0, awayScore: 1 }, // Haiti 0 Scotland 1
 };
   
 
