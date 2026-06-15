@@ -28,10 +28,10 @@ const roundOneFixtures = [
   { id: "7", date: "Sat 13 Jun 2026", group: "Group C", home: "Brazil", away: "Morocco", venue: "New York New Jersey Stadium", homeScore: 1, awayScore: 1 },
   { id: "8", date: "Sat 13 Jun 2026", group: "Group B", home: "Qatar", away: "Switzerland", venue: "San Francisco Bay Area Stadium", homeScore: 1, awayScore: 1 },
 
-  { id: "9", date: "Sun 14 Jun 2026", group: "Group E", home: "Côte d'Ivoire", away: "Ecuador", venue: "Philadelphia Stadium", homeScore: null, awayScore: null },
+  { id: "9", date: "Sun 14 Jun 2026", group: "Group E", home: "Côte d'Ivoire", away: "Ecuador", venue: "Philadelphia Stadium", homeScore: 1, awayScore: 0 },
   { id: "10", date: "Sun 14 Jun 2026", group: "Group E", home: "Germany", away: "Curaçao", venue: "Houston Stadium", homeScore: 7, awayScore: 1 },
-  { id: "11", date: "Sun 14 Jun 2026", group: "Group F", home: "Netherlands", away: "Japan", venue: "Dallas Stadium", homeScore: null, awayScore: null },
-  { id: "12", date: "Sun 14 Jun 2026", group: "Group F", home: "Sweden", away: "Tunisia", venue: "Estadio Monterrey", homeScore: null, awayScore: null },
+  { id: "11", date: "Sun 14 Jun 2026", group: "Group F", home: "Netherlands", away: "Japan", venue: "Dallas Stadium", homeScore: 2, awayScore: 2 },
+  { id: "12", date: "Sun 14 Jun 2026", group: "Group F", home: "Sweden", away: "Tunisia", venue: "Estadio Monterrey", homeScore: 4, awayScore: 1 },
 
   { id: "13", date: "Mon 15 Jun 2026", group: "Group H", home: "Saudi Arabia", away: "Uruguay", venue: "Miami Stadium", homeScore: null, awayScore: null },
   { id: "14", date: "Mon 15 Jun 2026", group: "Group H", home: "Spain", away: "Cabo Verde", venue: "Atlanta Stadium", homeScore: null, awayScore: null },
