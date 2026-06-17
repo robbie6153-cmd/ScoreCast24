@@ -25,6 +25,9 @@ const results = {
   14: { homeScore: 0, awayScore: 0},
   15: { homeScore: 2, awayScore: 2},
   16: { homeScore: 1, awayScore: 1},
+  17: { homeScore: 3, awayScore: 1},
+  18: { homeScore: 1, awayScore: 4},
+  19: { homeScore: 3, awayScore: 0},
 };
   
 

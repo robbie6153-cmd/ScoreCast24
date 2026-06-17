@@ -38,9 +38,9 @@ const roundOneFixtures = [
   { id: "15", date: "Mon 15 Jun 2026", group: "Group G", home: "IR Iran", away: "New Zealand", venue: "Los Angeles Stadium", homeScore: 2, awayScore: 2 },
   { id: "16", date: "Mon 15 Jun 2026", group: "Group G", home: "Belgium", away: "Egypt", venue: "Seattle Stadium", homeScore: 1, awayScore: 1 },
 
-  { id: "17", date: "Tue 16 Jun 2026", group: "Group I", home: "France", away: "Senegal", venue: "New York New Jersey Stadium", homeScore: null, awayScore: null },
-  { id: "18", date: "Tue 16 Jun 2026", group: "Group I", home: "Iraq", away: "Norway", venue: "Boston Stadium", homeScore: null, awayScore: null },
-  { id: "19", date: "Tue 16 Jun 2026", group: "Group J", home: "Argentina", away: "Algeria", venue: "Kansas City Stadium", homeScore: null, awayScore: null },
+  { id: "17", date: "Tue 16 Jun 2026", group: "Group I", home: "France", away: "Senegal", venue: "New York New Jersey Stadium", homeScore: 3, awayScore: 1 },
+  { id: "18", date: "Tue 16 Jun 2026", group: "Group I", home: "Iraq", away: "Norway", venue: "Boston Stadium", homeScore: 1, awayScore: 4 },
+  { id: "19", date: "Tue 16 Jun 2026", group: "Group J", home: "Argentina", away: "Algeria", venue: "Kansas City Stadium", homeScore: 3, awayScore: 0 },
   { id: "20", date: "Tue 16 Jun 2026", group: "Group J", home: "Austria", away: "Jordan", venue: "San Francisco Bay Area Stadium", homeScore: null, awayScore: null },
 
   { id: "21", date: "Wed 17 Jun 2026", group: "Group L", home: "Ghana", away: "Panama", venue: "Toronto Stadium", homeScore: null, awayScore: null },
