@@ -646,8 +646,8 @@ function renderHomeFixturesPreview() {
 
     homeFixturesPreview.appendChild(countdownDiv);
 
-    latestResults
-  .slice(3, 1)
+  latestResults
+  .slice(1, 3)
   .forEach((fixture) => {
       const div = document.createElement("div");
       div.className = "preview-row";
@@ -745,7 +745,20 @@ setInterval(updateRoundThreeCountdown, 1000);
 ========================= */
 
 showHome();
-renderHomeLeaderboardPreview();
+homeLeaderboardPreview.innerHTML = `
+  <div class="preview-row">
+    <span>1. SMF *real</span>
+    <span class="preview-points">38 pts</span>
+  </div>
+  <div class="preview-row">
+    <span>2. Jimbo</span>
+    <span class="preview-points">31 pts</span>
+  </div>
+  <div class="preview-row">
+    <span>3. Bluecarl</span>
+    <span class="preview-points">27 pts</span>
+  </div>
+`;
 renderHomeFixturesPreview();
 setInterval(renderHomeFixturesPreview, 1000);
 let deferredPrompt;
