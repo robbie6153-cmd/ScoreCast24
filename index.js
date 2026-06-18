@@ -648,7 +648,6 @@ function renderHomeFixturesPreview() {
 
     latestResults
   .slice(3, 1)
-  .reverse()
   .forEach((fixture) => {
       const div = document.createElement("div");
       div.className = "preview-row";
