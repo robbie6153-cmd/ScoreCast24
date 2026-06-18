@@ -631,7 +631,7 @@ function renderHomeFixturesPreview() {
       .reverse();
 
     if (latestResults.length > 0) {
-      const latest = latestResults[0];
+      const latest = latestResults[latestResults.length - 1];
 
       countdownDiv.innerHTML = `
         <span>${latest.home} ${latest.homeScore}-${latest.awayScore} ${latest.away}</span>
@@ -646,7 +646,10 @@ function renderHomeFixturesPreview() {
 
     homeFixturesPreview.appendChild(countdownDiv);
 
-    latestResults.slice(1, 3).forEach((fixture) => {
+    latestResults
+  .slice(-3, -1)
+  .reverse()
+  .forEach((fixture) => {
       const div = document.createElement("div");
       div.className = "preview-row";
 
