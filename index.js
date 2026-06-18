@@ -614,22 +614,26 @@ if (homeLeaderboardPreview) {
   }
 }
 
+
 function renderHomeFixturesPreview() {
   if (!homeFixturesPreview) return;
 
-  const now = new Date();
-  const timeLeft = predictionsDeadline - now;
-
   homeFixturesPreview.innerHTML = "";
 
-  const countdownDiv = document.createElement("div");
-  countdownDiv.className = "preview-row";
-
-if (timeLeft <= 0) {
   const latestResults = [...roundOneFixtures, ...roundTwoFixtures]
     .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 3);
+
+  if (latestResults.length === 0) {
+    homeFixturesPreview.innerHTML = `
+      <div class="preview-row">
+        <span>No results yet</span>
+        <span>—</span>
+      </div>
+    `;
+    return;
+  }
 
   latestResults.forEach((fixture, index) => {
     const div = document.createElement("div");
@@ -642,58 +646,8 @@ if (timeLeft <= 0) {
 
     homeFixturesPreview.appendChild(div);
   });
-
-} else {
-      countdownDiv.innerHTML = `
-        <span>Round One Results</span>
-        <span>View all</span>
-      `;
-    }
-
-    homeFixturesPreview.appendChild(countdownDiv);
-
-  latestResults
-  .slice(1, 3)
-  .forEach((fixture) => {
-      const div = document.createElement("div");
-      div.className = "preview-row";
-
-      div.innerHTML = `
-        <span>${fixture.home} ${fixture.homeScore}-${fixture.awayScore} ${fixture.away}</span>
-        <span>›</span>
-      `;
-
-      homeFixturesPreview.appendChild(div);
-    });
-
-  } else {
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-    const seconds = Math.floor((timeLeft / 1000) % 60);
-
-    countdownDiv.innerHTML = `
-      <span>Predictions close in</span>
-      <span>${days}d ${hours}h ${minutes}m ${seconds}s</span>
-    `;
-
-    homeFixturesPreview.appendChild(countdownDiv);
-
-    fixtures.slice(0, 2).forEach((fixture) => {
-      const div = document.createElement("div");
-      div.className = "preview-row";
-
-      div.innerHTML = `
-        <span>${fixture.home} v ${fixture.away}</span>
-        <span>›</span>
-      `;
-
-      homeFixturesPreview.appendChild(div);
-    });
-  }
 }
 
-     
 /* =========================
    START
 ========================= */
