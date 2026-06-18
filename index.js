@@ -81,8 +81,41 @@ const roundTwoFixtures = [
   { id: "48", date: "Wed 24 Jun 2026, 03:00", group: "Group K", home: "Colombia", away: "DR Congo", venue: "Estadio Akron, Guadalajara", homeScore: null, awayScore: null }
 ];
 
-const fixtures = predictionsAreClosed() ? roundTwoFixtures : roundOneFixtures;
-const currentRound = predictionsAreClosed() ? "Round Two" : "Round One";
+const roundThreeFixtures = [
+
+  { id: "49", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Canada", venue: "", homeScore: null, awayScore: null },
+  { id: "50", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Bosnia and Herzegovina", away: "Qatar", venue: "", homeScore: null, awayScore: null },
+
+  { id: "51", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Morocco", away: "Haiti", venue: "", homeScore: null, awayScore: null },
+  { id: "52", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Brazil", venue: "", homeScore: null, awayScore: null },
+
+  { id: "53", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "South Africa", away: "South Korea", venue: "", homeScore: null, awayScore: null },
+  { id: "54", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "Czech Republic", away: "Mexico", venue: "", homeScore: null, awayScore: null },
+
+  { id: "55", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Curacao", away: "Côte d'Ivoire", venue: "", homeScore: null, awayScore: null },
+  { id: "56", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Ecuador", away: "Germany", venue: "", homeScore: null, awayScore: null },
+
+  { id: "57", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Tunisia", away: "Netherlands", venue: "", homeScore: null, awayScore: null },
+  { id: "58", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Japan", away: "Sweden", venue: "", homeScore: null, awayScore: null },
+
+  { id: "59", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Turkey", away: "United States", venue: "", homeScore: null, awayScore: null },
+  { id: "60", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Paraguay", away: "Australia", venue: "", homeScore: null, awayScore: null },
+
+  { id: "61", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Norway", away: "France", venue: "", homeScore: null, awayScore: null },
+  { id: "62", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Senegal", away: "Iraq", venue: "", homeScore: null, awayScore: null },
+
+  { id: "63", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Cape Verde", away: "Saudi Arabia", venue: "", homeScore: null, awayScore: null },
+  { id: "64", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Uruguay", away: "Spain", venue: "", homeScore: null, awayScore: null },
+
+  { id: "65", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "New Zealand", away: "Belgium", venue: "", homeScore: null, awayScore: null },
+  { id: "66", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "Egypt", away: "Iran", venue: "", homeScore: null, awayScore: null },
+
+  { id: "67", date: "Sat 27 Jun 2026, 22:00", group: "Group L", home: "Panama", away: "England", venue: "", homeScore: null, awayScore: null },
+  { id: "68", date: "Sat 27 Jun 2026, 22:00", group: "Group L", home: "Croatia", away: "Ghana", venue: "", homeScore: null, awayScore: null }
+
+];
+const fixtures = roundThreeFixtures;
+const currentRound = "Round Three";
 /* =========================
    PAGE ELEMENTS
 ========================= */
@@ -679,18 +712,18 @@ if (menuToggle && dropdownMenu) {
    ROUND TWO COUNTDOWN
 ========================= */
 
-const roundTwoDeadline = new Date("2026-06-18T17:00:00+01:00");
+const roundThreeDeadline = new Date("2026-06-24T20:00:00+01:00");
 
-function updateRoundTwoCountdown() {
-  const countdownBox = document.getElementById("roundTwoCountdown");
+function updateRoundThreeCountdown() {
+  const countdownBox = document.getElementById("roundThreeCountdown");
 
   if (!countdownBox) return;
 
   const now = new Date();
-  const timeLeft = roundTwoDeadline - now;
+ const timeLeft = roundThreeDeadline - now;
 
   if (timeLeft <= 0) {
-    countdownBox.innerHTML = "Round Two predictions are now closed.";
+    countdownBox.innerHTML = "Round Three predictions are now closed.";
     return;
   }
 
@@ -700,10 +733,10 @@ function updateRoundTwoCountdown() {
   const seconds = Math.floor((timeLeft / 1000) % 60);
 
   countdownBox.innerHTML =
-    `Round Two closes in: <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
+    `Round Three closes in: <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
 }
 
-setInterval(updateRoundTwoCountdown, 1000);
+setInterval(updateRoundThreeCountdown, 1000);
 
 /* =========================
    START

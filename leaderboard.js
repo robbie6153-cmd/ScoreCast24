@@ -169,12 +169,14 @@ async function renderLeaderboard() {
 
 const roundOneTab = document.getElementById("roundOneTab");
 const roundTwoTab = document.getElementById("roundTwoTab");
+const roundThreeTab = document.getElementById("roundThreeTab");
 
 function updateActiveTab() {
-  if (!roundOneTab || !roundTwoTab) return;
+  if (!roundOneTab || !roundTwoTab || !roundThreeTab) return;
 
   roundOneTab.classList.toggle("active", selectedRound === "Round One");
   roundTwoTab.classList.toggle("active", selectedRound === "Round Two");
+  roundThreeTab.classList.toggle("active", selectedRound === "Round Three");
 }
 
 roundOneTab?.addEventListener("click", () => {
@@ -189,5 +191,10 @@ roundTwoTab?.addEventListener("click", () => {
   renderLeaderboard();
 });
 
+roundThreeTab?.addEventListener("click", () => {
+  selectedRound = "Round Three";
+  updateActiveTab();
+  renderLeaderboard();
+});
 updateActiveTab();
 renderLeaderboard();
