@@ -94,7 +94,7 @@ async function renderLeaderboard() {
   try {
  const predictionsSnap = await Promise.race([
   getDocs(collection(db, "scorecast24_predictions")),
-  timeoutPromise(20000)
+  timeoutPromise(40000)
 ]);
 
     const rows = [];

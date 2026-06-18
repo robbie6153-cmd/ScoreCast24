@@ -625,19 +625,25 @@ function renderHomeFixturesPreview() {
   const countdownDiv = document.createElement("div");
   countdownDiv.className = "preview-row";
 
-  if (timeLeft <= 0) {
- const latestResults = roundOneFixtures
-  .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
-  .reverse();
+if (timeLeft <= 0) {
+  const latestResults = [...roundOneFixtures, ...roundTwoFixtures]
+    .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
+    .sort((a, b) => Number(b.id) - Number(a.id))
+    .slice(0, 3);
 
-    if (latestResults.length > 0) {
-      const latest = latestResults[0];
+  latestResults.forEach((fixture, index) => {
+    const div = document.createElement("div");
+    div.className = "preview-row";
 
-      countdownDiv.innerHTML = `
-        <span>${latest.home} ${latest.homeScore}-${latest.awayScore} ${latest.away}</span>
-        <span>Latest</span>
-      `;
-    } else {
+    div.innerHTML = `
+      <span>${fixture.home} ${fixture.homeScore}-${fixture.awayScore} ${fixture.away}</span>
+      <span>${index === 0 ? "Latest" : "›"}</span>
+    `;
+
+    homeFixturesPreview.appendChild(div);
+  });
+
+} else {
       countdownDiv.innerHTML = `
         <span>Round One Results</span>
         <span>View all</span>
