@@ -626,12 +626,12 @@ function renderHomeFixturesPreview() {
   countdownDiv.className = "preview-row";
 
   if (timeLeft <= 0) {
-    const latestResults = roundOneFixtures
-      .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
-      .reverse();
+ const latestResults = roundOneFixtures
+  .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
+  .reverse();
 
     if (latestResults.length > 0) {
-      const latest = latestResults[latestResults.length - 1];
+      const latest = latestResults[0];
 
       countdownDiv.innerHTML = `
         <span>${latest.home} ${latest.homeScore}-${latest.awayScore} ${latest.away}</span>
@@ -647,7 +647,7 @@ function renderHomeFixturesPreview() {
     homeFixturesPreview.appendChild(countdownDiv);
 
     latestResults
-  .slice(-3, -1)
+  .slice(3, 1)
   .reverse()
   .forEach((fixture) => {
       const div = document.createElement("div");
