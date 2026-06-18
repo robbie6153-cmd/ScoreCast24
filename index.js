@@ -50,7 +50,7 @@ const roundOneFixtures = [
 ];
 
 const roundTwoFixtures = [
-  { id: "25", date: "Thu 18 Jun 2026, 17:00", group: "Group A", home: "Czechia", away: "South Africa", venue: "Mercedes-Benz Stadium, Atlanta", homeScore: null, awayScore: null },
+  { id: "25", date: "Thu 18 Jun 2026, 17:00", group: "Group A", home: "Czechia", away: "South Africa", venue: "Mercedes-Benz Stadium, Atlanta", homeScore: 1, awayScore: 1 },
   { id: "26", date: "Thu 18 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Bosnia & Herzegovina", venue: "SoFi Stadium, Los Angeles", homeScore: null, awayScore: null },
   { id: "27", date: "Thu 18 Jun 2026, 23:00", group: "Group B", home: "Canada", away: "Qatar", venue: "BC Place, Vancouver", homeScore: null, awayScore: null },
   { id: "28", date: "Fri 19 Jun 2026, 02:00", group: "Group A", home: "Mexico", away: "South Korea", venue: "Estadio Akron, Guadalajara", homeScore: null, awayScore: null },
