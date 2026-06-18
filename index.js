@@ -83,7 +83,7 @@ const roundTwoFixtures = [
 
 const roundThreeFixtures = [
 
-  { id: "49", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Canada", venue: "", homeScore: null, awayScore: null },
+  { id: "49", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Canada", venue: "", homeScore: 4, awayScore: 1 },
   { id: "50", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Bosnia and Herzegovina", away: "Qatar", venue: "", homeScore: null, awayScore: null },
 
   { id: "51", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Morocco", away: "Haiti", venue: "", homeScore: null, awayScore: null },
