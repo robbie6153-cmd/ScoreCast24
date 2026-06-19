@@ -51,9 +51,9 @@ const roundOneFixtures = [
 
 const roundTwoFixtures = [
   { id: "25", date: "Thu 18 Jun 2026, 17:00", group: "Group A", home: "Czechia", away: "South Africa", venue: "Mercedes-Benz Stadium, Atlanta", homeScore: 1, awayScore: 1 },
-  { id: "26", date: "Thu 18 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Bosnia & Herzegovina", venue: "SoFi Stadium, Los Angeles", homeScore: null, awayScore: null },
-  { id: "27", date: "Thu 18 Jun 2026, 23:00", group: "Group B", home: "Canada", away: "Qatar", venue: "BC Place, Vancouver", homeScore: null, awayScore: null },
-  { id: "28", date: "Fri 19 Jun 2026, 02:00", group: "Group A", home: "Mexico", away: "South Korea", venue: "Estadio Akron, Guadalajara", homeScore: null, awayScore: null },
+  { id: "26", date: "Thu 18 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Bosnia & Herzegovina", venue: "SoFi Stadium, Los Angeles", homeScore: 4, awayScore: 1 },
+  { id: "27", date: "Thu 18 Jun 2026, 23:00", group: "Group B", home: "Canada", away: "Qatar", venue: "BC Place, Vancouver", homeScore: 6, awayScore: 0 },
+  { id: "28", date: "Fri 19 Jun 2026, 02:00", group: "Group A", home: "Mexico", away: "South Korea", venue: "Estadio Akron, Guadalajara", homeScore: 1, awayScore: 0 },
 
   { id: "29", date: "Fri 19 Jun 2026, 20:00", group: "Group D", home: "USA", away: "Australia", venue: "Lumen Field, Seattle", homeScore: null, awayScore: null },
   { id: "30", date: "Fri 19 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Morocco", venue: "Gillette Stadium, Boston", homeScore: null, awayScore: null },

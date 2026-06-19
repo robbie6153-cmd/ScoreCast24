@@ -35,6 +35,8 @@ const results = {
   24: { homeScore: 1, awayScore: 3},
   25: { homeScore: 1, awayScore: 1},
   26: { homeScore: 4, awayScore: 1},
+  27: { homeScore: 6, awayScore: 0},
+  28: { homeScore: 1, awayScore: 0},
 };
   
 
