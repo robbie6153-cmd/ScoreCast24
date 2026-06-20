@@ -279,7 +279,6 @@ function getPredictionsFromPage() {
 
 
 submitPredictionsBtn.addEventListener("click", async () => {
-  alert("Submit button clicked");
 
   const usernameInput = document.getElementById("usernameInput");
   username = usernameInput.value.trim();
