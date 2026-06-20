@@ -548,7 +548,7 @@ if (homeLeaderboardPreview) {
     predictionsSnap.forEach((docSnap) => {
       const data = docSnap.data();
 
-      if (data.round !== "Round One") {
+      if (data.round !== "Round Two") {
         return;
       }
 
@@ -557,7 +557,7 @@ if (homeLeaderboardPreview) {
 
       if (data.predictions && Array.isArray(data.predictions)) {
         data.predictions.forEach((prediction) => {
-          const fixture = roundOneFixtures.find(f => f.id === prediction.fixtureId);
+        const fixture = roundTwoFixtures.find(f => f.id === prediction.fixtureId);
 
           if (fixture) {
             const points = calculatePoints(prediction, fixture);
@@ -705,22 +705,13 @@ setInterval(updateRoundThreeCountdown, 1000);
 ========================= */
 
 showHome();
-homeLeaderboardPreview.innerHTML = `
-  <div class="preview-row">
-    <span>1. SMF *real</span>
-    <span class="preview-points">38 pts</span>
-  </div>
-  <div class="preview-row">
-    <span>2. Jimbo</span>
-    <span class="preview-points">31 pts</span>
-  </div>
-  <div class="preview-row">
-    <span>3. Bluecarl</span>
-    <span class="preview-points">27 pts</span>
-  </div>
-`;
+
+renderHomeLeaderboardPreview();
 renderHomeFixturesPreview();
+
+setInterval(renderHomeLeaderboardPreview, 10000);
 setInterval(renderHomeFixturesPreview, 1000);
+
 let deferredPrompt;
 
 window.addEventListener("beforeinstallprompt", (e) => {
