@@ -55,10 +55,10 @@ const roundTwoFixtures = [
   { id: "27", date: "Thu 18 Jun 2026, 23:00", group: "Group B", home: "Canada", away: "Qatar", venue: "BC Place, Vancouver", homeScore: 6, awayScore: 0 },
   { id: "28", date: "Fri 19 Jun 2026, 02:00", group: "Group A", home: "Mexico", away: "South Korea", venue: "Estadio Akron, Guadalajara", homeScore: 1, awayScore: 0 },
 
-  { id: "29", date: "Fri 19 Jun 2026, 20:00", group: "Group D", home: "USA", away: "Australia", venue: "Lumen Field, Seattle", homeScore: null, awayScore: null },
-  { id: "30", date: "Fri 19 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Morocco", venue: "Gillette Stadium, Boston", homeScore: null, awayScore: null },
-  { id: "31", date: "Sat 20 Jun 2026, 01:30", group: "Group C", home: "Brazil", away: "Haiti", venue: "Lincoln Financial Field, Philadelphia", homeScore: null, awayScore: null },
-  { id: "32", date: "Sat 20 Jun 2026, 04:00", group: "Group D", home: "Türkiye", away: "Paraguay", venue: "Levi's Stadium, San Francisco Bay Area", homeScore: null, awayScore: null },
+  { id: "29", date: "Fri 19 Jun 2026, 20:00", group: "Group D", home: "USA", away: "Australia", venue: "Lumen Field, Seattle", homeScore: 2, awayScore: 0 },
+  { id: "30", date: "Fri 19 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Morocco", venue: "Gillette Stadium, Boston", homeScore: 0, awayScore: 1 },
+  { id: "31", date: "Sat 20 Jun 2026, 01:30", group: "Group C", home: "Brazil", away: "Haiti", venue: "Lincoln Financial Field, Philadelphia", homeScore: 3, awayScore: 0 },
+  { id: "32", date: "Sat 20 Jun 2026, 04:00", group: "Group D", home: "Türkiye", away: "Paraguay", venue: "Levi's Stadium, San Francisco Bay Area", homeScore: 0, awayScore: 1 },
 
   { id: "33", date: "Sat 20 Jun 2026, 18:00", group: "Group F", home: "Netherlands", away: "Sweden", venue: "NRG Stadium, Houston", homeScore: null, awayScore: null },
   { id: "34", date: "Sat 20 Jun 2026, 21:00", group: "Group E", home: "Germany", away: "Ivory Coast", venue: "BMO Field, Toronto", homeScore: null, awayScore: null },
