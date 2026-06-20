@@ -277,9 +277,7 @@ function getPredictionsFromPage() {
   return predictions;
 }
 
-
 submitPredictionsBtn.addEventListener("click", async () => {
-
   const usernameInput = document.getElementById("usernameInput");
   username = usernameInput.value.trim();
 
@@ -289,6 +287,9 @@ submitPredictionsBtn.addEventListener("click", async () => {
   }
 
   localStorage.setItem("scorecast24Username", username);
+
+  const predictions = getPredictionsFromPage();
+  if (!predictions) return;
 
   try {
     const alreadySubmitted = await hasAlreadySubmitted(username);
@@ -300,27 +301,6 @@ submitPredictionsBtn.addEventListener("click", async () => {
       return;
     }
 
-    const predictions = getPredictionsFromPage();
-    if (!predictions) return;
-
-    confirmModal.classList.remove("hidden");
-  } catch (error) {
-    console.error("Submit check failed:", error);
-    alert("Submit check failed:\n\n" + error.message);
-  }
-});
-
-cancelSubmitBtn.addEventListener("click", () => {
-  confirmModal.classList.add("hidden");
-});
-
-confirmSubmitBtn.addEventListener("click", async () => {
-  confirmModal.classList.add("hidden");
-
-  const predictions = getPredictionsFromPage();
-  if (!predictions) return;
-
-  try {
     const predictionRef = doc(
       db,
       "scorecast24_predictions",
@@ -343,7 +323,7 @@ confirmSubmitBtn.addEventListener("click", async () => {
 
   } catch (error) {
     console.error("Submission failed:", error);
-    alert("Submission failed. Check Firestore rules or console errors.");
+    alert("Submission failed:\n\n" + error.message);
   }
 });
 
