@@ -62,8 +62,8 @@ const roundTwoFixtures = [
 
   { id: "33", date: "Sat 20 Jun 2026, 18:00", group: "Group F", home: "Netherlands", away: "Sweden", venue: "NRG Stadium, Houston", homeScore: 5, awayScore: 1 },
   { id: "34", date: "Sat 20 Jun 2026, 21:00", group: "Group E", home: "Germany", away: "Ivory Coast", venue: "BMO Field, Toronto", homeScore: 2, awayScore: 1 },
-  { id: "35", date: "Sun 21 Jun 2026, 01:00", group: "Group E", home: "Ecuador", away: "Curaçao", venue: "Arrowhead Stadium, Kansas City", homeScore: null, awayScore: null },
-  { id: "36", date: "Sun 21 Jun 2026, 05:00", group: "Group F", home: "Tunisia", away: "Japan", venue: "Estadio BBVA, Monterrey", homeScore: null, awayScore: null },
+  { id: "35", date: "Sun 21 Jun 2026, 01:00", group: "Group E", home: "Ecuador", away: "Curaçao", venue: "Arrowhead Stadium, Kansas City", homeScore: 0, awayScore: 0 },
+  { id: "36", date: "Sun 21 Jun 2026, 05:00", group: "Group F", home: "Tunisia", away: "Japan", venue: "Estadio BBVA, Monterrey", homeScore: 0, awayScore: 4 },
 
   { id: "37", date: "Sun 21 Jun 2026, 17:00", group: "Group H", home: "Spain", away: "Saudi Arabia", venue: "Atlanta Stadium, Atlanta", homeScore: null, awayScore: null },
   { id: "38", date: "Sun 21 Jun 2026, 20:00", group: "Group G", home: "Belgium", away: "IR Iran", venue: "SoFi Stadium, Los Angeles", homeScore: null, awayScore: null },
