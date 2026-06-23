@@ -49,9 +49,9 @@ const results = {
   38: { homeScore: 0, awayScore: 0},
   39: { homeScore: 2, awayScore: 2},
   40: { homeScore: 1, awayScore: 3},
-  41: { homeScore: 2, awayAcore: 0},
+  41: { homeScore: 2, awayScore: 0},
   42: { homeScore: 3, awayScore: 0},
-  43: { homeScore: 3, awayAcore: 2},
+  43: { homeScore: 3, awayScore: 2},
 };
   
 
