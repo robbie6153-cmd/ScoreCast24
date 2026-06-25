@@ -57,6 +57,12 @@ const results = {
   46: { homeScore: 0, awayScore: 0},
   47: { homeScore: 0, awayScore: 1},
   48: { homeScore: 1, awayScore: 0},
+  49: { homeScore: 2, awayScore: 1},
+  50: { homeScore: 3, awayScore: 1},
+  51: { homeScore: 4, awayScore: 2},
+  52: { homeScore: 0, awayScore: 3},
+  53: { homeScore: 1, awayScore: 0},
+  54: { homeScore: 0, awayScore: 3},
 };
   
 

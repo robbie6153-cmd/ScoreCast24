@@ -83,14 +83,14 @@ const roundTwoFixtures = [
 
 const roundThreeFixtures = [
 
-  { id: "49", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Canada", venue: "", homeScore: null, awayScore: null },
-  { id: "50", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Bosnia and Herzegovina", away: "Qatar", venue: "", homeScore: null, awayScore: null },
+  { id: "49", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Canada", venue: "", homeScore: 2, awayScore: 1 },
+  { id: "50", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Bosnia and Herzegovina", away: "Qatar", venue: "", homeScore: 3, awayScore: 1 },
 
-  { id: "51", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Morocco", away: "Haiti", venue: "", homeScore: null, awayScore: null },
-  { id: "52", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Brazil", venue: "", homeScore: null, awayScore: null },
+  { id: "51", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Morocco", away: "Haiti", venue: "", homeScore: 4, awayScore: 2 },
+  { id: "52", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Brazil", venue: "", homeScore: 0, awayScore: 3 },
 
-  { id: "53", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "South Africa", away: "South Korea", venue: "", homeScore: null, awayScore: null },
-  { id: "54", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "Czech Republic", away: "Mexico", venue: "", homeScore: null, awayScore: null },
+  { id: "53", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "South Africa", away: "South Korea", venue: "", homeScore: 1, awayScore: 0 },
+  { id: "54", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "Czech Republic", away: "Mexico", venue: "", homeScore: 0, awayScore: 3 },
 
   { id: "55", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Curacao", away: "Côte d'Ivoire", venue: "", homeScore: null, awayScore: null },
   { id: "56", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Ecuador", away: "Germany", venue: "", homeScore: null, awayScore: null },
