@@ -92,14 +92,14 @@ const roundThreeFixtures = [
   { id: "53", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "South Africa", away: "South Korea", venue: "", homeScore: 1, awayScore: 0 },
   { id: "54", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "Czech Republic", away: "Mexico", venue: "", homeScore: 0, awayScore: 3 },
 
-  { id: "55", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Curacao", away: "Côte d'Ivoire", venue: "", homeScore: null, awayScore: null },
-  { id: "56", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Ecuador", away: "Germany", venue: "", homeScore: null, awayScore: null },
+  { id: "55", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Curacao", away: "Côte d'Ivoire", venue: "", homeScore: 0, awayScore: 2 },
+  { id: "56", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Ecuador", away: "Germany", venue: "", homeScore: 2, awayScore: 1 },
 
-  { id: "57", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Tunisia", away: "Netherlands", venue: "", homeScore: null, awayScore: null },
-  { id: "58", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Japan", away: "Sweden", venue: "", homeScore: null, awayScore: null },
+  { id: "57", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Tunisia", away: "Netherlands", venue: "", homeScore: 1, awayScore: 3 },
+  { id: "58", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Japan", away: "Sweden", venue: "", homeScore: 1, awayScore: 1 },
 
-  { id: "59", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Turkey", away: "United States", venue: "", homeScore: null, awayScore: null },
-  { id: "60", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Paraguay", away: "Australia", venue: "", homeScore: null, awayScore: null },
+  { id: "59", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Turkey", away: "United States", venue: "", homeScore: 3, awayScore: 2 },
+  { id: "60", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Paraguay", away: "Australia", venue: "", homeScore: 0, awayScore: 0 },
 
   { id: "61", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Norway", away: "France", venue: "", homeScore: null, awayScore: null },
   { id: "62", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Senegal", away: "Iraq", venue: "", homeScore: null, awayScore: null },
