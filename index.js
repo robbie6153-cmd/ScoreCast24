@@ -104,11 +104,11 @@ const roundThreeFixtures = [
   { id: "61", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Norway", away: "France", venue: "", homeScore: 1, awayScore: 4 },
   { id: "62", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Senegal", away: "Iraq", venue: "", homeScore: 5, awayScore: 0 },
 
-  { id: "63", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Cape Verde", away: "Saudi Arabia", venue: "", homeScore: null, awayScore: null },
-  { id: "64", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Uruguay", away: "Spain", venue: "", homeScore: null, awayScore: null },
+  { id: "63", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Cape Verde", away: "Saudi Arabia", venue: "", homeScore: 0, awayScore: 0 },
+  { id: "64", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Uruguay", away: "Spain", venue: "", homeScore: 0, awayScore: 1 },
 
-  { id: "65", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "New Zealand", away: "Belgium", venue: "", homeScore: null, awayScore: null },
-  { id: "66", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "Egypt", away: "Iran", venue: "", homeScore: null, awayScore: null },
+  { id: "65", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "New Zealand", away: "Belgium", venue: "", homeScore: 1, awayScore: 5 },
+  { id: "66", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "Egypt", away: "Iran", venue: "", homeScore: 1, awayScore: 1 },
 
   { id: "67", date: "Sat 27 Jun 2026, 22:00", group: "Group L", home: "Panama", away: "England", venue: "", homeScore: null, awayScore: null },
   { id: "68", date: "Sat 27 Jun 2026, 22:00", group: "Group L", home: "Croatia", away: "Ghana", venue: "", homeScore: null, awayScore: null }
