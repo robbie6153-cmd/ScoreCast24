@@ -463,27 +463,32 @@ function haveAnyResultsBeenAdded() {
 /* =========================
    BUTTONS
 ========================= */
-
 startGameBtn.addEventListener("click", async () => {
+  const nextRoundAnnouncement = new Date("2026-06-28T04:30:00+01:00");
+  const now = new Date();
+  const timeLeft = nextRoundAnnouncement - now;
+
+  if (timeLeft > 0) {
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+
+    alert(
+      `The next round of fixtures will be announced on Sunday 28 June at around 04:30 am.\n\nCountdown: ${days}d ${hours}h ${minutes}m`
+    );
+
+    return;
+  }
+
   const okay = askForUsername();
   if (!okay) return;
 
   renderFixtures();
   showPredictions();
 
-  try {
-    const alreadySubmitted = await hasAlreadySubmitted(username);
-
-    if (alreadySubmitted) {
-      alert("You have already submitted predictions. Showing leaderboard.");
-      await renderLeaderboard();
-      showLeaderboard();
-    }
-  } catch (error) {
-    console.error("Firestore check failed:", error);
-    alert("Predictions page loaded, but Firestore connection needs checking.");
-  }
+  // keep the rest of your existing code below
 });
+
 
 backHomeBtn.addEventListener("click", showHome);
 leaderboardHomeBtn.addEventListener("click", showHome);
@@ -529,7 +534,7 @@ if (homeLeaderboardPreview) {
     predictionsSnap.forEach((docSnap) => {
       const data = docSnap.data();
 
-      if (data.round !== "Round Two") {
+      if (data.round !== "Round Three") {
         return;
       }
 
@@ -538,7 +543,7 @@ if (homeLeaderboardPreview) {
 
       if (data.predictions && Array.isArray(data.predictions)) {
         data.predictions.forEach((prediction) => {
-        const fixture = roundTwoFixtures.find(f => f.id === prediction.fixtureId);
+        const fixture = roundThreeFixtures.find(f => f.id === prediction.fixtureId);
 
           if (fixture) {
             const points = calculatePoints(prediction, fixture);
@@ -601,10 +606,10 @@ function renderHomeFixturesPreview() {
 
   homeFixturesPreview.innerHTML = "";
 
-  const latestResults = [...roundOneFixtures, ...roundTwoFixtures]
-    .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
-    .sort((a, b) => Number(b.id) - Number(a.id))
-    .slice(0, 3);
+  const latestResults = [...roundOneFixtures, ...roundTwoFixtures, ...roundThreeFixtures]
+  .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
+  .sort((a, b) => Number(b.id) - Number(a.id))
+  .slice(0, 3);
 
   if (latestResults.length === 0) {
     homeFixturesPreview.innerHTML = `
