@@ -8,114 +8,49 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+
 /* =========================
-   ROUND ONE FIXTURES
+   ROUND OF 32 FIXTURES
 ========================= */
-const predictionsDeadline = new Date("2026-06-11T19:00:00Z");
+
+/* =========================
+   ROUND OF 32 FIXTURES
+========================= */
+
+const predictionsDeadline = new Date("2026-06-28T19:00:00Z");
 
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
-const roundOneFixtures = [
-  { id: "1", date: "Thu 11 Jun 2026", group: "Group A", home: "Mexico", away: "South Africa", venue: "Mexico City Stadium", homeScore: 2, awayScore: 0 },
-  { id: "2", date: "Thu 11 Jun 2026", group: "Group A", home: "Korea Republic", away: "Czechia", venue: "Estadio Guadalajara", homeScore: 2, awayScore: 1 },
 
-  { id: "3", date: "Fri 12 Jun 2026", group: "Group B", home: "Canada", away: "Bosnia and Herzegovina", venue: "Toronto Stadium", homeScore: 1, awayScore: 1 },
-  { id: "4", date: "Fri 12 Jun 2026", group: "Group D", home: "USA", away: "Paraguay", venue: "Los Angeles Stadium", homeScore: 4, awayScore: 1 },
+const roundOf32Fixtures = [
 
-  { id: "5", date: "Sat 13 Jun 2026", group: "Group C", home: "Haiti", away: "Scotland", venue: "Boston Stadium", homeScore: 0, awayScore: 1 },
-  { id: "6", date: "Sat 13 Jun 2026", group: "Group D", home: "Australia", away: "Türkiye", venue: "BC Place Vancouver", homeScore: 2, awayScore: 0 },
-  { id: "7", date: "Sat 13 Jun 2026", group: "Group C", home: "Brazil", away: "Morocco", venue: "New York New Jersey Stadium", homeScore: 1, awayScore: 1 },
-  { id: "8", date: "Sat 13 Jun 2026", group: "Group B", home: "Qatar", away: "Switzerland", venue: "San Francisco Bay Area Stadium", homeScore: 1, awayScore: 1 },
+  { id: "69", date: "Sun 28 Jun 2026, 20:00", group: "Round of 32", home: "South Africa", away: "Canada", venue: "Los Angeles Stadium", homeScore: null, awayScore: null },
 
-  { id: "9", date: "Sun 14 Jun 2026", group: "Group E", home: "Côte d'Ivoire", away: "Ecuador", venue: "Philadelphia Stadium", homeScore: 1, awayScore: 0 },
-  { id: "10", date: "Sun 14 Jun 2026", group: "Group E", home: "Germany", away: "Curaçao", venue: "Houston Stadium", homeScore: 7, awayScore: 1 },
-  { id: "11", date: "Sun 14 Jun 2026", group: "Group F", home: "Netherlands", away: "Japan", venue: "Dallas Stadium", homeScore: 2, awayScore: 2 },
-  { id: "12", date: "Sun 14 Jun 2026", group: "Group F", home: "Sweden", away: "Tunisia", venue: "Estadio Monterrey", homeScore: 5, awayScore: 1 },
+  { id: "70", date: "Mon 29 Jun 2026, 18:00", group: "Round of 32", home: "Brazil", away: "Japan", venue: "Houston Stadium", homeScore: null, awayScore: null },
+  { id: "71", date: "Mon 29 Jun 2026, 21:30", group: "Round of 32", home: "Germany", away: "Paraguay", venue: "Boston Stadium", homeScore: null, awayScore: null },
+  { id: "72", date: "Tue 30 Jun 2026, 02:00", group: "Round of 32", home: "Netherlands", away: "Morocco", venue: "Monterrey Stadium", homeScore: null, awayScore: null },
 
-  { id: "13", date: "Mon 15 Jun 2026", group: "Group H", home: "Saudi Arabia", away: "Uruguay", venue: "Miami Stadium", homeScore: 1, awayScore: 1 },
-  { id: "14", date: "Mon 15 Jun 2026", group: "Group H", home: "Spain", away: "Cabo Verde", venue: "Atlanta Stadium", homeScore: 0, awayScore: 0 },
-  { id: "15", date: "Mon 15 Jun 2026", group: "Group G", home: "IR Iran", away: "New Zealand", venue: "Los Angeles Stadium", homeScore: 2, awayScore: 2 },
-  { id: "16", date: "Mon 15 Jun 2026", group: "Group G", home: "Belgium", away: "Egypt", venue: "Seattle Stadium", homeScore: 1, awayScore: 1 },
+  { id: "73", date: "Tue 30 Jun 2026, 18:00", group: "Round of 32", home: "Ivory Coast", away: "Norway", venue: "Dallas Stadium", homeScore: null, awayScore: null },
+  { id: "74", date: "Tue 30 Jun 2026, 22:00", group: "Round of 32", home: "France", away: "Sweden", venue: "New York New Jersey Stadium", homeScore: null, awayScore: null },
+  { id: "75", date: "Wed 1 Jul 2026, 02:00", group: "Round of 32", home: "Mexico", away: "Ecuador", venue: "Mexico City Stadium", homeScore: null, awayScore: null },
 
-  { id: "17", date: "Tue 16 Jun 2026", group: "Group I", home: "France", away: "Senegal", venue: "New York New Jersey Stadium", homeScore: 3, awayScore: 1 },
-  { id: "18", date: "Tue 16 Jun 2026", group: "Group I", home: "Iraq", away: "Norway", venue: "Boston Stadium", homeScore: 1, awayScore: 4 },
-  { id: "19", date: "Tue 16 Jun 2026", group: "Group J", home: "Argentina", away: "Algeria", venue: "Kansas City Stadium", homeScore: 3, awayScore: 0 },
-  { id: "20", date: "Tue 16 Jun 2026", group: "Group J", home: "Austria", away: "Jordan", venue: "San Francisco Bay Area Stadium", homeScore: 3, awayScore: 1 },
+  { id: "76", date: "Wed 1 Jul 2026, 17:00", group: "Round of 32", home: "England", away: "DR Congo", venue: "Atlanta Stadium", homeScore: null, awayScore: null },
+  { id: "77", date: "Wed 1 Jul 2026, 21:00", group: "Round of 32", home: "Belgium", away: "Senegal", venue: "Seattle Stadium", homeScore: null, awayScore: null },
+  { id: "78", date: "Thu 2 Jul 2026, 01:00", group: "Round of 32", home: "USA", away: "Bosnia and Herzegovina", venue: "San Francisco Bay Area Stadium", homeScore: null, awayScore: null },
 
-  { id: "21", date: "Wed 17 Jun 2026", group: "Group L", home: "Ghana", away: "Panama", venue: "Toronto Stadium", homeScore: 1, awayScore: 0 },
-  { id: "22", date: "Wed 17 Jun 2026", group: "Group L", home: "England", away: "Croatia", venue: "Dallas Stadium", homeScore: 4, awayScore: 2 },
-  { id: "23", date: "Wed 17 Jun 2026", group: "Group K", home: "Portugal", away: "Congo DR", venue: "Houston Stadium", homeScore: 1, awayScore: 1 },
-  { id: "24", date: "Wed 17 Jun 2026", group: "Group K", home: "Uzbekistan", away: "Colombia", venue: "Mexico City Stadium", homeScore: 1, awayScore: 3 }
-];
+  { id: "79", date: "Thu 2 Jul 2026, 20:00", group: "Round of 32", home: "Spain", away: "Austria", venue: "Los Angeles Stadium", homeScore: null, awayScore: null },
+  { id: "80", date: "Fri 3 Jul 2026, 00:00", group: "Round of 32", home: "Portugal", away: "Croatia", venue: "Toronto Stadium", homeScore: null, awayScore: null },
+  { id: "81", date: "Fri 3 Jul 2026, 04:00", group: "Round of 32", home: "Switzerland", away: "Algeria", venue: "BC Place Vancouver", homeScore: null, awayScore: null },
 
-const roundTwoFixtures = [
-  { id: "25", date: "Thu 18 Jun 2026, 17:00", group: "Group A", home: "Czechia", away: "South Africa", venue: "Mercedes-Benz Stadium, Atlanta", homeScore: 1, awayScore: 1 },
-  { id: "26", date: "Thu 18 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Bosnia & Herzegovina", venue: "SoFi Stadium, Los Angeles", homeScore: 4, awayScore: 1 },
-  { id: "27", date: "Thu 18 Jun 2026, 23:00", group: "Group B", home: "Canada", away: "Qatar", venue: "BC Place, Vancouver", homeScore: 6, awayScore: 0 },
-  { id: "28", date: "Fri 19 Jun 2026, 02:00", group: "Group A", home: "Mexico", away: "South Korea", venue: "Estadio Akron, Guadalajara", homeScore: 1, awayScore: 0 },
-
-  { id: "29", date: "Fri 19 Jun 2026, 20:00", group: "Group D", home: "USA", away: "Australia", venue: "Lumen Field, Seattle", homeScore: 2, awayScore: 0 },
-  { id: "30", date: "Fri 19 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Morocco", venue: "Gillette Stadium, Boston", homeScore: 0, awayScore: 1 },
-  { id: "31", date: "Sat 20 Jun 2026, 01:30", group: "Group C", home: "Brazil", away: "Haiti", venue: "Lincoln Financial Field, Philadelphia", homeScore: 3, awayScore: 0 },
-  { id: "32", date: "Sat 20 Jun 2026, 04:00", group: "Group D", home: "Türkiye", away: "Paraguay", venue: "Levi's Stadium, San Francisco Bay Area", homeScore: 0, awayScore: 1 },
-
-  { id: "33", date: "Sat 20 Jun 2026, 18:00", group: "Group F", home: "Netherlands", away: "Sweden", venue: "NRG Stadium, Houston", homeScore: 5, awayScore: 1 },
-  { id: "34", date: "Sat 20 Jun 2026, 21:00", group: "Group E", home: "Germany", away: "Ivory Coast", venue: "BMO Field, Toronto", homeScore: 2, awayScore: 1 },
-  { id: "35", date: "Sun 21 Jun 2026, 01:00", group: "Group E", home: "Ecuador", away: "Curaçao", venue: "Arrowhead Stadium, Kansas City", homeScore: 0, awayScore: 0 },
-  { id: "36", date: "Sun 21 Jun 2026, 05:00", group: "Group F", home: "Tunisia", away: "Japan", venue: "Estadio BBVA, Monterrey", homeScore: 0, awayScore: 4 },
-
-  { id: "37", date: "Sun 21 Jun 2026, 17:00", group: "Group H", home: "Spain", away: "Saudi Arabia", venue: "Atlanta Stadium, Atlanta", homeScore: 4, awayScore: 0 },
-  { id: "38", date: "Sun 21 Jun 2026, 20:00", group: "Group G", home: "Belgium", away: "IR Iran", venue: "SoFi Stadium, Los Angeles", homeScore: 0, awayScore: 0 },
-  { id: "39", date: "Sun 21 Jun 2026, 23:00", group: "Group H", home: "Uruguay", away: "Cape Verde", venue: "Hard Rock Stadium, Miami", homeScore: 2, awayScore: 2 },
-  { id: "40", date: "Mon 22 Jun 2026, 02:00", group: "Group G", home: "New Zealand", away: "Egypt", venue: "BC Place, Vancouver", homeScore: 1, awayScore: 3 },
-
-  { id: "41", date: "Mon 22 Jun 2026, 18:00", group: "Group J", home: "Argentina", away: "Austria", venue: "AT&T Stadium, Dallas", homeScore: 2, awayScore: 0 },
-  { id: "42", date: "Mon 22 Jun 2026, 22:00", group: "Group I", home: "France", away: "Iraq", venue: "Lincoln Financial Field, Philadelphia", homeScore: 3, awayScore: 0 },
-  { id: "43", date: "Tue 23 Jun 2026, 01:00", group: "Group I", home: "Norway", away: "Senegal", venue: "MetLife Stadium, New York/New Jersey", homeScore: 3, awayScore: 2 },
-  { id: "44", date: "Tue 23 Jun 2026, 04:00", group: "Group J", home: "Jordan", away: "Algeria", venue: "Levi's Stadium, San Francisco Bay Area", homeScore: 1, awayScore: 2 },
-
-  { id: "45", date: "Tue 23 Jun 2026, 18:00", group: "Group K", home: "Portugal", away: "Uzbekistan", venue: "NRG Stadium, Houston", homeScore: 5, awayScore: 0 },
-  { id: "46", date: "Tue 23 Jun 2026, 21:00", group: "Group L", home: "England", away: "Ghana", venue: "Gillette Stadium, Boston", homeScore: 0, awayScore: 0 },
-  { id: "47", date: "Wed 24 Jun 2026, 00:00", group: "Group L", home: "Panama", away: "Croatia", venue: "BMO Field, Toronto", homeScore: 0, awayScore: 1 },
-  { id: "48", date: "Wed 24 Jun 2026, 03:00", group: "Group K", home: "Colombia", away: "DR Congo", venue: "Estadio Akron, Guadalajara", homeScore: 1, awayScore: 0 }
-];
-
-const roundThreeFixtures = [
-
-  { id: "49", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Switzerland", away: "Canada", venue: "", homeScore: 2, awayScore: 1 },
-  { id: "50", date: "Wed 24 Jun 2026, 20:00", group: "Group B", home: "Bosnia and Herzegovina", away: "Qatar", venue: "", homeScore: 3, awayScore: 1 },
-
-  { id: "51", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Morocco", away: "Haiti", venue: "", homeScore: 4, awayScore: 2 },
-  { id: "52", date: "Wed 24 Jun 2026, 23:00", group: "Group C", home: "Scotland", away: "Brazil", venue: "", homeScore: 0, awayScore: 3 },
-
-  { id: "53", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "South Africa", away: "South Korea", venue: "", homeScore: 1, awayScore: 0 },
-  { id: "54", date: "Thu 25 Jun 2026, 02:00", group: "Group A", home: "Czech Republic", away: "Mexico", venue: "", homeScore: 0, awayScore: 3 },
-
-  { id: "55", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Curacao", away: "Côte d'Ivoire", venue: "", homeScore: 0, awayScore: 2 },
-  { id: "56", date: "Thu 25 Jun 2026, 21:00", group: "Group E", home: "Ecuador", away: "Germany", venue: "", homeScore: 2, awayScore: 1 },
-
-  { id: "57", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Tunisia", away: "Netherlands", venue: "", homeScore: 1, awayScore: 3 },
-  { id: "58", date: "Fri 26 Jun 2026, 00:00", group: "Group F", home: "Japan", away: "Sweden", venue: "", homeScore: 1, awayScore: 1 },
-
-  { id: "59", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Turkey", away: "United States", venue: "", homeScore: 3, awayScore: 2 },
-  { id: "60", date: "Fri 26 Jun 2026, 03:00", group: "Group D", home: "Paraguay", away: "Australia", venue: "", homeScore: 0, awayScore: 0 },
-
-  { id: "61", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Norway", away: "France", venue: "", homeScore: 1, awayScore: 4 },
-  { id: "62", date: "Fri 26 Jun 2026, 20:00", group: "Group I", home: "Senegal", away: "Iraq", venue: "", homeScore: 5, awayScore: 0 },
-
-  { id: "63", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Cape Verde", away: "Saudi Arabia", venue: "", homeScore: 0, awayScore: 0 },
-  { id: "64", date: "Sat 27 Jun 2026, 01:00", group: "Group H", home: "Uruguay", away: "Spain", venue: "", homeScore: 0, awayScore: 1 },
-
-  { id: "65", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "New Zealand", away: "Belgium", venue: "", homeScore: 1, awayScore: 5 },
-  { id: "66", date: "Sat 27 Jun 2026, 04:00", group: "Group G", home: "Egypt", away: "Iran", venue: "", homeScore: 1, awayScore: 1 },
-
-  { id: "67", date: "Sat 27 Jun 2026, 22:00", group: "Group L", home: "Panama", away: "England", venue: "", homeScore: 0, awayScore: 2 },
-  { id: "68", date: "Sat 27 Jun 2026, 22:00", group: "Group L", home: "Croatia", away: "Ghana", venue: "", homeScore: 2, awayScore: 1 }
+  { id: "82", date: "Fri 3 Jul 2026, 19:00", group: "Round of 32", home: "Egypt", away: "Australia", venue: "Dallas Stadium", homeScore: null, awayScore: null },
+  { id: "83", date: "Fri 3 Jul 2026, 23:00", group: "Round of 32", home: "Argentina", away: "Cape Verde", venue: "Miami Stadium", homeScore: null, awayScore: null },
+  { id: "84", date: "Sat 4 Jul 2026, 02:30", group: "Round of 32", home: "Colombia", away: "Ghana", venue: "Kansas City Stadium", homeScore: null, awayScore: null }
 
 ];
-const fixtures = roundThreeFixtures;
-const currentRound = "Round Three";
+
+const fixtures = roundOf32Fixtures;
+const currentRound = "Round of 32";
 /* =========================
    PAGE ELEMENTS
 ========================= */
@@ -545,16 +480,16 @@ if (homeLeaderboardPreview) {
     predictionsSnap.forEach((docSnap) => {
       const data = docSnap.data();
 
-      if (data.round !== "Round Three") {
-        return;
-      }
+    if (data.round !== currentRound) {
+  return;
+}
 
       let totalPoints = 0;
       let hasScoredFixture = false;
 
       if (data.predictions && Array.isArray(data.predictions)) {
         data.predictions.forEach((prediction) => {
-        const fixture = roundThreeFixtures.find(f => f.id === prediction.fixtureId);
+        const fixture = fixtures.find(f => f.id === prediction.fixtureId);
 
           if (fixture) {
             const points = calculatePoints(prediction, fixture);
@@ -617,7 +552,7 @@ function renderHomeFixturesPreview() {
 
   homeFixturesPreview.innerHTML = "";
 
-  const latestResults = [...roundOneFixtures, ...roundTwoFixtures, ...roundThreeFixtures]
+  const fixture = fixtures.find(f => f.id === prediction.fixtureId);
   .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
   .sort((a, b) => Number(b.id) - Number(a.id))
   .slice(0, 3);
@@ -668,21 +603,21 @@ if (menuToggle && dropdownMenu) {
 
 
 /* =========================
-   ROUND TWO COUNTDOWN
+   ROUND OF 32 COUNTDOWN
 ========================= */
 
-const roundThreeDeadline = new Date("2026-06-24T20:00:00+01:00");
+const roundOf32Deadline = new Date("2026-06-28T20:00:00+01:00");
 
-function updateRoundThreeCountdown() {
-  const countdownBox = document.getElementById("roundThreeCountdown");
+function updateRoundOf32Countdown() {
+  const countdownBox = document.getElementById("roundOf32Countdown");
 
   if (!countdownBox) return;
 
   const now = new Date();
- const timeLeft = roundThreeDeadline - now;
+  const timeLeft = roundOf32Deadline - now;
 
   if (timeLeft <= 0) {
-    countdownBox.innerHTML = "Round Three predictions are now closed.";
+    countdownBox.innerHTML = "Round of 32 predictions are now closed.";
     return;
   }
 
@@ -692,10 +627,10 @@ function updateRoundThreeCountdown() {
   const seconds = Math.floor((timeLeft / 1000) % 60);
 
   countdownBox.innerHTML =
-    `Round Three closes in: <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
+    `Round of 32 predictions close in <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
 }
 
-setInterval(updateRoundThreeCountdown, 1000);
+setInterval(updateRoundOf32Countdown, 1000);
 
 /* =========================
    START
