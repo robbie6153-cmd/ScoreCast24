@@ -91,7 +91,7 @@ const results = {
   68: { homeScore: 2, awayScore: 1 },
 
   // ROUND OF 32
-  69: { homeScore: null, awayScore: null },
+  69: { homeScore: 0, awayScore: 1 },
   70: { homeScore: null, awayScore: null },
   71: { homeScore: null, awayScore: null },
   72: { homeScore: null, awayScore: null },
