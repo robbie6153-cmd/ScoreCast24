@@ -75,6 +75,8 @@ const results = {
   64: { homeScore: 0, awayScore: 1},
   65: { homeScore: 1, awayScore: 5},
   66: { homeScore: 1, awayScore: 1},
+  67: { homeScore: 0, awayScore: 2},
+  66: { homeScore: 2, awayScore: 1},
 };
   
 
