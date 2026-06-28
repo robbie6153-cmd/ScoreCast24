@@ -17,7 +17,7 @@ import {
    ROUND OF 32 FIXTURES
 ========================= */
 
-const predictionsDeadline = new Date("2026-06-28T19:00:00Z");
+const predictionsDeadline = new Date("2026-06-28T20:00:00+01:00");
 
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
@@ -212,55 +212,69 @@ function getPredictionsFromPage() {
   return predictions;
 }
 
-submitPredictionsBtn.addEventListener("click", async () => {
-  const usernameInput = document.getElementById("usernameInput");
-  username = usernameInput.value.trim();
 
-  if (username.length < 2) {
-    alert("Please enter a username.");
-    return;
-  }
-
-  localStorage.setItem("scorecast24Username", username);
-
-  const predictions = getPredictionsFromPage();
-  if (!predictions) return;
-
-  try {
-    const alreadySubmitted = await hasAlreadySubmitted(username);
-
-    if (alreadySubmitted) {
-      alert("You have already submitted predictions for this round. You cannot change them.");
-      await renderLeaderboard();
-      showLeaderboard();
+if (submitPredictionsBtn) {
+  submitPredictionsBtn.addEventListener("click", async () => {
+    if (predictionsAreClosed()) {
+      alert("Round of 32 predictions are now closed.");
       return;
     }
 
-    const predictionRef = doc(
-      db,
-      "scorecast24_predictions",
-      getPredictionDocId(username)
-    );
+    const usernameInput = document.getElementById("usernameInput");
 
-    await setDoc(predictionRef, {
-      username,
-      predictions,
-      round: currentRound,
-      submittedAt: serverTimestamp(),
-      status: "Score pending match results",
-      points: null
-    });
+    if (!usernameInput) {
+      alert("Please press Submit Your Score Predictions Now first.");
+      return;
+    }
 
-    alert("Predictions submitted!");
+    username = usernameInput.value.trim();
 
-    await renderLeaderboard();
-    showLeaderboard();
+    if (username.length < 2) {
+      alert("Please enter a username.");
+      return;
+    }
 
-  } catch (error) {
-    console.error("Submission failed:", error);
-    alert("Submission failed:\n\n" + error.message);
-  }
-});
+    localStorage.setItem("scorecast24Username", username);
+
+    const predictions = getPredictionsFromPage();
+    if (!predictions) return;
+
+    try {
+      const alreadySubmitted = await hasAlreadySubmitted(username);
+
+      if (alreadySubmitted) {
+        alert("You have already submitted predictions for this round. You cannot change them.");
+        await renderLeaderboard();
+        showLeaderboard();
+        return;
+      }
+
+      const predictionRef = doc(
+        db,
+        "scorecast24_predictions",
+        getPredictionDocId(username)
+      );
+
+      await setDoc(predictionRef, {
+        username,
+        predictions,
+        round: currentRound,
+        submittedAt: serverTimestamp(),
+        status: "Score pending match results",
+        points: null
+      });
+
+      alert("Predictions submitted!");
+
+      await renderLeaderboard();
+      showLeaderboard();
+
+    } catch (error) {
+      console.error("Submission failed:", error);
+      alert("Submission failed:\n\n" + error.message);
+    }
+  });
+}
 
 /* =========================
    SCORING SYSTEM
@@ -546,16 +560,15 @@ if (homeLeaderboardPreview) {
   }
 }
 
-
 function renderHomeFixturesPreview() {
   if (!homeFixturesPreview) return;
 
   homeFixturesPreview.innerHTML = "";
 
-  const fixture = fixtures.find(f => f.id === prediction.fixtureId);
-  .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
-  .sort((a, b) => Number(b.id) - Number(a.id))
-  .slice(0, 3);
+  const latestResults = fixtures
+    .filter(fixture => fixture.homeScore !== null && fixture.awayScore !== null)
+    .sort((a, b) => Number(b.id) - Number(a.id))
+    .slice(0, 3);
 
   if (latestResults.length === 0) {
     homeFixturesPreview.innerHTML = `
@@ -629,7 +642,7 @@ function updateRoundOf32Countdown() {
   countdownBox.innerHTML =
     `Round of 32 predictions close in <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
 }
-
+updateRoundOf32Countdown();
 setInterval(updateRoundOf32Countdown, 1000);
 
 /* =========================
