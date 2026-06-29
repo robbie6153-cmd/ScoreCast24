@@ -27,7 +27,7 @@ const roundOf32Fixtures = [
 
   { id: "69", date: "Sun 28 Jun 2026, 20:00", group: "Round of 32", home: "South Africa", away: "Canada", venue: "Los Angeles Stadium", homeScore: 0, awayScore: 1 },
 
-  { id: "70", date: "Mon 29 Jun 2026, 18:00", group: "Round of 32", home: "Brazil", away: "Japan", venue: "Houston Stadium", homeScore: null, awayScore: null },
+  { id: "70", date: "Mon 29 Jun 2026, 18:00", group: "Round of 32", home: "Brazil", away: "Japan", venue: "Houston Stadium", homeScore: 2, awayScore: 1 },
   { id: "71", date: "Mon 29 Jun 2026, 21:30", group: "Round of 32", home: "Germany", away: "Paraguay", venue: "Boston Stadium", homeScore: null, awayScore: null },
   { id: "72", date: "Tue 30 Jun 2026, 02:00", group: "Round of 32", home: "Netherlands", away: "Morocco", venue: "Monterrey Stadium", homeScore: null, awayScore: null },
 
