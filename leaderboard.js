@@ -93,8 +93,8 @@ const results = {
   // ROUND OF 32
   69: { homeScore: 0, awayScore: 1 },
   70: { homeScore: 2, awayScore: 1 },
-  71: { homeScore: null, awayScore: null },
-  72: { homeScore: null, awayScore: null },
+  71: { homeScore: 1, awayScore: 1 },
+  72: { homeScore: 1, awayScore: 1 },
   73: { homeScore: null, awayScore: null },
   74: { homeScore: null, awayScore: null },
   75: { homeScore: null, awayScore: null },
