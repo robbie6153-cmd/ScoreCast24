@@ -95,7 +95,7 @@ const results = {
   70: { homeScore: 2, awayScore: 1 },
   71: { homeScore: 1, awayScore: 1 },
   72: { homeScore: 1, awayScore: 1 },
-  73: { homeScore: null, awayScore: null },
+  73: { homeScore: 1, awayScore: 2 },
   74: { homeScore: null, awayScore: null },
   75: { homeScore: null, awayScore: null },
   76: { homeScore: null, awayScore: null },
