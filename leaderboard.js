@@ -1,3 +1,4 @@
+console.log("leaderboard.js loaded v61");
 import { db } from "./firebase.js?v=7";
 
 import {
@@ -277,13 +278,8 @@ async function renderLeaderboard() {
     console.error("Leaderboard error:", error);
 
     leaderboardContainer.innerHTML = `
-      <div class="leaderboard-info">
-        <h2>ScoreCast24 World Cup 2026 Leaderboard</h2>
-        <p>
-          The leaderboard updates as World Cup results are added.
-          If the live rankings do not appear immediately, please refresh the page shortly.
-        </p>
-      </div>
+      <h2>Leaderboard Error</h2>
+      <p>${error.message}</p>
     `;
   }
 }
