@@ -99,7 +99,7 @@ const results = {
   73: { homeScore: 1, awayScore: 2 },
   74: { homeScore: 3, awayScore: 0 },
   75: { homeScore: 2, awayScore: 0 },
-  76: { homeScore: null, awayScore: null },
+  76: { homeScore: 2, awayScore: 1 },
   77: { homeScore: null, awayScore: null },
   78: { homeScore: null, awayScore: null },
   79: { homeScore: null, awayScore: null },
