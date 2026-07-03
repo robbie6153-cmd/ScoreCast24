@@ -105,7 +105,7 @@ const results = {
   79: { homeScore: 3, awayScore: 0 },
   80: { homeScore: 2, awayScore: 1 },
   81: { homeScore: 2, awayScore: 0 },
-  82: { homeScore: null, awayScore: null },
+  82: { homeScore: 1, awayScore: 1 },
   83: { homeScore: null, awayScore: null },
   84: { homeScore: null, awayScore: null }
 };
