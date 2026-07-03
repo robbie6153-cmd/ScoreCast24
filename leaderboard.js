@@ -102,9 +102,9 @@ const results = {
   76: { homeScore: 2, awayScore: 1 },
   77: { homeScore: 2, awayScore: 2 },
   78: { homeScore: 2, awayScore: 0 },
-  79: { homeScore: null, awayScore: null },
-  80: { homeScore: null, awayScore: null },
-  81: { homeScore: null, awayScore: null },
+  79: { homeScore: 3, awayScore: 0 },
+  80: { homeScore: 2, awayScore: 1 },
+  81: { homeScore: 2, awayScore: 0 },
   82: { homeScore: null, awayScore: null },
   83: { homeScore: null, awayScore: null },
   84: { homeScore: null, awayScore: null }

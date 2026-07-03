@@ -39,9 +39,9 @@ const roundOf32Fixtures = [
   { id: "77", date: "Wed 1 Jul 2026, 21:00", group: "Round of 32", home: "Belgium", away: "Senegal", venue: "Seattle Stadium", homeScore: 2, awayScore: 2 },
   { id: "78", date: "Thu 2 Jul 2026, 01:00", group: "Round of 32", home: "USA", away: "Bosnia and Herzegovina", venue: "San Francisco Bay Area Stadium", homeScore: 2, awayScore: 0 },
 
-  { id: "79", date: "Thu 2 Jul 2026, 20:00", group: "Round of 32", home: "Spain", away: "Austria", venue: "Los Angeles Stadium", homeScore: null, awayScore: null },
-  { id: "80", date: "Fri 3 Jul 2026, 00:00", group: "Round of 32", home: "Portugal", away: "Croatia", venue: "Toronto Stadium", homeScore: null, awayScore: null },
-  { id: "81", date: "Fri 3 Jul 2026, 04:00", group: "Round of 32", home: "Switzerland", away: "Algeria", venue: "BC Place Vancouver", homeScore: null, awayScore: null },
+  { id: "79", date: "Thu 2 Jul 2026, 20:00", group: "Round of 32", home: "Spain", away: "Austria", venue: "Los Angeles Stadium", homeScore: 3, awayScore: 0 },
+  { id: "80", date: "Fri 3 Jul 2026, 00:00", group: "Round of 32", home: "Portugal", away: "Croatia", venue: "Toronto Stadium", homeScore: 2, awayScore: 1 },
+  { id: "81", date: "Fri 3 Jul 2026, 04:00", group: "Round of 32", home: "Switzerland", away: "Algeria", venue: "BC Place Vancouver", homeScore: 2, awayScore: 0 },
 
   { id: "82", date: "Fri 3 Jul 2026, 19:00", group: "Round of 32", home: "Egypt", away: "Australia", venue: "Dallas Stadium", homeScore: null, awayScore: null },
   { id: "83", date: "Fri 3 Jul 2026, 23:00", group: "Round of 32", home: "Argentina", away: "Cape Verde", venue: "Miami Stadium", homeScore: null, awayScore: null },
