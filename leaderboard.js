@@ -106,8 +106,8 @@ const results = {
   80: { homeScore: 2, awayScore: 1 },
   81: { homeScore: 2, awayScore: 0 },
   82: { homeScore: 1, awayScore: 1 },
-  83: { homeScore: null, awayScore: null },
-  84: { homeScore: null, awayScore: null }
+  83: { homeScore: 1, awayScore: 1 },
+  84: { homeScore: 1, awayScore: 0 },
 };
 
 function timeoutPromise(ms) {

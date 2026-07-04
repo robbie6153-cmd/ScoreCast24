@@ -44,8 +44,8 @@ const roundOf32Fixtures = [
   { id: "81", date: "Fri 3 Jul 2026, 04:00", group: "Round of 32", home: "Switzerland", away: "Algeria", venue: "BC Place Vancouver", homeScore: 2, awayScore: 0 },
 
   { id: "82", date: "Fri 3 Jul 2026, 19:00", group: "Round of 32", home: "Egypt", away: "Australia", venue: "Dallas Stadium", homeScore: 1, awayScore: 1 },
-  { id: "83", date: "Fri 3 Jul 2026, 23:00", group: "Round of 32", home: "Argentina", away: "Cape Verde", venue: "Miami Stadium", homeScore: null, awayScore: null },
-  { id: "84", date: "Sat 4 Jul 2026, 02:30", group: "Round of 32", home: "Colombia", away: "Ghana", venue: "Kansas City Stadium", homeScore: null, awayScore: null }
+  { id: "83", date: "Fri 3 Jul 2026, 23:00", group: "Round of 32", home: "Argentina", away: "Cape Verde", venue: "Miami Stadium", homeScore: 1, awayScore: 1 },
+  { id: "84", date: "Sat 4 Jul 2026, 02:30", group: "Round of 32", home: "Colombia", away: "Ghana", venue: "Kansas City Stadium", homeScore: 1, awayScore: 0 }
 
 ];
 
