@@ -61,7 +61,7 @@ body {
 .hero-buttons {
   position: absolute;
   left: 50%;
-  top: 48%;
+  top: 38%;
   transform: translateX(-50%);
   width: 90%;
   max-width: 560px;
