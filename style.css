@@ -572,3 +572,26 @@ h1 {
   font-size: 1.2rem;
   margin-top: 4px;
 }
+.home-game-buttons {
+  position: absolute;
+  left: 50%;
+  top: 62vh;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 560px;
+  z-index: 5;
+}
+
+.home-game-btn {
+  display: block;
+  width: 100%;
+  margin: 12px auto;
+  padding: 15px 18px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(#ffd34d, #d89400);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 0 18px rgba(255, 213, 0, 0.8);
+}
