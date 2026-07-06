@@ -1,4 +1,5 @@
-console.log("leaderboard.js loaded v61");
+console.log("leaderboard.js loaded English League v1");
+
 import { db } from "./firebase.js?v=7";
 
 import {
@@ -8,106 +9,22 @@ import {
 
 const leaderboardContainer = document.getElementById("leaderboardContainer");
 
-const currentLeaderboardTab = document.getElementById("currentLeaderboardTab");
-const groupStageTotalTab = document.getElementById("groupStageTotalTab");
-
-let leaderboardMode = "current";
-
-const currentRound = "Round of 32";
-const groupStageRounds = ["Round One", "Round Two", "Round Three"];
+const currentRound = "English League Week One";
 
 const results = {
-  // ROUND ONE
-  1: { homeScore: 2, awayScore: 0 },
-  2: { homeScore: 2, awayScore: 1 },
-  3: { homeScore: 1, awayScore: 1 },
-  4: { homeScore: 4, awayScore: 1 },
-  5: { homeScore: 0, awayScore: 1 },
-  6: { homeScore: 2, awayScore: 0 },
-  7: { homeScore: 1, awayScore: 1 },
-  8: { homeScore: 1, awayScore: 1 },
-  9: { homeScore: 1, awayScore: 0 },
-  10: { homeScore: 7, awayScore: 1 },
-  11: { homeScore: 2, awayScore: 2 },
-  12: { homeScore: 5, awayScore: 1 },
-  13: { homeScore: 1, awayScore: 1 },
-  14: { homeScore: 0, awayScore: 0 },
-  15: { homeScore: 2, awayScore: 2 },
-  16: { homeScore: 1, awayScore: 1 },
-  17: { homeScore: 3, awayScore: 1 },
-  18: { homeScore: 1, awayScore: 4 },
-  19: { homeScore: 3, awayScore: 0 },
-  20: { homeScore: 3, awayScore: 1 },
-  21: { homeScore: 1, awayScore: 0 },
-  22: { homeScore: 4, awayScore: 2 },
-  23: { homeScore: 1, awayScore: 1 },
-  24: { homeScore: 1, awayScore: 3 },
-
-  // ROUND TWO
-  25: { homeScore: 1, awayScore: 1 },
-  26: { homeScore: 4, awayScore: 1 },
-  27: { homeScore: 6, awayScore: 0 },
-  28: { homeScore: 1, awayScore: 0 },
-  29: { homeScore: 2, awayScore: 0 },
-  30: { homeScore: 0, awayScore: 1 },
-  31: { homeScore: 3, awayScore: 0 },
-  32: { homeScore: 0, awayScore: 1 },
-  33: { homeScore: 5, awayScore: 1 },
-  34: { homeScore: 2, awayScore: 1 },
-  35: { homeScore: 0, awayScore: 0 },
-  36: { homeScore: 0, awayScore: 4 },
-  37: { homeScore: 4, awayScore: 0 },
-  38: { homeScore: 0, awayScore: 0 },
-  39: { homeScore: 2, awayScore: 2 },
-  40: { homeScore: 1, awayScore: 3 },
-  41: { homeScore: 2, awayScore: 0 },
-  42: { homeScore: 3, awayScore: 0 },
-  43: { homeScore: 3, awayScore: 2 },
-  44: { homeScore: 1, awayScore: 2 },
-  45: { homeScore: 5, awayScore: 0 },
-  46: { homeScore: 0, awayScore: 0 },
-  47: { homeScore: 0, awayScore: 1 },
-  48: { homeScore: 1, awayScore: 0 },
-
-  // ROUND THREE
-  49: { homeScore: 2, awayScore: 1 },
-  50: { homeScore: 3, awayScore: 1 },
-  51: { homeScore: 4, awayScore: 2 },
-  52: { homeScore: 0, awayScore: 3 },
-  53: { homeScore: 1, awayScore: 0 },
-  54: { homeScore: 0, awayScore: 3 },
-  55: { homeScore: 0, awayScore: 2 },
-  56: { homeScore: 2, awayScore: 1 },
-  57: { homeScore: 1, awayScore: 3 },
-  58: { homeScore: 1, awayScore: 1 },
-  59: { homeScore: 3, awayScore: 2 },
-  60: { homeScore: 0, awayScore: 0 },
-  61: { homeScore: 1, awayScore: 4 },
-  62: { homeScore: 5, awayScore: 0 },
-  63: { homeScore: 0, awayScore: 0 },
-  64: { homeScore: 0, awayScore: 1 },
-  65: { homeScore: 1, awayScore: 5 },
-  66: { homeScore: 1, awayScore: 1 },
-  67: { homeScore: 0, awayScore: 2 },
-  68: { homeScore: 2, awayScore: 1 },
-
-  // ROUND OF 32
-  69: { homeScore: 0, awayScore: 1 },
-  70: { homeScore: 2, awayScore: 1 },
-  71: { homeScore: 1, awayScore: 1 },
-  72: { homeScore: 1, awayScore: 1 },
-  73: { homeScore: 1, awayScore: 2 },
-  74: { homeScore: 3, awayScore: 0 },
-  75: { homeScore: 2, awayScore: 0 },
-  76: { homeScore: 2, awayScore: 1 },
-  77: { homeScore: 2, awayScore: 2 },
-  78: { homeScore: 2, awayScore: 0 },
-  79: { homeScore: 3, awayScore: 0 },
-  80: { homeScore: 2, awayScore: 1 },
-  81: { homeScore: 2, awayScore: 0 },
-  82: { homeScore: 1, awayScore: 1 },
-  83: { homeScore: 1, awayScore: 1 },
-  84: { homeScore: 1, awayScore: 0 },
+  1: { homeScore: null, awayScore: null },
+  2: { homeScore: null, awayScore: null },
+  3: { homeScore: null, awayScore: null },
+  4: { homeScore: null, awayScore: null },
+  5: { homeScore: null, awayScore: null },
+  6: { homeScore: null, awayScore: null },
+  7: { homeScore: null, awayScore: null },
+  8: { homeScore: null, awayScore: null },
+  9: { homeScore: null, awayScore: null },
+  10: { homeScore: null, awayScore: null },
+  11: { homeScore: null, awayScore: null },
+  12: { homeScore: null, awayScore: null },
+  13: { homeScore: null, awayScore: null }
 };
 
 function timeoutPromise(ms) {
@@ -135,20 +52,11 @@ function calculatePoints(predictions = []) {
 
     if (predictedHome === actualHome && predictedAway === actualAway) {
       total += 5;
-    } else if (
-      predictedHome === predictedAway &&
-      actualHome === actualAway
-    ) {
+    } else if (predictedHome === predictedAway && actualHome === actualAway) {
       total += 3;
-    } else if (
-      predictedHome > predictedAway &&
-      actualHome > actualAway
-    ) {
+    } else if (predictedHome > predictedAway && actualHome > actualAway) {
       total += 1;
-    } else if (
-      predictedHome < predictedAway &&
-      actualHome < actualAway
-    ) {
+    } else if (predictedHome < predictedAway && actualHome < actualAway) {
       total += 2;
     }
   });
@@ -156,71 +64,8 @@ function calculatePoints(predictions = []) {
   return hasAnyResult ? total : null;
 }
 
-function updateActiveTab() {
-  currentLeaderboardTab?.classList.toggle("active", leaderboardMode === "current");
-  groupStageTotalTab?.classList.toggle("active", leaderboardMode === "groupStage");
-}
-
-function buildCurrentRows(predictionsSnap) {
-  const rows = [];
-
-  predictionsSnap.forEach((docSnap) => {
-    const data = docSnap.data();
-
-    if (data.round !== currentRound) return;
-
-    rows.push({
-      id: docSnap.id,
-      username: data.username || "Unknown",
-      points: calculatePoints(data.predictions)
-    });
-  });
-
-  return rows;
-}
-
-function buildGroupStageRows(predictionsSnap) {
-  const users = {};
-
-  predictionsSnap.forEach((docSnap) => {
-    const data = docSnap.data();
-
-    if (!groupStageRounds.includes(data.round)) return;
-
-    const username = data.username || "Unknown";
-    const cleanName = username.trim().toLowerCase();
-
-    if (!users[cleanName]) {
-      users[cleanName] = {
-        id: docSnap.id,
-        username,
-        points: 0,
-        hasAnyResult: false
-      };
-    }
-
-    const points = calculatePoints(data.predictions);
-
-    if (points !== null) {
-      users[cleanName].points += points;
-      users[cleanName].hasAnyResult = true;
-    }
-  });
-
-  return Object.values(users).map((user) => ({
-    id: user.id,
-    username: user.username,
-    points: user.hasAnyResult ? user.points : null
-  }));
-}
-
 async function renderLeaderboard() {
-  const title =
-    leaderboardMode === "current"
-      ? "Round of 32 Leaderboard"
-      : "Group Stage Total Leaderboard";
-
-  leaderboardContainer.innerHTML = `Loading ${title}...`;
+  leaderboardContainer.innerHTML = "Loading English League leaderboard...";
 
   try {
     const predictionsSnap = await Promise.race([
@@ -228,20 +73,29 @@ async function renderLeaderboard() {
       timeoutPromise(40000)
     ]);
 
-    const rows =
-      leaderboardMode === "current"
-        ? buildCurrentRows(predictionsSnap)
-        : buildGroupStageRows(predictionsSnap);
+    const rows = [];
+
+    predictionsSnap.forEach((docSnap) => {
+      const data = docSnap.data();
+
+      if (data.round !== currentRound) return;
+
+      rows.push({
+        id: docSnap.id,
+        username: data.username || "Unknown",
+        points: calculatePoints(data.predictions)
+      });
+    });
 
     rows.sort((a, b) => (b.points || 0) - (a.points || 0));
 
     if (rows.length === 0) {
-      leaderboardContainer.innerHTML = `<p>No predictions found for this leaderboard yet.</p>`;
+      leaderboardContainer.innerHTML = "<p>No predictions submitted yet.</p>";
       return;
     }
 
     leaderboardContainer.innerHTML = `
-      <h2>${title} 🏆</h2>
+      <h2>English League Week One Leaderboard 🏆</h2>
     `;
 
     rows.forEach((row, index) => {
@@ -284,17 +138,4 @@ async function renderLeaderboard() {
   }
 }
 
-currentLeaderboardTab?.addEventListener("click", () => {
-  leaderboardMode = "current";
-  updateActiveTab();
-  renderLeaderboard();
-});
-
-groupStageTotalTab?.addEventListener("click", () => {
-  leaderboardMode = "groupStage";
-  updateActiveTab();
-  renderLeaderboard();
-});
-
-updateActiveTab();
 renderLeaderboard();

@@ -8,49 +8,42 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-
 /* =========================
-   ROUND OF 32 FIXTURES
+   ENGLISH LEAGUE OPENING FIXTURES
 ========================= */
 
-/* =========================
-   ROUND OF 32 FIXTURES
-========================= */
-
-const predictionsDeadline = new Date("2026-06-28T20:00:00+01:00");
+const predictionsDeadline = new Date("2026-08-14T20:00:00+01:00");
 
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
 
-const roundOf32Fixtures = [
+const englishLeagueFixtures = [
+  { id: "1", date: "Fri 14 Aug 2026, 20:00", group: "Championship", home: "Wolves", away: "Blackburn", homeScore: null, awayScore: null },
 
-  { id: "69", date: "Sun 28 Jun 2026, 20:00", group: "Round of 32", home: "South Africa", away: "Canada", venue: "Los Angeles Stadium", homeScore: 0, awayScore: 1 },
+  { id: "2", date: "Sat 15 Aug 2026, 12:30", group: "Championship", home: "Bolton", away: "Preston", homeScore: null, awayScore: null },
 
-  { id: "70", date: "Mon 29 Jun 2026, 18:00", group: "Round of 32", home: "Brazil", away: "Japan", venue: "Houston Stadium", homeScore: 2, awayScore: 1 },
-  { id: "71", date: "Mon 29 Jun 2026, 21:30", group: "Round of 32", home: "Germany", away: "Paraguay", venue: "Boston Stadium", homeScore: 1, awayScore: 1 },
-  { id: "72", date: "Tue 30 Jun 2026, 02:00", group: "Round of 32", home: "Netherlands", away: "Morocco", venue: "Monterrey Stadium", homeScore: 1, awayScore: 1 },
+  { id: "3", date: "Sat 15 Aug 2026, 15:00", group: "Championship", home: "Bristol City", away: "Millwall", homeScore: null, awayScore: null },
+  { id: "4", date: "Sat 15 Aug 2026, 15:00", group: "Championship", home: "Charlton", away: "Derby", homeScore: null, awayScore: null },
+  { id: "5", date: "Sat 15 Aug 2026, 15:00", group: "Championship", home: "Middlesbrough", away: "Lincoln", homeScore: null, awayScore: null },
+  { id: "6", date: "Sat 15 Aug 2026, 15:00", group: "Championship", home: "Norwich", away: "West Brom", homeScore: null, awayScore: null },
+  { id: "7", date: "Sat 15 Aug 2026, 15:00", group: "Championship", home: "Portsmouth", away: "QPR", homeScore: null, awayScore: null },
+  { id: "8", date: "Sat 15 Aug 2026, 15:00", group: "Championship", home: "Stoke", away: "Swansea", homeScore: null, awayScore: null },
 
-  { id: "73", date: "Tue 30 Jun 2026, 18:00", group: "Round of 32", home: "Ivory Coast", away: "Norway", venue: "Dallas Stadium", homeScore: 1, awayScore: 2 },
-  { id: "74", date: "Tue 30 Jun 2026, 22:00", group: "Round of 32", home: "France", away: "Sweden", venue: "New York New Jersey Stadium", homeScore: 3, awayScore: 0 },
-  { id: "75", date: "Wed 1 Jul 2026, 02:00", group: "Round of 32", home: "Mexico", away: "Ecuador", venue: "Mexico City Stadium", homeScore: 2, awayScore: 0 },
+  { id: "9", date: "Sat 15 Aug 2026, 17:30", group: "Championship", home: "Sheffield United", away: "Birmingham", homeScore: null, awayScore: null },
 
-  { id: "76", date: "Wed 1 Jul 2026, 17:00", group: "Round of 32", home: "England", away: "DR Congo", venue: "Atlanta Stadium", homeScore: 2, awayScore: 1 },
-  { id: "77", date: "Wed 1 Jul 2026, 21:00", group: "Round of 32", home: "Belgium", away: "Senegal", venue: "Seattle Stadium", homeScore: 2, awayScore: 2 },
-  { id: "78", date: "Thu 2 Jul 2026, 01:00", group: "Round of 32", home: "USA", away: "Bosnia and Herzegovina", venue: "San Francisco Bay Area Stadium", homeScore: 2, awayScore: 0 },
+  { id: "10", date: "Sun 16 Aug 2026, 13:30", group: "Championship", home: "Watford", away: "Southampton", homeScore: null, awayScore: null },
 
-  { id: "79", date: "Thu 2 Jul 2026, 20:00", group: "Round of 32", home: "Spain", away: "Austria", venue: "Los Angeles Stadium", homeScore: 3, awayScore: 0 },
-  { id: "80", date: "Fri 3 Jul 2026, 00:00", group: "Round of 32", home: "Portugal", away: "Croatia", venue: "Toronto Stadium", homeScore: 2, awayScore: 1 },
-  { id: "81", date: "Fri 3 Jul 2026, 04:00", group: "Round of 32", home: "Switzerland", away: "Algeria", venue: "BC Place Vancouver", homeScore: 2, awayScore: 0 },
+  { id: "11", date: "Sun 16 Aug 2026, 15:00", group: "Community Shield", home: "Arsenal", away: "Manchester City", venue: "Principality Stadium, Cardiff", homeScore: null, awayScore: null },
 
-  { id: "82", date: "Fri 3 Jul 2026, 19:00", group: "Round of 32", home: "Egypt", away: "Australia", venue: "Dallas Stadium", homeScore: 1, awayScore: 1 },
-  { id: "83", date: "Fri 3 Jul 2026, 23:00", group: "Round of 32", home: "Argentina", away: "Cape Verde", venue: "Miami Stadium", homeScore: 1, awayScore: 1 },
-  { id: "84", date: "Sat 4 Jul 2026, 02:30", group: "Round of 32", home: "Colombia", away: "Ghana", venue: "Kansas City Stadium", homeScore: 1, awayScore: 0 }
+  { id: "12", date: "Sun 16 Aug 2026, 16:00", group: "Championship", home: "Burnley", away: "West Ham", homeScore: null, awayScore: null },
 
+  { id: "13", date: "Mon 17 Aug 2026, 20:00", group: "Championship", home: "Cardiff", away: "Wrexham", homeScore: null, awayScore: null }
 ];
 
-const fixtures = roundOf32Fixtures;
-const currentRound = "Round of 32";
+const fixtures = englishLeagueFixtures;
+const currentRound = "English League Week One";
+
 /* =========================
    PAGE ELEMENTS
 ========================= */
