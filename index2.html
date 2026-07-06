@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Premier League Table Predictor</title>
+  <link rel="stylesheet" href="./style2.css?v=2">
+
+</head>
+
+<body>
+  <div class="page">
+
+    <section id="homeScreen" class="home-screen">
+      <img src="cast.jpg" alt="Premier League Predictor" class="hero-img">
+
+      <h1>Premier League Table Predictor</h1>
+
+      <p>
+        Predict the final Premier League table from 1st to 20th.
+      </p>
+
+      <button id="startBtn" class="start-btn">Start Prediction</button>
+    </section>
+
+    <section id="gameScreen" class="game-screen hidden">
+      <h1>Predict the Final Table</h1>
+
+      <p class="intro">
+        Choose one team for every position. You can only use each team once.
+      </p>
+
+      <div id="tableContainer" class="table-container"></div>
+
+      <button id="submitBtn" class="submit-btn" disabled>
+        Submit Now
+      </button>
+
+      <p id="message" class="message"></p>
+    </section>
+
+  </div>
+
+  <script src="./app.js?v=2"></script>
+</body>
+</html>

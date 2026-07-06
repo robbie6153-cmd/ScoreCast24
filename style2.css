@@ -1,0 +1,106 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #064d25, #0b7a35);
+  color: white;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.home-screen,
+.game-screen {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-img {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 18px;
+  margin-top: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+h1 {
+  margin-top: 24px;
+  font-size: 2rem;
+}
+
+p {
+  line-height: 1.5;
+}
+
+.hidden {
+  display: none;
+}
+
+.start-btn,
+.submit-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.start-btn {
+  background: #ffffff;
+  color: #064d25;
+}
+
+.submit-btn {
+  background: #777;
+  color: white;
+  cursor: not-allowed;
+}
+
+.submit-btn.ready {
+  background: #14b84a;
+  cursor: pointer;
+}
+
+.table-container {
+  margin-top: 25px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 45px 1fr 70px;
+  gap: 10px;
+  align-items: center;
+  background: rgba(255,255,255,0.12);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.position {
+  font-weight: bold;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.95rem;
+}
+
+.confirm-box {
+  transform: scale(1.2);
+}
+
+.message {
+  margin-top: 20px;
+  font-weight: bold;
+}
