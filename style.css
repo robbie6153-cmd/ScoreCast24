@@ -576,3 +576,9 @@ h1 {
   font-size: 1.2rem;
   margin-top: 4px;
 }
+.start-btn {
+  display: block;
+  width: 90%;
+  max-width: 520px;
+  margin: 14px auto;
+}
