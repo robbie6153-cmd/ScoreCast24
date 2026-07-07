@@ -639,3 +639,113 @@ h1 {
     flex-direction: column;
   }
 }
+/* =========================
+   AUTH / LOGIN POPUP
+========================= */
+
+.login-status {
+  max-width: 760px;
+  margin: 8px auto 12px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #f5c542;
+  border: 1px solid #f5c542;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.auth-box {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.78);
+  z-index: 9999;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  color: #fff;
+  border: 2px solid #f5c542;
+  border-radius: 16px;
+  padding: 22px 18px;
+  box-shadow: 0 0 18px rgba(245, 197, 66, 0.35);
+  text-align: center;
+  position: relative;
+}
+
+.auth-card h2 {
+  margin: 0 0 10px;
+  color: #f5c542;
+}
+
+.auth-note {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  color: #ddd;
+}
+
+.auth-card input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #555;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.auth-card button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(145deg, #f5c542, #d9a900);
+  color: #111;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.auth-card button:hover {
+  filter: brightness(1.08);
+}
+
+.auth-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 34px !important;
+  height: 34px;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  font-size: 22px !important;
+  line-height: 1;
+}
+
+.text-btn {
+  background: none !important;
+  color: #f5c542 !important;
+  text-decoration: underline;
+  padding: 4px !important;
+  margin-top: 8px !important;
+  font-size: 14px !important;
+}
+
+#authMessage {
+  min-height: 20px;
+  margin-top: 12px;
+  color: #f5c542;
+  font-size: 14px;
+  line-height: 1.4;
+}

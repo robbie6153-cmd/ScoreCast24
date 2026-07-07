@@ -1,4 +1,5 @@
-import { db } from "./firebase.js?v=7";
+import { db } from "./firebase.js?v=8";
+import { requireLogin } from "./auth.js?v=1";
 import {
   collection,
   doc,
@@ -53,6 +54,9 @@ const predictionsPage = document.getElementById("predictionsPage");
 const leaderboardPage = document.getElementById("leaderboardPage");
 
 const startGameBtn = document.getElementById("startGameBtn");
+const premierLeagueBtn = document.getElementById("premierLeagueBtn");
+const dreamTeamBtn = document.getElementById("dreamTeamBtn");
+
 const backHomeBtn = document.getElementById("backHomeBtn");
 const backToPredictionsBtn = document.getElementById("backToPredictionsBtn");
 const leaderboardHomeBtn = document.getElementById("leaderboardHomeBtn");
@@ -406,6 +410,7 @@ function haveAnyResultsBeenAdded() {
    BUTTONS
 ========================= */
 startGameBtn.addEventListener("click", async () => {
+    if (!requireLogin()) return;
   const nextRoundAnnouncement = new Date("2026-06-28T04:30:00+01:00");
   const now = new Date();
   const timeLeft = nextRoundAnnouncement - now;
@@ -442,7 +447,19 @@ startGameBtn.addEventListener("click", async () => {
   }
 });
 
+if (premierLeagueBtn) {
+  premierLeagueBtn.addEventListener("click", () => {
+    if (!requireLogin()) return;
+    window.location.href = "index2.html";
+  });
+}
 
+if (dreamTeamBtn) {
+  dreamTeamBtn.addEventListener("click", () => {
+    if (!requireLogin()) return;
+    alert("Ultimate Dream Team is coming soon.");
+  });
+}
 backHomeBtn.addEventListener("click", showHome);
 leaderboardHomeBtn.addEventListener("click", showHome);
 backToPredictionsBtn.addEventListener("click", async () => {

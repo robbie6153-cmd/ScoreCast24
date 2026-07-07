@@ -4,108 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>ScoreCast24 - English League Score Prediction Game</title>
-<link rel="stylesheet" href="style.css?v=20">
+  <title>ScoreCast24 - English League Score Prediction Game</title>
+  <link rel="stylesheet" href="style.css?v=22">
 
-<meta name="description" content="Predict Premier League and Championship scores and compete on the leaderboard.">
+  <meta name="description" content="Predict Premier League and Championship scores and compete on the leaderboard.">
 
-<meta property="og:title" content="ScoreCast24 - English League Prediction Game">
-<meta property="og:description" content="Predict Premier League and Championship scores and compete on the leaderboard.">
-
-  <meta property="og:title" content="ScoreCast24 - World Cup Prediction Game">
-  <meta property="og:description" content="Predict every FIFA World Cup 2026 score and compete on the leaderboard.">
+  <meta property="og:title" content="ScoreCast24 - English League Prediction Game">
+  <meta property="og:description" content="Predict Premier League and Championship scores and compete on the leaderboard.">
   <meta property="og:image" content="https://scorecast24.com/homepage.jpg">
   <meta property="og:url" content="https://scorecast24.com">
   <meta property="og:type" content="website">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7137119315620021"
-     crossorigin="anonymous"></script>
-     <link rel="manifest" href="manifest.json">
 
-<meta name="theme-color" content="#f5c542">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7137119315620021"
+    crossorigin="anonymous"></script>
 
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f5c542">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 
 <body>
   <div class="page">
 
-  <header class="top-bar">
-  <div class="logo-text">ScoreCast24</div>
+    <header class="top-bar">
+      <div class="logo-text">ScoreCast24</div>
+      <button id="menuToggle" class="menu-btn">☰</button>
+    </header>
 
-  <button id="menuToggle" class="menu-btn">☰</button>
-</header>
-
-<nav id="dropdownMenu" class="dropdown-menu hidden">
-  <a href="index.html">Home</a>
-  <a href="leaderboard.html">Leaderboard</a>
-  <a href="fixtures.html">Fixtures</a>
-  
-  <a href="rules.html">Rules</a>
-  <a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-<a href="terms.html">Terms & Conditions</a>
-<a href="privacy.html">Privacy Policy</a>
-</nav>
-
-   <main id="homePage" class="home-page">
-  <img src="homepage.jpg" alt="ScoreCast24 homepage" class="home-image" />
-
-<div class="hero-buttons">
-  <button id="startGameBtn" class="start-btn">
-    Submit Your Score Predictions Now!
-  </button>
-
-  <button class="start-btn"
-    onclick="window.location.href='index2.html'">
-    🏆 Predict the Premier League and Win!
-  </button>
-
-  <button class="start-btn"
-    onclick="window.location.href='dream.html'">
-    ⭐ Ultimate Dream Team (Coming Soon)
-  </button>
-</div>
-
-<div id="englishLeagueCountdown" class="countdown-box"></div>
-<button id="installBtn" class="start-btn" style="display:none;">
-📱 Add ScoreCast24 To Home Screen
-</button>
-<div class="home-news-box">
-  <h2>Premier League & Championship News</h2>
-  <p>Follow weekly score predictions, fixtures, results and leaderboard updates across the English season.</p>
-</div>
-
-  <a href="rules.html" class="how-to-play-box">
-  ❓ How To Play & Scoring Rules
-</a>
-<div class="home-boxes">
-
-  <a href="leaderboard.html" class="home-card">
-   <h2>Current Leaderboard 🏆</h2>
-
-    <div id="homeLeaderboardPreview">
-      Loading standings...
+    <div id="loginStatus" class="login-status">
+      Not logged in
     </div>
-  </a>
 
-  <a href="fixtures.html" class="home-card">
-   <h2>⚽ Latest Results</h2>
+    <nav id="dropdownMenu" class="dropdown-menu hidden">
+      <a href="index.html">Home</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="fixtures.html">Fixtures</a>
+      <a href="rules.html">Rules</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms & Conditions</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </nav>
 
-    <div id="homeFixturesPreview">
-      Loading games...
-    </div>
-  </a>
+    <main id="homePage" class="home-page">
+      <img src="homepage.jpg" alt="ScoreCast24 homepage" class="home-image" />
 
+      <div class="hero-buttons">
+        <button id="startGameBtn" class="start-btn">
+          Submit Your Score Predictions Now!
+        </button>
 
-</div>
- 
-</main>
+        <button id="premierLeagueBtn" class="start-btn">
+          🏆 Predict the Premier League and Win!
+        </button>
+
+        <button id="dreamTeamBtn" class="start-btn">
+          ⭐ Ultimate Dream Team (Coming Soon)
+        </button>
+      </div>
+
+      <div id="englishLeagueCountdown" class="countdown-box"></div>
+
+      <button id="installBtn" class="start-btn" style="display:none;">
+        📱 Add ScoreCast24 To Home Screen
+      </button>
+
+      <div class="home-news-box">
+        <h2>Premier League & Championship News</h2>
+        <p>Follow weekly score predictions, fixtures, results and leaderboard updates across the English season.</p>
+      </div>
+
+      <a href="rules.html" class="how-to-play-box">
+        ❓ How To Play & Scoring Rules
+      </a>
+
+      <div class="home-boxes">
+
+        <a href="leaderboard.html" class="home-card">
+          <h2>Current Leaderboard 🏆</h2>
+          <div id="homeLeaderboardPreview">
+            Loading standings...
+          </div>
+        </a>
+
+        <a href="fixtures.html" class="home-card">
+          <h2>⚽ Latest Results</h2>
+          <div id="homeFixturesPreview">
+            Loading games...
+          </div>
+        </a>
+
+      </div>
+    </main>
+
     <section id="predictionsPage" class="predictions-page hidden">
-     <h1>English League ScoreCast</h1>
+      <h1>English League ScoreCast</h1>
       <p class="subheading">Enter your predicted scores below.</p>
 
       <div id="fixturesContainer"></div>
@@ -124,13 +119,13 @@
 
       <div id="leaderboardContainer"></div>
 
-     <button id="backToPredictionsBtn" class="secondary-btn">
-  Back to Predictions
-</button>
+      <button id="backToPredictionsBtn" class="secondary-btn">
+        Back to Predictions
+      </button>
 
-<button id="leaderboardHomeBtn" class="secondary-btn">
-  Back to Home
-</button>
+      <button id="leaderboardHomeBtn" class="secondary-btn">
+        Back to Home
+      </button>
     </section>
 
   </div>
@@ -147,6 +142,7 @@
     </div>
   </div>
 
-  <script type="module" src="index.js?v=18"></script>
+  <script type="module" src="auth.js?v=1"></script>
+  <script type="module" src="index.js?v=19"></script>
 </body>
 </html>
