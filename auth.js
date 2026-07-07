@@ -127,14 +127,23 @@ onAuthStateChanged(auth, (user) => {
 
   const loginStatus = document.getElementById("loginStatus");
 
-  if (loginStatus) {
-    if (user && user.emailVerified) {
-      const username = localStorage.getItem("scorecast24Username") || user.email;
-      loginStatus.textContent = `Logged in as ${username}`;
-    } else {
-      loginStatus.textContent = "Not logged in";
-    }
+if (user && user.emailVerified) {
+  const username = localStorage.getItem("scorecast24Username");
+
+  if (username) {
+    loginStatus.textContent = `Logged in as ${username}`;
+  } else {
+    loginStatus.innerHTML = `
+      Logged in. 
+      <a href="username.html" style="color:#f5c542;text-decoration:underline;">
+        Create username
+      </a>
+    `;
   }
+} else {
+  loginStatus.textContent = "Not logged in";
+}
+
 });
 
 function cleanAuthError(code) {
