@@ -95,7 +95,7 @@ async function renderLeaderboard() {
     }
 
     leaderboardContainer.innerHTML = `
-      <h2>English League Week One Leaderboard 🏆</h2>
+     <h2>Current Leaderboard 🏆</h2>
     `;
 
     rows.forEach((row, index) => {
