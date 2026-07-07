@@ -121,14 +121,6 @@ function showLeaderboard() {
 function renderFixtures() {
   fixturesContainer.innerHTML = "";
 
-  const usernameBox = document.createElement("div");
-  usernameBox.className = "username-box";
-  usernameBox.innerHTML = `
-    <label>Your username</label>
-    <input id="usernameInput" value="${username || ""}" placeholder="Enter username">
-  `;
-  fixturesContainer.appendChild(usernameBox);
-
   fixtures.forEach((fixture) => {
     const card = document.createElement("div");
     card.className = "fixture-card";
@@ -217,21 +209,13 @@ if (submitPredictionsBtn) {
       return;
     }
 
-    const usernameInput = document.getElementById("usernameInput");
+ username = localStorage.getItem("scorecast24Username");
 
-    if (!usernameInput) {
-      alert("Please press Submit Your Score Predictions Now first.");
-      return;
-    }
-
-    username = usernameInput.value.trim();
-
-    if (username.length < 2) {
-      alert("Please enter a username.");
-      return;
-    }
-
-    localStorage.setItem("scorecast24Username", username);
+if (!username || username.trim().length < 2) {
+  alert("Please create your ScoreCast24 username first.");
+  window.location.href = "username.html";
+  return;
+}
 
     const predictions = getPredictionsFromPage();
     if (!predictions) return;
@@ -427,11 +411,15 @@ startGameBtn.addEventListener("click", async () => {
     return;
   }
 
-  const okay = askForUsername();
-  if (!okay) return;
+username = localStorage.getItem("scorecast24Username");
 
-  renderFixtures();
-  showPredictions();
+if (!username || username.trim().length < 2) {
+  window.location.href = "username.html";
+  return;
+}
+
+renderFixtures();
+showPredictions();
 
   try {
     const alreadySubmitted = await hasAlreadySubmitted(username);
