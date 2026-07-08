@@ -1,3 +1,12 @@
+import { db } from "./firebase.js?v=7";
+
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
 const teams = [
   "Arsenal",
   "Aston Villa",
@@ -21,6 +30,29 @@ const teams = [
   "Tottenham Hotspur"
 ];
 
+const currentPremierLeagueTable = [
+  "Arsenal",
+  "Manchester City",
+  "Liverpool",
+  "Chelsea",
+  "Newcastle United",
+  "Tottenham Hotspur",
+  "Manchester United",
+  "Aston Villa",
+  "Brighton & Hove Albion",
+  "Crystal Palace",
+  "Bournemouth",
+  "Brentford",
+  "Fulham",
+  "Everton",
+  "Nottingham Forest",
+  "Leeds United",
+  "Sunderland",
+  "Ipswich Town",
+  "Coventry City",
+  "Hull City"
+];
+
 const homeScreen = document.getElementById("homeScreen");
 const gameScreen = document.getElementById("gameScreen");
 const startBtn = document.getElementById("startBtn");
@@ -28,14 +60,54 @@ const tableContainer = document.getElementById("tableContainer");
 const submitBtn = document.getElementById("submitBtn");
 const message = document.getElementById("message");
 
-startBtn.addEventListener("click", () => {
+let existingPrediction = null;
+
+const username =
+  localStorage.getItem("scorecast24Username") ||
+  localStorage.getItem("username") ||
+  "";
+
+const cleanUsername = username.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
+
+startBtn.addEventListener("click", async () => {
   homeScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
+
+  if (!cleanUsername) {
+    tableContainer.innerHTML = `
+      <p class="message">
+        Please log in or create a username before entering the Premier League predictor.
+      </p>
+    `;
+    submitBtn.style.display = "none";
+    return;
+  }
+
+  await loadExistingPrediction();
   buildTable();
 });
 
+async function loadExistingPrediction() {
+  try {
+    const predictionRef = doc(db, "premier_league_predictions", cleanUsername);
+    const predictionSnap = await getDoc(predictionRef);
+
+    if (predictionSnap.exists()) {
+      existingPrediction = predictionSnap.data().prediction || null;
+    }
+  } catch (error) {
+    console.error("Could not load prediction:", error);
+  }
+}
+
 function buildTable() {
   tableContainer.innerHTML = "";
+
+  if (existingPrediction) {
+    showExistingPrediction();
+    submitBtn.style.display = "none";
+    return;
+  }
 
   for (let i = 1; i <= 20; i++) {
     const row = document.createElement("div");
@@ -58,6 +130,100 @@ function buildTable() {
   document.querySelectorAll(".team-select, .confirm-box").forEach(item => {
     item.addEventListener("change", updateForm);
   });
+}
+
+function showExistingPrediction() {
+  const matches = countMatchingPositions(existingPrediction);
+
+  tableContainer.innerHTML = `
+    <div class="prediction-summary">
+      <h2>My Premier Prediction</h2>
+      ${renderTable(existingPrediction)}
+
+      <h3>You currently have ${matches} matching positions</h3>
+
+      <h2>Current Premier League Table</h2>
+      ${renderCurrentTable()}
+    </div>
+  `;
+}
+
+function renderTable(prediction) {
+  return `
+    <table class="league-table">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Team</th>
+          <th>P</th>
+          <th>W</th>
+          <th>D</th>
+          <th>L</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${prediction.map(item => `
+          <tr>
+            <td>${item.position}</td>
+            <td>${item.team}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderCurrentTable() {
+  return `
+    <table class="league-table">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Team</th>
+          <th>P</th>
+          <th>W</th>
+          <th>D</th>
+          <th>L</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${currentPremierLeagueTable.map((team, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${team}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function countMatchingPositions(prediction) {
+  let matches = 0;
+
+  prediction.forEach(item => {
+    const currentTeam = currentPremierLeagueTable[item.position - 1];
+
+    if (item.team === currentTeam) {
+      matches++;
+    }
+  });
+
+  return matches;
 }
 
 function updateForm() {
@@ -91,7 +257,7 @@ function updateForm() {
   }
 }
 
-submitBtn.addEventListener("click", () => {
+submitBtn.addEventListener("click", async () => {
   const sure = confirm("Are you sure you want to submit this as your final prediction?");
 
   if (!sure) return;
@@ -103,9 +269,27 @@ submitBtn.addEventListener("click", () => {
     };
   });
 
-  localStorage.setItem("premierLeaguePrediction", JSON.stringify(prediction));
+  try {
+    await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
+      username: username,
+      cleanUsername: cleanUsername,
+      prediction: prediction,
+      submittedAt: serverTimestamp()
+    });
 
-  message.textContent = "Prediction submitted and saved on this device.";
-  submitBtn.disabled = true;
-  submitBtn.classList.remove("ready");
+    localStorage.setItem("premierLeaguePrediction", JSON.stringify(prediction));
+
+    existingPrediction = prediction;
+
+    message.textContent = "Prediction submitted and saved.";
+    submitBtn.disabled = true;
+    submitBtn.classList.remove("ready");
+    submitBtn.style.display = "none";
+
+    showExistingPrediction();
+
+  } catch (error) {
+    console.error("Save error:", error);
+    message.textContent = "Could not save prediction. Please try again.";
+  }
 });
