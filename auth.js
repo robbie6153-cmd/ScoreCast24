@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase.js?v=104";
+import { auth, db } from "./firebase.js?v=106";
 
 import {
   doc,
@@ -11,7 +11,7 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   onAuthStateChanged,
-  signOut,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 
