@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase.js?v=99";
+import { auth, db } from "./firebase.js?v=103";
 
 import {
   doc,
@@ -12,11 +12,8 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
   signOut,
-  browserLocalPersistence,
-  setPersistence
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-await setPersistence(auth, browserLocalPersistence);
 
 let currentUser = null;
 
