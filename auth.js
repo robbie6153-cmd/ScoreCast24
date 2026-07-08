@@ -141,8 +141,7 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
   const loginStatus = document.getElementById("loginStatus");
-
-  if (!loginStatus) return;
+ const menuLinks = document.getElementById("dropdownMenu");
 
   if (user && user.emailVerified) {
     let username = localStorage.getItem("scorecast24Username");
@@ -156,33 +155,51 @@ onAuthStateChanged(auth, async (user) => {
           username = userSnap.data().username;
           const cleanUsername = userSnap.data().cleanUsername;
 
-          if (username) {
-            localStorage.setItem("scorecast24Username", username);
-          }
-
-          if (cleanUsername) {
-            localStorage.setItem("scorecast24CleanUsername", cleanUsername);
-          }
+          if (username) localStorage.setItem("scorecast24Username", username);
+          if (cleanUsername) localStorage.setItem("scorecast24CleanUsername", cleanUsername);
         }
       } catch (error) {
         console.error("Username load error:", error);
       }
     }
 
-    if (username) {
-      loginStatus.textContent = `Logged in as ${username}`;
-    } else {
-      loginStatus.innerHTML = `
-        Logged in. 
-        <a href="username.html" style="color:#f5c542;text-decoration:underline;">
-          Create username
-        </a>
-      `;
+    if (loginStatus) {
+      if (username) {
+        loginStatus.textContent = `Logged in as ${username}`;
+      } else {
+        loginStatus.innerHTML = `
+          Logged in. 
+          <a href="username.html" style="color:#f5c542;text-decoration:underline;">
+            Create username
+          </a>
+        `;
+      }
     }
+
+    if (menuLinks && !document.getElementById("logoutMenuBtn")) {
+      const logoutBtn = document.createElement("button");
+      logoutBtn.id = "logoutMenuBtn";
+      logoutBtn.className = "";
+      logoutBtn.textContent = "Log out";
+
+      logoutBtn.addEventListener("click", async () => {
+        await logoutUser();
+        window.location.href = "index.html";
+      });
+
+      menuLinks.appendChild(logoutBtn);
+    }
+
   } else {
     localStorage.removeItem("scorecast24Username");
     localStorage.removeItem("scorecast24CleanUsername");
-    loginStatus.textContent = "Not logged in";
+
+    if (loginStatus) {
+      loginStatus.textContent = "Not logged in";
+    }
+
+    const logoutBtn = document.getElementById("logoutMenuBtn");
+    if (logoutBtn) logoutBtn.remove();
   }
 });
 
