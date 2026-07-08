@@ -1,5 +1,5 @@
-alert("auth.js loaded");
-import { auth, db } from "./firebase.js?v=8";
+
+import { auth, db } from "./firebase.js?v=99";
 
 import {
   doc,
