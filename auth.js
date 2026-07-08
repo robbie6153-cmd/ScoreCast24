@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase.js?v=106";
+import { auth, db } from "./firebase.js?v=107";
 
 import {
   doc,
@@ -11,9 +11,14 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   onAuthStateChanged,
-  signOut
+  signOut,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error("Persistence error:", error);
+});
 
 let currentUser = null;
 
@@ -73,13 +78,13 @@ document.getElementById("createAccountBtn").addEventListener("click", async () =
 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-   await sendEmailVerification(userCredential.user, {
-  url: "https://scorecast24.com",
-  handleCodeInApp: false
-});
+    await sendEmailVerification(userCredential.user, {
+      url: "https://scorecast24.com/username.html",
+      handleCodeInApp: false
+    });
 
     authMessage.textContent =
-      "Account created. Verification email sent. Open the email link, choose your username, then you will be taken back to ScoreCast24.";
+      "Account created. Verification email sent. After verifying, log in and choose your username.";
   } catch (error) {
     authMessage.textContent = cleanAuthError(error.code);
   }
@@ -106,6 +111,12 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     }
 
     hideAuthPopup();
+
+    const username = await loadUsername(userCredential.user);
+
+    if (!username && !window.location.pathname.includes("username.html")) {
+      window.location.href = "username.html";
+    }
   } catch (error) {
     authMessage.textContent = cleanAuthError(error.code);
   }
@@ -134,31 +145,42 @@ document.getElementById("forgotPasswordBtn").addEventListener("click", async () 
   }
 });
 
+async function loadUsername(user) {
+  let username = localStorage.getItem("scorecast24Username");
+  let cleanUsername = localStorage.getItem("scorecast24CleanUsername");
+
+  if (username && cleanUsername) {
+    return username;
+  }
+
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      username = userSnap.data().username || "";
+      cleanUsername = userSnap.data().cleanUsername || "";
+
+      if (username) localStorage.setItem("scorecast24Username", username);
+      if (cleanUsername) localStorage.setItem("scorecast24CleanUsername", cleanUsername);
+
+      return username;
+    }
+  } catch (error) {
+    console.error("Username load error:", error);
+  }
+
+  return "";
+}
+
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
   const loginStatus = document.getElementById("loginStatus");
- const menuLinks = document.getElementById("dropdownMenu");
+  const menuLinks = document.getElementById("dropdownMenu");
 
   if (user && user.emailVerified) {
-    let username = localStorage.getItem("scorecast24Username");
-
-    if (!username) {
-      try {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          username = userSnap.data().username;
-          const cleanUsername = userSnap.data().cleanUsername;
-
-          if (username) localStorage.setItem("scorecast24Username", username);
-          if (cleanUsername) localStorage.setItem("scorecast24CleanUsername", cleanUsername);
-        }
-      } catch (error) {
-        console.error("Username load error:", error);
-      }
-    }
+    const username = await loadUsername(user);
 
     if (loginStatus) {
       if (username) {
@@ -186,7 +208,6 @@ onAuthStateChanged(auth, async (user) => {
 
       menuLinks.appendChild(logoutBtn);
     }
-
   } else {
     localStorage.removeItem("scorecast24Username");
     localStorage.removeItem("scorecast24CleanUsername");
@@ -243,5 +264,7 @@ export function getCurrentUser() {
 }
 
 export async function logoutUser() {
+  localStorage.removeItem("scorecast24Username");
+  localStorage.removeItem("scorecast24CleanUsername");
   await signOut(auth);
 }
