@@ -76,10 +76,10 @@ document.getElementById("createAccountBtn").addEventListener("click", async () =
 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    await sendEmailVerification(userCredential.user, {
-      url: "https://scorecast24.com/username.html",
-      handleCodeInApp: false
-    });
+   await sendEmailVerification(userCredential.user, {
+  url: "https://scorecast24.com",
+  handleCodeInApp: false
+});
 
     authMessage.textContent =
       "Account created. Verification email sent. Open the email link, choose your username, then you will be taken back to ScoreCast24.";
