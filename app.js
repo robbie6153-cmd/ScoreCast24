@@ -62,18 +62,23 @@ const message = document.getElementById("message");
 
 let existingPrediction = null;
 
-const username =
-  localStorage.getItem("scorecast24Username") ||
-  localStorage.getItem("username") ||
-  "";
+function getUsername() {
+  return (
+    localStorage.getItem("scorecast24Username") ||
+    localStorage.getItem("username") ||
+    ""
+  );
+}
 
-const cleanUsername = username.trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
+function getCleanUsername() {
+  return getUsername().trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
+}
 
 startBtn.addEventListener("click", async () => {
   homeScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
 
-  if (!cleanUsername) {
+if (!getCleanUsername()) {
     tableContainer.innerHTML = `
       <p class="message">
         Please log in or create a username before entering the Premier League predictor.
@@ -89,7 +94,7 @@ startBtn.addEventListener("click", async () => {
 
 async function loadExistingPrediction() {
   try {
-    const predictionRef = doc(db, "premier_league_predictions", cleanUsername);
+    const predictionRef = doc(db, "premier_league_predictions", getCleanUsername());
     const predictionSnap = await getDoc(predictionRef);
 
     if (predictionSnap.exists()) {
@@ -270,12 +275,15 @@ submitBtn.addEventListener("click", async () => {
   });
 
   try {
-    await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
-      username: username,
-      cleanUsername: cleanUsername,
-      prediction: prediction,
-      submittedAt: serverTimestamp()
-    });
+const username = getUsername();
+const cleanUsername = getCleanUsername();
+
+await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
+  username: username,
+  cleanUsername: cleanUsername,
+  prediction: prediction,
+  submittedAt: serverTimestamp()
+});
 
     localStorage.setItem("premierLeaguePrediction", JSON.stringify(prediction));
 
@@ -289,7 +297,7 @@ submitBtn.addEventListener("click", async () => {
     showExistingPrediction();
 
   } catch (error) {
-    console.error("Save error:", error);
-    message.textContent = "Could not save prediction. Please try again.";
-  }
+  console.error("Save error:", error);
+  message.textContent = "Could not save prediction: " + error.message;
+}
 });
