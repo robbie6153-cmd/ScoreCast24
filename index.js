@@ -1,5 +1,5 @@
-import { db } from "./firebase.js?v=8";
-import { requireLogin } from "./auth.js?v=1";
+import { db } from "./firebase.js?v=99";
+import { requireLogin } from "./auth.js?v=99";
 import {
   collection,
   doc,
