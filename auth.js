@@ -1,4 +1,3 @@
-
 import { auth, db } from "./firebase.js?v=99";
 
 import {
@@ -12,8 +11,12 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   onAuthStateChanged,
-  signOut
+  signOut,
+  browserLocalPersistence,
+  setPersistence
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+await setPersistence(auth, browserLocalPersistence);
 
 let currentUser = null;
 
@@ -69,6 +72,8 @@ document.getElementById("createAccountBtn").addEventListener("click", async () =
   }
 
   try {
+    authMessage.textContent = "Creating account...";
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
     await sendEmailVerification(userCredential.user, {
@@ -77,7 +82,7 @@ document.getElementById("createAccountBtn").addEventListener("click", async () =
     });
 
     authMessage.textContent =
-      "Account created. We have sent an email confirmation. Please check your spam/junk folder.";
+      "Account created. Verification email sent. Open the email link, choose your username, then you will be taken back to ScoreCast24.";
   } catch (error) {
     authMessage.textContent = cleanAuthError(error.code);
   }
@@ -93,6 +98,8 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 
   try {
+    authMessage.textContent = "Logging in...";
+
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
     if (!userCredential.user.emailVerified) {
@@ -116,6 +123,8 @@ document.getElementById("forgotPasswordBtn").addEventListener("click", async () 
   }
 
   try {
+    authMessage.textContent = "Sending password reset...";
+
     await sendPasswordResetEmail(auth, email, {
       url: "https://scorecast24.com",
       handleCodeInApp: false
@@ -145,9 +154,14 @@ onAuthStateChanged(auth, async (user) => {
 
         if (userSnap.exists()) {
           username = userSnap.data().username;
+          const cleanUsername = userSnap.data().cleanUsername;
 
           if (username) {
             localStorage.setItem("scorecast24Username", username);
+          }
+
+          if (cleanUsername) {
+            localStorage.setItem("scorecast24CleanUsername", cleanUsername);
           }
         }
       } catch (error) {
@@ -167,6 +181,7 @@ onAuthStateChanged(auth, async (user) => {
     }
   } else {
     localStorage.removeItem("scorecast24Username");
+    localStorage.removeItem("scorecast24CleanUsername");
     loginStatus.textContent = "Not logged in";
   }
 });
