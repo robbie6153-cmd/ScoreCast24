@@ -1,4 +1,9 @@
-import { auth } from "./firebase.js?v=8";
+import { auth, db } from "./firebase.js?v=8";
+
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
   createUserWithEmailAndPassword,
@@ -122,28 +127,47 @@ document.getElementById("forgotPasswordBtn").addEventListener("click", async () 
   }
 });
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
   const loginStatus = document.getElementById("loginStatus");
 
-if (user && user.emailVerified) {
-  const username = localStorage.getItem("scorecast24Username");
+  if (!loginStatus) return;
 
-  if (username) {
-    loginStatus.textContent = `Logged in as ${username}`;
+  if (user && user.emailVerified) {
+    let username = localStorage.getItem("scorecast24Username");
+
+    if (!username) {
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          username = userSnap.data().username;
+
+          if (username) {
+            localStorage.setItem("scorecast24Username", username);
+          }
+        }
+      } catch (error) {
+        console.error("Username load error:", error);
+      }
+    }
+
+    if (username) {
+      loginStatus.textContent = `Logged in as ${username}`;
+    } else {
+      loginStatus.innerHTML = `
+        Logged in. 
+        <a href="username.html" style="color:#f5c542;text-decoration:underline;">
+          Create username
+        </a>
+      `;
+    }
   } else {
-    loginStatus.innerHTML = `
-      Logged in. 
-      <a href="username.html" style="color:#f5c542;text-decoration:underline;">
-        Create username
-      </a>
-    `;
+    localStorage.removeItem("scorecast24Username");
+    loginStatus.textContent = "Not logged in";
   }
-} else {
-  loginStatus.textContent = "Not logged in";
-}
-
 });
 
 function cleanAuthError(code) {
