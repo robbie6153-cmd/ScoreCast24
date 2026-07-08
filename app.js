@@ -169,17 +169,22 @@ function renderTable(prediction) {
       </thead>
 
       <tbody>
-        ${prediction.map(item => `
-          <tr>
-            <td>${item.position}</td>
-            <td>${item.team}</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-          </tr>
-        `).join("")}
+        ${prediction.map(item => {
+          const currentTeam = currentPremierLeagueTable[item.position - 1];
+          const isMatch = item.team === currentTeam;
+
+          return `
+            <tr class="${isMatch ? "matched-position" : ""}">
+              <td>${item.position}</td>
+              <td>${isMatch ? "✅ " : ""}${item.team}</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+          `;
+        }).join("")}
       </tbody>
     </table>
   `;
