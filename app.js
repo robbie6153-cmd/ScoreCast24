@@ -354,15 +354,20 @@ submitBtn.addEventListener("click", async () => {
   try {
     const username = getUsername();
     const cleanUsername = getCleanUsername();
-    const email = getUserEmail();
+    const user = auth.currentUser;
 
-    await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
-      username,
-      cleanUsername,
-      email,
-      prediction,
-      submittedAt: serverTimestamp()
-    });
+if (!user) {
+  throw new Error("You must be logged in to submit a prediction.");
+}
+
+await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
+  username,
+  cleanUsername,
+  email: user.email || "",
+  userId: user.uid,
+  prediction,
+  submittedAt: serverTimestamp()
+});
 
     localStorage.setItem("premierLeaguePrediction", JSON.stringify(prediction));
 
