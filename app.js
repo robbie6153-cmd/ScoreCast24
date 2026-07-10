@@ -52,8 +52,8 @@ const currentPremierLeagueTable = [
   "Everton",
   "Nottingham Forest",
   "Leeds United",
-  "Fulham",
   "Ipswich Town",
+  "Fulham",
   "Coventry City",
   "Hull City"
 ];
