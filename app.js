@@ -48,7 +48,7 @@ const currentPremierLeagueTable = [
   "Crystal Palace",
   "Bournemouth",
   "Brentford",
-  "Sunderlamd",
+  "Sunderland",
   "Everton",
   "Nottingham Forest",
   "Leeds United",
