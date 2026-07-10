@@ -1,11 +1,16 @@
-import { db } from "./firebase.js?v=107";
+import { auth, db } from "./firebase.js?v=108";
 
 import {
   doc,
   getDoc,
   setDoc,
+  getDocs,
+  collection,
+  addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const ADMIN_EMAIL = "robbie6153@icloud.com";
 
 const teams = [
   "Arsenal",
@@ -31,9 +36,9 @@ const teams = [
 ];
 
 const currentPremierLeagueTable = [
-  "Arsenal",
-  "Manchester City",
   "Liverpool",
+  "Manchester City",
+  "Arsenal",
   "Chelsea",
   "Newcastle United",
   "Tottenham Hotspur",
@@ -43,11 +48,11 @@ const currentPremierLeagueTable = [
   "Crystal Palace",
   "Bournemouth",
   "Brentford",
-  "Fulham",
+  "Sunderlamd",
   "Everton",
   "Nottingham Forest",
   "Leeds United",
-  "Sunderland",
+  "Fulham",
   "Ipswich Town",
   "Coventry City",
   "Hull City"
@@ -74,11 +79,15 @@ function getCleanUsername() {
   return getUsername().trim().toLowerCase().replace(/[^a-z0-9]/g, "-");
 }
 
+function getUserEmail() {
+  return auth.currentUser?.email || localStorage.getItem("scorecast24Email") || "";
+}
+
 startBtn.addEventListener("click", async () => {
   homeScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
 
-if (!getCleanUsername()) {
+  if (!getCleanUsername()) {
     tableContainer.innerHTML = `
       <p class="message">
         Please log in or create a username before entering the Premier League predictor.
@@ -143,7 +152,7 @@ function showExistingPrediction() {
   tableContainer.innerHTML = `
     <div class="prediction-summary">
       <h2>My Premier Prediction</h2>
-      ${renderTable(existingPrediction)}
+      ${renderPredictionTable(existingPrediction)}
 
       <h3>You currently have ${matches} matching positions</h3>
 
@@ -153,18 +162,13 @@ function showExistingPrediction() {
   `;
 }
 
-function renderTable(prediction) {
+function renderPredictionTable(prediction) {
   return `
-    <table class="league-table">
+    <table class="league-table prediction-table">
       <thead>
         <tr>
           <th>Pos</th>
           <th>Team</th>
-          <th>P</th>
-          <th>W</th>
-          <th>D</th>
-          <th>L</th>
-          <th>Pts</th>
         </tr>
       </thead>
 
@@ -177,11 +181,6 @@ function renderTable(prediction) {
             <tr class="${isMatch ? "matched-position" : ""}">
               <td>${item.position}</td>
               <td>${isMatch ? "✅ " : ""}${item.team}</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
             </tr>
           `;
         }).join("")}
@@ -267,6 +266,79 @@ function updateForm() {
   }
 }
 
+async function sendAdminPredictionReport(reason = "Premier League prediction update") {
+  try {
+    const predictionsSnap = await getDocs(collection(db, "premier_league_predictions"));
+
+    let exactMatches = [];
+    let bestMatches = -1;
+    let bestUsers = [];
+    let totalEntries = 0;
+
+    predictionsSnap.forEach(docSnap => {
+      const data = docSnap.data();
+      const prediction = data.prediction || [];
+
+      if (!prediction.length) return;
+
+      totalEntries++;
+
+      const matches = countMatchingPositions(prediction);
+
+      const userDetails = {
+        username: data.username || "Unknown username",
+        email: data.email || "No email saved",
+        matches
+      };
+
+      if (matches === 20) {
+        exactMatches.push(userDetails);
+      }
+
+      if (matches > bestMatches) {
+        bestMatches = matches;
+        bestUsers = [userDetails];
+      } else if (matches === bestMatches) {
+        bestUsers.push(userDetails);
+      }
+    });
+
+    const exactText = exactMatches.length
+      ? exactMatches.map(user => `${user.username} - ${user.email}`).join("\n")
+      : "None";
+
+    const bestText = bestUsers.length
+      ? bestUsers.map(user => `${user.username} - ${user.email} - ${user.matches}/20`).join("\n")
+      : "None";
+
+    const emailText = `
+${reason}
+
+Total entries: ${totalEntries}
+
+Exact 20/20 matches: ${exactMatches.length}
+
+Exact match users:
+${exactText}
+
+Closest prediction:
+${bestText}
+    `.trim();
+
+    await addDoc(collection(db, "mail"), {
+      to: [ADMIN_EMAIL],
+      message: {
+        subject: "ScoreCast24 Premier League Prediction Report",
+        text: emailText
+      },
+      createdAt: serverTimestamp()
+    });
+
+  } catch (error) {
+    console.error("Admin email report failed:", error);
+  }
+}
+
 submitBtn.addEventListener("click", async () => {
   const sure = confirm("Are you sure you want to submit this as your final prediction?");
 
@@ -280,15 +352,17 @@ submitBtn.addEventListener("click", async () => {
   });
 
   try {
-const username = getUsername();
-const cleanUsername = getCleanUsername();
+    const username = getUsername();
+    const cleanUsername = getCleanUsername();
+    const email = getUserEmail();
 
-await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
-  username: username,
-  cleanUsername: cleanUsername,
-  prediction: prediction,
-  submittedAt: serverTimestamp()
-});
+    await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
+      username,
+      cleanUsername,
+      email,
+      prediction,
+      submittedAt: serverTimestamp()
+    });
 
     localStorage.setItem("premierLeaguePrediction", JSON.stringify(prediction));
 
@@ -301,8 +375,10 @@ await setDoc(doc(db, "premier_league_predictions", cleanUsername), {
 
     showExistingPrediction();
 
+    await sendAdminPredictionReport("A new Premier League prediction has been submitted.");
+
   } catch (error) {
-  console.error("Save error:", error);
-  message.textContent = "Could not save prediction: " + error.message;
-}
+    console.error("Save error:", error);
+    message.textContent = "Could not save prediction: " + error.message;
+  }
 });
