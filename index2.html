@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Premier League Table Predictor</title>
-  <link rel="stylesheet" href="./style2.css?v=99">
+  <link rel="stylesheet" href="./style2.css?v=101">
 
 </head>
 
@@ -13,22 +13,36 @@
   <div class="page">
 
     <section id="homeScreen" class="home-screen">
-     <img src="icon-512.png" alt="ScoreCast24 logo" class="hero-img">
 
- <h1>💰 Predict the Premier League Table and Win £100,000! 💰</h1>
+      <img src="icon-512.png" alt="ScoreCast24 logo" class="hero-img">
 
-<p>
-  Think you can predict the final Premier League table? Put all 20 teams in their finishing positions and you could win our <strong>£100,000 grand prize!</strong><br><br>
+      <h1>💰 Predict the Premier League Table and Win £100,000! 💰</h1>
 
-  Plus, you could win one of our <strong>weekly £500 prizes</strong> if your prediction is correct at <strong>ANY</strong> stage of the season.<br><br>
+      <p>
+        Think you can predict the final Premier League table? Put all 20 teams in their finishing positions and you could win our <strong>£100,000 grand prize!</strong><br><br>
 
-  <strong>Enter today for just £1.</strong>
-</p>
+        Plus, you could win one of our <strong>weekly £500 prizes</strong> if your prediction is correct at <strong>ANY</strong> stage of the season.<br><br>
 
-      <button id="startBtn" class="start-btn">Start Prediction</button>
+        <strong>Enter today for just £1.</strong>
+      </p>
+
+      <div class="home-buttons">
+
+        <button id="buyCreditHomeBtn" class="buy-credit-circle">
+          <span class="buy-title">BUY ENTRY</span>
+          <span class="buy-price">£1</span>
+        </button>
+
+        <button id="startBtn" class="start-btn">
+          Start Prediction
+        </button>
+
+      </div>
+
     </section>
 
     <section id="gameScreen" class="game-screen hidden">
+
       <h1>Predict the Final Table</h1>
 
       <p class="intro">
@@ -42,10 +56,12 @@
       </button>
 
       <p id="message" class="message"></p>
+
     </section>
 
   </div>
 
-  <script type="module" src="./app.js?v=109"></script>
+  <script type="module" src="./app.js?v=111"></script>
+
 </body>
 </html>

@@ -73,7 +73,11 @@ const currentPremierLeagueTable = [
 const homeScreen = document.getElementById("homeScreen");
 const gameScreen = document.getElementById("gameScreen");
 const startBtn = document.getElementById("startBtn");
-const tableContainer = document.getElementById("tableContainer");
+const buyCreditHomeBtn =
+  document.getElementById("buyCreditHomeBtn");
+
+const tableContainer =
+  document.getElementById("tableContainer");
 const submitBtn = document.getElementById("submitBtn");
 const message = document.getElementById("message");
 
@@ -105,6 +109,8 @@ function getCleanUsername() {
     .replace(/[^a-z0-9]/g, "-");
 }
 
+
+
 function renderCreditPanel() {
   creditPanel.style.display = "block";
 
@@ -115,52 +121,96 @@ function renderCreditPanel() {
 
   if (premierLeagueCredits > 0) {
     creditPanel.innerHTML = `
-      <p><strong>Premier League entry credits: ${premierLeagueCredits}</strong></p>
+      <p>
+        <strong>
+          Premier League entry credits:
+          ${premierLeagueCredits}
+        </strong>
+      </p>
     `;
   } else {
     creditPanel.innerHTML = `
-      <p><strong>Premier League entry credits: 0</strong></p>
-      <button type="button" id="buyCreditBtn">
-        Buy 1 credit for £1
+      <p>
+        <strong>
+          Premier League entry credits: 0
+        </strong>
+      </p>
+
+      <button
+        type="button"
+        id="buyCreditBtn"
+        class="buy-credit-circle"
+      >
+        <span class="buy-title">BUY ENTRY</span>
+        <span class="buy-price">£1</span>
       </button>
     `;
 
-    document
-      .getElementById("buyCreditBtn")
-      .addEventListener("click", buyCredit);
+    const gameBuyButton =
+      document.getElementById("buyCreditBtn");
+
+   if (gameBuyButton) {
+  gameBuyButton.addEventListener("click", () => {
+    buyCredit(gameBuyButton);
+  });
+}
   }
 }
 
-async function buyCredit() {
-  const buyButton = document.getElementById("buyCreditBtn");
+async function buyCredit(button) {
+  if (!button) return;
+
+  const originalButtonContent = button.innerHTML;
 
   try {
     if (!auth.currentUser) {
-      throw new Error("You must be logged in before buying a credit.");
+      throw new Error(
+        "You must be logged in before buying a credit."
+      );
     }
 
-    buyButton.disabled = true;
-    buyButton.textContent = "Opening payment page...";
+    button.disabled = true;
 
-    const result = await createPremierLeagueCheckout();
+    button.innerHTML = `
+      <span class="buy-title">OPENING</span>
+      <span class="buy-price">...</span>
+    `;
+
+    const result =
+      await createPremierLeagueCheckout();
 
     if (!result.data?.url) {
-      throw new Error("Stripe did not return a payment page.");
+      throw new Error(
+        "Stripe did not return a payment page."
+      );
     }
 
     window.location.href = result.data.url;
   } catch (error) {
     console.error("Checkout error:", error);
 
-    message.textContent =
+    const errorMessage =
       error.message ||
       "The payment page could not be opened.";
 
-    if (buyButton) {
-      buyButton.disabled = false;
-      buyButton.textContent = "Buy 1 credit for £1";
+    message.textContent = errorMessage;
+
+    /*
+      The message element is hidden while the player
+      is still on the home screen, so show an alert too.
+    */
+    if (!homeScreen.classList.contains("hidden")) {
+      alert(errorMessage);
     }
+
+    button.disabled = false;
+    button.innerHTML = originalButtonContent;
   }
+}
+if (buyCreditHomeBtn) {
+  buyCreditHomeBtn.addEventListener("click", () => {
+    buyCredit(buyCreditHomeBtn);
+  });
 }
 
 startBtn.addEventListener("click", async () => {
