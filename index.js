@@ -147,7 +147,7 @@ function renderFixtures() {
       </div>
 
       <div class="fixture-date">
-        ${fixture.date} · ${fixture.group} · ${fixture.venue}
+      ${fixture.date} · ${fixture.group}${fixture.venue ? ` · ${fixture.venue}` : ""}
       </div>
     `;
 
@@ -204,10 +204,10 @@ function getPredictionsFromPage() {
 
 if (submitPredictionsBtn) {
   submitPredictionsBtn.addEventListener("click", async () => {
-    if (predictionsAreClosed()) {
-      alert("Round of 32 predictions are now closed.");
-      return;
-    }
+if (predictionsAreClosed()) {
+  alert("English League Week One predictions are now closed.");
+  return;
+}
 
  username = localStorage.getItem("scorecast24Username");
 
@@ -393,47 +393,39 @@ function haveAnyResultsBeenAdded() {
 /* =========================
    BUTTONS
 ========================= */
-startGameBtn.addEventListener("click", async () => {
+if (startGameBtn) {
+  startGameBtn.addEventListener("click", async () => {
     if (!requireLogin()) return;
-  const nextRoundAnnouncement = new Date("2026-06-28T04:30:00+01:00");
-  const now = new Date();
-  const timeLeft = nextRoundAnnouncement - now;
 
-  if (timeLeft > 0) {
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-
-    alert(
-      `The next round of fixtures will be announced on Sunday 28 June at around 04:30 am.\n\nCountdown: ${days}d ${hours}h ${minutes}m`
-    );
-
-    return;
-  }
-
-username = localStorage.getItem("scorecast24Username");
-
-if (!username || username.trim().length < 2) {
-  window.location.href = "username.html";
-  return;
-}
-
-renderFixtures();
-showPredictions();
-
-  try {
-    const alreadySubmitted = await hasAlreadySubmitted(username);
-
-    if (alreadySubmitted) {
-      alert("You have already submitted predictions. Showing leaderboard.");
-      await renderLeaderboard();
-      showLeaderboard();
+    if (predictionsAreClosed()) {
+      alert("English League Week One predictions are now closed.");
+      return;
     }
-  } catch (error) {
-    console.error("Firestore check failed:", error);
-    alert("Predictions page loaded, but Firestore connection needs checking.");
-  }
-});
+
+    username = localStorage.getItem("scorecast24Username");
+
+    if (!username || username.trim().length < 2) {
+      window.location.href = "username.html";
+      return;
+    }
+
+    renderFixtures();
+    showPredictions();
+
+    try {
+      const alreadySubmitted = await hasAlreadySubmitted(username);
+
+      if (alreadySubmitted) {
+        alert("You have already submitted predictions. Showing leaderboard.");
+        await renderLeaderboard();
+        showLeaderboard();
+      }
+    } catch (error) {
+      console.error("Firestore check failed:", error);
+      alert("Predictions page loaded, but the Firestore connection needs checking.");
+    }
+  });
+}
 
 if (premierLeagueBtn) {
   premierLeagueBtn.addEventListener("click", () => {
@@ -445,27 +437,40 @@ if (premierLeagueBtn) {
 if (dreamTeamBtn) {
   dreamTeamBtn.addEventListener("click", () => {
     if (!requireLogin()) return;
-    alert("Ultimate Dream Team is coming soon.");
   });
 }
-backHomeBtn.addEventListener("click", showHome);
-leaderboardHomeBtn.addEventListener("click", showHome);
-backToPredictionsBtn.addEventListener("click", async () => {
-  try {
-    const alreadySubmitted = await hasAlreadySubmitted(username);
+if (backHomeBtn) {
+  backHomeBtn.addEventListener("click", showHome);
+}
 
-    if (alreadySubmitted) {
-      alert("You have already submitted predictions. You cannot change them.");
+if (leaderboardHomeBtn) {
+  leaderboardHomeBtn.addEventListener("click", showHome);
+}
+if (backToPredictionsBtn) {
+  backToPredictionsBtn.addEventListener("click", async () => {
+    if (predictionsAreClosed()) {
+      alert("English League Week One predictions are now closed.");
       return;
     }
 
-    renderFixtures();
-    showPredictions();
-  } catch (error) {
-    console.error("Back to predictions failed:", error);
-    alert("Could not check your submission status.");
-  }
-});
+    username = localStorage.getItem("scorecast24Username");
+
+    try {
+      const alreadySubmitted = await hasAlreadySubmitted(username);
+
+      if (alreadySubmitted) {
+        alert("You have already submitted predictions. You cannot change them.");
+        return;
+      }
+
+      renderFixtures();
+      showPredictions();
+    } catch (error) {
+      console.error("Back to predictions failed:", error);
+      alert("Could not check your submission status.");
+    }
+  });
+}
 /* =========================
    HOME PAGE PREVIEWS
 ========================= */
@@ -614,34 +619,52 @@ if (menuToggle && dropdownMenu) {
 
 
 /* =========================
-   ROUND OF 32 COUNTDOWN
+   WEEK ONE COUNTDOWN
 ========================= */
 
-const roundOf32Deadline = new Date("2026-06-28T20:00:00+01:00");
-
-function updateRoundOf32Countdown() {
-  const countdownBox = document.getElementById("roundOf32Countdown");
+function updateWeekOneCountdown() {
+  const countdownBox = document.getElementById("weekOneCountdown");
 
   if (!countdownBox) return;
 
-  const now = new Date();
-  const timeLeft = roundOf32Deadline - now;
+  const timeLeft = predictionsDeadline.getTime() - Date.now();
 
   if (timeLeft <= 0) {
-    countdownBox.innerHTML = "Round of 32 predictions are now closed.";
+    countdownBox.innerHTML =
+      "<strong>English League Week One predictions are now closed.</strong>";
+
+    if (startGameBtn) {
+      startGameBtn.disabled = true;
+      startGameBtn.textContent = "Predictions Closed";
+    }
+
+    if (submitPredictionsBtn) {
+      submitPredictionsBtn.disabled = true;
+    }
+
     return;
   }
 
   const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-  const seconds = Math.floor((timeLeft / 1000) % 60);
+  const hours = Math.floor(
+    (timeLeft / (1000 * 60 * 60)) % 24
+  );
+  const minutes = Math.floor(
+    (timeLeft / (1000 * 60)) % 60
+  );
+  const seconds = Math.floor(
+    (timeLeft / 1000) % 60
+  );
 
-  countdownBox.innerHTML =
-    `Round of 32 predictions close in <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
+  countdownBox.innerHTML = `
+    Predictions close in
+    <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>
+  `;
 }
-updateRoundOf32Countdown();
-setInterval(updateRoundOf32Countdown, 1000);
+
+updateWeekOneCountdown();
+setInterval(updateWeekOneCountdown, 1000);
+
 
 /* =========================
    START
