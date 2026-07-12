@@ -127,3 +127,272 @@ body {
     width: 100%;
   }
 }
+/* =========================
+   DREAM TEAM GAME PAGE
+   ========================= */
+
+.dream-game-page {
+  width: min(1100px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 20px 0 50px;
+}
+
+.dream-game-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.dream-game-header .back-home-link {
+  display: block;
+  width: fit-content;
+  margin: 0 0 14px;
+}
+
+.dream-game-logo {
+  display: block;
+  width: 110px;
+  max-width: 110px;
+  height: auto;
+  margin: 10px auto 18px;
+  border-radius: 18px;
+}
+
+.dream-game-header h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
+  line-height: 1.15;
+}
+
+#dreamLoginStatus {
+  margin: 0;
+  font-weight: 700;
+}
+
+.dream-controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+  background: rgba(4, 19, 48, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+}
+
+.dream-controls label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.dream-controls select,
+.dream-controls input {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 2px solid #ffd633;
+  border-radius: 9px;
+  background: white;
+  color: #071d46;
+  font: inherit;
+}
+
+.dream-summary {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: #ffd633;
+  color: #071d46;
+  font-size: 1.05rem;
+}
+
+.dream-message {
+  min-height: 24px;
+  margin: 12px 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.dream-message.error {
+  color: #ffb3b3;
+}
+
+.dream-message.success {
+  color: #8cffad;
+}
+
+.available-players-section,
+.selected-team-section {
+  margin-top: 25px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(4, 19, 48, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.available-players-section h2,
+.selected-team-section h2 {
+  margin-top: 0;
+}
+
+.player-list,
+.selected-team {
+  display: grid;
+  gap: 10px;
+}
+
+.player-card,
+.selected-player-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 13px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.player-card-details,
+.selected-player-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.player-card-details strong,
+.selected-player-card strong {
+  overflow-wrap: anywhere;
+}
+
+.player-card-details span,
+.selected-player-card span {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.92rem;
+}
+
+.player-card-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #ffd633;
+  color: #071d46;
+  font-weight: 900;
+}
+
+.add-player-button,
+.remove-player-button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.add-player-button {
+  background: #ffd633;
+  color: #071d46;
+}
+
+.remove-player-button {
+  background: #dc3545;
+  color: white;
+}
+
+.add-player-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dream-submit-section {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.dream-submit-section button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.over-budget {
+  color: #b00020;
+}
+
+@media (max-width: 750px) {
+  .dream-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .dream-game-page {
+    width: min(100% - 16px, 1100px);
+    padding-top: 10px;
+  }
+
+  .dream-game-logo {
+    width: 90px;
+    max-width: 90px;
+  }
+
+  .dream-controls {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .dream-summary {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .player-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .player-card-rating {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .add-player-button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .selected-player-card {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-player-button {
+    width: 100%;
+  }
+
+  .dream-submit-section {
+    flex-direction: column;
+  }
+
+  .dream-submit-section .dream-yellow-button {
+    width: 100%;
+  }
+}
