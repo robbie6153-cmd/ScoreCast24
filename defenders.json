@@ -1,0 +1,412 @@
+[
+
+  {"id": "benjamin-white", "name": "Benjamin White", "club": "Arsenal", "position": "Defender", "rating": 83},
+
+  {"id": "brayden-clarke", "name": "Brayden Clarke", "club": "Arsenal", "position": "Defender", "rating": 66},
+
+  {"id": "cristhian-mosquera", "name": "Cristhian Mosquera", "club": "Arsenal", "position": "Defender", "rating": 84},
+
+  {"id": "gabriel-magalhaes", "name": "Gabriel Magalhães", "club": "Arsenal", "position": "Defender", "rating": 92},
+
+  {"id": "josh-nichols", "name": "Josh Nichols", "club": "Arsenal", "position": "Defender", "rating": 66},
+
+  {"id": "jurrien-timber", "name": "Jurriën Timber", "club": "Arsenal", "position": "Defender", "rating": 91},
+
+  {"id": "marli-salmon", "name": "Marli Salmon", "club": "Arsenal", "position": "Defender", "rating": 69},
+
+  {"id": "myles-lewis-skelly", "name": "Myles Lewis-Skelly", "club": "Arsenal", "position": "Defender", "rating": 82},
+
+  {"id": "piero-hincapie", "name": "Piero Hincapié", "club": "Arsenal", "position": "Defender", "rating": 86},
+
+  {"id": "riccardo-calafiori", "name": "Riccardo Calafiori", "club": "Arsenal", "position": "Defender", "rating": 89},
+
+  {"id": "william-saliba", "name": "William Saliba", "club": "Arsenal", "position": "Defender", "rating": 90},
+
+  {"id": "andres-garcia", "name": "Andrés García", "club": "Aston Villa", "position": "Defender", "rating": 70},
+
+  {"id": "ezri-konsa-ngoyo", "name": "Ezri Konsa Ngoyo", "club": "Aston Villa", "position": "Defender", "rating": 82},
+
+  {"id": "ian-maatsen", "name": "Ian Maatsen", "club": "Aston Villa", "position": "Defender", "rating": 77},
+
+  {"id": "lamare-bogarde", "name": "Lamare Bogarde", "club": "Aston Villa", "position": "Defender", "rating": 73},
+
+  {"id": "leon-routh", "name": "Leon Routh", "club": "Aston Villa", "position": "Defender", "rating": 69},
+
+  {"id": "lucas-digne", "name": "Lucas Digne", "club": "Aston Villa", "position": "Defender", "rating": 83},
+
+  {"id": "matty-cash", "name": "Matty Cash", "club": "Aston Villa", "position": "Defender", "rating": 86},
+
+  {"id": "pau-torres", "name": "Pau Torres", "club": "Aston Villa", "position": "Defender", "rating": 78},
+
+  {"id": "tj-carroll", "name": "TJ Carroll", "club": "Aston Villa", "position": "Defender", "rating": 69},
+
+  {"id": "travis-patterson", "name": "Travis Patterson", "club": "Aston Villa", "position": "Defender", "rating": 68},
+
+  {"id": "tyrone-mings", "name": "Tyrone Mings", "club": "Aston Villa", "position": "Defender", "rating": 77},
+
+  {"id": "victor-lindelof", "name": "Victor Lindelöf", "club": "Aston Villa", "position": "Defender", "rating": 79},
+
+  {"id": "adam-smith", "name": "Adam Smith", "club": "Bournemouth", "position": "Defender", "rating": 79},
+
+  {"id": "adrien-truffert", "name": "Adrien Truffert", "club": "Bournemouth", "position": "Defender", "rating": 88},
+
+  {"id": "bafode-diakite", "name": "Bafodé Diakité", "club": "Bournemouth", "position": "Defender", "rating": 75},
+
+  {"id": "james-hill", "name": "James Hill", "club": "Bournemouth", "position": "Defender", "rating": 79},
+
+  {"id": "julio-soler-barreto", "name": "Julio Soler Barreto", "club": "Bournemouth", "position": "Defender", "rating": 69},
+
+  {"id": "marcos-senesi-baron", "name": "Marcos Senesi Barón", "club": "Bournemouth", "position": "Defender", "rating": 90},
+
+  {"id": "matai-akinmboni", "name": "Matai Akinmboni", "club": "Bournemouth", "position": "Defender", "rating": 67},
+
+  {"id": "owen-bevan", "name": "Owen Bevan", "club": "Bournemouth", "position": "Defender", "rating": 67},
+
+  {"id": "veljko-milosavljevic", "name": "Veljko Milosavljevic", "club": "Bournemouth", "position": "Defender", "rating": 76},
+
+  {"id": "alex-jimenez-sanchez", "name": "Álex Jiménez Sánchez", "club": "Bournemouth", "position": "Defender", "rating": 82},
+
+  {"id": "aaron-hickey", "name": "Aaron Hickey", "club": "Brentford", "position": "Defender", "rating": 73},
+
+  {"id": "conor-mcmanus", "name": "Conor McManus", "club": "Brentford", "position": "Defender", "rating": 69},
+
+  {"id": "ethan-pinnock", "name": "Ethan Pinnock", "club": "Brentford", "position": "Defender", "rating": 74},
+
+  {"id": "joshua-stephenson", "name": "Joshua Stephenson", "club": "Brentford", "position": "Defender", "rating": 69},
+
+  {"id": "keane-lewis-potter", "name": "Keane Lewis-Potter", "club": "Brentford", "position": "Defender", "rating": 85},
+
+  {"id": "kristoffer-ajer", "name": "Kristoffer Ajer", "club": "Brentford", "position": "Defender", "rating": 80},
+
+  {"id": "michael-kayode", "name": "Michael Kayode", "club": "Brentford", "position": "Defender", "rating": 85},
+
+  {"id": "nathan-collins", "name": "Nathan Collins", "club": "Brentford", "position": "Defender", "rating": 88},
+
+  {"id": "ollie-shield", "name": "Ollie Shield", "club": "Brentford", "position": "Defender", "rating": 69},
+
+  {"id": "rico-henry", "name": "Rico Henry", "club": "Brentford", "position": "Defender", "rating": 77},
+
+  {"id": "sepp-van-den-berg", "name": "Sepp van den Berg", "club": "Brentford", "position": "Defender", "rating": 82},
+
+  {"id": "adam-webster", "name": "Adam Webster", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 74},
+
+  {"id": "charlie-tasker", "name": "Charlie Tasker", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 67},
+
+  {"id": "ferdi-kadoglu", "name": "Ferdi Kadıoğlu", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 85},
+
+  {"id": "freddie-simmonds", "name": "Freddie Simmonds", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 69},
+
+  {"id": "igor-julio", "name": "Igor Julio", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 77},
+
+  {"id": "jan-paul-van-hecke", "name": "Jan Paul van Hecke", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 87},
+
+  {"id": "joel-veltman", "name": "Joël Veltman", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 77},
+
+  {"id": "lewis-dunk", "name": "Lewis Dunk", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 83},
+
+  {"id": "maxim-de-cuyper", "name": "Maxim De Cuyper", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 79},
+
+  {"id": "olivier-boscagli", "name": "Olivier Boscagli", "club": "Brighton & Hove Albion", "position": "Defender", "rating": 75},
+
+  {"id": "benoit-badiashile-mukinayi", "name": "Benoît Badiashile Mukinayi", "club": "Chelsea", "position": "Defender", "rating": 76},
+
+  {"id": "jorrel-hato", "name": "Jorrel Hato", "club": "Chelsea", "position": "Defender", "rating": 80},
+
+  {"id": "josh-acheampong", "name": "Josh Acheampong", "club": "Chelsea", "position": "Defender", "rating": 69},
+
+  {"id": "levi-samuels-colwill", "name": "Levi Samuels Colwill", "club": "Chelsea", "position": "Defender", "rating": 79},
+
+  {"id": "malo-gusto", "name": "Malo Gusto", "club": "Chelsea", "position": "Defender", "rating": 85},
+
+  {"id": "mamadou-sarr", "name": "Mamadou Sarr", "club": "Chelsea", "position": "Defender", "rating": 77},
+
+  {"id": "marc-cucurella-saseta", "name": "Marc Cucurella Saseta", "club": "Chelsea", "position": "Defender", "rating": 90},
+
+  {"id": "reece-james", "name": "Reece James", "club": "Chelsea", "position": "Defender", "rating": 89},
+
+  {"id": "tosin-adarabioyo", "name": "Tosin Adarabioyo", "club": "Chelsea", "position": "Defender", "rating": 73},
+
+  {"id": "trevoh-chalobah", "name": "Trevoh Chalobah", "club": "Chelsea", "position": "Defender", "rating": 90},
+
+  {"id": "wesley-fofana", "name": "Wesley Fofana", "club": "Chelsea", "position": "Defender", "rating": 80},
+
+  {"id": "bobby-thomas", "name": "Bobby Thomas", "club": "Coventry City", "position": "Defender", "rating": 77},
+
+  {"id": "jake-bidwell", "name": "Jake Bidwell", "club": "Coventry City", "position": "Defender", "rating": 71},
+
+  {"id": "jay-dasilva", "name": "Jay Dasilva", "club": "Coventry City", "position": "Defender", "rating": 75},
+
+  {"id": "joel-latibeaudiere", "name": "Joel Latibeaudiere", "club": "Coventry City", "position": "Defender", "rating": 73},
+
+  {"id": "kaine-kesler-hayden", "name": "Kaine Kesler-Hayden", "club": "Coventry City", "position": "Defender", "rating": 74},
+
+  {"id": "liam-kitching", "name": "Liam Kitching", "club": "Coventry City", "position": "Defender", "rating": 75},
+
+  {"id": "luke-woolfenden", "name": "Luke Woolfenden", "club": "Coventry City", "position": "Defender", "rating": 74},
+
+  {"id": "miguel-angel-brau", "name": "Miguel Ángel Brau", "club": "Coventry City", "position": "Defender", "rating": 70},
+
+  {"id": "milan-van-ewijk", "name": "Milan van Ewijk", "club": "Coventry City", "position": "Defender", "rating": 78},
+
+  {"id": "borna-sosa", "name": "Borna Sosa", "club": "Crystal Palace", "position": "Defender", "rating": 79},
+
+  {"id": "caleb-kporha", "name": "Caleb Kporha", "club": "Crystal Palace", "position": "Defender", "rating": 69},
+
+  {"id": "chadi-riad-dnanou", "name": "Chadi Riad Dnanou", "club": "Crystal Palace", "position": "Defender", "rating": 72},
+
+  {"id": "chris-richards", "name": "Chris Richards", "club": "Crystal Palace", "position": "Defender", "rating": 83},
+
+  {"id": "daniel-munoz-mejia", "name": "Daniel Muñoz Mejía", "club": "Crystal Palace", "position": "Defender", "rating": 91},
+
+  {"id": "dean-benamar", "name": "Dean Benamar", "club": "Crystal Palace", "position": "Defender", "rating": 69},
+
+  {"id": "george-king", "name": "George King", "club": "Crystal Palace", "position": "Defender", "rating": 69},
+
+  {"id": "jaydee-canvot", "name": "Jaydee Canvot", "club": "Crystal Palace", "position": "Defender", "rating": 81},
+
+  {"id": "maxence-lacroix", "name": "Maxence Lacroix", "club": "Crystal Palace", "position": "Defender", "rating": 90},
+
+  {"id": "nathaniel-clyne", "name": "Nathaniel Clyne", "club": "Crystal Palace", "position": "Defender", "rating": 70},
+
+  {"id": "tyrick-mitchell", "name": "Tyrick Mitchell", "club": "Crystal Palace", "position": "Defender", "rating": 89},
+
+  {"id": "adam-aznou", "name": "Adam Aznou", "club": "Everton", "position": "Defender", "rating": 71},
+
+  {"id": "jake-o-brien", "name": "Jake O'Brien", "club": "Everton", "position": "Defender", "rating": 87},
+
+  {"id": "james-tarkowski", "name": "James Tarkowski", "club": "Everton", "position": "Defender", "rating": 92},
+
+  {"id": "jarrad-branthwaite", "name": "Jarrad Branthwaite", "club": "Everton", "position": "Defender", "rating": 86},
+
+  {"id": "michael-keane", "name": "Michael Keane", "club": "Everton", "position": "Defender", "rating": 84},
+
+  {"id": "nathan-patterson", "name": "Nathan Patterson", "club": "Everton", "position": "Defender", "rating": 76},
+
+  {"id": "reece-welch", "name": "Reece Welch", "club": "Everton", "position": "Defender", "rating": 67},
+
+  {"id": "seamus-coleman", "name": "Séamus Coleman", "club": "Everton", "position": "Defender", "rating": 73},
+
+  {"id": "vitalii-mykolenko", "name": "Vitalii Mykolenko", "club": "Everton", "position": "Defender", "rating": 86},
+
+  {"id": "antonee-robinson", "name": "Antonee Robinson", "club": "Fulham", "position": "Defender", "rating": 84},
+
+  {"id": "calvin-bassey", "name": "Calvin Bassey", "club": "Fulham", "position": "Defender", "rating": 82},
+
+  {"id": "issa-diop", "name": "Issa Diop", "club": "Fulham", "position": "Defender", "rating": 76},
+
+  {"id": "joachim-andersen", "name": "Joachim Andersen", "club": "Fulham", "position": "Defender", "rating": 83},
+
+  {"id": "jorge-cuenca-barreno", "name": "Jorge Cuenca Barreno", "club": "Fulham", "position": "Defender", "rating": 76},
+
+  {"id": "kenny-tete", "name": "Kenny Tete", "club": "Fulham", "position": "Defender", "rating": 82},
+
+  {"id": "samuel-amissah", "name": "Samuel Amissah", "club": "Fulham", "position": "Defender", "rating": 67},
+
+  {"id": "timothy-castagne", "name": "Timothy Castagne", "club": "Fulham", "position": "Defender", "rating": 78},
+
+  {"id": "charlie-hughes", "name": "Charlie Hughes", "club": "Hull City", "position": "Defender", "rating": 77},
+
+  {"id": "cody-drameh", "name": "Cody Drameh", "club": "Hull City", "position": "Defender", "rating": 73},
+
+  {"id": "john-egan", "name": "John Egan", "club": "Hull City", "position": "Defender", "rating": 74},
+
+  {"id": "lewie-coyle", "name": "Lewie Coyle", "club": "Hull City", "position": "Defender", "rating": 74},
+
+  {"id": "matty-jacob", "name": "Matty Jacob", "club": "Hull City", "position": "Defender", "rating": 72},
+
+  {"id": "paddy-mcnair", "name": "Paddy McNair", "club": "Hull City", "position": "Defender", "rating": 75},
+
+  {"id": "ryan-giles", "name": "Ryan Giles", "club": "Hull City", "position": "Defender", "rating": 76},
+
+  {"id": "semi-ajayi", "name": "Semi Ajayi", "club": "Hull City", "position": "Defender", "rating": 76},
+
+  {"id": "axel-tuanzebe", "name": "Axel Tuanzebe", "club": "Ipswich Town", "position": "Defender", "rating": 76},
+
+  {"id": "ben-johnson", "name": "Ben Johnson", "club": "Ipswich Town", "position": "Defender", "rating": 75},
+
+  {"id": "conor-townsend", "name": "Conor Townsend", "club": "Ipswich Town", "position": "Defender", "rating": 71},
+
+  {"id": "cedric-kipre", "name": "Cédric Kipré", "club": "Ipswich Town", "position": "Defender", "rating": 77},
+
+  {"id": "dara-o-shea", "name": "Dara O'Shea", "club": "Ipswich Town", "position": "Defender", "rating": 77},
+
+  {"id": "harry-clarke", "name": "Harry Clarke", "club": "Ipswich Town", "position": "Defender", "rating": 73},
+
+  {"id": "jacob-greaves", "name": "Jacob Greaves", "club": "Ipswich Town", "position": "Defender", "rating": 79},
+
+  {"id": "leif-davis", "name": "Leif Davis", "club": "Ipswich Town", "position": "Defender", "rating": 80},
+
+  {"id": "gabriel-gudmundsson", "name": "Gabriel Gudmundsson", "club": "Leeds United", "position": "Defender", "rating": 74},
+
+  {"id": "jaka-bijol", "name": "Jaka Bijol", "club": "Leeds United", "position": "Defender", "rating": 75},
+
+  {"id": "james-justin", "name": "James Justin", "club": "Leeds United", "position": "Defender", "rating": 76},
+
+  {"id": "jayden-bogle", "name": "Jayden Bogle", "club": "Leeds United", "position": "Defender", "rating": 82},
+
+  {"id": "jayden-lienou", "name": "Jayden Lienou", "club": "Leeds United", "position": "Defender", "rating": 69},
+
+  {"id": "joe-rodon", "name": "Joe Rodon", "club": "Leeds United", "position": "Defender", "rating": 76},
+
+  {"id": "pascal-struijk", "name": "Pascal Struijk", "club": "Leeds United", "position": "Defender", "rating": 80},
+
+  {"id": "sam-byram", "name": "Sam Byram", "club": "Leeds United", "position": "Defender", "rating": 67},
+
+  {"id": "sebastiaan-bornauw", "name": "Sebastiaan Bornauw", "club": "Leeds United", "position": "Defender", "rating": 70},
+
+  {"id": "amara-nallo", "name": "Amara Nallo", "club": "Liverpool", "position": "Defender", "rating": 66},
+
+  {"id": "andrew-robertson", "name": "Andrew Robertson", "club": "Liverpool", "position": "Defender", "rating": 86},
+
+  {"id": "calvin-ramsay", "name": "Calvin Ramsay", "club": "Liverpool", "position": "Defender", "rating": 66},
+
+  {"id": "conor-bradley", "name": "Conor Bradley", "club": "Liverpool", "position": "Defender", "rating": 82},
+
+  {"id": "giovanni-leoni", "name": "Giovanni Leoni", "club": "Liverpool", "position": "Defender", "rating": 78},
+
+  {"id": "ibrahima-konate", "name": "Ibrahima Konaté", "club": "Liverpool", "position": "Defender", "rating": 90},
+
+  {"id": "jeremie-frimpong", "name": "Jeremie Frimpong", "club": "Liverpool", "position": "Defender", "rating": 87},
+
+  {"id": "joe-gomez", "name": "Joe Gomez", "club": "Liverpool", "position": "Defender", "rating": 82},
+
+  {"id": "milos-kerkez", "name": "Milos Kerkez", "club": "Liverpool", "position": "Defender", "rating": 88},
+
+  {"id": "rhys-williams", "name": "Rhys Williams", "club": "Liverpool", "position": "Defender", "rating": 66},
+
+  {"id": "talla-ndiaye", "name": "Talla Ndiaye", "club": "Liverpool", "position": "Defender", "rating": 69},
+
+  {"id": "virgil-van-dijk", "name": "Virgil van Dijk", "club": "Liverpool", "position": "Defender", "rating": 92},
+
+  {"id": "wellity-lucky", "name": "Wellity Lucky", "club": "Liverpool", "position": "Defender", "rating": 69},
+
+  {"id": "abdukodir-khusanov", "name": "Abdukodir Khusanov", "club": "Manchester City", "position": "Defender", "rating": 87},
+
+  {"id": "john-stones", "name": "John Stones", "club": "Manchester City", "position": "Defender", "rating": 83},
+
+  {"id": "josko-gvardiol", "name": "Joško Gvardiol", "club": "Manchester City", "position": "Defender", "rating": 88},
+
+  {"id": "marc-guehi", "name": "Marc Guéhi", "club": "Manchester City", "position": "Defender", "rating": 87},
+
+  {"id": "matheus-nunes", "name": "Matheus Nunes", "club": "Manchester City", "position": "Defender", "rating": 90},
+
+  {"id": "max-alleyne", "name": "Max Alleyne", "club": "Manchester City", "position": "Defender", "rating": 70},
+
+  {"id": "nathan-ake", "name": "Nathan Aké", "club": "Manchester City", "position": "Defender", "rating": 83},
+
+  {"id": "nico-o-reilly", "name": "Nico O'Reilly", "club": "Manchester City", "position": "Defender", "rating": 90},
+
+  {"id": "rayan-ait-nouri", "name": "Rayan Aït-Nouri", "club": "Manchester City", "position": "Defender", "rating": 86},
+
+  {"id": "rico-lewis", "name": "Rico Lewis", "club": "Manchester City", "position": "Defender", "rating": 79},
+
+  {"id": "ruben-dias", "name": "Rúben Dias", "club": "Manchester City", "position": "Defender", "rating": 89},
+
+  {"id": "ayden-heaven", "name": "Ayden Heaven", "club": "Manchester United", "position": "Defender", "rating": 70},
+
+  {"id": "diego-leon-blanco", "name": "Diego León Blanco", "club": "Manchester United", "position": "Defender", "rating": 71},
+
+  {"id": "diogo-dalot", "name": "Diogo Dalot", "club": "Manchester United", "position": "Defender", "rating": 84},
+
+  {"id": "godwill-kukonki", "name": "Godwill Kukonki", "club": "Manchester United", "position": "Defender", "rating": 69},
+
+  {"id": "harry-maguire", "name": "Harry Maguire", "club": "Manchester United", "position": "Defender", "rating": 80},
+
+  {"id": "leny-yoro", "name": "Leny Yoro", "club": "Manchester United", "position": "Defender", "rating": 76},
+
+  {"id": "lisandro-martinez", "name": "Lisandro Martínez", "club": "Manchester United", "position": "Defender", "rating": 82},
+
+  {"id": "luke-shaw", "name": "Luke Shaw", "club": "Manchester United", "position": "Defender", "rating": 84},
+
+  {"id": "matthijs-de-ligt", "name": "Matthijs de Ligt", "club": "Manchester United", "position": "Defender", "rating": 83},
+
+  {"id": "noussair-mazraoui", "name": "Noussair Mazraoui", "club": "Manchester United", "position": "Defender", "rating": 83},
+
+  {"id": "patrick-dorgu", "name": "Patrick Dorgu", "club": "Manchester United", "position": "Defender", "rating": 78},
+
+  {"id": "tyler-fredricson", "name": "Tyler Fredricson", "club": "Manchester United", "position": "Defender", "rating": 67},
+
+  {"id": "tyrell-malacia", "name": "Tyrell Malacia", "club": "Manchester United", "position": "Defender", "rating": 67},
+
+  {"id": "alex-murphy", "name": "Alex Murphy", "club": "Newcastle United", "position": "Defender", "rating": 68},
+
+  {"id": "dan-burn", "name": "Dan Burn", "club": "Newcastle United", "position": "Defender", "rating": 86},
+
+  {"id": "emil-krafth", "name": "Emil Krafth", "club": "Newcastle United", "position": "Defender", "rating": 73},
+
+  {"id": "fabian-schar", "name": "Fabian Schär", "club": "Newcastle United", "position": "Defender", "rating": 84},
+
+  {"id": "kieran-trippier", "name": "Kieran Trippier", "club": "Newcastle United", "position": "Defender", "rating": 83},
+
+  {"id": "leo-shahar", "name": "Leo Shahar", "club": "Newcastle United", "position": "Defender", "rating": 69},
+
+  {"id": "lewis-hall", "name": "Lewis Hall", "club": "Newcastle United", "position": "Defender", "rating": 87},
+
+  {"id": "malick-thiaw", "name": "Malick Thiaw", "club": "Newcastle United", "position": "Defender", "rating": 87},
+
+  {"id": "miodrag-pivas", "name": "Miodrag Pivaš", "club": "Newcastle United", "position": "Defender", "rating": 67},
+
+  {"id": "sven-botman", "name": "Sven Botman", "club": "Newcastle United", "position": "Defender", "rating": 85},
+
+  {"id": "tino-livramento", "name": "Tino Livramento", "club": "Newcastle United", "position": "Defender", "rating": 83},
+
+  {"id": "jair-cunha", "name": "Jair Cunha", "club": "Nottingham Forest", "position": "Defender", "rating": 74},
+
+  {"id": "luca-netz", "name": "Luca Netz", "club": "Nottingham Forest", "position": "Defender", "rating": 78},
+
+  {"id": "morato", "name": "Morato", "club": "Nottingham Forest", "position": "Defender", "rating": 78},
+
+  {"id": "murillo", "name": "Murillo", "club": "Nottingham Forest", "position": "Defender", "rating": 87},
+
+  {"id": "neco-williams", "name": "Neco Williams", "club": "Nottingham Forest", "position": "Defender", "rating": 87},
+
+  {"id": "nicolo-savona", "name": "Nicolò Savona", "club": "Nottingham Forest", "position": "Defender", "rating": 79},
+
+  {"id": "nikola-milenkovic", "name": "Nikola Milenković", "club": "Nottingham Forest", "position": "Defender", "rating": 89},
+
+  {"id": "ola-aina", "name": "Ola Aina", "club": "Nottingham Forest", "position": "Defender", "rating": 83},
+
+  {"id": "willy-boly", "name": "Willy Boly", "club": "Nottingham Forest", "position": "Defender", "rating": 67},
+
+  {"id": "zach-abbott", "name": "Zach Abbott", "club": "Nottingham Forest", "position": "Defender", "rating": 69},
+
+  {"id": "daniel-ballard", "name": "Daniel Ballard", "club": "Sunderland", "position": "Defender", "rating": 85},
+
+  {"id": "dennis-cirkin", "name": "Dennis Cirkin", "club": "Sunderland", "position": "Defender", "rating": 72},
+
+  {"id": "jenson-jones", "name": "Jenson Jones", "club": "Sunderland", "position": "Defender", "rating": 69},
+
+  {"id": "luke-o-nien", "name": "Luke O'Nien", "club": "Sunderland", "position": "Defender", "rating": 72},
+
+  {"id": "lutsharel-geertruida", "name": "Lutsharel Geertruida", "club": "Sunderland", "position": "Defender", "rating": 81},
+
+  {"id": "nordi-mukiele", "name": "Nordi Mukiele", "club": "Sunderland", "position": "Defender", "rating": 86},
+
+  {"id": "omar-alderete", "name": "Omar Alderete", "club": "Sunderland", "position": "Defender", "rating": 80},
+
+  {"id": "reinildo-mandava", "name": "Reinildo Mandava", "club": "Sunderland", "position": "Defender", "rating": 73},
+
+  {"id": "trai-hume", "name": "Trai Hume", "club": "Sunderland", "position": "Defender", "rating": 84},
+
+  {"id": "ben-davies", "name": "Ben Davies", "club": "Tottenham Hotspur", "position": "Defender", "rating": 75},
+
+  {"id": "cristian-romero", "name": "Cristian Romero", "club": "Tottenham Hotspur", "position": "Defender", "rating": 88},
+
+  {"id": "destiny-udogie", "name": "Destiny Udogie", "club": "Tottenham Hotspur", "position": "Defender", "rating": 76},
+
+  {"id": "djed-spence", "name": "Djed Spence", "club": "Tottenham Hotspur", "position": "Defender", "rating": 77},
+
+  {"id": "james-rowswell", "name": "James Rowswell", "club": "Tottenham Hotspur", "position": "Defender", "rating": 70},
+
+  {"id": "jun-ai-byfield", "name": "Jun'ai Byfield", "club": "Tottenham Hotspur", "position": "Defender", "rating": 70},
+
+  {"id": "kevin-danso", "name": "Kevin Danso", "club": "Tottenham Hotspur", "position": "Defender", "rating": 77},
+
+  {"id": "micky-van-de-ven", "name": "Micky van de Ven", "club": "Tottenham Hotspur", "position": "Defender", "rating": 87},
+
+  {"id": "pedro-porro-sauceda", "name": "Pedro Porro Sauceda", "club": "Tottenham Hotspur", "position": "Defender", "rating": 89},
+
+  {"id": "radu-dragusin", "name": "Radu Drăgușin", "club": "Tottenham Hotspur", "position": "Defender", "rating": 78},
+
+  {"id": "souza", "name": "Souza", "club": "Tottenham Hotspur", "position": "Defender", "rating": 71}
+]

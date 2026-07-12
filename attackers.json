@@ -1,0 +1,749 @@
+[
+  {
+    "id": "gabriel-jesus",
+    "name": "Gabriel Jesus",
+    "club": "Arsenal",
+    "position": "Attacker",
+    "rating": 82
+  },
+  {
+    "id": "kai-havertz",
+    "name": "Kai Havertz",
+    "club": "Arsenal",
+    "position": "Attacker",
+    "rating": 85
+  },
+  {
+    "id": "viktor-gyokeres",
+    "name": "Viktor Gyökeres",
+    "club": "Arsenal",
+    "position": "Attacker",
+    "rating": 89
+  },
+
+  {
+    "id": "ollie-watkins",
+    "name": "Ollie Watkins",
+    "club": "Aston Villa",
+    "position": "Attacker",
+    "rating": 88
+  },
+  {
+    "id": "tammy-abraham",
+    "name": "Tammy Abraham",
+    "club": "Aston Villa",
+    "position": "Attacker",
+    "rating": 82
+  },
+  {
+    "id": "jamaldeen-jimoh-aloba",
+    "name": "Jamaldeen Jimoh-Aloba",
+    "club": "Aston Villa",
+    "position": "Attacker",
+    "rating": 68
+  },
+  {
+    "id": "rory-wilson",
+    "name": "Rory Wilson",
+    "club": "Aston Villa",
+    "position": "Attacker",
+    "rating": 68
+  },
+
+  {
+    "id": "evanilson",
+    "name": "Evanilson",
+    "club": "Bournemouth",
+    "position": "Attacker",
+    "rating": 84
+  },
+  {
+    "id": "enes-unal",
+    "name": "Enes Ünal",
+    "club": "Bournemouth",
+    "position": "Attacker",
+    "rating": 78
+  },
+  {
+    "id": "eli-junior-kroupi",
+    "name": "Eli Junior Kroupi",
+    "club": "Bournemouth",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "daniel-adu-adjei",
+    "name": "Daniel Adu-Adjei",
+    "club": "Bournemouth",
+    "position": "Attacker",
+    "rating": 68
+  },
+
+  {
+    "id": "igor-thiago",
+    "name": "Igor Thiago",
+    "club": "Brentford",
+    "position": "Attacker",
+    "rating": 83
+  },
+  {
+    "id": "kevin-shade",
+    "name": "Kevin Schade",
+    "club": "Brentford",
+    "position": "Attacker",
+    "rating": 84
+  },
+  {
+    "id": "gustavo-nunes",
+    "name": "Gustavo Nunes",
+    "club": "Brentford",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "ashley-hay",
+    "name": "Ashley Hay",
+    "club": "Brentford",
+    "position": "Attacker",
+    "rating": 67
+  },
+
+  {
+    "id": "stefanos-tzimas",
+    "name": "Stefanos Tzimas",
+    "club": "Brighton & Hove Albion",
+    "position": "Attacker",
+    "rating": 78
+  },
+  {
+    "id": "danny-welbeck",
+    "name": "Danny Welbeck",
+    "club": "Brighton & Hove Albion",
+    "position": "Attacker",
+    "rating": 80
+  },
+  {
+    "id": "charalampos-kostoulas",
+    "name": "Charalampos Kostoulas",
+    "club": "Brighton & Hove Albion",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "ibrahim-osman",
+    "name": "Ibrahim Osman",
+    "club": "Brighton & Hove Albion",
+    "position": "Attacker",
+    "rating": 73
+  },
+  {
+    "id": "zadok-yohanna",
+    "name": "Zadok Yohanna",
+    "club": "Brighton & Hove Albion",
+    "position": "Attacker",
+    "rating": 66
+  },
+
+  {
+    "id": "joao-pedro",
+    "name": "João Pedro",
+    "club": "Chelsea",
+    "position": "Attacker",
+    "rating": 87
+  },
+  {
+    "id": "liam-delap",
+    "name": "Liam Delap",
+    "club": "Chelsea",
+    "position": "Attacker",
+    "rating": 83
+  },
+  {
+    "id": "marc-guiu",
+    "name": "Marc Guiu",
+    "club": "Chelsea",
+    "position": "Attacker",
+    "rating": 74
+  },
+  {
+    "id": "emmanuel-emegha",
+    "name": "Emmanuel Emegha",
+    "club": "Chelsea",
+    "position": "Attacker",
+    "rating": 79
+  },
+  {
+    "id": "david-datro-fofana",
+    "name": "David Datro Fofana",
+    "club": "Chelsea",
+    "position": "Attacker",
+    "rating": 73
+  },
+  {
+    "id": "deivid-washington",
+    "name": "Deivid Washington",
+    "club": "Chelsea",
+    "position": "Attacker",
+    "rating": 70
+  },
+
+  {
+    "id": "haji-wright",
+    "name": "Haji Wright",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 80
+  },
+  {
+    "id": "ellis-simms",
+    "name": "Ellis Simms",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 78
+  },
+  {
+    "id": "brandon-thomas-asante",
+    "name": "Brandon Thomas-Asante",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 75
+  },
+  {
+    "id": "norman-bassette",
+    "name": "Norman Bassette",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 71
+  },
+  {
+    "id": "loum-tchaouna",
+    "name": "Loum Tchaouna",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 77
+  },
+  {
+    "id": "ephron-mason-clark",
+    "name": "Ephron Mason-Clark",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "raphael-borges-rodrigues",
+    "name": "Raphael Borges Rodrigues",
+    "club": "Coventry City",
+    "position": "Attacker",
+    "rating": 72
+  },
+
+  {
+    "id": "jean-philippe-mateta",
+    "name": "Jean-Philippe Mateta",
+    "club": "Crystal Palace",
+    "position": "Attacker",
+    "rating": 86
+  },
+  {
+    "id": "eddie-nketiah",
+    "name": "Eddie Nketiah",
+    "club": "Crystal Palace",
+    "position": "Attacker",
+    "rating": 79
+  },
+  {
+    "id": "odsonne-edouard",
+    "name": "Odsonne Édouard",
+    "club": "Crystal Palace",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "romain-esse",
+    "name": "Romain Esse",
+    "club": "Crystal Palace",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "zach-marsh",
+    "name": "Zach Marsh",
+    "club": "Crystal Palace",
+    "position": "Attacker",
+    "rating": 67
+  },
+
+  {
+    "id": "beto",
+    "name": "Beto",
+    "club": "Everton",
+    "position": "Attacker",
+    "rating": 81
+  },
+  {
+    "id": "thierno-barry",
+    "name": "Thierno Barry",
+    "club": "Everton",
+    "position": "Attacker",
+    "rating": 79
+  },
+  {
+    "id": "youssef-chermiti",
+    "name": "Youssef Chermiti",
+    "club": "Everton",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "martin-sherif",
+    "name": "Martin Sherif",
+    "club": "Everton",
+    "position": "Attacker",
+    "rating": 67
+  },
+
+  {
+    "id": "raul-jimenez",
+    "name": "Raúl Jiménez",
+    "club": "Fulham",
+    "position": "Attacker",
+    "rating": 82
+  },
+  {
+    "id": "rodrigo-muniz",
+    "name": "Rodrigo Muniz",
+    "club": "Fulham",
+    "position": "Attacker",
+    "rating": 81
+  },
+  {
+    "id": "jonah-kusi-asare",
+    "name": "Jonah Kusi-Asare",
+    "club": "Fulham",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "callum-osmand",
+    "name": "Callum Osmand",
+    "club": "Fulham",
+    "position": "Attacker",
+    "rating": 68
+  },
+
+  {
+    "id": "joao-pedro-galvao",
+    "name": "João Pedro Galvão",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 77
+  },
+  {
+    "id": "chris-bedia",
+    "name": "Chris Bedia",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 74
+  },
+  {
+    "id": "mason-burstow",
+    "name": "Mason Burstow",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "joe-gelhardt",
+    "name": "Joe Gelhardt",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 74
+  },
+  {
+    "id": "abu-kamara",
+    "name": "Abu Kamara",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 74
+  },
+  {
+    "id": "mohamed-belloumi",
+    "name": "Mohamed Belloumi",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "liam-millar",
+    "name": "Liam Millar",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 75
+  },
+  {
+    "id": "darko-gyabi",
+    "name": "Darko Gyabi",
+    "club": "Hull City",
+    "position": "Attacker",
+    "rating": 72
+  },
+
+  {
+    "id": "george-hirst",
+    "name": "George Hirst",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "chuba-akpom",
+    "name": "Chuba Akpom",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 78
+  },
+  {
+    "id": "ali-al-hamadi",
+    "name": "Ali Al-Hamadi",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "jaden-philogene",
+    "name": "Jaden Philogene",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 80
+  },
+  {
+    "id": "jack-clarke",
+    "name": "Jack Clarke",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 80
+  },
+  {
+    "id": "wes-burns",
+    "name": "Wes Burns",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "sindre-walle-egeli",
+    "name": "Sindre Walle Egeli",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 74
+  },
+  {
+    "id": "emersonn",
+    "name": "Emersonn",
+    "club": "Ipswich Town",
+    "position": "Attacker",
+    "rating": 72
+  },
+
+  {
+    "id": "dominic-calvert-lewin",
+    "name": "Dominic Calvert-Lewin",
+    "club": "Leeds United",
+    "position": "Attacker",
+    "rating": 79
+  },
+  {
+    "id": "joel-piroe",
+    "name": "Joël Piroe",
+    "club": "Leeds United",
+    "position": "Attacker",
+    "rating": 80
+  },
+  {
+    "id": "lukas-nmecha",
+    "name": "Lukas Nmecha",
+    "club": "Leeds United",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "mateo-joseph",
+    "name": "Mateo Joseph",
+    "club": "Leeds United",
+    "position": "Attacker",
+    "rating": 74
+  },
+  {
+    "id": "patrick-bamford",
+    "name": "Patrick Bamford",
+    "club": "Leeds United",
+    "position": "Attacker",
+    "rating": 73
+  },
+  {
+    "id": "harry-gray",
+    "name": "Harry Gray",
+    "club": "Leeds United",
+    "position": "Attacker",
+    "rating": 68
+  },
+
+  {
+    "id": "alexander-isak",
+    "name": "Alexander Isak",
+    "club": "Liverpool",
+    "position": "Attacker",
+    "rating": 91
+  },
+  {
+    "id": "hugo-ekitike",
+    "name": "Hugo Ekitiké",
+    "club": "Liverpool",
+    "position": "Attacker",
+    "rating": 86
+  },
+  {
+    "id": "victor-munoz",
+    "name": "Víctor Muñoz",
+    "club": "Liverpool",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "jayden-danns",
+    "name": "Jayden Danns",
+    "club": "Liverpool",
+    "position": "Attacker",
+    "rating": 70
+  },
+  {
+    "id": "will-wright",
+    "name": "Will Wright",
+    "club": "Liverpool",
+    "position": "Attacker",
+    "rating": 67
+  },
+
+  {
+    "id": "erling-haaland",
+    "name": "Erling Haaland",
+    "club": "Manchester City",
+    "position": "Attacker",
+    "rating": 93
+  },
+  {
+    "id": "omar-marmoush",
+    "name": "Omar Marmoush",
+    "club": "Manchester City",
+    "position": "Attacker",
+    "rating": 87
+  },
+  {
+    "id": "divine-mukasa",
+    "name": "Divine Mukasa",
+    "club": "Manchester City",
+    "position": "Attacker",
+    "rating": 69
+  },
+
+  {
+    "id": "benjamin-sesko",
+    "name": "Benjamin Šeško",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 86
+  },
+  {
+    "id": "joshua-zirkzee",
+    "name": "Joshua Zirkzee",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 79
+  },
+  {
+    "id": "rasmus-hojlund",
+    "name": "Rasmus Højlund",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 78
+  },
+  {
+    "id": "marcus-rashford",
+    "name": "Marcus Rashford",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 82
+  },
+  {
+    "id": "enyo-kana-biyik",
+    "name": "Enzo Kana-Biyik",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 69
+  },
+  {
+    "id": "chido-obi",
+    "name": "Chido Obi",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 71
+  },
+  {
+    "id": "ethan-wheatley",
+    "name": "Ethan Wheatley",
+    "club": "Manchester United",
+    "position": "Attacker",
+    "rating": 68
+  },
+
+  {
+    "id": "yoane-wissa",
+    "name": "Yoane Wissa",
+    "club": "Newcastle United",
+    "position": "Attacker",
+    "rating": 86
+  },
+  {
+    "id": "nick-woltemade",
+    "name": "Nick Woltemade",
+    "club": "Newcastle United",
+    "position": "Attacker",
+    "rating": 84
+  },
+  {
+    "id": "will-osula",
+    "name": "Will Osula",
+    "club": "Newcastle United",
+    "position": "Attacker",
+    "rating": 73
+  },
+  {
+    "id": "sean-neave",
+    "name": "Sean Neave",
+    "club": "Newcastle United",
+    "position": "Attacker",
+    "rating": 67
+  },
+
+  {
+    "id": "chris-wood",
+    "name": "Chris Wood",
+    "club": "Nottingham Forest",
+    "position": "Attacker",
+    "rating": 85
+  },
+  {
+    "id": "igor-jesus",
+    "name": "Igor Jesus",
+    "club": "Nottingham Forest",
+    "position": "Attacker",
+    "rating": 81
+  },
+  {
+    "id": "taiwo-awoniyi",
+    "name": "Taiwo Awoniyi",
+    "club": "Nottingham Forest",
+    "position": "Attacker",
+    "rating": 77
+  },
+  {
+    "id": "arnaud-kalimuendo",
+    "name": "Arnaud Kalimuendo",
+    "club": "Nottingham Forest",
+    "position": "Attacker",
+    "rating": 81
+  },
+
+  {
+    "id": "wilson-isidor",
+    "name": "Wilson Isidor",
+    "club": "Sunderland",
+    "position": "Attacker",
+    "rating": 79
+  },
+  {
+    "id": "brian-brobbey",
+    "name": "Brian Brobbey",
+    "club": "Sunderland",
+    "position": "Attacker",
+    "rating": 82
+  },
+  {
+    "id": "eliesse-ben-seghir",
+    "name": "Eliesse Ben Seghir",
+    "club": "Sunderland",
+    "position": "Attacker",
+    "rating": 80
+  },
+  {
+    "id": "ahmed-abdullahi",
+    "name": "Ahmed Abdullahi",
+    "club": "Sunderland",
+    "position": "Attacker",
+    "rating": 70
+  },
+  {
+    "id": "mayenda",
+    "name": "Eliezer Mayenda",
+    "club": "Sunderland",
+    "position": "Attacker",
+    "rating": 76
+  },
+  {
+    "id": "jewison-bennette",
+    "name": "Jewison Bennette",
+    "club": "Sunderland",
+    "position": "Attacker",
+    "rating": 70
+  },
+
+  {
+    "id": "dominic-solanke",
+    "name": "Dominic Solanke",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 85
+  },
+  {
+    "id": "richarlison",
+    "name": "Richarlison",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 81
+  },
+  {
+    "id": "mathys-tel",
+    "name": "Mathys Tel",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 82
+  },
+  {
+    "id": "dane-scarlett",
+    "name": "Dane Scarlett",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 70
+  },
+  {
+    "id": "will-lankshear",
+    "name": "Will Lankshear",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 70
+  },
+  {
+    "id": "yang-min-hyeok",
+    "name": "Yang Min-Hyeok",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 72
+  },
+  {
+    "id": "manor-solomon",
+    "name": "Manor Solomon",
+    "club": "Tottenham Hotspur",
+    "position": "Attacker",
+    "rating": 78
+  }
+]

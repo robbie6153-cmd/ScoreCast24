@@ -1,0 +1,129 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    linear-gradient(
+      180deg,
+      #071d46 0%,
+      #0b326d 55%,
+      #061630 100%
+    );
+  color: white;
+}
+
+.dream-welcome-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.dream-welcome-card {
+  width: 100%;
+  max-width: 720px;
+  padding: 32px 22px;
+  text-align: center;
+  background: rgba(4, 19, 48, 0.92);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 22px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.dream-logo {
+  display: block;
+  width: 145px;
+  max-width: 42%;
+  height: auto;
+  margin: 0 auto 24px;
+  border-radius: 22px;
+}
+
+.dream-welcome-card h1 {
+  margin: 0 0 18px;
+  font-size: clamp(1.9rem, 6vw, 3rem);
+  line-height: 1.12;
+}
+
+.dream-welcome-card h2 {
+  margin: 0 auto 24px;
+  max-width: 620px;
+  color: #ffd633;
+  font-size: clamp(1.1rem, 4vw, 1.45rem);
+  line-height: 1.4;
+}
+
+.dream-welcome-card p {
+  max-width: 610px;
+  margin: 0 auto 15px;
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.dream-welcome-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.dream-yellow-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 165px;
+  padding: 15px 24px;
+  border: 2px solid #ffed75;
+  border-radius: 12px;
+  background: #ffd633;
+  color: #071d46;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 800;
+  box-shadow: 0 5px 0 #b68f00;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.dream-yellow-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #b68f00;
+}
+
+.dream-yellow-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #b68f00;
+}
+
+.back-home-link {
+  display: inline-block;
+  margin-top: 30px;
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-home-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 520px) {
+  .dream-welcome-card {
+    padding: 27px 17px;
+  }
+
+  .dream-welcome-buttons {
+    flex-direction: column;
+  }
+
+  .dream-yellow-button {
+    width: 100%;
+  }
+}
