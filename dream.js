@@ -143,7 +143,37 @@ function getWeeklyRoundId() {
   return `${year}-week-${String(weekNumber).padStart(2, "0")}`;
 }
 
+function normalisePosition(position) {
+  const value = String(position || "")
+    .trim()
+    .toLowerCase();
 
+  const positionNames = {
+    gk: "Goalkeeper",
+    goalkeeper: "Goalkeeper",
+    goalkeepers: "Goalkeeper",
+
+    def: "Defender",
+    defender: "Defender",
+    defenders: "Defender",
+    df: "Defender",
+
+    mid: "Midfielder",
+    midfielder: "Midfielder",
+    midfielders: "Midfielder",
+    mf: "Midfielder",
+
+    att: "Attacker",
+    attacker: "Attacker",
+    attackers: "Attacker",
+    forward: "Attacker",
+    forwards: "Attacker",
+    fw: "Attacker",
+    st: "Attacker"
+  };
+
+  return positionNames[value] || position;
+}
 async function loadPlayerFiles() {
   try {
     const fileNames = [
@@ -182,10 +212,11 @@ async function loadPlayerFiles() {
           Number.isFinite(Number(player.rating))
         );
       })
-      .map(player => ({
-        ...player,
-        rating: Number(player.rating)
-      }));
+    .map(player => ({
+  ...player,
+  position: normalisePosition(player.position),
+  rating: Number(player.rating)
+}));
 
     populateClubFilter();
     renderPlayers();
@@ -227,7 +258,10 @@ function populateClubFilter() {
 
 function getFilteredPlayers() {
   const selectedClub = clubFilter.value;
-  const selectedPosition = positionFilter.value;
+ const selectedPosition =
+  positionFilter.value === "ALL"
+    ? "ALL"
+    : normalisePosition(positionFilter.value);
   const searchValue =
     playerSearch.value.trim().toLowerCase();
 
@@ -673,10 +707,12 @@ async function submitDreamTeam() {
       totalPoints: 0
     });
 
-    showMessage(
-      "Your weekly Dream Team has been submitted successfully.",
-      "success"
-    );
+  sessionStorage.setItem(
+  "dreamTeamSubmittedUsername",
+  currentUsername
+);
+
+window.location.href = "./dream-team-created.html";
 
   } catch (error) {
     console.error("Dream Team submission failed:", error);
@@ -778,10 +814,10 @@ playerSearch.addEventListener(
   renderPlayers
 );
 
-submitDreamTeamBtn.addEventListener(
-  "click",
-  submitDreamTeam
-);
+submitDreamTeamBtn.addEventListener("click", event => {
+  event.preventDefault();
+  submitDreamTeam();
+});
 
 
 onAuthStateChanged(auth, async user => {
