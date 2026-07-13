@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Dream Team Created | ScoreCast24</title>
+
+  <meta
+    name="description"
+    content="Your ScoreCast24 weekly Dream Team has been created."
+  >
+
+  <!-- Keep this stylesheet name the same as your other ScoreCast24 pages -->
+  <link
+    rel="stylesheet"
+    href="style.css?v=1"
+  >
+</head>
+
+<body>
+
+  <header class="site-header">
+
+    <a
+      href="index.html"
+      class="site-logo-link"
+      aria-label="ScoreCast24 home"
+    >
+      <img
+        src="scorecast24-logo.png"
+        alt="ScoreCast24"
+        class="site-logo"
+      >
+    </a>
+
+  </header>
+
+
+  <main class="dream-game-page">
+
+    <section class="dream-confirmation-section">
+
+      <div class="dream-confirmation-box">
+
+        <h1 id="dreamConfirmationHeading">
+          Your team has been created!
+        </h1>
+
+        <p class="dream-confirmation-text">
+          Your weekly Dream Team has been saved successfully.
+        </p>
+
+        <div class="dream-confirmation-actions">
+
+          <a
+            href="dream-team-leaderboard.html"
+            class="dream-yellow-button"
+          >
+            View Dream Team Leaderboard
+          </a>
+
+          <a
+            href="dream.html"
+            class="dream-yellow-button"
+          >
+            View My Dream Team
+          </a>
+
+          <a
+            href="index.html"
+            class="dream-yellow-button"
+          >
+            Return to ScoreCast24
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script>
+    const confirmationHeading =
+      document.getElementById(
+        "dreamConfirmationHeading"
+      );
+
+    const submittedUsername =
+      sessionStorage.getItem(
+        "dreamTeamSubmittedUsername"
+      );
+
+    const savedUsername =
+      localStorage.getItem(
+        "scorecast24Username"
+      );
+
+    const username =
+      submittedUsername ||
+      savedUsername ||
+      "";
+
+    if (username) {
+      confirmationHeading.textContent =
+        `${username}, your team has been created!`;
+    } else {
+      confirmationHeading.textContent =
+        "Your team has been created!";
+    }
+
+    sessionStorage.removeItem(
+      "dreamTeamSubmittedUsername"
+    );
+  </script>
+
+</body>
+
+</html>
