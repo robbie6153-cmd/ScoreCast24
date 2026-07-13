@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Dream Team Leaderboard - ScoreCast24</title>
+
+  <meta
+    name="description"
+    content="View the latest ScoreCast24 Dream Team leaderboard and see how players are performing this week."
+  >
+
+  <meta
+    property="og:title"
+    content="Dream Team Leaderboard - ScoreCast24"
+  >
+
+  <meta
+    property="og:description"
+    content="See the latest ScoreCast24 Dream Team standings and compare weekly scores."
+  >
+
+  <meta
+    property="og:image"
+    content="https://scorecast24.com/homepage.jpg"
+  >
+
+  <meta
+    property="og:url"
+    content="https://scorecast24.com/dream-leaderboard.html"
+  >
+
+  <meta
+    property="og:type"
+    content="website"
+  >
+
+  <link
+    rel="canonical"
+    href="https://scorecast24.com/dream-leaderboard.html"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=12"
+  />
+</head>
+
+<body>
+  <div class="page">
+
+    <header class="top-bar">
+      <a href="index.html" class="menu-btn">⌂</a>
+    </header>
+
+    <main class="leaderboard-page dream-leaderboard-page">
+
+      <section class="mini-league-promo">
+
+        <h1>Create Mini League!</h1>
+
+        <p class="mini-league-price">
+          For just £1, you can create your own mini league
+          for up to 20 players!
+        </p>
+
+        <p>
+          Compete among friends, colleagues or family and see
+          who can build the best weekly Dream Team.
+        </p>
+
+        <button
+          type="button"
+          id="createMiniLeagueBtn"
+          class="secondary-btn mini-league-button"
+        >
+          Create Mini League
+        </button>
+
+        <p
+          id="miniLeagueMessage"
+          class="mini-league-message"
+        ></p>
+
+      </section>
+
+
+      <h1>Dream Team Leaderboard</h1>
+
+      <p class="leaderboard-hint">
+        Tap a player to view their Dream Team.
+      </p>
+
+      <div class="round-tabs">
+
+        <button
+          id="seasonDreamLeaderboardTab"
+          class="round-tab"
+        >
+          Season Leaderboard
+        </button>
+
+        <button
+          id="weeklyDreamLeaderboardTab"
+          class="round-tab active"
+        >
+          This Week
+        </button>
+
+      </div>
+
+      <div id="dreamLeaderboardContainer">
+        Loading Dream Team leaderboard...
+      </div>
+
+      <a href="dream.html" class="secondary-btn">
+        View My Dream Team
+      </a>
+
+      <a href="index.html" class="secondary-btn">
+        Back to Home
+      </a>
+
+    </main>
+
+  </div>
+
+  <script
+    type="module"
+    src="dream-leaderboard.js?v=1"
+  ></script>
+</body>
+</html>

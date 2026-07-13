@@ -396,3 +396,106 @@ body {
     width: 100%;
   }
 }
+.mini-league-promo {
+  width: min(92%, 760px);
+  margin: 28px auto;
+  padding: 24px;
+  text-align: center;
+  background: #ffd900;
+  color: #111;
+  border: 3px solid #111;
+  border-radius: 18px;
+  box-shadow: 0 7px 0 #111;
+}
+
+.mini-league-promo h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  text-transform: uppercase;
+}
+
+.mini-league-promo p {
+  margin: 8px auto;
+  max-width: 620px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.mini-league-price {
+  font-weight: 800;
+}
+
+.mini-league-promo .dream-yellow-button {
+  margin-top: 16px;
+  background: #111;
+  color: #ffd900;
+  border: 2px solid #111;
+}
+
+.mini-league-promo .dream-yellow-button:hover {
+  transform: translateY(-2px);
+}
+
+.mini-league-message {
+  min-height: 24px;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.dream-leaderboard-section {
+  width: min(92%, 900px);
+  margin: 32px auto;
+}
+
+.leaderboard-heading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.leaderboard-empty-message {
+  padding: 24px;
+  text-align: center;
+}
+.mini-league-promo {
+  width: min(100%, 760px);
+  margin: 0 auto 30px;
+  padding: 24px;
+  text-align: center;
+  background: #ffd900;
+  color: #111;
+  border: 3px solid #111;
+  border-radius: 18px;
+  box-shadow: 0 7px 0 #111;
+}
+
+.mini-league-promo h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  text-transform: uppercase;
+}
+
+.mini-league-promo p {
+  max-width: 620px;
+  margin: 10px auto;
+  line-height: 1.5;
+}
+
+.mini-league-price {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.mini-league-button {
+  margin-top: 14px;
+}
+
+.mini-league-message {
+  min-height: 24px;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.leaderboard-empty-message {
+  padding: 24px;
+  text-align: center;
+}

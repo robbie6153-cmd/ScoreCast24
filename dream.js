@@ -712,7 +712,7 @@ async function submitDreamTeam() {
   currentUsername
 );
 
-window.location.href = "./dream-team-created.html";
+window.location.href = "./dream-leaderboard.html";
 
   } catch (error) {
     console.error("Dream Team submission failed:", error);
