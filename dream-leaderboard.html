@@ -13,74 +13,128 @@
   <meta
     name="description"
     content="View the latest ScoreCast24 Dream Team leaderboard and see how players are performing this week."
-  >
+  />
 
   <meta
     property="og:title"
     content="Dream Team Leaderboard - ScoreCast24"
-  >
+  />
 
   <meta
     property="og:description"
     content="See the latest ScoreCast24 Dream Team standings and compare weekly scores."
-  >
+  />
 
   <meta
     property="og:image"
     content="https://scorecast24.com/homepage.jpg"
-  >
+  />
 
   <meta
     property="og:url"
     content="https://scorecast24.com/dream-leaderboard.html"
-  >
+  />
 
   <meta
     property="og:type"
     content="website"
-  >
+  />
 
   <link
     rel="canonical"
     href="https://scorecast24.com/dream-leaderboard.html"
-  >
+  />
 
   <link
     rel="stylesheet"
-    href="style.css?v=12"
+    href="style.css?v=13"
   />
 </head>
 
 <body>
+
   <div class="page">
 
     <header class="top-bar">
-      <a href="index.html" class="menu-btn">⌂</a>
+      <a
+        href="index.html"
+        class="menu-btn"
+        aria-label="Back to ScoreCast24 home"
+      >
+        ⌂
+      </a>
     </header>
 
     <main class="leaderboard-page dream-leaderboard-page">
 
+      <!-- MINI LEAGUE SECTION -->
       <section class="mini-league-promo">
 
-        <h1>Create Mini League!</h1>
+        <h1>Dream Team Mini Leagues</h1>
 
         <p class="mini-league-price">
-          For just £1, you can create your own mini league
-          for up to 20 players!
+          Create your own mini league for just £1.
         </p>
 
         <p>
-          Compete among friends, colleagues or family and see
-          who can build the best weekly Dream Team.
+          Compete against friends, family or colleagues throughout
+          the season. Each mini league can include up to 20 players.
         </p>
 
-        <button
-          type="button"
-          id="createMiniLeagueBtn"
+        <details class="mini-league-dropdown">
+
+          <summary class="secondary-btn mini-league-button">
+            Create Mini League
+          </summary>
+
+          <div class="mini-league-options">
+
+            <a
+              href="mini.html?type=public"
+              class="mini-league-option"
+            >
+              <strong>Public Mini League</strong>
+
+              <span>
+                Create a league that other ScoreCast24 players
+                can find and join.
+              </span>
+            </a>
+
+            <a
+              href="mini.html?type=private"
+              class="mini-league-option"
+            >
+              <strong>Private Mini League</strong>
+
+              <span>
+                Create an invite-only league for friends,
+                family or colleagues.
+              </span>
+            </a>
+
+            <a
+              href="mini.html#about"
+              class="mini-league-option"
+            >
+              <strong>About Mini Leagues</strong>
+
+              <span>
+                Learn how mini leagues, joining codes and
+                season standings work.
+              </span>
+            </a>
+
+          </div>
+
+        </details>
+
+        <a
+          href="mini.html#my-leagues"
           class="secondary-btn mini-league-button"
         >
-          Create Mini League
-        </button>
+          View My Mini Leagues
+        </a>
 
         <p
           id="miniLeagueMessage"
@@ -90,6 +144,7 @@
       </section>
 
 
+      <!-- MAIN LEADERBOARD -->
       <h1>Dream Team Leaderboard</h1>
 
       <p class="leaderboard-hint">
@@ -99,6 +154,7 @@
       <div class="round-tabs">
 
         <button
+          type="button"
           id="seasonDreamLeaderboardTab"
           class="round-tab"
         >
@@ -106,6 +162,7 @@
         </button>
 
         <button
+          type="button"
           id="weeklyDreamLeaderboardTab"
           class="round-tab active"
         >
@@ -118,13 +175,30 @@
         Loading Dream Team leaderboard...
       </div>
 
-      <a href="dream.html" class="secondary-btn">
-        View My Dream Team
-      </a>
+      <div class="leaderboard-navigation">
 
-      <a href="index.html" class="secondary-btn">
-        Back to Home
-      </a>
+        <a
+          href="dream-game.html"
+          class="secondary-btn"
+        >
+          View My Dream Team
+        </a>
+
+        <a
+          href="dream.html"
+          class="secondary-btn"
+        >
+          Back to Dream Team
+        </a>
+
+        <a
+          href="index.html"
+          class="secondary-btn"
+        >
+          Back to Home
+        </a>
+
+      </div>
 
     </main>
 
@@ -132,7 +206,8 @@
 
   <script
     type="module"
-    src="dream-leaderboard.js?v=1"
+    src="dream-leaderboard.js?v=2"
   ></script>
+
 </body>
 </html>

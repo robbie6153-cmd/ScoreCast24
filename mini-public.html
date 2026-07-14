@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Create Public Mini League - ScoreCast24</title>
+
+  <meta
+    name="description"
+    content="Create your own public ScoreCast24 Dream Team Mini League."
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=13"
+  >
+</head>
+
+<body>
+
+  <div class="page">
+
+    <header class="top-bar">
+      <a href="index.html" class="menu-btn">⌂</a>
+    </header>
+
+    <main class="leaderboard-page">
+
+      <h1>Create Public Mini League</h1>
+
+      <p class="leaderboard-hint">
+        Create a public Dream Team Mini League that any
+        ScoreCast24 player can join.
+      </p>
+
+      <section class="mini-league-promo">
+
+        <h2>How Public Leagues Work</h2>
+
+        <p>
+          Public Mini Leagues are visible to every ScoreCast24 user.
+          Anyone can join until all available places have been filled.
+        </p>
+
+        <p>
+          Creating a league costs <strong>£1</strong> and includes
+          space for <strong>20 players</strong>.
+        </p>
+
+        <p>
+          Joining an existing public league is free.
+        </p>
+
+        <p>
+          If the league reaches capacity, any existing member can
+          purchase an additional <strong>10 places for £1</strong>.
+        </p>
+
+      </section>
+
+      <section class="mini-league-promo">
+
+        <h2>Choose a Good League Name</h2>
+
+        <p>
+          Choose a clear name so players know exactly what your
+          league is intended for.
+        </p>
+
+        <p><strong>Examples</strong></p>
+
+        <ul>
+          <li>Liverpool FC Supporters</li>
+          <li>Manchester United Fans</li>
+          <li>NHS Staff Fantasy League</li>
+          <li>Teachers League</li>
+          <li>Football Banter League</li>
+          <li>Five-a-Side Friends</li>
+        </ul>
+
+      </section>
+
+      <section class="mini-league-promo">
+
+        <h2>Create Your League</h2>
+
+        <label for="leagueName">
+          <strong>League Name</strong>
+        </label>
+
+        <input
+          type="text"
+          id="leagueName"
+          maxlength="40"
+          autocomplete="off"
+          placeholder="Enter league name"
+        >
+
+        <br><br>
+
+        <label for="leagueDescription">
+          <strong>Description — optional</strong>
+        </label>
+
+        <textarea
+          id="leagueDescription"
+          rows="4"
+          maxlength="250"
+          placeholder="Tell players who this league is for..."
+        ></textarea>
+
+        <br><br>
+
+        <button
+          type="button"
+          id="createPublicLeagueBtn"
+          class="secondary-btn mini-league-button"
+        >
+          Create Public League (£1)
+        </button>
+
+        <p
+          id="publicLeagueMessage"
+          class="mini-league-message"
+        ></p>
+
+      </section>
+
+      <section class="mini-league-promo">
+
+        <h2>Before You Create</h2>
+
+        <ul>
+          <li>The league begins with space for 20 players.</li>
+
+          <li>Joining an existing public league is free.</li>
+
+          <li>
+            The league name must not contain offensive or abusive
+            language.
+          </li>
+
+          <li>
+            Any logged-in ScoreCast24 user will be able to find and
+            join the league.
+          </li>
+
+          <li>
+            The creator does not need to approve new members.
+          </li>
+
+          <li>
+            Dream Team scoring is identical to the main weekly
+            competition.
+          </li>
+
+          <li>
+            The standard ScoreCast24 Rules and Terms apply.
+          </li>
+        </ul>
+
+      </section>
+
+      <a
+        href="mini-about.html"
+        class="secondary-btn"
+      >
+        About Mini Leagues
+      </a>
+
+      <br><br>
+
+      <a
+        href="dream-leaderboard.html"
+        class="secondary-btn"
+      >
+        ← Back to Leaderboard
+      </a>
+
+    </main>
+
+  </div>
+
+  <script
+    type="module"
+    src="mini-leagues.js?v=1"
+  ></script>
+
+</body>
+</html>
