@@ -661,3 +661,44 @@ body {
 .selected-player-card button {
     background: rgba(255,255,255,.9);
 }
+/* MINI LEAGUE LINKS */
+
+.mini-league-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #f5f5f5;
+    border: 2px solid #f6cf43;
+    border-radius: 14px;
+    color: #1f4d21;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.mini-league-option:hover {
+    background: #fff8dc;
+    transform: translateY(-2px);
+}
+
+.mini-league-option strong {
+    color: #1f4d21;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.mini-league-option small {
+    display: block;
+    margin-top: 4px;
+    color: #444;
+    font-size: 15px;
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.mini-league-option:visited,
+.mini-league-option:link {
+    color: #1f4d21;
+    text-decoration: none;
+}
