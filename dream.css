@@ -631,3 +631,33 @@ body {
   cursor: not-allowed;
   opacity: 0.7;
 }
+/* PLAYER POSITION COLOURS */
+
+.player-card.goalkeeper,
+.selected-player-card.goalkeeper {
+    background: #2e7d32;
+    color: #fff;
+}
+
+.player-card.defender,
+.selected-player-card.defender {
+    background: #1565c0;
+    color: #fff;
+}
+
+.player-card.midfielder,
+.selected-player-card.midfielder {
+    background: #c62828;
+    color: #fff;
+}
+
+.player-card.attacker,
+.selected-player-card.attacker {
+    background: #ffd54f;
+    color: #000;
+}
+
+.player-card button,
+.selected-player-card button {
+    background: rgba(255,255,255,.9);
+}
