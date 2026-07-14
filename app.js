@@ -73,6 +73,8 @@ const currentPremierLeagueTable = [
 const homeScreen = document.getElementById("homeScreen");
 const gameScreen = document.getElementById("gameScreen");
 const startBtn = document.getElementById("startBtn");
+const homeBtn = document.getElementById("homeBtn");
+
 const buyCreditHomeBtn =
   document.getElementById("buyCreditHomeBtn");
 
@@ -212,6 +214,10 @@ if (buyCreditHomeBtn) {
     buyCredit(buyCreditHomeBtn);
   });
 }
+
+homeBtn.addEventListener("click", () => {
+  window.location.href = "../index.html";
+});
 
 startBtn.addEventListener("click", async () => {
   homeScreen.classList.add("hidden");
