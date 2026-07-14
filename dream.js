@@ -83,6 +83,8 @@ const clubFilter =
 const positionFilter =
   document.getElementById("positionFilter");
 
+  const ratingFilter =
+  document.getElementById("ratingFilter");
 const playerSearch =
   document.getElementById("playerSearch");
 
@@ -257,11 +259,17 @@ function populateClubFilter() {
 
 
 function getFilteredPlayers() {
-  const selectedClub = clubFilter.value;
- const selectedPosition =
-  positionFilter.value === "ALL"
-    ? "ALL"
-    : normalisePosition(positionFilter.value);
+  const selectedClub =
+    clubFilter.value;
+
+  const selectedPosition =
+    positionFilter.value === "ALL"
+      ? "ALL"
+      : normalisePosition(positionFilter.value);
+
+  const selectedRating =
+    ratingFilter.value;
+
   const searchValue =
     playerSearch.value.trim().toLowerCase();
 
@@ -278,9 +286,35 @@ function getFilteredPlayers() {
       !searchValue ||
       player.name.toLowerCase().includes(searchValue);
 
+    let matchesRating = true;
+
+    if (selectedRating === "60-69") {
+      matchesRating =
+        player.rating >= 60 &&
+        player.rating <= 69;
+    }
+
+    if (selectedRating === "70-79") {
+      matchesRating =
+        player.rating >= 70 &&
+        player.rating <= 79;
+    }
+
+    if (selectedRating === "80-89") {
+      matchesRating =
+        player.rating >= 80 &&
+        player.rating <= 89;
+    }
+
+    if (selectedRating === "90+") {
+      matchesRating =
+        player.rating >= 90;
+    }
+
     return (
       matchesClub &&
       matchesPosition &&
+      matchesRating &&
       matchesSearch
     );
   });
@@ -305,7 +339,7 @@ function renderPlayers() {
         );
 
       return `
-        <article class="player-card">
+  <article class="player-card ${player.position.toLowerCase()}">
 
           <div class="player-card-details">
             <strong>${escapeHtml(player.name)}</strong>
@@ -559,7 +593,7 @@ function updateDreamTeamDisplay() {
 
     selectedTeam.innerHTML =
       orderedPlayers.map(player => `
-        <article class="selected-player-card">
+        <article class="selected-player-card ${player.position.toLowerCase()}">
 
           <div>
             <strong>${escapeHtml(player.name)}</strong>
@@ -808,7 +842,10 @@ positionFilter.addEventListener(
   "change",
   renderPlayers
 );
-
+ratingFilter.addEventListener(
+  "change",
+  renderPlayers
+);
 playerSearch.addEventListener(
   "input",
   renderPlayers
