@@ -749,3 +749,43 @@ h1 {
   font-size: 14px;
   line-height: 1.4;
 }
+/* FORCE MINI LEAGUE LINK STYLING */
+
+.mini-league-options a.mini-league-option {
+  display: flex !important;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 16px;
+  border: 2px solid #e5bf35;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #174f1c !important;
+  text-decoration: none !important;
+  box-sizing: border-box;
+}
+
+.mini-league-options a.mini-league-option:link,
+.mini-league-options a.mini-league-option:visited,
+.mini-league-options a.mini-league-option:hover,
+.mini-league-options a.mini-league-option:active {
+  color: #174f1c !important;
+  text-decoration: none !important;
+}
+
+.mini-league-options a.mini-league-option strong {
+  display: block;
+  color: #174f1c !important;
+  text-decoration: none !important;
+  font-size: 19px;
+}
+
+.mini-league-options a.mini-league-option small {
+  display: block;
+  margin-top: 5px;
+  color: #444444 !important;
+  text-decoration: none !important;
+  font-size: 14px;
+  line-height: 1.4;
+}
