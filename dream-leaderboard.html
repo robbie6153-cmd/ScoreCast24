@@ -47,7 +47,7 @@
 
   <link
     rel="stylesheet"
-    href="style.css?v=13"
+    href="style.css?v=14"
   />
 </head>
 
@@ -67,81 +67,91 @@
 
     <main class="leaderboard-page dream-leaderboard-page">
 
-      <!-- MINI LEAGUE SECTION -->
-      <section class="mini-league-promo">
+     
 
-        <h1>Dream Team Mini Leagues</h1>
+   <section class="mini-league-promo mini-league-menu">
 
-        <p class="mini-league-price">
-          Create your own mini league for just £1.
-        </p>
+  <h1>Dream Team Mini Leagues</h1>
 
-        <p>
-          Compete against friends, family or colleagues throughout
-          the season. Each mini league can include up to 20 players.
-        </p>
+  <p class="mini-league-price">
+    Create your own mini league for just £1.
+  </p>
 
-        <details class="mini-league-dropdown">
+  <p>
+    Compete against friends, family, colleagues or other
+    football supporters throughout the season.
+  </p>
 
-          <summary class="secondary-btn mini-league-button">
-            Create Mini League
-          </summary>
+  <details class="mini-league-dropdown">
 
-          <div class="mini-league-options">
+    <summary class="mini-league-main-button">
+      <span>🏆 Create Mini League</span>
+      <span class="mini-league-arrow">▼</span>
+    </summary>
 
-            <a
-              href="mini.html?type=public"
-              class="mini-league-option"
-            >
-              <strong>Public Mini League</strong>
+    <div class="mini-league-options">
 
-              <span>
-                Create a league that other ScoreCast24 players
-                can find and join.
-              </span>
-            </a>
+      <a
+        href="mini-public.html"
+        class="mini-league-option"
+      >
+        <span class="mini-option-icon">🌍</span>
 
-            <a
-              href="mini.html?type=private"
-              class="mini-league-option"
-            >
-              <strong>Private Mini League</strong>
+        <span class="mini-option-text">
+          <strong>Create Public Mini League</strong>
 
-              <span>
-                Create an invite-only league for friends,
-                family or colleagues.
-              </span>
-            </a>
+          <small>
+            Create a league that any ScoreCast24 player can find
+            and join.
+          </small>
+        </span>
+      </a>
 
-            <a
-              href="mini.html#about"
-              class="mini-league-option"
-            >
-              <strong>About Mini Leagues</strong>
+      <a
+        href="mini-private.html"
+        class="mini-league-option"
+      >
+        <span class="mini-option-icon">🔒</span>
 
-              <span>
-                Learn how mini leagues, joining codes and
-                season standings work.
-              </span>
-            </a>
+        <span class="mini-option-text">
+          <strong>Create Private Mini League</strong>
 
-          </div>
+          <small>
+            Create an invitation-only league for friends,
+            family or colleagues.
+          </small>
+        </span>
+      </a>
 
-        </details>
+      <a
+        href="mini-about.html"
+        class="mini-league-option"
+      >
+        <span class="mini-option-icon">ℹ️</span>
 
-        <a
-          href="mini.html#my-leagues"
-          class="secondary-btn mini-league-button"
-        >
-          View My Mini Leagues
-        </a>
+        <span class="mini-option-text">
+          <strong>About Mini Leagues</strong>
 
-        <p
-          id="miniLeagueMessage"
-          class="mini-league-message"
-        ></p>
+          <small>
+            Find out how public and private mini leagues work.
+          </small>
+        </span>
+      </a>
 
-      </section>
+    </div>
+
+  </details>
+
+  <button
+    type="button"
+    class="mini-league-view-button"
+    disabled
+  >
+    View My Mini Leagues
+    <small>Page being added next</small>
+  </button>
+
+</section>
 
 
       <!-- MAIN LEADERBOARD -->

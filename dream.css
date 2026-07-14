@@ -499,3 +499,135 @@ body {
   padding: 24px;
   text-align: center;
 }
+/* =========================
+   DREAM TEAM MINI LEAGUES
+========================= */
+
+.mini-league-menu {
+  text-align: center;
+}
+
+.mini-league-dropdown {
+  width: 100%;
+  margin: 28px auto 18px;
+}
+
+.mini-league-dropdown summary {
+  list-style: none;
+}
+
+.mini-league-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.mini-league-main-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 22px;
+  border: 3px solid #f6cf43;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    #f8d95f,
+    #e8b92f
+  );
+  color: #071d0a;
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #947314;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.mini-league-main-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #947314;
+}
+
+.mini-league-arrow {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.mini-league-dropdown[open]
+  .mini-league-arrow {
+  transform: rotate(180deg);
+}
+
+.mini-league-options {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.mini-league-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 17px;
+  border: 2px solid #356c31;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #143f18;
+  text-align: left;
+  text-decoration: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+}
+
+.mini-league-option:hover {
+  transform: translateY(-2px);
+  border-color: #f6cf43;
+}
+
+.mini-option-icon {
+  flex-shrink: 0;
+  font-size: 30px;
+}
+
+.mini-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mini-option-text strong {
+  color: #174f1c;
+  font-size: 18px;
+}
+
+.mini-option-text small {
+  color: #444444;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.mini-league-view-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 18px;
+  padding: 17px;
+  border: 2px solid #456b44;
+  border-radius: 16px;
+  background: #eef3ed;
+  color: #264c27;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.mini-league-view-button small {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mini-league-view-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
