@@ -702,3 +702,270 @@ body {
     color: #1f4d21;
     text-decoration: none;
 }
+/* =========================
+   DREAM TEAM LEADERBOARD
+========================= */
+
+#dreamLeaderboardContainer {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.dream-leaderboard-list {
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid #d9ad2b;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.dream-leaderboard-header,
+.dream-leaderboard-row {
+  display: grid;
+  grid-template-columns:
+    52px
+    minmax(120px, 1fr)
+    80px
+    70px;
+
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  padding: 15px 12px;
+}
+
+.dream-leaderboard-header {
+  background: #e9b936;
+  color: #071d0d;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.dream-leaderboard-row {
+  appearance: none;
+  border: 0;
+  border-top: 1px solid #dddddd;
+  border-radius: 0;
+  background: #ffffff;
+  color: #111111;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dream-leaderboard-row:hover,
+.dream-leaderboard-row:focus {
+  background: #fff7d7;
+}
+
+.dream-leaderboard-row.current-dream-player {
+  background: #eef8e9;
+}
+
+.dream-position {
+  font-weight: 900;
+  text-align: center;
+}
+
+.dream-player-name {
+  min-width: 0;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.dream-player-name small {
+  display: block;
+  margin-top: 3px;
+  color: #356b2d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dream-rating-total,
+.dream-points-total {
+  font-weight: 800;
+  text-align: center;
+}
+
+/* Give the first three positions a medal-style marker */
+
+.dream-leaderboard-row:nth-child(2) .dream-position::before {
+  content: "🥇 ";
+}
+
+.dream-leaderboard-row:nth-child(3) .dream-position::before {
+  content: "🥈 ";
+}
+
+.dream-leaderboard-row:nth-child(4) .dream-position::before {
+  content: "🥉 ";
+}
+
+@media (max-width: 480px) {
+  .dream-leaderboard-header,
+  .dream-leaderboard-row {
+    grid-template-columns:
+      42px
+      minmax(105px, 1fr)
+      62px
+      58px;
+
+    gap: 5px;
+    padding: 13px 8px;
+    font-size: 14px;
+  }
+
+  .dream-leaderboard-header {
+    font-size: 13px;
+  }
+}
+/* =========================
+   DREAM TEAM FORMATION PITCH
+========================= */
+
+.formation-pitch-section {
+  width: 100%;
+  margin: 0 0 28px;
+}
+
+.formation-pitch {
+  position: relative;
+  width: 100%;
+  min-height: 760px;
+
+  background-image:
+    linear-gradient(
+      rgba(0, 20, 5, 0.1),
+      rgba(0, 20, 5, 0.1)
+    ),
+    url("pitch.jpg");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding:
+    clamp(55px, 9vw, 90px)
+    clamp(14px, 4vw, 30px)
+    clamp(50px, 8vw, 85px);
+
+  overflow: hidden;
+}
+
+.formation-row {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+
+  width: 100%;
+  gap: 8px;
+}
+
+.formation-player {
+  flex: 1 1 0;
+  max-width: 130px;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+.formation-player-name {
+  min-height: 34px;
+  margin-bottom: 5px;
+  padding: 3px 5px;
+
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.68);
+
+  border-radius: 6px;
+
+  font-size: clamp(11px, 2.7vw, 15px);
+  font-weight: 800;
+  line-height: 1.1;
+
+  overflow-wrap: anywhere;
+  text-shadow: 1px 1px 2px #000000;
+}
+
+.formation-player-dot {
+  width: clamp(32px, 9vw, 54px);
+  height: clamp(32px, 9vw, 54px);
+
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.75),
+    inset 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+.formation-player-dot.goalkeeper {
+  background: #2fa84f;
+}
+
+.formation-player-dot.defender {
+  background: #287ad6;
+}
+
+.formation-player-dot.midfielder {
+  background: #d93636;
+}
+
+.formation-player-dot.attacker {
+  background: #f0c62f;
+}
+
+.attacker-row {
+  order: 1;
+}
+
+.midfielder-row {
+  order: 2;
+}
+
+.defender-row {
+  order: 3;
+}
+
+.goalkeeper-row {
+  order: 4;
+}
+
+@media (max-width: 600px) {
+  .formation-pitch {
+    min-height: 650px;
+    padding:
+      52px 8px
+      44px;
+  }
+
+  .formation-row {
+    gap: 3px;
+  }
+
+  .formation-player {
+    max-width: 82px;
+  }
+
+  .formation-player-name {
+    font-size: 10px;
+    padding: 3px;
+  }
+
+  .formation-player-dot {
+    width: 34px;
+    height: 34px;
+    border-width: 2px;
+  }
+}

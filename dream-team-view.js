@@ -30,7 +30,17 @@ const viewDreamPoints =
 const viewDreamTeamPlayers =
   document.getElementById("viewDreamTeamPlayers");
 
+const attackerFormationRow =
+  document.getElementById("attackerFormationRow");
 
+const midfielderFormationRow =
+  document.getElementById("midfielderFormationRow");
+
+const defenderFormationRow =
+  document.getElementById("defenderFormationRow");
+
+const goalkeeperFormationRow =
+  document.getElementById("goalkeeperFormationRow");
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -137,7 +147,76 @@ function renderPlayers(players) {
     }).join("");
 }
 
+function createFormationPlayer(player) {
+  const position =
+    String(player.position || "")
+      .trim()
+      .toLowerCase();
 
+  return `
+    <div class="formation-player">
+
+      <div class="formation-player-name">
+        ${escapeHtml(player.name || "Unknown player")}
+      </div>
+
+      <div
+        class="formation-player-dot ${escapeHtml(position)}"
+        title="${escapeHtml(player.name || "")}"
+      ></div>
+
+    </div>
+  `;
+}
+
+
+function renderFormation(players) {
+  if (
+    !attackerFormationRow ||
+    !midfielderFormationRow ||
+    !defenderFormationRow ||
+    !goalkeeperFormationRow
+  ) {
+    return;
+  }
+
+  const safePlayers =
+    Array.isArray(players)
+      ? players
+      : [];
+
+  const goalkeepers =
+    safePlayers.filter(
+      player => player.position === "Goalkeeper"
+    );
+
+  const defenders =
+    safePlayers.filter(
+      player => player.position === "Defender"
+    );
+
+  const midfielders =
+    safePlayers.filter(
+      player => player.position === "Midfielder"
+    );
+
+  const attackers =
+    safePlayers.filter(
+      player => player.position === "Attacker"
+    );
+
+  goalkeeperFormationRow.innerHTML =
+    goalkeepers.map(createFormationPlayer).join("");
+
+  defenderFormationRow.innerHTML =
+    defenders.map(createFormationPlayer).join("");
+
+  midfielderFormationRow.innerHTML =
+    midfielders.map(createFormationPlayer).join("");
+
+  attackerFormationRow.innerHTML =
+    attackers.map(createFormationPlayer).join("");
+}
 function renderDreamTeam(entry) {
   const username =
     entry.username || "ScoreCast24 Player";
@@ -175,7 +254,7 @@ function renderDreamTeam(entry) {
   if (dreamTeamSummary) {
     dreamTeamSummary.hidden = false;
   }
-
+renderFormation(entry.players);
   renderPlayers(entry.players);
 }
 
