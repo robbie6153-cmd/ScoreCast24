@@ -1,4 +1,4 @@
-import { db } from "./firebase.js?v=108";
+import { auth, db } from "./firebase.js?v=108";
 
 import {
   collection,
@@ -6,6 +6,10 @@ import {
   query,
   where
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 
 const dreamLeaderboardContainer =
@@ -16,6 +20,9 @@ const seasonDreamLeaderboardTab =
 
 const weeklyDreamLeaderboardTab =
   document.getElementById("weeklyDreamLeaderboardTab");
+
+const viewMyDreamTeamBtn =
+  document.getElementById("viewMyDreamTeamBtn");
 
 
 function getWeeklyRoundId() {
@@ -63,8 +70,10 @@ function getSubmittedUsername() {
 }
 
 
-function showLoadingMessage(message) {
-  if (!dreamLeaderboardContainer) return;
+function showLeaderboardMessage(message) {
+  if (!dreamLeaderboardContainer) {
+    return;
+  }
 
   dreamLeaderboardContainer.innerHTML = `
     <p class="leaderboard-empty-message">
@@ -75,7 +84,7 @@ function showLoadingMessage(message) {
 
 
 function sortEntries(entries) {
-  return entries.sort((a, b) => {
+  return [...entries].sort((a, b) => {
     const pointsDifference =
       Number(b.totalPoints || 0) -
       Number(a.totalPoints || 0);
@@ -86,7 +95,7 @@ function sortEntries(entries) {
 
     /*
       Tie-break:
-      the lower overall rating total wins.
+      lowest team rating wins.
     */
     const ratingDifference =
       Number(a.ratingTotal || 0) -
@@ -97,26 +106,32 @@ function sortEntries(entries) {
     }
 
     return String(a.username || "")
-      .localeCompare(String(b.username || ""));
+      .localeCompare(
+        String(b.username || "")
+      );
   });
 }
 
 
 function renderLeaderboard(entries, mode) {
-  if (!dreamLeaderboardContainer) return;
+  if (!dreamLeaderboardContainer) {
+    return;
+  }
 
   if (!entries.length) {
-    dreamLeaderboardContainer.innerHTML = `
-      <p class="leaderboard-empty-message">
-        No Dream Teams have been submitted
-        ${mode === "weekly" ? "for this week yet." : "yet."}
-      </p>
-    `;
+    showLeaderboardMessage(
+      mode === "weekly"
+        ? "No Dream Teams have been submitted for this week yet."
+        : "No Dream Team season entries are available yet."
+    );
+
     return;
   }
 
   const submittedUsername =
-    getSubmittedUsername().trim().toLowerCase();
+    getSubmittedUsername()
+      .trim()
+      .toLowerCase();
 
   dreamLeaderboardContainer.innerHTML = `
     <div class="dream-leaderboard-list">
@@ -130,7 +145,8 @@ function renderLeaderboard(entries, mode) {
 
       ${entries.map((entry, index) => {
         const username =
-          entry.username || "ScoreCast24 Player";
+          entry.username ||
+          "ScoreCast24 Player";
 
         const isCurrentUser =
           submittedUsername &&
@@ -177,7 +193,9 @@ function renderLeaderboard(entries, mode) {
         const entryId =
           row.dataset.entryId;
 
-        if (!entryId) return;
+        if (!entryId) {
+          return;
+        }
 
         window.location.href =
           `dream-team-view.html?id=${encodeURIComponent(entryId)}`;
@@ -191,7 +209,7 @@ function renderLeaderboard(entries, mode) {
 
 
 async function loadWeeklyLeaderboard() {
-  showLoadingMessage(
+  showLeaderboardMessage(
     "Loading this week’s Dream Team leaderboard..."
   );
 
@@ -201,8 +219,15 @@ async function loadWeeklyLeaderboard() {
 
     const entriesQuery =
       query(
-        collection(db, "dream_team_entries"),
-        where("roundId", "==", roundId)
+        collection(
+          db,
+          "dream_team_entries"
+        ),
+        where(
+          "roundId",
+          "==",
+          roundId
+        )
       );
 
     const snapshot =
@@ -225,25 +250,25 @@ async function loadWeeklyLeaderboard() {
       error
     );
 
-    dreamLeaderboardContainer.innerHTML = `
-      <p class="leaderboard-empty-message">
-        The Dream Team leaderboard could not be loaded.
-        Please try again.
-      </p>
-    `;
+    showLeaderboardMessage(
+      "The Dream Team leaderboard could not be loaded. Please try again."
+    );
   }
 }
 
 
 async function loadSeasonLeaderboard() {
-  showLoadingMessage(
+  showLeaderboardMessage(
     "Loading the Dream Team season leaderboard..."
   );
 
   try {
     const snapshot =
       await getDocs(
-        collection(db, "dream_team_entries")
+        collection(
+          db,
+          "dream_team_entries"
+        )
       );
 
     const entries =
@@ -252,7 +277,8 @@ async function loadSeasonLeaderboard() {
         ...documentSnapshot.data()
       }));
 
-    const totalsByUser = new Map();
+    const totalsByUser =
+      new Map();
 
     entries.forEach(entry => {
       const userKey =
@@ -260,46 +286,56 @@ async function loadSeasonLeaderboard() {
         entry.email ||
         entry.username;
 
-      if (!userKey) return;
+      if (!userKey) {
+        return;
+      }
 
       const existing =
         totalsByUser.get(userKey) || {
-          id: userKey,
+          id: entry.id,
+          uid: entry.uid || "",
           username:
-            entry.username || "ScoreCast24 Player",
+            entry.username ||
+            "ScoreCast24 Player",
           totalPoints: 0,
-          ratingTotal: 0,
+          ratingTotalSum: 0,
           weeksPlayed: 0
         };
 
       existing.totalPoints +=
         Number(entry.totalPoints || 0);
 
-      existing.ratingTotal +=
+      existing.ratingTotalSum +=
         Number(entry.ratingTotal || 0);
 
       existing.weeksPlayed += 1;
 
-      totalsByUser.set(userKey, existing);
+      /*
+        Keep the most recent available entry ID
+        so tapping the season row still opens a team.
+      */
+      existing.id = entry.id;
+
+      totalsByUser.set(
+        userKey,
+        existing
+      );
     });
 
     const seasonEntries =
-      Array.from(totalsByUser.values())
-        .map(entry => ({
-          ...entry,
+      Array.from(
+        totalsByUser.values()
+      ).map(entry => ({
+        ...entry,
 
-          /*
-            For season ties, this uses the player's
-            average weekly rating as the tie-break.
-          */
-          ratingTotal:
-            entry.weeksPlayed > 0
-              ? Math.round(
-                  entry.ratingTotal /
-                  entry.weeksPlayed
-                )
-              : 0
-        }));
+        ratingTotal:
+          entry.weeksPlayed > 0
+            ? Math.round(
+                entry.ratingTotalSum /
+                entry.weeksPlayed
+              )
+            : 0
+      }));
 
     renderLeaderboard(
       sortEntries(seasonEntries),
@@ -312,50 +348,73 @@ async function loadSeasonLeaderboard() {
       error
     );
 
-    dreamLeaderboardContainer.innerHTML = `
-      <p class="leaderboard-empty-message">
-        The season leaderboard could not be loaded.
-        Please try again.
-      </p>
-    `;
+    showLeaderboardMessage(
+      "The season leaderboard could not be loaded. Please try again."
+    );
   }
 }
 
 
-if (seasonDreamLeaderboardTab) {
-  seasonDreamLeaderboardTab.addEventListener(
-    "click",
-    () => {
-      seasonDreamLeaderboardTab.classList.add(
-        "active"
-      );
+function showWeeklyTab() {
+  weeklyDreamLeaderboardTab
+    ?.classList.add("active");
 
-      weeklyDreamLeaderboardTab?.classList.remove(
-        "active"
-      );
+  seasonDreamLeaderboardTab
+    ?.classList.remove("active");
 
-      loadSeasonLeaderboard();
-    }
-  );
+  loadWeeklyLeaderboard();
 }
 
 
-if (weeklyDreamLeaderboardTab) {
-  weeklyDreamLeaderboardTab.addEventListener(
-    "click",
-    () => {
-      weeklyDreamLeaderboardTab.classList.add(
-        "active"
-      );
+function showSeasonTab() {
+  seasonDreamLeaderboardTab
+    ?.classList.add("active");
 
-      seasonDreamLeaderboardTab?.classList.remove(
-        "active"
-      );
+  weeklyDreamLeaderboardTab
+    ?.classList.remove("active");
 
-      loadWeeklyLeaderboard();
-    }
-  );
+  loadSeasonLeaderboard();
 }
 
 
-loadWeeklyLeaderboard();
+seasonDreamLeaderboardTab
+  ?.addEventListener(
+    "click",
+    showSeasonTab
+  );
+
+
+weeklyDreamLeaderboardTab
+  ?.addEventListener(
+    "click",
+    showWeeklyTab
+  );
+
+
+onAuthStateChanged(auth, user => {
+  if (!viewMyDreamTeamBtn) {
+    return;
+  }
+
+  if (!user) {
+    viewMyDreamTeamBtn.href =
+      "index.html";
+
+    viewMyDreamTeamBtn.textContent =
+      "Log In to View My Dream Team";
+
+    return;
+  }
+
+  const roundId =
+    getWeeklyRoundId();
+
+  const entryId =
+    `${roundId}_${user.uid}`;
+
+  viewMyDreamTeamBtn.href =
+    `dream-team-view.html?id=${encodeURIComponent(entryId)}`;
+});
+
+
+showWeeklyTab();
