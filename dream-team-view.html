@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>View Dream Team | ScoreCast24</title>
+
+  <meta
+    name="description"
+    content="View a submitted ScoreCast24 weekly Dream Team."
+  >
+
+  <link
+    rel="stylesheet"
+    href="dream.css?v=4"
+  >
+</head>
+
+<body>
+
+  <main class="dream-team-view-page">
+
+    <section class="dream-game-header">
+
+      <a
+        href="dream-leaderboard.html"
+        class="back-home-link"
+      >
+        ← Back to Dream Team Leaderboard
+      </a>
+
+      <img
+        src="icon-512.png"
+        alt="ScoreCast24"
+        class="dream-game-logo"
+      >
+
+      <h1 id="dreamTeamViewTitle">
+        Dream Team
+      </h1>
+
+      <p id="dreamTeamViewStatus">
+        Loading Dream Team...
+      </p>
+
+    </section>
+
+
+    <section
+      id="dreamTeamSummary"
+      class="dream-summary"
+      hidden
+    >
+
+      <div>
+        Manager:
+        <strong id="viewDreamUsername">—</strong>
+      </div>
+
+      <div>
+        Formation:
+        <strong id="viewDreamFormation">—</strong>
+      </div>
+
+      <div>
+        Team Rating:
+        <strong id="viewDreamRating">—</strong>
+      </div>
+
+      <div>
+        Weekly Points:
+        <strong id="viewDreamPoints">—</strong>
+      </div>
+
+    </section>
+
+
+    <section class="selected-team-section">
+
+      <h2>Selected Players</h2>
+
+      <div
+        id="viewDreamTeamPlayers"
+        class="selected-team"
+      >
+        <p>Loading selected players...</p>
+      </div>
+
+    </section>
+
+
+    <section class="dream-submit-section">
+
+      <a
+        href="dream-leaderboard.html"
+        class="dream-yellow-button"
+      >
+        View Leaderboard
+      </a>
+
+      <a
+        href="dream.html"
+        class="dream-yellow-button"
+      >
+        Dream Team Home
+      </a>
+
+      <a
+        href="index.html"
+        class="dream-yellow-button"
+      >
+        ScoreCast24 Home
+      </a>
+
+    </section>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="dream-team-view.js?v=1"
+  ></script>
+
+</body>
+</html>
