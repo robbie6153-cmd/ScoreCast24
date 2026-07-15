@@ -789,3 +789,227 @@ h1 {
   font-size: 14px;
   line-height: 1.4;
 }
+/* =========================
+   DREAM TEAM LEADERBOARD
+========================= */
+
+#dreamLeaderboardContainer {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.dream-leaderboard-list {
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid #d9ad2b;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.dream-leaderboard-header,
+.dream-leaderboard-row {
+  display: grid;
+  grid-template-columns:
+    52px
+    minmax(120px, 1fr)
+    80px
+    70px;
+
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  padding: 15px 12px;
+}
+
+.dream-leaderboard-header {
+  background: #e9b936;
+  color: #071d0d;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.dream-leaderboard-row {
+  appearance: none;
+  border: 0;
+  border-top: 1px solid #dddddd;
+  border-radius: 0;
+  background: #ffffff;
+  color: #111111;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dream-leaderboard-row:hover,
+.dream-leaderboard-row:focus {
+  background: #fff7d7;
+}
+
+.dream-leaderboard-row.current-dream-player {
+  background: #eef8e9;
+}
+
+.dream-position {
+  font-weight: 900;
+  text-align: center;
+}
+
+.dream-player-name {
+  min-width: 0;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.dream-player-name small {
+  display: block;
+  margin-top: 3px;
+  color: #356b2d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dream-rating-total,
+.dream-points-total {
+  font-weight: 800;
+  text-align: center;
+}
+
+/* Give the first three positions a medal-style marker */
+
+.dream-leaderboard-row:nth-child(2) .dream-position::before {
+  content: "🥇 ";
+}
+
+.dream-leaderboard-row:nth-child(3) .dream-position::before {
+  content: "🥈 ";
+}
+
+.dream-leaderboard-row:nth-child(4) .dream-position::before {
+  content: "🥉 ";
+}
+
+@media (max-width: 480px) {
+  .dream-leaderboard-header,
+  .dream-leaderboard-row {
+    grid-template-columns:
+      42px
+      minmax(105px, 1fr)
+      62px
+      58px;
+
+    gap: 5px;
+    padding: 13px 8px;
+    font-size: 14px;
+  }
+
+  .dream-leaderboard-header {
+    font-size: 13px;
+  }
+}
+/* =================================
+   DREAM TEAM LEADERBOARD TABLE
+================================= */
+
+.dream-leaderboard-page #dreamLeaderboardContainer {
+  width: 100%;
+  margin: 24px 0;
+}
+
+.dream-leaderboard-page .dream-leaderboard-list {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid #d8ae2f;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.dream-leaderboard-page .dream-leaderboard-header,
+.dream-leaderboard-page button.dream-leaderboard-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 76px 70px;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 12px 10px;
+  gap: 6px;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.dream-leaderboard-page .dream-leaderboard-header {
+  background: #e8b82f;
+  color: #071d0c;
+  font-size: 15px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.dream-leaderboard-page button.dream-leaderboard-row {
+  appearance: none;
+  border: 0;
+  border-top: 1px solid #d5d5d5;
+  background: #ffffff;
+  color: #111111;
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dream-leaderboard-page button.dream-leaderboard-row:nth-of-type(even) {
+  background: #f5f5f5;
+}
+
+.dream-leaderboard-page button.dream-leaderboard-row:hover,
+.dream-leaderboard-page button.dream-leaderboard-row:focus {
+  background: #fff2ba;
+}
+
+.dream-leaderboard-page button.dream-leaderboard-row.current-dream-player {
+  background: #e5f4df;
+}
+
+.dream-leaderboard-page .dream-position {
+  font-weight: 900;
+  text-align: center;
+}
+
+.dream-leaderboard-page .dream-player-name {
+  min-width: 0;
+  padding-left: 5px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.dream-leaderboard-page .dream-player-name small {
+  display: block;
+  margin-top: 3px;
+  color: #326226;
+  font-size: 11px;
+}
+
+.dream-leaderboard-page .dream-rating-total,
+.dream-leaderboard-page .dream-points-total {
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .dream-leaderboard-page .dream-leaderboard-header,
+  .dream-leaderboard-page button.dream-leaderboard-row {
+    grid-template-columns: 42px minmax(0, 1fr) 62px 58px;
+    min-height: 54px;
+    padding: 10px 6px;
+    gap: 3px;
+  }
+
+  .dream-leaderboard-page .dream-leaderboard-header {
+    font-size: 12px;
+  }
+
+  .dream-leaderboard-page button.dream-leaderboard-row {
+    font-size: 14px;
+  }
+}
