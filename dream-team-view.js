@@ -160,9 +160,15 @@ function createFormationPlayer(player) {
         ${escapeHtml(player.name || "Unknown player")}
       </div>
 
+      <div class="formation-player-club">
+        (${escapeHtml(player.club || "Unknown club")})
+      </div>
+
       <div
         class="formation-player-dot ${escapeHtml(position)}"
-        title="${escapeHtml(player.name || "")}"
+        title="${escapeHtml(
+          `${player.name || ""} - ${player.club || ""}`
+        )}"
       ></div>
 
     </div>

@@ -969,3 +969,13 @@ body {
     border-width: 2px;
   }
 }
+.formation-player-club {
+  margin-top: 2px;
+  margin-bottom: 4px;
+  font-size: 11px;
+  line-height: 1.1;
+  text-align: center;
+  color: #ffffff;
+  opacity: 0.9;
+  white-space: nowrap;
+}
