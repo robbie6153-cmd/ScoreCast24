@@ -34,7 +34,12 @@
       <p id="dreamLoginStatus">
         Checking your ScoreCast24 account...
       </p>
-
+<div
+  id="dreamDeadlineCountdown"
+  class="dream-deadline-countdown"
+>
+  Loading submission deadline...
+</div>
     </section>
 
     <section class="dream-controls">
@@ -127,17 +132,7 @@
 
     </section>
 
-    <section class="available-players-section">
-
-      <h2>Available Players</h2>
-
-      <div id="playerList" class="player-list">
-        <p>Loading players...</p>
-      </div>
-
-    </section>
-
-<section class="dream-submit-section">
+    <section class="dream-submit-section">
 
   <button
     id="submitDreamTeamBtn"
@@ -162,11 +157,29 @@
     Rules
   </a>
 
+  <div
+    id="dreamDeadlineCountdown"
+    class="dream-deadline-countdown"
+  ></div>
+
 </section>
 
-  </main>
+<section class="available-players-section">
 
-  <script type="module" src="dream.js?v=109"></script>
+  <h2>Available Players</h2>
+
+  <div
+    id="playerList"
+    class="player-list"
+  >
+    <p>Loading players...</p>
+  </div>
+
+</section>
+
+</main>
+
+<script type="module" src="dream.js?v=109"></script>
 
 </body>
 </html>

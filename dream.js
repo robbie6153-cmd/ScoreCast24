@@ -244,7 +244,52 @@ function formatDateTime(
     }
   );
 }
+const dreamDeadlineCountdown =
+  document.getElementById("dreamDeadlineCountdown");
 
+function updateDeadlineCountdown() {
+
+  if (!dreamDeadlineCountdown) {
+    return;
+  }
+
+  const gameWindow =
+    getCurrentGameWindow();
+
+  const now = new Date();
+
+  const target =
+    gameWindow.locked
+      ? gameWindow.reopenTime
+      : gameWindow.lockTime;
+
+  const difference =
+    target - now;
+
+  if (difference <= 0) {
+    return;
+  }
+
+  const days =
+    Math.floor(difference / 86400000);
+
+  const hours =
+    Math.floor((difference % 86400000) / 3600000);
+
+  const minutes =
+    Math.floor((difference % 3600000) / 60000);
+
+  const seconds =
+    Math.floor((difference % 60000) / 1000);
+
+  if (gameWindow.locked) {
+    dreamDeadlineCountdown.textContent =
+      `🔒 Dream Team locked. Reopens in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  } else {
+    dreamDeadlineCountdown.textContent =
+      `⏳ Submissions close in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+}
 
 function refreshLockStatus() {
   const gameWindow =
@@ -1716,7 +1761,10 @@ onAuthStateChanged(
 
 loadPlayerFiles();
 
-setInterval(
-  refreshLockStatus,
-  30000
-);
+refreshLockStatus();
+updateDeadlineCountdown();
+
+setInterval(() => {
+  refreshLockStatus();
+  updateDeadlineCountdown();
+}, 1000);
