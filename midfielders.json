@@ -25,7 +25,6 @@
   {"id": "leon-bailey", "name": "Leon Bailey", "club": "Aston Villa", "position": "Midfielder", "rating": 80},
   {"id": "morgan-rogers", "name": "Morgan Rogers", "club": "Aston Villa", "position": "Midfielder", "rating": 86},
   {"id": "ross-barkley", "name": "Ross Barkley", "club": "Aston Villa", "position": "Midfielder", "rating": 75},
-  {"id": "youri-tielemans", "name": "Youri Tielemans", "club": "Aston Villa", "position": "Midfielder", "rating": 85},
 
   {"id": "alex-scott", "name": "Alex Scott", "club": "Bournemouth", "position": "Midfielder", "rating": 82},
   {"id": "alex-toth", "name": "Alex Tóth", "club": "Bournemouth", "position": "Midfielder", "rating": 74},
@@ -218,6 +217,7 @@
   {"id": "matheus-cunha", "name": "Matheus Cunha", "club": "Manchester United", "position": "Midfielder", "rating": 91},
   {"id": "shea-lacey", "name": "Shea Lacey", "club": "Manchester United", "position": "Midfielder", "rating": 70},
   {"id": "tyler-fletcher", "name": "Tyler Fletcher", "club": "Manchester United", "position": "Midfielder", "rating": 68},
+  {"id": "youri-tielemans", "name": "Youri Tielemans", "club": "Manchester United", "position": "Midfielder", "rating": 85},
 
   {"id": "anthony-elanga", "name": "Anthony Elanga", "club": "Newcastle United", "position": "Midfielder", "rating": 85},
   {"id": "anthony-gordon", "name": "Anthony Gordon", "club": "Newcastle United", "position": "Midfielder", "rating": 89},
