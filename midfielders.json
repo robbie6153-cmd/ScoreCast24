@@ -202,6 +202,7 @@
   {"id": "savinho", "name": "Savinho", "club": "Manchester City", "position": "Midfielder", "rating": 85},
   {"id": "sverre-nypan", "name": "Sverre Nypan", "club": "Manchester City", "position": "Midfielder", "rating": 74},
   {"id": "tijjani-reijnders", "name": "Tijjani Reijnders", "club": "Manchester City", "position": "Midfielder", "rating": 81},
+  {"id": "elliot-anderson", "name": "Elliot Anderson", "club": "Nottingham Forest", "position": "Midfielder", "rating": 88},
 
   {"id": "amad-diallo", "name": "Amad Diallo", "club": "Manchester United", "position": "Midfielder", "rating": 87},
   {"id": "bendito-mantato", "name": "Bendito Mantato", "club": "Manchester United", "position": "Midfielder", "rating": 69},
@@ -236,7 +237,6 @@
   {"id": "callum-hudson-odoi", "name": "Callum Hudson-Odoi", "club": "Nottingham Forest", "position": "Midfielder", "rating": 85},
   {"id": "dan-ndoye", "name": "Dan Ndoye", "club": "Nottingham Forest", "position": "Midfielder", "rating": 82},
   {"id": "dilane-bakwa", "name": "Dilane Bakwa", "club": "Nottingham Forest", "position": "Midfielder", "rating": 82},
-  {"id": "elliot-anderson", "name": "Elliot Anderson", "club": "Nottingham Forest", "position": "Midfielder", "rating": 88},
   {"id": "eric-da-silva-moreira", "name": "Eric da Silva Moreira", "club": "Nottingham Forest", "position": "Midfielder", "rating": 68},
   {"id": "ibrahim-sangare", "name": "Ibrahim Sangaré", "club": "Nottingham Forest", "position": "Midfielder", "rating": 80},
   {"id": "james-mcatee", "name": "James McAtee", "club": "Nottingham Forest", "position": "Midfielder", "rating": 76},
