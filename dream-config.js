@@ -7,22 +7,11 @@ export const DREAM_CONFIG = {
   maxRating: 888,
   maxFromOneClub: 2,
 
+  manualLock: false,
+
   /*
-    First Dream Team gameweek
-
-    Locks:
-    Friday 14 August 2026 at 8:00 pm
-
-    Remains locked while the Friday-to-Monday
-    fixtures are being played.
-
-    Reopens:
-    Tuesday 18 August 2026 at 12:05 am
-
-    Every later lock and reopen time is calculated
-    automatically in seven-day intervals.
+    First weekly lock period
   */
-manualLock: false,
 
   firstLockTime:
     "2026-08-14T20:00:00+01:00",
