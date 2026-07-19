@@ -1341,45 +1341,6 @@ async function loadExistingDreamTeam() {
 
 
 /* =========================
-   LOAD CURRENT WEEK
-========================= */
-
-async function loadExistingDreamTeam() {
-  try {
-    const savedEntry =
-      await getEntryForRound(
-        getCurrentRoundId()
-      );
-
-    if (!savedEntry) {
-      return false;
-    }
-
-    loadEntryIntoEditor(
-      savedEntry
-    );
-
-    showMessage(
-      gameIsLocked
-        ? DREAM_CONFIG.messages.loadedLocked
-        : DREAM_CONFIG.messages.loadedEditable,
-      "success"
-    );
-
-    return true;
-
-  } catch (error) {
-    console.error(
-      "Could not load existing Dream Team:",
-      error
-    );
-
-    return false;
-  }
-}
-
-
-/* =========================
    KEEP OR CHANGE NOTICE
 ========================= */
 
