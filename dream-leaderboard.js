@@ -13,29 +13,165 @@ import {
 
 
 const dreamLeaderboardContainer =
-  document.getElementById("dreamLeaderboardContainer");
+  document.getElementById(
+    "dreamLeaderboardContainer"
+  );
 
 const seasonDreamLeaderboardTab =
-  document.getElementById("seasonDreamLeaderboardTab");
+  document.getElementById(
+    "seasonDreamLeaderboardTab"
+  );
 
 const weeklyDreamLeaderboardTab =
-  document.getElementById("weeklyDreamLeaderboardTab");
+  document.getElementById(
+    "weeklyDreamLeaderboardTab"
+  );
 
 const viewMyDreamTeamBtn =
-  document.getElementById("viewMyDreamTeamBtn");
+  document.getElementById(
+    "viewMyDreamTeamBtn"
+  );
 
 
-function getWeeklyRoundId() {
+/*
+  Returns the Friday belonging to the active
+  Dream Team gameweek.
+
+  Tuesday–Thursday:
+  use the upcoming Friday.
+
+  Friday–Monday:
+  use the Friday that began the current round.
+*/
+function getGameweekFriday() {
   const now = new Date();
 
-  const year = now.getFullYear();
+  const gameweekFriday =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
+  gameweekFriday.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  const dayOfWeek =
+    gameweekFriday.getDay();
+
+  let dateAdjustment = 0;
+
+  if (
+    dayOfWeek >= 2 &&
+    dayOfWeek <= 4
+  ) {
+    /*
+      Tuesday, Wednesday or Thursday:
+      move forward to the upcoming Friday.
+    */
+    dateAdjustment =
+      5 - dayOfWeek;
+
+  } else if (dayOfWeek === 0) {
+    /*
+      Sunday:
+      move backwards two days.
+    */
+    dateAdjustment = -2;
+
+  } else if (dayOfWeek === 1) {
+    /*
+      Monday:
+      move backwards three days.
+    */
+    dateAdjustment = -3;
+  }
+
+  gameweekFriday.setDate(
+    gameweekFriday.getDate() +
+    dateAdjustment
+  );
+
+  return gameweekFriday;
+}
+
+
+/*
+  New preferred round ID.
+
+  Example:
+  2026-gameweek-07-17
+*/
+function getWeeklyRoundId() {
+  const gameweekFriday =
+    getGameweekFriday();
+
+  const year =
+    gameweekFriday.getFullYear();
+
+  const month =
+    String(
+      gameweekFriday.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+  const day =
+    String(
+      gameweekFriday.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+  return (
+    `${year}-gameweek-${month}-${day}`
+  );
+}
+
+
+/*
+  Creates the old week-number ID that was used
+  when the existing teams were submitted.
+
+  Example:
+  2026-week-29
+
+  This temporarily allows old submissions and
+  new submissions to appear together.
+*/
+function getLegacyWeeklyRoundId() {
+  const gameweekFriday =
+    getGameweekFriday();
+
+  const year =
+    gameweekFriday.getFullYear();
 
   const firstDayOfYear =
-    new Date(year, 0, 1);
+    new Date(
+      year,
+      0,
+      1
+    );
+
+  firstDayOfYear.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
   const daysSinceFirstDay =
     Math.floor(
-      (now - firstDayOfYear) / 86400000
+      (
+        gameweekFriday -
+        firstDayOfYear
+      ) / 86400000
     );
 
   const weekNumber =
@@ -47,17 +183,55 @@ function getWeeklyRoundId() {
       ) / 7
     );
 
-  return `${year}-week-${String(weekNumber).padStart(2, "0")}`;
+  return (
+    `${year}-week-${String(
+      weekNumber
+    ).padStart(
+      2,
+      "0"
+    )}`
+  );
+}
+
+
+/*
+  Returns all round IDs that should be treated
+  as the same current football gameweek.
+
+  This includes:
+  1. The new Friday-based ID.
+  2. The old week-number ID.
+*/
+function getActiveRoundIds() {
+  return [
+    getWeeklyRoundId(),
+    getLegacyWeeklyRoundId()
+  ];
 }
 
 
 function escapeHtml(value) {
   return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 }
 
 
@@ -70,7 +244,9 @@ function getSubmittedUsername() {
 }
 
 
-function showLeaderboardMessage(message) {
+function showLeaderboardMessage(
+  message
+) {
   if (!dreamLeaderboardContainer) {
     return;
   }
@@ -84,36 +260,183 @@ function showLeaderboardMessage(message) {
 
 
 function sortEntries(entries) {
-  return [...entries].sort((a, b) => {
-    const pointsDifference =
-      Number(b.totalPoints || 0) -
-      Number(a.totalPoints || 0);
+  return [...entries].sort(
+    (a, b) => {
+      const pointsDifference =
+        Number(
+          b.totalPoints || 0
+        ) -
+        Number(
+          a.totalPoints || 0
+        );
 
-    if (pointsDifference !== 0) {
-      return pointsDifference;
-    }
+      if (
+        pointsDifference !== 0
+      ) {
+        return pointsDifference;
+      }
 
-    /*
-      Tie-break:
-      lowest team rating wins.
-    */
-    const ratingDifference =
-      Number(a.ratingTotal || 0) -
-      Number(b.ratingTotal || 0);
+      /*
+        Tie-break:
+        lowest team rating wins.
+      */
+      const ratingDifference =
+        Number(
+          a.ratingTotal || 0
+        ) -
+        Number(
+          b.ratingTotal || 0
+        );
 
-    if (ratingDifference !== 0) {
-      return ratingDifference;
-    }
+      if (
+        ratingDifference !== 0
+      ) {
+        return ratingDifference;
+      }
 
-    return String(a.username || "")
-      .localeCompare(
-        String(b.username || "")
+      return String(
+        a.username || ""
+      ).localeCompare(
+        String(
+          b.username || ""
+        )
       );
-  });
+    }
+  );
 }
 
 
-function renderLeaderboard(entries, mode) {
+/*
+  Creates a reliable user key for preventing
+  accidental duplicate leaderboard rows.
+*/
+function getEntryUserKey(entry) {
+  if (entry.uid) {
+    return `uid:${entry.uid}`;
+  }
+
+  if (entry.email) {
+    return (
+      `email:${String(
+        entry.email
+      ).trim().toLowerCase()}`
+    );
+  }
+
+  if (entry.username) {
+    return (
+      `username:${String(
+        entry.username
+      ).trim().toLowerCase()}`
+    );
+  }
+
+  return `document:${entry.id}`;
+}
+
+
+/*
+  If a user somehow has both an old-format and
+  new-format submission for the same gameweek,
+  only one leaderboard row is shown.
+
+  The new Friday-based entry is preferred.
+*/
+function removeCurrentRoundDuplicates(
+  entries
+) {
+  const preferredRoundId =
+    getWeeklyRoundId();
+
+  const entriesByUser =
+    new Map();
+
+  entries.forEach(entry => {
+    const userKey =
+      getEntryUserKey(entry);
+
+    const existing =
+      entriesByUser.get(userKey);
+
+    if (!existing) {
+      entriesByUser.set(
+        userKey,
+        entry
+      );
+
+      return;
+    }
+
+    const entryUsesPreferredRound =
+      entry.roundId ===
+      preferredRoundId;
+
+    const existingUsesPreferredRound =
+      existing.roundId ===
+      preferredRoundId;
+
+    if (
+      entryUsesPreferredRound &&
+      !existingUsesPreferredRound
+    ) {
+      entriesByUser.set(
+        userKey,
+        entry
+      );
+    }
+  });
+
+  return Array.from(
+    entriesByUser.values()
+  );
+}
+
+
+/*
+  Stops season totals from counting the same
+  person twice in one round if old and new IDs
+  temporarily coexist.
+*/
+function removeSeasonDuplicates(
+  entries
+) {
+  const uniqueEntries =
+    new Map();
+
+  entries.forEach(entry => {
+    const userKey =
+      getEntryUserKey(entry);
+
+    const roundKey =
+      entry.roundId ||
+      entry.gameweekId ||
+      entry.id;
+
+    const combinedKey =
+      `${userKey}_${roundKey}`;
+
+    if (
+      !uniqueEntries.has(
+        combinedKey
+      )
+    ) {
+      uniqueEntries.set(
+        combinedKey,
+        entry
+      );
+    }
+  });
+
+  return Array.from(
+    uniqueEntries.values()
+  );
+}
+
+
+function renderLeaderboard(
+  entries,
+  mode
+) {
   if (!dreamLeaderboardContainer) {
     return;
   }
@@ -121,7 +444,7 @@ function renderLeaderboard(entries, mode) {
   if (!entries.length) {
     showLeaderboardMessage(
       mode === "weekly"
-        ? "No Dream Teams have been submitted for this week yet."
+        ? "No Dream Teams have been submitted for this gameweek yet."
         : "No Dream Team season entries are available yet."
     );
 
@@ -143,63 +466,96 @@ function renderLeaderboard(entries, mode) {
         <span>Points</span>
       </div>
 
-      ${entries.map((entry, index) => {
-        const username =
-          entry.username ||
-          "ScoreCast24 Player";
+      ${entries.map(
+        (entry, index) => {
+          const username =
+            entry.username ||
+            "ScoreCast24 Player";
 
-        const isCurrentUser =
-          submittedUsername &&
-          username.trim().toLowerCase() ===
-            submittedUsername;
+          const isCurrentUser =
+            submittedUsername &&
+            username
+              .trim()
+              .toLowerCase() ===
+              submittedUsername;
 
-        return `
-          <button
-            type="button"
-            class="dream-leaderboard-row
-              ${isCurrentUser ? "current-dream-player" : ""}"
-            data-entry-id="${escapeHtml(entry.id)}"
-          >
-            <span class="dream-position">
-              ${index + 1}
-            </span>
+          return `
+            <button
+              type="button"
+              class="dream-leaderboard-row
+                ${
+                  isCurrentUser
+                    ? "current-dream-player"
+                    : ""
+                }"
+              data-entry-id="${
+                escapeHtml(
+                  entry.id
+                )
+              }"
+            >
+              <span class="dream-position">
+                ${index + 1}
+              </span>
 
-            <span class="dream-player-name">
-              ${escapeHtml(username)}
+              <span class="dream-player-name">
+                ${escapeHtml(
+                  username
+                )}
 
-              ${isCurrentUser ? `
-                <small>Your team</small>
-              ` : ""}
-            </span>
+                ${
+                  isCurrentUser
+                    ? `
+                      <small>
+                        Your team
+                      </small>
+                    `
+                    : ""
+                }
+              </span>
 
-            <span class="dream-rating-total">
-              ${Number(entry.ratingTotal || 0)}
-            </span>
+              <span class="dream-rating-total">
+                ${Number(
+                  entry.ratingTotal || 0
+                )}
+              </span>
 
-            <span class="dream-points-total">
-              ${Number(entry.totalPoints || 0)}
-            </span>
-          </button>
-        `;
-      }).join("")}
+              <span class="dream-points-total">
+                ${Number(
+                  entry.totalPoints || 0
+                )}
+              </span>
+            </button>
+          `;
+        }
+      ).join("")}
 
     </div>
   `;
 
   document
-    .querySelectorAll(".dream-leaderboard-row")
+    .querySelectorAll(
+      ".dream-leaderboard-row"
+    )
     .forEach(row => {
-      row.addEventListener("click", () => {
-        const entryId =
-          row.dataset.entryId;
+      row.addEventListener(
+        "click",
+        () => {
+          const entryId =
+            row.dataset.entryId;
 
-        if (!entryId) {
-          return;
+          if (!entryId) {
+            return;
+          }
+
+          window.location.href =
+            `dream-team-view.html?id=${
+              encodeURIComponent(
+                entryId
+              )
+            }`;
         }
-
-        window.location.href =
-          `dream-team-view.html?id=${encodeURIComponent(entryId)}`;
-      });
+      );
     });
 
   sessionStorage.removeItem(
@@ -208,36 +564,52 @@ function renderLeaderboard(entries, mode) {
 }
 
 
+async function getActiveRoundEntries() {
+  const activeRoundIds =
+    getActiveRoundIds();
+
+  const entriesQuery =
+    query(
+      collection(
+        db,
+        "dream_team_entries"
+      ),
+      where(
+        "roundId",
+        "in",
+        activeRoundIds
+      )
+    );
+
+  const snapshot =
+    await getDocs(
+      entriesQuery
+    );
+
+  const entries =
+    snapshot.docs.map(
+      documentSnapshot => ({
+        id:
+          documentSnapshot.id,
+
+        ...documentSnapshot.data()
+      })
+    );
+
+  return removeCurrentRoundDuplicates(
+    entries
+  );
+}
+
+
 async function loadWeeklyLeaderboard() {
   showLeaderboardMessage(
-    "Loading this week’s Dream Team leaderboard..."
+    "Loading this gameweek’s Dream Team leaderboard..."
   );
 
   try {
-    const roundId =
-      getWeeklyRoundId();
-
-    const entriesQuery =
-      query(
-        collection(
-          db,
-          "dream_team_entries"
-        ),
-        where(
-          "roundId",
-          "==",
-          roundId
-        )
-      );
-
-    const snapshot =
-      await getDocs(entriesQuery);
-
     const entries =
-      snapshot.docs.map(documentSnapshot => ({
-        id: documentSnapshot.id,
-        ...documentSnapshot.data()
-      }));
+      await getActiveRoundEntries();
 
     renderLeaderboard(
       sortEntries(entries),
@@ -271,11 +643,20 @@ async function loadSeasonLeaderboard() {
         )
       );
 
+    const allEntries =
+      snapshot.docs.map(
+        documentSnapshot => ({
+          id:
+            documentSnapshot.id,
+
+          ...documentSnapshot.data()
+        })
+      );
+
     const entries =
-      snapshot.docs.map(documentSnapshot => ({
-        id: documentSnapshot.id,
-        ...documentSnapshot.data()
-      }));
+      removeSeasonDuplicates(
+        allEntries
+      );
 
     const totalsByUser =
       new Map();
@@ -291,9 +672,12 @@ async function loadSeasonLeaderboard() {
       }
 
       const existing =
-        totalsByUser.get(userKey) || {
+        totalsByUser.get(
+          userKey
+        ) || {
           id: entry.id,
-          uid: entry.uid || "",
+          uid:
+            entry.uid || "",
           username:
             entry.username ||
             "ScoreCast24 Player",
@@ -303,18 +687,23 @@ async function loadSeasonLeaderboard() {
         };
 
       existing.totalPoints +=
-        Number(entry.totalPoints || 0);
+        Number(
+          entry.totalPoints || 0
+        );
 
       existing.ratingTotalSum +=
-        Number(entry.ratingTotal || 0);
+        Number(
+          entry.ratingTotal || 0
+        );
 
       existing.weeksPlayed += 1;
 
       /*
-        Keep the most recent available entry ID
-        so tapping the season row still opens a team.
+        Keep an available entry ID so pressing
+        the season row still opens a team.
       */
-      existing.id = entry.id;
+      existing.id =
+        entry.id;
 
       totalsByUser.set(
         userKey,
@@ -338,7 +727,9 @@ async function loadSeasonLeaderboard() {
       }));
 
     renderLeaderboard(
-      sortEntries(seasonEntries),
+      sortEntries(
+        seasonEntries
+      ),
       "season"
     );
 
@@ -357,10 +748,14 @@ async function loadSeasonLeaderboard() {
 
 function showWeeklyTab() {
   weeklyDreamLeaderboardTab
-    ?.classList.add("active");
+    ?.classList.add(
+      "active"
+    );
 
   seasonDreamLeaderboardTab
-    ?.classList.remove("active");
+    ?.classList.remove(
+      "active"
+    );
 
   loadWeeklyLeaderboard();
 }
@@ -368,10 +763,14 @@ function showWeeklyTab() {
 
 function showSeasonTab() {
   seasonDreamLeaderboardTab
-    ?.classList.add("active");
+    ?.classList.add(
+      "active"
+    );
 
   weeklyDreamLeaderboardTab
-    ?.classList.remove("active");
+    ?.classList.remove(
+      "active"
+    );
 
   loadSeasonLeaderboard();
 }
@@ -391,30 +790,88 @@ weeklyDreamLeaderboardTab
   );
 
 
-onAuthStateChanged(auth, user => {
-  if (!viewMyDreamTeamBtn) {
-    return;
-  }
+onAuthStateChanged(
+  auth,
+  async user => {
+    if (!viewMyDreamTeamBtn) {
+      return;
+    }
 
-  if (!user) {
-    viewMyDreamTeamBtn.href =
-      "index.html";
+    if (!user) {
+      viewMyDreamTeamBtn.href =
+        "index.html";
+
+      viewMyDreamTeamBtn.textContent =
+        "Log In to View My Dream Team";
+
+      return;
+    }
 
     viewMyDreamTeamBtn.textContent =
-      "Log In to View My Dream Team";
+      "Loading My Dream Team...";
 
-    return;
+    viewMyDreamTeamBtn.removeAttribute(
+      "href"
+    );
+
+    try {
+      const entries =
+        await getActiveRoundEntries();
+
+      const userEntry =
+        entries.find(entry => {
+          if (
+            entry.uid &&
+            entry.uid === user.uid
+          ) {
+            return true;
+          }
+
+          /*
+            Fallback for older documents whose
+            document ID contains the user's UID.
+          */
+          return String(
+            entry.id || ""
+          ).includes(
+            user.uid
+          );
+        });
+
+      if (!userEntry) {
+        viewMyDreamTeamBtn.href =
+          "dream.html";
+
+        viewMyDreamTeamBtn.textContent =
+          "Choose My Dream Team";
+
+        return;
+      }
+
+      viewMyDreamTeamBtn.href =
+        `dream-team-view.html?id=${
+          encodeURIComponent(
+            userEntry.id
+          )
+        }`;
+
+      viewMyDreamTeamBtn.textContent =
+        "View My Dream Team";
+
+    } catch (error) {
+      console.error(
+        "View My Dream Team error:",
+        error
+      );
+
+      viewMyDreamTeamBtn.href =
+        "dream.html";
+
+      viewMyDreamTeamBtn.textContent =
+        "View My Dream Team";
+    }
   }
-
-  const roundId =
-    getWeeklyRoundId();
-
-  const entryId =
-    `${roundId}_${user.uid}`;
-
-  viewMyDreamTeamBtn.href =
-    `dream-team-view.html?id=${encodeURIComponent(entryId)}`;
-});
+);
 
 
 showWeeklyTab();

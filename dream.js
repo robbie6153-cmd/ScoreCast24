@@ -58,7 +58,13 @@ let currentUsername = "";
 let gameIsLocked = false;
 let playerFilesLoaded = false;
 let rolloverPromptOpen = false;
-
+/*
+  If an existing team was saved using the old
+  round-ID format, keep using that document when
+  the user edits and resubmits it.
+*/
+let currentEntryDocumentId = null;
+let currentEntryRoundId = null;
 
 /* =========================
    PAGE ELEMENTS
@@ -129,19 +135,86 @@ function clearMessage() {
    WEEKLY ROUND IDS
 ========================= */
 
-function getWeeklyRoundIdForDate(
+/*
+  The round is identified by its Friday lock date.
+
+  Example:
+  2026-gameweek-08-14
+
+  The same round remains active:
+  - before Friday while selections are open
+  - after Friday while teams are locked
+  - through the Monday fixtures
+  - until the configured reopen time
+*/
+function getFridayRoundIdForDate(
+  date
+) {
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+  return (
+    `${year}-gameweek-${month}-${day}`
+  );
+}
+
+
+/*
+  Produces the older week-number round ID.
+
+  Existing Firestore documents may still use
+  this format, so it must remain supported.
+*/
+function getLegacyRoundIdForDate(
   date
 ) {
   const year =
     date.getFullYear();
 
   const firstDayOfYear =
-    new Date(year, 0, 1);
+    new Date(
+      year,
+      0,
+      1
+    );
+
+  firstDayOfYear.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  const comparisonDate =
+    new Date(date);
+
+  comparisonDate.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
   const daysSinceFirstDay =
     Math.floor(
       (
-        date -
+        comparisonDate -
         firstDayOfYear
       ) / 86400000
     );
@@ -156,44 +229,94 @@ function getWeeklyRoundIdForDate(
     );
 
   return (
-    `${year}-week-` +
-    String(weekNumber).padStart(2, "0")
+    `${year}-week-${String(
+      weekNumber
+    ).padStart(
+      2,
+      "0"
+    )}`
   );
 }
 
 
+/*
+  The current round is always anchored to the
+  relevant configured Friday lock time.
+*/
 function getCurrentRoundId() {
-  return getWeeklyRoundIdForDate(
-    new Date()
+  const gameWindow =
+    getCurrentGameWindow();
+
+  return getFridayRoundIdForDate(
+    gameWindow.lockTime
   );
 }
 
 
-function getPreviousRoundId() {
-  const previousWeek =
+/*
+  Returns both possible IDs for the current round:
+  1. New Friday-date ID.
+  2. Old week-number ID.
+*/
+function getCurrentRoundIds() {
+  const gameWindow =
+    getCurrentGameWindow();
+
+  return [
+    getFridayRoundIdForDate(
+      gameWindow.lockTime
+    ),
+
+    getLegacyRoundIdForDate(
+      gameWindow.lockTime
+    )
+  ];
+}
+
+
+/*
+  Previous round means the Friday lock date
+  exactly seven days before the current round.
+*/
+function getPreviousRoundIds() {
+  const gameWindow =
+    getCurrentGameWindow();
+
+  const previousLockTime =
     new Date(
-      Date.now() -
+      gameWindow.lockTime.getTime() -
       ONE_WEEK_MS
     );
 
-  return getWeeklyRoundIdForDate(
-    previousWeek
-  );
+  return [
+    getFridayRoundIdForDate(
+      previousLockTime
+    ),
+
+    getLegacyRoundIdForDate(
+      previousLockTime
+    )
+  ];
 }
 
 
 /* =========================
    LOCK AND REOPEN TIMES
 ========================= */
-
 function getCurrentGameWindow(
   now = new Date()
 ) {
+  /*
+    Before the very first launch deadline,
+    use the configured first round.
+  */
   if (now < FIRST_LOCK_TIME) {
     return {
       locked: false,
-      lockTime: FIRST_LOCK_TIME,
-      reopenTime: FIRST_REOPEN_TIME
+      lockTime:
+        new Date(FIRST_LOCK_TIME),
+      reopenTime:
+        new Date(FIRST_REOPEN_TIME)
     };
   }
 
@@ -207,23 +330,61 @@ function getCurrentGameWindow(
       ONE_WEEK_MS
     );
 
-  const lockTime =
+  let lockTime =
     new Date(
       FIRST_LOCK_TIME.getTime() +
-      weeklyCycle * ONE_WEEK_MS
+      weeklyCycle *
+      ONE_WEEK_MS
     );
 
-  const reopenTime =
+  let reopenTime =
     new Date(
       FIRST_REOPEN_TIME.getTime() +
-      weeklyCycle * ONE_WEEK_MS
+      weeklyCycle *
+      ONE_WEEK_MS
     );
 
-  return {
-    locked:
-      now >= lockTime &&
-      now < reopenTime,
+  /*
+    Between Friday's deadline and the configured
+    reopen time, the existing team is locked and
+    remains attached to that Friday's gameweek.
+  */
+  if (
+    now >= lockTime &&
+    now < reopenTime
+  ) {
+    return {
+      locked: true,
+      lockTime,
+      reopenTime
+    };
+  }
 
+  /*
+    Once the Monday fixtures have finished and
+    the game reopens, move forward to the next
+    Friday's selection deadline.
+
+    This fixes the old behaviour where the timer
+    continued pointing at a deadline that had
+    already passed.
+  */
+  if (now >= reopenTime) {
+    lockTime =
+      new Date(
+        lockTime.getTime() +
+        ONE_WEEK_MS
+      );
+
+    reopenTime =
+      new Date(
+        reopenTime.getTime() +
+        ONE_WEEK_MS
+      );
+  }
+
+  return {
+    locked: false,
     lockTime,
     reopenTime
   };
@@ -296,19 +457,27 @@ function refreshLockStatus() {
     getCurrentGameWindow();
 
   gameIsLocked =
+    DREAM_CONFIG.manualLock ||
     gameWindow.locked;
 
   if (gameIsLocked) {
-    showMessage(
-      DREAM_CONFIG.messages.locked
-        .replace(
-          "{reopenTime}",
-          formatDateTime(
-            gameWindow.reopenTime
-          )
-        ),
-      "error"
-    );
+    if (DREAM_CONFIG.manualLock) {
+      showMessage(
+        "Dream Team selections are temporarily locked while fixtures are being played.",
+        "error"
+      );
+    } else {
+      showMessage(
+        DREAM_CONFIG.messages.locked
+          .replace(
+            "{reopenTime}",
+            formatDateTime(
+              gameWindow.reopenTime
+            )
+          ),
+        "error"
+      );
+    }
   }
 
   updateDreamTeamDisplay();
@@ -1047,33 +1216,47 @@ function updateDreamTeamDisplay() {
    FIRESTORE ENTRIES
 ========================= */
 
-async function getEntryForRound(
-  roundId
+async function getEntryForRoundIds(
+  roundIds
 ) {
   if (!currentUser) {
     return null;
   }
 
-  const entryId =
-    `${roundId}_${currentUser.uid}`;
+  for (
+    const roundId of roundIds
+  ) {
+    const entryId =
+      `${roundId}_${currentUser.uid}`;
 
-  const entryReference =
-    doc(
-      db,
-      "dream_team_entries",
-      entryId
-    );
+    const entryReference =
+      doc(
+        db,
+        "dream_team_entries",
+        entryId
+      );
 
-  const entrySnapshot =
-    await getDoc(
-      entryReference
-    );
+    const entrySnapshot =
+      await getDoc(
+        entryReference
+      );
 
-  if (!entrySnapshot.exists()) {
-    return null;
+    if (
+      entrySnapshot.exists()
+    ) {
+      return {
+        id:
+          entrySnapshot.id,
+
+        roundId,
+
+        data:
+          entrySnapshot.data()
+      };
+    }
   }
 
-  return entrySnapshot.data();
+  return null;
 }
 
 
@@ -1109,84 +1292,51 @@ function loadEntryIntoEditor(
 }
 
 
-async function saveDreamTeamEntry({
-  players,
-  formation,
-  rolloverFromRound = null
-}) {
-  const roundId =
-    getCurrentRoundId();
+async function loadExistingDreamTeam() {
+  try {
+    const savedResult =
+      await getEntryForRoundIds(
+        getCurrentRoundIds()
+      );
 
-  const entryId =
-    `${roundId}_${currentUser.uid}`;
+    if (!savedResult) {
+      currentEntryDocumentId =
+        null;
 
-  const entryReference =
-    doc(
-      db,
-      "dream_team_entries",
-      entryId
+      currentEntryRoundId =
+        null;
+
+      return false;
+    }
+
+    currentEntryDocumentId =
+      savedResult.id;
+
+    currentEntryRoundId =
+      savedResult.data.roundId ||
+      savedResult.roundId;
+
+    loadEntryIntoEditor(
+      savedResult.data
     );
 
-  await setDoc(
-    entryReference,
-    {
-      uid:
-        currentUser.uid,
+    showMessage(
+      gameIsLocked
+        ? DREAM_CONFIG.messages.loadedLocked
+        : DREAM_CONFIG.messages.loadedEditable,
+      "success"
+    );
 
-      username:
-        currentUsername,
+    return true;
 
-      email:
-        currentUser.email || "",
+  } catch (error) {
+    console.error(
+      "Could not load existing Dream Team:",
+      error
+    );
 
-      roundId,
-
-      formation,
-
-      ratingTotal:
-        players.reduce(
-          (
-            total,
-            player
-          ) =>
-            total +
-            Number(player.rating),
-          0
-        ),
-
-      players:
-        players.map(player => ({
-          id:
-            player.id,
-
-          name:
-            player.name,
-
-          club:
-            player.club,
-
-          position:
-            player.position,
-
-          rating:
-            Number(player.rating)
-        })),
-
-      submittedAt:
-        serverTimestamp(),
-
-      status:
-        "submitted",
-
-      totalPoints:
-        0,
-
-      rolloverFromRound
-    },
-    {
-      merge: false
-    }
-  );
+    return false;
+  }
 }
 
 
@@ -1363,7 +1513,6 @@ function showRolloverPrompt(
   );
 }
 
-
 async function checkForPreviousTeam() {
   if (
     !currentUser ||
@@ -1373,14 +1522,26 @@ async function checkForPreviousTeam() {
   }
 
   try {
-    const previousEntry =
-      await getEntryForRound(
-        getPreviousRoundId()
+    const previousResult =
+      await getEntryForRoundIds(
+        getPreviousRoundIds()
       );
 
-    if (!previousEntry) {
+    if (!previousResult) {
       return;
     }
+
+    const previousEntry = {
+      ...previousResult.data,
+
+      /*
+        Ensure the rollover record knows the
+        previous round even on older documents.
+      */
+      roundId:
+        previousResult.data.roundId ||
+        previousResult.roundId
+    };
 
     showRolloverPrompt(
       previousEntry
@@ -1393,7 +1554,6 @@ async function checkForPreviousTeam() {
     );
   }
 }
-
 
 /* =========================
    SUBMIT PREVIOUS TEAM
@@ -1439,9 +1599,9 @@ async function submitPreviousTeam(
       formation:
         formationSelect.value,
 
-      rolloverFromRound:
-        previousEntry.roundId ||
-        getPreviousRoundId()
+    rolloverFromRound:
+  previousEntry.roundId ||
+  getPreviousRoundIds()[0]
     });
 
     completeSubmission();

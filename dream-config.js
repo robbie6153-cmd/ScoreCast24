@@ -8,20 +8,27 @@ export const DREAM_CONFIG = {
   maxFromOneClub: 2,
 
   /*
-    First weekly lock period
+    First Dream Team gameweek
 
     Locks:
-    Friday 21 August 2026 at 7:00 pm
+    Friday 14 August 2026 at 8:00 pm
+
+    Remains locked while the Friday-to-Monday
+    fixtures are being played.
 
     Reopens:
-    Monday 24 August 2026 at 11:59 pm
+    Tuesday 18 August 2026 at 12:05 am
+
+    Every later lock and reopen time is calculated
+    automatically in seven-day intervals.
   */
+manualLock: false,
 
   firstLockTime:
-    "2026-08-21T19:00:00+01:00",
+    "2026-08-14T20:00:00+01:00",
 
   firstReopenTime:
-    "2026-08-24T23:59:00+01:00",
+    "2026-08-18T00:05:00+01:00",
 
   /*
     Player database files
@@ -97,16 +104,16 @@ export const DREAM_CONFIG = {
   */
 
   rolloverTitle:
-    "Your new Dream Team week is open",
+    "Your new Dream Team gameweek is open",
 
   rolloverQuestion:
-    "Do you wish to make any changes to your team?",
+    "Would you like to keep last week's team or make changes?",
 
   changeTeamButton:
-    "Yes — make changes",
+    "Make changes",
 
   keepTeamButton:
-    "No — keep the same team",
+    "Keep the same team",
 
   /*
     User-facing messages
@@ -114,13 +121,13 @@ export const DREAM_CONFIG = {
 
   messages: {
     locked:
-      "Dream Team selections are locked while this week's matches are being played. Team selection reopens {reopenTime}.",
+      "Dream Team selections are locked while this gameweek's matches are being played. Team selection reopens {reopenTime}.",
 
     lockedShort:
       "Dream Team selections are currently locked.",
 
     loadedLocked:
-      "Your submitted team has been loaded. Selections are currently locked.",
+      "Your submitted team has been loaded. It is locked while this gameweek's matches are being played.",
 
     loadedEditable:
       "Your submitted team has been loaded. You may make changes before the deadline.",
@@ -132,7 +139,7 @@ export const DREAM_CONFIG = {
       "Last week's team no longer meets the selection rules. Please make the required changes and submit it manually.",
 
     invalidTeam:
-      "Your team does not currently meet all the rules.",
+      "Your team does not currently meet all the selection rules.",
 
     submitError:
       "Your team could not be submitted. Please try again."
