@@ -2,9 +2,7 @@ import { auth, db } from "./firebase.js?v=108";
 
 import {
   collection,
-  getDocs,
-  query,
-  where
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
@@ -34,180 +32,16 @@ const viewMyDreamTeamBtn =
 
 
 /*
-  Returns the Friday belonging to the active
-  Dream Team gameweek.
+  Manual Dream Team gameweek.
 
-  Tuesday–Thursday:
-  use the upcoming Friday.
-
-  Friday–Monday:
-  use the Friday that began the current round.
+  All entries currently in Firestore belong
+  to Week One.
 */
-function getGameweekFriday() {
-  const now = new Date();
 
-  const gameweekFriday =
-    new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
+const CURRENT_WEEK_NUMBER = 1;
 
-  gameweekFriday.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  const dayOfWeek =
-    gameweekFriday.getDay();
-
-  let dateAdjustment = 0;
-
-  if (
-    dayOfWeek >= 2 &&
-    dayOfWeek <= 4
-  ) {
-    /*
-      Tuesday, Wednesday or Thursday:
-      move forward to the upcoming Friday.
-    */
-    dateAdjustment =
-      5 - dayOfWeek;
-
-  } else if (dayOfWeek === 0) {
-    /*
-      Sunday:
-      move backwards two days.
-    */
-    dateAdjustment = -2;
-
-  } else if (dayOfWeek === 1) {
-    /*
-      Monday:
-      move backwards three days.
-    */
-    dateAdjustment = -3;
-  }
-
-  gameweekFriday.setDate(
-    gameweekFriday.getDate() +
-    dateAdjustment
-  );
-
-  return gameweekFriday;
-}
-
-
-/*
-  New preferred round ID.
-
-  Example:
-  2026-gameweek-07-17
-*/
-function getWeeklyRoundId() {
-  const gameweekFriday =
-    getGameweekFriday();
-
-  const year =
-    gameweekFriday.getFullYear();
-
-  const month =
-    String(
-      gameweekFriday.getMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
-
-  const day =
-    String(
-      gameweekFriday.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
-
-  return (
-    `${year}-gameweek-${month}-${day}`
-  );
-}
-
-
-/*
-  Creates the old week-number ID that was used
-  when the existing teams were submitted.
-
-  Example:
-  2026-week-29
-
-  This temporarily allows old submissions and
-  new submissions to appear together.
-*/
-function getLegacyWeeklyRoundId() {
-  const gameweekFriday =
-    getGameweekFriday();
-
-  const year =
-    gameweekFriday.getFullYear();
-
-  const firstDayOfYear =
-    new Date(
-      year,
-      0,
-      1
-    );
-
-  firstDayOfYear.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  const daysSinceFirstDay =
-    Math.floor(
-      (
-        gameweekFriday -
-        firstDayOfYear
-      ) / 86400000
-    );
-
-  const weekNumber =
-    Math.ceil(
-      (
-        daysSinceFirstDay +
-        firstDayOfYear.getDay() +
-        1
-      ) / 7
-    );
-
-  return (
-    `${year}-week-${String(
-      weekNumber
-    ).padStart(
-      2,
-      "0"
-    )}`
-  );
-}
-
-
-/*
-  Returns all round IDs that should be treated
-  as the same current football gameweek.
-
-  This includes:
-  1. The new Friday-based ID.
-  2. The old week-number ID.
-*/
-function getActiveRoundIds() {
-  return [
-    getWeeklyRoundId(),
-    getLegacyWeeklyRoundId()
-  ];
-}
+const CURRENT_ROUND_ID =
+  "2026-week-01";
 
 
 function escapeHtml(value) {
@@ -335,19 +169,9 @@ function getEntryUserKey(entry) {
 }
 
 
-/*
-  If a user somehow has both an old-format and
-  new-format submission for the same gameweek,
-  only one leaderboard row is shown.
-
-  The new Friday-based entry is preferred.
-*/
 function removeCurrentRoundDuplicates(
   entries
 ) {
-  const preferredRoundId =
-    getWeeklyRoundId();
-
   const entriesByUser =
     new Map();
 
@@ -367,17 +191,21 @@ function removeCurrentRoundDuplicates(
       return;
     }
 
-    const entryUsesPreferredRound =
+    /*
+      Prefer the new manual Week One entry
+      if both an old and new document exist.
+    */
+    const entryIsManualWeekOne =
       entry.roundId ===
-      preferredRoundId;
+      CURRENT_ROUND_ID;
 
-    const existingUsesPreferredRound =
+    const existingIsManualWeekOne =
       existing.roundId ===
-      preferredRoundId;
+      CURRENT_ROUND_ID;
 
     if (
-      entryUsesPreferredRound &&
-      !existingUsesPreferredRound
+      entryIsManualWeekOne &&
+      !existingIsManualWeekOne
     ) {
       entriesByUser.set(
         userKey,
@@ -444,7 +272,7 @@ function renderLeaderboard(
   if (!entries.length) {
     showLeaderboardMessage(
       mode === "weekly"
-        ? "No Dream Teams have been submitted for this gameweek yet."
+        ? "No Dream Teams have been submitted for Week One yet."
         : "No Dream Team season entries are available yet."
     );
 
@@ -565,25 +393,19 @@ function renderLeaderboard(
 
 
 async function getActiveRoundEntries() {
-  const activeRoundIds =
-    getActiveRoundIds();
+  /*
+    At present, every stored Dream Team entry
+    belongs to Week One.
 
-  const entriesQuery =
-    query(
+    This also recovers entries saved under the
+    previous automatic date-based round IDs.
+  */
+  const snapshot =
+    await getDocs(
       collection(
         db,
         "dream_team_entries"
-      ),
-      where(
-        "roundId",
-        "in",
-        activeRoundIds
       )
-    );
-
-  const snapshot =
-    await getDocs(
-      entriesQuery
     );
 
   const entries =
@@ -604,7 +426,7 @@ async function getActiveRoundEntries() {
 
 async function loadWeeklyLeaderboard() {
   showLeaderboardMessage(
-    "Loading this gameweek’s Dream Team leaderboard..."
+   "Loading the Week One Dream Team leaderboard..."
   );
 
   try {
