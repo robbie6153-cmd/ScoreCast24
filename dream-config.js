@@ -7,17 +7,16 @@ export const DREAM_CONFIG = {
   maxRating: 888,
   maxFromOneClub: 2,
 
-  manualLock: false,
-
-  /*
-    First weekly lock period
+    /*
+    Manual gameweek controls
   */
 
-  firstLockTime:
-    "2026-08-14T20:00:00+01:00",
+  manualLock: false,
 
-  firstReopenTime:
-    "2026-08-18T00:05:00+01:00",
+  currentRoundId: "2026-week-01",
+
+  previousRoundId: null,
+
 
   /*
     Player database files

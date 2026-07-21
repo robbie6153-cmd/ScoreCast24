@@ -35,15 +35,6 @@ const FORMATIONS =
 const PLAYER_FILES =
   DREAM_CONFIG.playerFiles;
 
-const FIRST_LOCK_TIME =
-  new Date(DREAM_CONFIG.firstLockTime);
-
-const FIRST_REOPEN_TIME =
-  new Date(DREAM_CONFIG.firstReopenTime);
-
-const ONE_WEEK_MS =
-  7 * 24 * 60 * 60 * 1000;
-
 
 /* =========================
    CURRENT GAME STATE
@@ -55,7 +46,8 @@ let selectedPlayers = [];
 let currentUser = null;
 let currentUsername = "";
 
-let gameIsLocked = false;
+let gameIsLocked =
+  DREAM_CONFIG.manualLock;
 let playerFilesLoaded = false;
 let rolloverPromptOpen = false;
 /*
@@ -132,357 +124,44 @@ function clearMessage() {
 
 
 /* =========================
-   WEEKLY ROUND IDS
+   MANUAL ROUND IDS
 ========================= */
 
-/*
-  The round is identified by its Friday lock date.
-
-  Example:
-  2026-gameweek-08-14
-
-  The same round remains active:
-  - before Friday while selections are open
-  - after Friday while teams are locked
-  - through the Monday fixtures
-  - until the configured reopen time
-*/
-function getFridayRoundIdForDate(
-  date
-) {
-  const year =
-    date.getFullYear();
-
-  const month =
-    String(
-      date.getMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
-
-  const day =
-    String(
-      date.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
-
-  return (
-    `${year}-gameweek-${month}-${day}`
-  );
-}
-
-
-/*
-  Produces the older week-number round ID.
-
-  Existing Firestore documents may still use
-  this format, so it must remain supported.
-*/
-function getLegacyRoundIdForDate(
-  date
-) {
-  const year =
-    date.getFullYear();
-
-  const firstDayOfYear =
-    new Date(
-      year,
-      0,
-      1
-    );
-
-  firstDayOfYear.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  const comparisonDate =
-    new Date(date);
-
-  comparisonDate.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  const daysSinceFirstDay =
-    Math.floor(
-      (
-        comparisonDate -
-        firstDayOfYear
-      ) / 86400000
-    );
-
-  const weekNumber =
-    Math.ceil(
-      (
-        daysSinceFirstDay +
-        firstDayOfYear.getDay() +
-        1
-      ) / 7
-    );
-
-  return (
-    `${year}-week-${String(
-      weekNumber
-    ).padStart(
-      2,
-      "0"
-    )}`
-  );
-}
-
-
-/*
-  The current round is always anchored to the
-  relevant configured Friday lock time.
-*/
-function getCurrentRoundId() {
-  const gameWindow =
-    getCurrentGameWindow();
-
-  return getFridayRoundIdForDate(
-    gameWindow.lockTime
-  );
-}
-
-
-/*
-  Returns both possible IDs for the current round:
-  1. New Friday-date ID.
-  2. Old week-number ID.
-*/
 function getCurrentRoundIds() {
-  const gameWindow =
-    getCurrentGameWindow();
-
   return [
-    getFridayRoundIdForDate(
-      gameWindow.lockTime
-    ),
-
-    getLegacyRoundIdForDate(
-      gameWindow.lockTime
-    )
+    DREAM_CONFIG.currentRoundId
   ];
 }
 
 
-/*
-  Previous round means the Friday lock date
-  exactly seven days before the current round.
-*/
 function getPreviousRoundIds() {
-  const gameWindow =
-    getCurrentGameWindow();
-
-  const previousLockTime =
-    new Date(
-      gameWindow.lockTime.getTime() -
-      ONE_WEEK_MS
-    );
+  if (!DREAM_CONFIG.previousRoundId) {
+    return [];
+  }
 
   return [
-    getFridayRoundIdForDate(
-      previousLockTime
-    ),
-
-    getLegacyRoundIdForDate(
-      previousLockTime
-    )
+    DREAM_CONFIG.previousRoundId
   ];
 }
 
 
 /* =========================
-   LOCK AND REOPEN TIMES
+   MANUAL LOCK
 ========================= */
-function getCurrentGameWindow(
-  now = new Date()
-) {
-  /*
-    Before the very first launch deadline,
-    use the configured first round.
-  */
-  if (now < FIRST_LOCK_TIME) {
-    return {
-      locked: false,
-      lockTime:
-        new Date(FIRST_LOCK_TIME),
-      reopenTime:
-        new Date(FIRST_REOPEN_TIME)
-    };
-  }
-
-  const elapsed =
-    now.getTime() -
-    FIRST_LOCK_TIME.getTime();
-
-  const weeklyCycle =
-    Math.floor(
-      elapsed /
-      ONE_WEEK_MS
-    );
-
-  let lockTime =
-    new Date(
-      FIRST_LOCK_TIME.getTime() +
-      weeklyCycle *
-      ONE_WEEK_MS
-    );
-
-  let reopenTime =
-    new Date(
-      FIRST_REOPEN_TIME.getTime() +
-      weeklyCycle *
-      ONE_WEEK_MS
-    );
-
-  /*
-    Between Friday's deadline and the configured
-    reopen time, the existing team is locked and
-    remains attached to that Friday's gameweek.
-  */
-  if (
-    now >= lockTime &&
-    now < reopenTime
-  ) {
-    return {
-      locked: true,
-      lockTime,
-      reopenTime
-    };
-  }
-
-  /*
-    Once the Monday fixtures have finished and
-    the game reopens, move forward to the next
-    Friday's selection deadline.
-
-    This fixes the old behaviour where the timer
-    continued pointing at a deadline that had
-    already passed.
-  */
-  if (now >= reopenTime) {
-    lockTime =
-      new Date(
-        lockTime.getTime() +
-        ONE_WEEK_MS
-      );
-
-    reopenTime =
-      new Date(
-        reopenTime.getTime() +
-        ONE_WEEK_MS
-      );
-  }
-
-  return {
-    locked: false,
-    lockTime,
-    reopenTime
-  };
-}
-
-
-function formatDateTime(
-  date
-) {
-  return date.toLocaleString(
-    "en-GB",
-    {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      hour: "2-digit",
-      minute: "2-digit"
-    }
-  );
-}
-const dreamDeadlineCountdown =
-  document.getElementById("dreamDeadlineCountdown");
-
-function updateDeadlineCountdown() {
-
-  if (!dreamDeadlineCountdown) {
-    return;
-  }
-
-  const gameWindow =
-    getCurrentGameWindow();
-
-  const now = new Date();
-
-  const target =
-    gameWindow.locked
-      ? gameWindow.reopenTime
-      : gameWindow.lockTime;
-
-  const difference =
-    target - now;
-
-  if (difference <= 0) {
-    return;
-  }
-
-  const days =
-    Math.floor(difference / 86400000);
-
-  const hours =
-    Math.floor((difference % 86400000) / 3600000);
-
-  const minutes =
-    Math.floor((difference % 3600000) / 60000);
-
-  const seconds =
-    Math.floor((difference % 60000) / 1000);
-
-  if (gameWindow.locked) {
-    dreamDeadlineCountdown.textContent =
-      `🔒 Dream Team locked. Reopens in ${days}d ${hours}h ${minutes}m ${seconds}s`;
-  } else {
-    dreamDeadlineCountdown.textContent =
-      `⏳ Submissions close in ${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-}
 
 function refreshLockStatus() {
-  const gameWindow =
-    getCurrentGameWindow();
-
   gameIsLocked =
-    DREAM_CONFIG.manualLock ||
-    gameWindow.locked;
+    DREAM_CONFIG.manualLock;
 
   if (gameIsLocked) {
-    if (DREAM_CONFIG.manualLock) {
-      showMessage(
-        "Dream Team selections are temporarily locked while fixtures are being played.",
-        "error"
-      );
-    } else {
-      showMessage(
-        DREAM_CONFIG.messages.locked
-          .replace(
-            "{reopenTime}",
-            formatDateTime(
-              gameWindow.reopenTime
-            )
-          ),
-        "error"
-      );
-    }
+    showMessage(
+      DREAM_CONFIG.messages.lockedShort,
+      "error"
+    );
   }
 
   updateDreamTeamDisplay();
 }
-
 
 /* =========================
    PLAYER POSITION NAMES
@@ -1856,17 +1535,8 @@ onAuthStateChanged(
       !currentEntryExists &&
       gameIsLocked
     ) {
-      const gameWindow =
-        getCurrentGameWindow();
-
       showMessage(
-        DREAM_CONFIG.messages.locked
-          .replace(
-            "{reopenTime}",
-            formatDateTime(
-              gameWindow.reopenTime
-            )
-          ),
+        DREAM_CONFIG.messages.lockedShort,
         "error"
       );
     }
@@ -1883,9 +1553,3 @@ onAuthStateChanged(
 loadPlayerFiles();
 
 refreshLockStatus();
-updateDeadlineCountdown();
-
-setInterval(() => {
-  refreshLockStatus();
-  updateDeadlineCountdown();
-}, 1000);
