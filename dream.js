@@ -889,7 +889,112 @@ function updateDreamTeamDisplay() {
 
   renderPlayers();
 }
+async function saveDreamTeamEntry({
+  players,
+  formation,
+  rolloverFromRound = null
+}) {
+  if (!currentUser) {
+    throw new Error(
+      "No logged-in user."
+    );
+  }
 
+  const roundId =
+    DREAM_CONFIG.currentRoundId;
+
+  if (!roundId) {
+    throw new Error(
+      "No current Dream Team round has been configured."
+    );
+  }
+
+  /*
+    If the user loaded an existing Week One entry,
+    update that same Firestore document.
+
+    Otherwise create the normal document for the
+    manually selected current round.
+  */
+  const entryId =
+    currentEntryDocumentId ||
+    `${roundId}_${currentUser.uid}`;
+
+  const entryReference =
+    doc(
+      db,
+      "dream_team_entries",
+      entryId
+    );
+
+  const entryData = {
+    uid:
+      currentUser.uid,
+
+    username:
+      currentUsername,
+
+    email:
+      currentUser.email || "",
+
+    roundId,
+
+    formation,
+
+    ratingTotal:
+      calculateRatingTotal(),
+
+    players:
+      players.map(player => ({
+        id:
+          player.id,
+
+        name:
+          player.name,
+
+        club:
+          player.club,
+
+        position:
+          player.position,
+
+        rating:
+          Number(player.rating),
+
+        points:
+          Number(player.points || 0)
+      })),
+
+    status:
+      DREAM_CONFIG.manualLock
+        ? "locked"
+        : "submitted",
+
+    totalPoints: 0,
+
+    submittedAt:
+      serverTimestamp()
+  };
+
+  if (rolloverFromRound) {
+    entryData.rolloverFromRound =
+      rolloverFromRound;
+  }
+
+  await setDoc(
+    entryReference,
+    entryData,
+    {
+      merge: true
+    }
+  );
+
+  currentEntryDocumentId =
+    entryId;
+
+  currentEntryRoundId =
+    roundId;
+}
 
 /* =========================
    FIRESTORE ENTRIES
