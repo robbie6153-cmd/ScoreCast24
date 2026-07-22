@@ -409,20 +409,43 @@ if (startGameBtn) {
       return;
     }
 
-    renderFixtures();
-    showPredictions();
+    // Prevent repeated clicks while Firestore is checking.
+    startGameBtn.disabled = true;
+    startGameBtn.textContent = "Checking your entry...";
 
     try {
-      const alreadySubmitted = await hasAlreadySubmitted(username);
+      const alreadySubmitted =
+        await hasAlreadySubmitted(username);
 
       if (alreadySubmitted) {
-        alert("You have already submitted predictions. Showing leaderboard.");
+        alert(
+          "You have already submitted predictions. Showing leaderboard."
+        );
+
         await renderLeaderboard();
         showLeaderboard();
+        return;
       }
+
+      // Only show the prediction form once Firestore confirms
+      // that the user has not already submitted.
+      renderFixtures();
+      showPredictions();
+
     } catch (error) {
-      console.error("Firestore check failed:", error);
-      alert("Predictions page loaded, but the Firestore connection needs checking.");
+      console.error(
+        "Firestore check failed:",
+        error
+      );
+
+      alert(
+        "We could not check your existing entry. Please check your connection and try again."
+      );
+
+    } finally {
+      startGameBtn.disabled = false;
+      startGameBtn.textContent =
+        "Submit Your Score Predictions Now!";
     }
   });
 }
