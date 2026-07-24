@@ -1013,3 +1013,32 @@ h1 {
     font-size: 14px;
   }
 }
+.leaderboard-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px auto;
+  padding: 0 12px;
+}
+
+.leaderboard-tab {
+  flex: 1;
+  max-width: 240px;
+  padding: 12px 10px;
+  border: 2px solid #f2c200;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.leaderboard-tab.active {
+  background: #f2c200;
+  color: #111111;
+}
+
+.leaderboard-tab:hover {
+  filter: brightness(0.96);
+}
