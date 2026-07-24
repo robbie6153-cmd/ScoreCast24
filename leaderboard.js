@@ -1,4 +1,4 @@
-console.log("leaderboard.js loaded English League v2");
+console.log("leaderboard.js loaded English League v3");
 
 import { db } from "./firebase.js?v=7";
 
@@ -12,7 +12,7 @@ const leaderboardContainer =
   document.getElementById("leaderboardContainer");
 
 const weekLeaderboardTab =
-  document.getElementById("weekLeaderboardTab");
+  document.getElementById("groupStageTotalTab");
 
 const seasonLeaderboardTab =
   document.getElementById("seasonLeaderboardTab");
@@ -39,7 +39,7 @@ const results = {
 };
 
 
-let allPredictionEntries = [];
+let leaderboardRows = [];
 
 
 /* =========================
@@ -47,22 +47,18 @@ let allPredictionEntries = [];
 ========================= */
 
 function timeoutPromise(ms) {
-  return new Promise((_, reject) =>
-    setTimeout(
-      () =>
-        reject(
-          new Error(
-            "Leaderboard load timed out"
-          )
-        ),
-      ms
-    )
-  );
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(
+        new Error("Leaderboard load timed out")
+      );
+    }, ms);
+  });
 }
 
 
 /* =========================
-   CALCULATE CURRENT WEEK
+   CALCULATE POINTS
 ========================= */
 
 function calculatePoints(predictions = []) {
@@ -130,34 +126,7 @@ function calculatePoints(predictions = []) {
 
 
 /* =========================
-   LOAD FIRESTORE ENTRIES
-========================= */
-
-async function loadPredictionEntries() {
-  const predictionsSnap =
-    await Promise.race([
-      getDocs(
-        collection(
-          db,
-          "scorecast24_predictions"
-        )
-      ),
-      timeoutPromise(40000)
-    ]);
-
-  allPredictionEntries = [];
-
-  predictionsSnap.forEach((docSnap) => {
-    allPredictionEntries.push({
-      id: docSnap.id,
-      ...docSnap.data()
-    });
-  });
-}
-
-
-/* =========================
-   TAB STYLING
+   ACTIVE TAB
 ========================= */
 
 function setActiveTab(activeTab) {
@@ -174,15 +143,11 @@ function setActiveTab(activeTab) {
 
 
 /* =========================
-   DISPLAY ROWS
+   DISPLAY LEADERBOARD
 ========================= */
 
-function displayRows(
-  rows,
-  heading,
-  allowPredictionViewing = true
-) {
-  if (rows.length === 0) {
+function displayLeaderboard(heading) {
+  if (leaderboardRows.length === 0) {
     leaderboardContainer.innerHTML = `
       <h2>${heading}</h2>
       <p>No predictions submitted yet.</p>
@@ -191,57 +156,39 @@ function displayRows(
     return;
   }
 
-
   leaderboardContainer.innerHTML = `
     <h2>${heading} 🏆</h2>
   `;
 
+  leaderboardRows.forEach(
+    (row, index) => {
+      const div =
+        document.createElement("div");
 
-  rows.forEach((row, index) => {
-    const div =
-      document.createElement("div");
+      div.className =
+        "leaderboard-row";
 
-    div.className =
-      "leaderboard-row";
+      div.innerHTML = `
+        <div>#${index + 1}</div>
 
+        <div>
+          <div>${row.username}</div>
 
-    div.innerHTML = `
-      <div>#${index + 1}</div>
+          <div class="view-predictions-text">
+            View predictions
+          </div>
+        </div>
 
-      <div>
-        <div>${row.username}</div>
+        <div class="leaderboard-points">
+          ${
+            row.points === null ||
+            row.points === undefined
+              ? "Score pending match results"
+              : `${row.points} pts`
+          }
+        </div>
+      `;
 
-        ${
-          allowPredictionViewing
-            ? `
-              <div class="view-predictions-text">
-                View predictions
-              </div>
-            `
-            : `
-              <div class="view-predictions-text">
-                ${row.roundsPlayed} round${
-                  row.roundsPlayed === 1
-                    ? ""
-                    : "s"
-                } played
-              </div>
-            `
-        }
-      </div>
-
-      <div class="leaderboard-points">
-        ${
-          row.points === null ||
-          row.points === undefined
-            ? "Score pending match results"
-            : `${row.points} pts`
-        }
-      </div>
-    `;
-
-
-    if (allowPredictionViewing) {
       div.addEventListener(
         "click",
         () => {
@@ -259,134 +206,45 @@ function displayRows(
             "view-predictions.html";
         }
       );
-    }
 
-
-    leaderboardContainer.appendChild(div);
-  });
-}
-
-
-/* =========================
-   WEEK ONE LEADERBOARD
-========================= */
-
-function renderWeekLeaderboard() {
-  setActiveTab(weekLeaderboardTab);
-
-  const rows =
-    allPredictionEntries
-      .filter(
-        (entry) =>
-          entry.round === currentRound
-      )
-      .map((entry) => ({
-        id: entry.id,
-        username:
-          entry.username || "Unknown",
-        points:
-          calculatePoints(
-            entry.predictions
-          )
-      }));
-
-
-  rows.sort(
-    (a, b) =>
-      (b.points || 0) -
-      (a.points || 0)
-  );
-
-
-  displayRows(
-    rows,
-    "Week 1 Leaderboard",
-    true
-  );
-}
-
-
-/* =========================
-   SEASON LEADERBOARD
-========================= */
-
-function renderSeasonLeaderboard() {
-  setActiveTab(seasonLeaderboardTab);
-
-  const seasonTotals = {};
-
-
-  allPredictionEntries.forEach(
-    (entry) => {
-      const username =
-        entry.username || "Unknown";
-
-      /*
-        For the current round, use the
-        live calculated score.
-
-        For older rounds, use the saved
-        Firestore points field.
-      */
-      const entryPoints =
-        entry.round === currentRound
-          ? calculatePoints(
-              entry.predictions
-            )
-          : Number(entry.points);
-
-
-      /*
-        Do not add rounds whose scores
-        have not been calculated yet.
-      */
-      if (
-        entryPoints === null ||
-        entryPoints === undefined ||
-        Number.isNaN(entryPoints)
-      ) {
-        return;
-      }
-
-
-      if (!seasonTotals[username]) {
-        seasonTotals[username] = {
-          username,
-          points: 0,
-          roundsPlayed: 0
-        };
-      }
-
-
-      seasonTotals[username].points +=
-        entryPoints;
-
-      seasonTotals[username].roundsPlayed +=
-        1;
+      leaderboardContainer.appendChild(
+        div
+      );
     }
   );
-
-
-  const rows =
-    Object.values(seasonTotals);
-
-
-  rows.sort(
-    (a, b) =>
-      b.points - a.points
-  );
-
-
-  displayRows(
-    rows,
-    "Season Leaderboard",
-    false
-  );
 }
 
 
 /* =========================
-   INITIAL LOAD
+   TAB CLICKS
+========================= */
+
+weekLeaderboardTab.addEventListener(
+  "click",
+  () => {
+    setActiveTab(weekLeaderboardTab);
+
+    displayLeaderboard(
+      "Week One Leaderboard"
+    );
+  }
+);
+
+
+seasonLeaderboardTab.addEventListener(
+  "click",
+  () => {
+    setActiveTab(seasonLeaderboardTab);
+
+    displayLeaderboard(
+      "Season Leaderboard"
+    );
+  }
+);
+
+
+/* =========================
+   LOAD LEADERBOARD
 ========================= */
 
 async function initialiseLeaderboard() {
@@ -394,9 +252,55 @@ async function initialiseLeaderboard() {
     "Loading English League leaderboard...";
 
   try {
-    await loadPredictionEntries();
+    const predictionsSnap =
+      await Promise.race([
+        getDocs(
+          collection(
+            db,
+            "scorecast24_predictions"
+          )
+        ),
+        timeoutPromise(40000)
+      ]);
 
-    renderWeekLeaderboard();
+    leaderboardRows = [];
+
+    predictionsSnap.forEach(
+      (docSnap) => {
+        const data =
+          docSnap.data();
+
+        if (
+          data.round !== currentRound
+        ) {
+          return;
+        }
+
+        leaderboardRows.push({
+          id: docSnap.id,
+
+          username:
+            data.username || "Unknown",
+
+          points:
+            calculatePoints(
+              data.predictions
+            )
+        });
+      }
+    );
+
+    leaderboardRows.sort(
+      (a, b) =>
+        (b.points || 0) -
+        (a.points || 0)
+    );
+
+    setActiveTab(weekLeaderboardTab);
+
+    displayLeaderboard(
+      "Week One Leaderboard"
+    );
 
   } catch (error) {
     console.error(
@@ -410,18 +314,6 @@ async function initialiseLeaderboard() {
     `;
   }
 }
-
-
-weekLeaderboardTab.addEventListener(
-  "click",
-  renderWeekLeaderboard
-);
-
-
-seasonLeaderboardTab.addEventListener(
-  "click",
-  renderSeasonLeaderboard
-);
 
 
 initialiseLeaderboard();
