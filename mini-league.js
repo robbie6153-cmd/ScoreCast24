@@ -9,14 +9,30 @@ import {
   getDoc,
   getDocs,
   orderBy,
-  query,
-  runTransaction,
-  serverTimestamp
+  query
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+import {
+  getFunctions,
+  httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-functions.js";
+
+
+const functions =
+  getFunctions(
+    undefined,
+    "europe-west1"
+  );
+
+const createJoinMiniLeagueCheckout =
+  httpsCallable(
+    functions,
+    "createJoinMiniLeagueCheckout"
+  );
 
 
 const miniLeagueTitle =
@@ -58,6 +74,9 @@ const pageParameters =
 const miniLeagueId =
   pageParameters.get("id");
 
+const paymentStatus =
+  pageParameters.get("payment");
+
 
 let currentUser = null;
 let leagueData = null;
@@ -68,6 +87,10 @@ let leagueData = null;
 ========================= */
 
 function showMessage(message) {
+  if (!miniLeagueMessage) {
+    return;
+  }
+
   miniLeagueMessage.textContent =
     message;
 }
@@ -92,12 +115,13 @@ function escapeHtml(value) {
 ========================= */
 
 async function updateJoinButton() {
-
   if (!currentUser || !miniLeagueId) {
     joinMiniLeagueBtn.textContent =
       "Log In to Join This League";
 
-    joinMiniLeagueBtn.disabled = false;
+    joinMiniLeagueBtn.disabled =
+      false;
+
     return;
   }
 
@@ -119,7 +143,8 @@ async function updateJoinButton() {
     joinMiniLeagueBtn.textContent =
       "You Have Joined This League";
 
-    joinMiniLeagueBtn.disabled = true;
+    joinMiniLeagueBtn.disabled =
+      true;
 
     if (joinMiniLeagueInfo) {
       joinMiniLeagueInfo.style.display =
@@ -132,7 +157,13 @@ async function updateJoinButton() {
   joinMiniLeagueBtn.textContent =
     "Join This League — £1";
 
-  joinMiniLeagueBtn.disabled = false;
+  joinMiniLeagueBtn.disabled =
+    false;
+
+  if (joinMiniLeagueInfo) {
+    joinMiniLeagueInfo.style.display =
+      "";
+  }
 }
 
 
@@ -141,7 +172,6 @@ async function updateJoinButton() {
 ========================= */
 
 async function loadLeagueMembers() {
-
   const membersQuery =
     query(
       collection(
@@ -172,7 +202,6 @@ async function loadLeagueMembers() {
 
   membersSnapshot.forEach(
     memberDocument => {
-
       const memberData =
         memberDocument.data();
 
@@ -221,7 +250,6 @@ async function loadLeagueMembers() {
 ========================= */
 
 async function loadMiniLeague() {
-
   if (!miniLeagueId) {
     miniLeagueTitle.textContent =
       "Mini League Not Found";
@@ -236,7 +264,6 @@ async function loadMiniLeague() {
   }
 
   try {
-
     const leagueReference =
       doc(
         db,
@@ -284,8 +311,23 @@ async function loadMiniLeague() {
     await loadLeagueMembers();
     await updateJoinButton();
 
-  } catch (error) {
+    if (
+      paymentStatus === "cancelled"
+    ) {
+      showMessage(
+        "Payment was cancelled. You have not joined this mini league."
+      );
+    }
 
+    if (
+      paymentStatus === "success"
+    ) {
+      showMessage(
+        "Payment received. Your membership should appear shortly."
+      );
+    }
+
+  } catch (error) {
     console.error(
       "Could not load mini league:",
       error
@@ -307,7 +349,6 @@ async function loadMiniLeague() {
 joinMiniLeagueBtn.addEventListener(
   "click",
   async () => {
-
     if (!currentUser) {
       window.location.href =
         "login.html";
@@ -316,31 +357,24 @@ joinMiniLeagueBtn.addEventListener(
     }
 
     if (!miniLeagueId) {
+      showMessage(
+        "This mini league could not be found."
+      );
+
       return;
     }
 
-    joinMiniLeagueBtn.disabled = true;
+    joinMiniLeagueBtn.disabled =
+      true;
+
     joinMiniLeagueBtn.textContent =
-      "Joining...";
+      "Opening payment...";
+
+    showMessage(
+      "Preparing your £1 secure payment..."
+    );
 
     try {
-
-      const leagueReference =
-        doc(
-          db,
-          "score_prediction_mini_leagues",
-          miniLeagueId
-        );
-
-      const memberReference =
-        doc(
-          db,
-          "score_prediction_mini_leagues",
-          miniLeagueId,
-          "members",
-          currentUser.uid
-        );
-
       const username =
         localStorage.getItem(
           "scorecast24Username"
@@ -349,89 +383,82 @@ joinMiniLeagueBtn.addEventListener(
         currentUser.email ||
         "ScoreCast24 Player";
 
-      await runTransaction(
-        db,
-        async transaction => {
+      const result =
+        await createJoinMiniLeagueCheckout({
+          leagueId:
+            miniLeagueId,
 
-          const leagueSnapshot =
-            await transaction.get(
-              leagueReference
-            );
+          username:
+            username
+        });
 
-          const memberSnapshot =
-            await transaction.get(
-              memberReference
-            );
+      const checkoutUrl =
+        result?.data?.url;
 
-          if (!leagueSnapshot.exists()) {
-            throw new Error(
-              "This mini league no longer exists."
-            );
-          }
-
-          if (memberSnapshot.exists()) {
-            return;
-          }
-
-          const currentMemberCount =
-            Number(
-              leagueSnapshot.data()
-                .memberCount || 0
-            );
-
-          transaction.set(
-            memberReference,
-            {
-              uid:
-                currentUser.uid,
-
-              username:
-                username,
-
-              email:
-                currentUser.email || "",
-
-              joinedAt:
-                serverTimestamp(),
-
-              role:
-                "member",
-
-              points:
-                0
-            }
-          );
-
-          transaction.update(
-            leagueReference,
-            {
-              memberCount:
-                currentMemberCount + 1
-            }
-          );
-        }
-      );
+      if (!checkoutUrl) {
+        throw new Error(
+          "Stripe did not return a payment page."
+        );
+      }
 
       showMessage(
-        "You have joined this mini league."
+        "Taking you to Stripe..."
       );
 
-      await loadMiniLeague();
+      window.location.href =
+        checkoutUrl;
 
     } catch (error) {
-
       console.error(
-        "Could not join mini league:",
+        "Could not open mini-league payment:",
         error
       );
 
+      let errorMessage =
+        "The payment page could not be opened. Please try again.";
+
+      if (
+        error?.code ===
+        "functions/already-exists"
+      ) {
+        errorMessage =
+          "You have already joined this mini league.";
+
+      } else if (
+        error?.code ===
+        "functions/not-found"
+      ) {
+        errorMessage =
+          "This mini league no longer exists.";
+
+      } else if (
+        error?.code ===
+        "functions/failed-precondition"
+      ) {
+        errorMessage =
+          "This mini league is not currently available to join.";
+
+      } else if (
+        error?.code ===
+        "functions/unauthenticated"
+      ) {
+        errorMessage =
+          "You must be logged in to join this mini league.";
+
+      } else if (
+        error?.message
+      ) {
+        errorMessage =
+          error.message;
+      }
+
       showMessage(
-        `Could not join mini league: ${
-          error.code || error.message
-        }`
+        errorMessage
       );
 
-      joinMiniLeagueBtn.disabled = false;
+      joinMiniLeagueBtn.disabled =
+        false;
+
       joinMiniLeagueBtn.textContent =
         "Join This League — £1";
     }
@@ -446,8 +473,8 @@ joinMiniLeagueBtn.addEventListener(
 onAuthStateChanged(
   auth,
   user => {
-
-    currentUser = user;
+    currentUser =
+      user;
 
     loadMiniLeague();
   }
