@@ -1,4 +1,4 @@
-console.log("leaderboard.js loaded English League v3");
+console.log("leaderboard.js loaded English League v4");
 
 import { db } from "./firebase.js?v=7";
 
@@ -12,6 +12,7 @@ const leaderboardContainer =
   document.getElementById("leaderboardContainer");
 
 const weekLeaderboardTab =
+  document.getElementById("weekLeaderboardTab") ||
   document.getElementById("groupStageTotalTab");
 
 const seasonLeaderboardTab =
@@ -50,7 +51,9 @@ function timeoutPromise(ms) {
   return new Promise((_, reject) => {
     setTimeout(() => {
       reject(
-        new Error("Leaderboard load timed out")
+        new Error(
+          "Leaderboard load timed out"
+        )
       );
     }, ms);
   });
@@ -130,15 +133,21 @@ function calculatePoints(predictions = []) {
 ========================= */
 
 function setActiveTab(activeTab) {
-  weekLeaderboardTab.classList.remove(
-    "active"
-  );
+  if (weekLeaderboardTab) {
+    weekLeaderboardTab.classList.remove(
+      "active"
+    );
+  }
 
-  seasonLeaderboardTab.classList.remove(
-    "active"
-  );
+  if (seasonLeaderboardTab) {
+    seasonLeaderboardTab.classList.remove(
+      "active"
+    );
+  }
 
-  activeTab.classList.add("active");
+  if (activeTab) {
+    activeTab.classList.add("active");
+  }
 }
 
 
@@ -219,35 +228,55 @@ function displayLeaderboard(heading) {
    TAB CLICKS
 ========================= */
 
-weekLeaderboardTab.addEventListener(
-  "click",
-  () => {
-    setActiveTab(weekLeaderboardTab);
+if (weekLeaderboardTab) {
+  weekLeaderboardTab.addEventListener(
+    "click",
+    () => {
+      setActiveTab(
+        weekLeaderboardTab
+      );
 
-    displayLeaderboard(
-      "Week One Leaderboard"
-    );
-  }
-);
+      displayLeaderboard(
+        "Week One Leaderboard"
+      );
+    }
+  );
+}
 
 
-seasonLeaderboardTab.addEventListener(
-  "click",
-  () => {
-    setActiveTab(seasonLeaderboardTab);
+if (seasonLeaderboardTab) {
+  seasonLeaderboardTab.addEventListener(
+    "click",
+    () => {
+      setActiveTab(
+        seasonLeaderboardTab
+      );
 
-    displayLeaderboard(
-      "Season Leaderboard"
-    );
-  }
-);
+      /*
+        For Week One, the season table
+        is deliberately the same table.
+      */
+      displayLeaderboard(
+        "Season Leaderboard"
+      );
+    }
+  );
+}
 
 
 /* =========================
-   LOAD LEADERBOARD
+   LOAD FIRESTORE
 ========================= */
 
 async function initialiseLeaderboard() {
+  if (!leaderboardContainer) {
+    console.error(
+      "leaderboardContainer not found"
+    );
+
+    return;
+  }
+
   leaderboardContainer.innerHTML =
     "Loading English League leaderboard...";
 
@@ -284,7 +313,7 @@ async function initialiseLeaderboard() {
 
           points:
             calculatePoints(
-              data.predictions
+              data.predictions || []
             )
         });
       }
@@ -296,7 +325,9 @@ async function initialiseLeaderboard() {
         (a.points || 0)
     );
 
-    setActiveTab(weekLeaderboardTab);
+    setActiveTab(
+      weekLeaderboardTab
+    );
 
     displayLeaderboard(
       "Week One Leaderboard"
