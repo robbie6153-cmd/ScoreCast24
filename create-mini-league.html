@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Create a Score Prediction Mini League - ScoreCast24
+  </title>
+
+  <meta
+    name="description"
+    content="Create a ScoreCast24 score prediction mini league and compete against other players throughout the football season."
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=25"
+  />
+
+</head>
+
+<body>
+
+  <div class="page">
+
+    <header class="top-bar">
+
+      <a
+        href="score-mini-leagues.html"
+        class="menu-btn"
+        aria-label="Back to mini leagues"
+      >
+        ←
+      </a>
+
+    </header>
+
+
+    <main class="leaderboard-page">
+
+      <h1>
+        Create a Mini League
+      </h1>
+
+
+      <div class="yellow-box">
+
+        <p>
+          Create your own score prediction mini league
+          for a <strong>one-off £1 registration fee</strong>.
+        </p>
+
+        <p>
+          Your registration lasts until the end of the
+          current football season.
+        </p>
+
+        <p>
+          <strong>
+            This is not a subscription and there are no
+            recurring payments.
+          </strong>
+        </p>
+
+      </div>
+
+
+      <form
+        id="createMiniLeagueForm"
+        class="mini-league-form"
+      >
+
+        <label for="miniLeagueName">
+          Mini League Name
+        </label>
+
+        <input
+          id="miniLeagueName"
+          name="miniLeagueName"
+          type="text"
+          maxlength="40"
+          placeholder="Enter a mini league name"
+          autocomplete="off"
+          required
+        />
+
+        <p class="form-help">
+          Choose a name between 3 and 40 characters.
+        </p>
+
+
+        <button
+          id="createMiniLeagueBtn"
+          class="primary-btn"
+          type="submit"
+        >
+          Create Mini League
+        </button>
+
+      </form>
+
+
+      <p
+        id="createMiniLeagueMessage"
+        class="form-message"
+        aria-live="polite"
+      ></p>
+
+
+      <a
+        href="score-mini-leagues.html"
+        class="secondary-btn"
+      >
+        Back to Mini Leagues
+      </a>
+
+    </main>
+
+  </div>
+
+
+  <script>
+    const createMiniLeagueForm =
+      document.getElementById("createMiniLeagueForm");
+
+    const miniLeagueNameInput =
+      document.getElementById("miniLeagueName");
+
+    const createMiniLeagueMessage =
+      document.getElementById("createMiniLeagueMessage");
+
+
+    createMiniLeagueForm.addEventListener(
+      "submit",
+      event => {
+
+        event.preventDefault();
+
+        const miniLeagueName =
+          miniLeagueNameInput.value.trim();
+
+        if (miniLeagueName.length < 3) {
+
+          createMiniLeagueMessage.textContent =
+            "The mini league name must contain at least 3 characters.";
+
+          return;
+        }
+
+        createMiniLeagueMessage.textContent =
+          "Payment and mini league creation will be added next.";
+
+      }
+    );
+  </script>
+
+</body>
+
+</html>

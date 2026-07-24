@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Mini League Leaderboard - ScoreCast24
+  </title>
+
+  <meta
+    name="description"
+    content="View a ScoreCast24 score prediction mini league leaderboard and join the league for the current football season."
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=25"
+  />
+
+</head>
+
+<body>
+
+  <div class="page">
+
+    <header class="top-bar">
+
+      <a
+        href="score-mini-leagues.html"
+        class="menu-btn"
+        aria-label="Back to mini leagues"
+      >
+        ←
+      </a>
+
+    </header>
+
+
+    <main class="leaderboard-page">
+
+      <h1 id="miniLeagueTitle">
+        Mini League
+      </h1>
+
+
+      <p
+        id="miniLeagueMemberCount"
+        class="leaderboard-hint"
+      >
+        Loading league details...
+      </p>
+
+
+      <button
+        id="joinMiniLeagueBtn"
+        class="primary-btn"
+        type="button"
+      >
+        Join This League — £1
+      </button>
+
+
+      <div
+        id="joinMiniLeagueInfo"
+        class="yellow-box"
+      >
+
+        <p>
+          Join this mini league for a
+          <strong>one-off £1 registration fee</strong>.
+        </p>
+
+        <p>
+          Membership lasts until the end of the
+          current football season.
+        </p>
+
+        <p>
+          <strong>
+            This is not a subscription.
+          </strong>
+        </p>
+
+      </div>
+
+
+      <h2>
+        League Table
+      </h2>
+
+
+      <p class="leaderboard-hint">
+        Tap a player to view their predictions.
+      </p>
+
+
+      <div id="miniLeagueLeaderboard">
+
+        <p>
+          This mini league currently has no members.
+        </p>
+
+      </div>
+
+
+      <p
+        id="miniLeagueMessage"
+        class="form-message"
+        aria-live="polite"
+      ></p>
+
+
+      <a
+        href="score-mini-leagues.html"
+        class="secondary-btn"
+      >
+        Back to Mini Leagues
+      </a>
+
+    </main>
+
+  </div>
+
+
+  <script>
+
+    const miniLeagueTitle =
+      document.getElementById(
+        "miniLeagueTitle"
+      );
+
+    const miniLeagueMemberCount =
+      document.getElementById(
+        "miniLeagueMemberCount"
+      );
+
+    const joinMiniLeagueBtn =
+      document.getElementById(
+        "joinMiniLeagueBtn"
+      );
+
+    const miniLeagueMessage =
+      document.getElementById(
+        "miniLeagueMessage"
+      );
+
+
+    /*
+      The mini league will eventually be loaded
+      using a URL such as:
+
+      mini-league.html?id=bakery-league
+    */
+
+    const pageParameters =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const miniLeagueId =
+      pageParameters.get("id");
+
+
+    if (!miniLeagueId) {
+
+      miniLeagueTitle.textContent =
+        "Mini League Not Found";
+
+      miniLeagueMemberCount.textContent =
+        "No mini league was selected.";
+
+      joinMiniLeagueBtn.style.display =
+        "none";
+
+      miniLeagueMessage.textContent =
+        "Return to the mini leagues page and select a league.";
+
+    } else {
+
+      /*
+        Temporary display until Firebase is connected.
+
+        Later, miniLeagueId will be used to load the
+        league name, member count and leaderboard
+        from Firestore.
+      */
+
+      const temporaryLeagueName =
+        miniLeagueId
+          .replaceAll("-", " ")
+          .replace(
+            /\b\w/g,
+            letter => letter.toUpperCase()
+          );
+
+      miniLeagueTitle.textContent =
+        temporaryLeagueName;
+
+      miniLeagueMemberCount.textContent =
+        "0 members";
+
+    }
+
+
+    joinMiniLeagueBtn.addEventListener(
+      "click",
+      () => {
+
+        miniLeagueMessage.textContent =
+          "Payment and league membership will be added later.";
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
