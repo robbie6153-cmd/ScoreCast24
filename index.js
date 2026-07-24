@@ -178,8 +178,6 @@ const dreamTeamBtn =
 const backHomeBtn =
   document.getElementById("backHomeBtn");
 
-const backToPredictionsBtn =
-  document.getElementById("backToPredictionsBtn");
 
 const fixturesContainer =
   document.getElementById("fixturesContainer");
@@ -732,120 +730,6 @@ if (dreamTeamBtn) {
 }
 
 
-/* =========================
-   BACK BUTTONS
-========================= */
-
-if (backHomeBtn) {
-  backHomeBtn.addEventListener(
-    "click",
-    showHome
-  );
-}
-
-
-if (backToPredictionsBtn) {
-  backToPredictionsBtn.addEventListener(
-    "click",
-    async () => {
-      if (predictionsAreClosed()) {
-        alert(
-          "English League Week One predictions are now closed."
-        );
-
-        return;
-      }
-
-      username =
-        localStorage.getItem(
-          "scorecast24Username"
-        );
-
-      if (
-        localStorage.getItem(
-          submittedStorageKey
-        ) === "true"
-      ) {
-        alert(
-          "You have already submitted predictions. You cannot change them."
-        );
-
-        return;
-      }
-
-      try {
-        const alreadySubmitted =
-          await hasAlreadySubmitted(
-            username
-          );
-
-        if (alreadySubmitted) {
-          localStorage.setItem(
-            submittedStorageKey,
-            "true"
-          );
-
-          alert(
-            "You have already submitted predictions. You cannot change them."
-          );
-
-          return;
-        }
-
-        renderFixtures();
-        showPredictions();
-
-      } catch (error) {
-        console.error(
-          "Back to predictions failed:",
-          error
-        );
-
-        alert(
-          "Could not check your submission status."
-        );
-      }
-    }
-  );
-}
-
-
-/* =========================
-   VIEW LEADERBOARD BUTTON
-========================= */
-
-function addViewLeaderboardButton() {
-  if (!homeLeaderboardPreview) return;
-
-  if (
-    document.getElementById(
-      "viewScoreLeaderboardBtn"
-    )
-  ) {
-    return;
-  }
-
-  const viewLeaderboardBtn =
-    document.createElement("a");
-
-  viewLeaderboardBtn.id =
-    "viewScoreLeaderboardBtn";
-
-  viewLeaderboardBtn.href =
-    "leaderboard.html";
-
-  viewLeaderboardBtn.className =
-    "secondary-btn view-leaderboard-btn";
-
-  viewLeaderboardBtn.textContent =
-    "View Leaderboard";
-
-  homeLeaderboardPreview.insertAdjacentElement(
-    "afterend",
-    viewLeaderboardBtn
-  );
-}
-
 
 /* =========================
    HOME LEADERBOARD PREVIEW
@@ -1214,7 +1098,6 @@ window.addEventListener(
 
 showHome();
 
-addViewLeaderboardButton();
 
 renderHomeLeaderboardPreview();
 renderHomeFixturesPreview();
