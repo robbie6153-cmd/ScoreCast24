@@ -1,22 +1,19 @@
 import {
-  auth,
-  db
+  auth
 } from "./firebase.js?v=108";
 
 import {
-  collection,
-  doc,
-  getDocs,
-  limit,
-  query,
-  serverTimestamp,
-  where,
-  writeBatch
-} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  getApp
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 
 import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+import {
+  getFunctions,
+  httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-functions.js";
 
 
 const createMiniLeagueForm =
@@ -40,6 +37,24 @@ const createMiniLeagueMessage =
   );
 
 
+/*
+  Connect to Firebase Functions
+  in the same region as the backend.
+*/
+
+const functions =
+  getFunctions(
+    getApp(),
+    "europe-west1"
+  );
+
+const createScoreMiniLeagueCheckout =
+  httpsCallable(
+    functions,
+    "createScoreMiniLeagueCheckout"
+  );
+
+
 let currentUser = null;
 let authenticationChecked = false;
 
@@ -48,7 +63,14 @@ let authenticationChecked = false;
    SHOW MESSAGE
 ========================= */
 
-function showMessage(message, type = "") {
+function showMessage(
+  message,
+  type = ""
+) {
+  if (!createMiniLeagueMessage) {
+    return;
+  }
+
   createMiniLeagueMessage.textContent =
     message;
 
@@ -70,9 +92,22 @@ function showMessage(message, type = "") {
 ========================= */
 
 function cleanLeagueName(name) {
-  return name
+  return String(name || "")
     .trim()
     .replace(/\s+/g, " ");
+}
+
+
+/* =========================
+   RESET BUTTON
+========================= */
+
+function resetCreateButton() {
+  createMiniLeagueBtn.disabled =
+    false;
+
+  createMiniLeagueBtn.textContent =
+    "Create Mini League";
 }
 
 
@@ -80,14 +115,17 @@ function cleanLeagueName(name) {
    AUTHENTICATION
 ========================= */
 
-createMiniLeagueBtn.disabled = true;
+createMiniLeagueBtn.disabled =
+  true;
 
 onAuthStateChanged(
   auth,
   user => {
+    currentUser =
+      user;
 
-    currentUser = user;
-    authenticationChecked = true;
+    authenticationChecked =
+      true;
 
     if (!user) {
       showMessage(
@@ -95,13 +133,47 @@ onAuthStateChanged(
         "error"
       );
 
-      createMiniLeagueBtn.disabled = false;
+      createMiniLeagueBtn.disabled =
+        false;
+
       return;
     }
 
-    createMiniLeagueBtn.disabled = false;
+    createMiniLeagueBtn.disabled =
+      false;
   }
 );
+
+
+/* =========================
+   CANCELLED PAYMENT MESSAGE
+========================= */
+
+const pageParameters =
+  new URLSearchParams(
+    window.location.search
+  );
+
+if (
+  pageParameters.get("payment") ===
+  "cancelled"
+) {
+  showMessage(
+    "Payment was cancelled. Your mini league has not been activated.",
+    "error"
+  );
+
+  /*
+    Remove the cancelled-payment details
+    from the address bar.
+  */
+
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  );
+}
 
 
 /* =========================
@@ -111,7 +183,6 @@ onAuthStateChanged(
 createMiniLeagueForm.addEventListener(
   "submit",
   async event => {
-
     event.preventDefault();
 
     if (!authenticationChecked) {
@@ -137,7 +208,9 @@ createMiniLeagueForm.addEventListener(
         miniLeagueNameInput.value
       );
 
-    if (miniLeagueName.length < 3) {
+    if (
+      miniLeagueName.length < 3
+    ) {
       showMessage(
         "The mini league name must contain at least 3 characters.",
         "error"
@@ -146,7 +219,9 @@ createMiniLeagueForm.addEventListener(
       return;
     }
 
-    if (miniLeagueName.length > 40) {
+    if (
+      miniLeagueName.length > 40
+    ) {
       showMessage(
         "The mini league name cannot contain more than 40 characters.",
         "error"
@@ -155,175 +230,88 @@ createMiniLeagueForm.addEventListener(
       return;
     }
 
-    const miniLeagueNameLowercase =
-      miniLeagueName.toLowerCase();
+    const username =
+      localStorage.getItem(
+        "scorecast24Username"
+      ) ||
+      currentUser.displayName ||
+      currentUser.email ||
+      "ScoreCast24 Player";
 
-    createMiniLeagueBtn.disabled = true;
+    createMiniLeagueBtn.disabled =
+      true;
+
     createMiniLeagueBtn.textContent =
-      "Creating...";
+      "Opening payment...";
 
     showMessage(
-      "Checking mini league name..."
+      "Preparing your £1 secure payment..."
     );
 
     try {
+      const result =
+        await createScoreMiniLeagueCheckout({
+          miniLeagueName,
+          username
+        });
 
-      /*
-        Check whether the league name
-        already exists.
-      */
+      const checkoutUrl =
+        result?.data?.url;
 
-      const existingLeagueQuery =
-        query(
-          collection(
-            db,
-            "score_prediction_mini_leagues"
-          ),
-          where(
-            "nameLowercase",
-            "==",
-            miniLeagueNameLowercase
-          ),
-          limit(1)
+      if (!checkoutUrl) {
+        throw new Error(
+          "The payment page address was not returned."
         );
-
-      const existingLeagueSnapshot =
-        await getDocs(
-          existingLeagueQuery
-        );
-
-      if (!existingLeagueSnapshot.empty) {
-        showMessage(
-          "A mini league with that name already exists.",
-          "error"
-        );
-
-        createMiniLeagueBtn.disabled = false;
-        createMiniLeagueBtn.textContent =
-          "Create Mini League";
-
-        return;
       }
 
-
-      const username =
-        localStorage.getItem(
-          "scorecast24Username"
-        ) ||
-        currentUser.displayName ||
-        currentUser.email ||
-        "ScoreCast24 Player";
-
-
-      /*
-        Create a new league document with
-        an automatically generated ID.
-      */
-
-      const leagueReference =
-        doc(
-          collection(
-            db,
-            "score_prediction_mini_leagues"
-          )
-        );
-
-
-      /*
-        Store members in a subcollection rather
-        than one large array. This allows leagues
-        to grow without a fixed member limit.
-      */
-
-      const memberReference =
-        doc(
-          db,
-          "score_prediction_mini_leagues",
-          leagueReference.id,
-          "members",
-          currentUser.uid
-        );
-
-
-      const batch =
-        writeBatch(db);
-
-
-      batch.set(
-        leagueReference,
-        {
-          name: miniLeagueName,
-          nameLowercase:
-            miniLeagueNameLowercase,
-
-          creatorUid:
-            currentUser.uid,
-
-          creatorUsername:
-            username,
-
-          memberCount: 1,
-
-          createdAt:
-            serverTimestamp(),
-
-          status: "active"
-        }
-      );
-
-
-      batch.set(
-        memberReference,
-        {
-          uid:
-            currentUser.uid,
-
-          username:
-            username,
-
-          email:
-            currentUser.email || "",
-
-          joinedAt:
-            serverTimestamp(),
-
-          role: "creator"
-        }
-      );
-
-
-      await batch.commit();
-
-
       showMessage(
-        "Mini league created successfully.",
-        "success"
+        "Taking you to Stripe..."
       );
-
 
       window.location.href =
-        `mini-league.html?id=${encodeURIComponent(
-          leagueReference.id
-        )}`;
+        checkoutUrl;
 
-  } catch (error) {
+    } catch (error) {
+      console.error(
+        "Could not open mini league payment:",
+        error
+      );
 
-  console.error(
-    "Could not create mini league:",
-    error
-  );
+      let errorMessage =
+        "The payment page could not be opened. Please try again.";
 
-  showMessage(
-    `Could not create mini league: ${
-      error.code || error.message
-    }`,
-    "error"
-  );
+      if (
+        error?.code ===
+        "functions/already-exists"
+      ) {
+        errorMessage =
+          "A mini league with that name already exists.";
+      } else if (
+        error?.code ===
+        "functions/unauthenticated"
+      ) {
+        errorMessage =
+          "You must be logged in to create a mini league.";
+      } else if (
+        error?.code ===
+        "functions/invalid-argument"
+      ) {
+        errorMessage =
+          error.message ||
+          "Please enter a valid mini league name.";
+      } else if (
+        error?.message
+      ) {
+        errorMessage =
+          error.message;
+      }
 
-  createMiniLeagueBtn.disabled = false;
+      showMessage(
+        errorMessage,
+        "error"
+      );
 
-  createMiniLeagueBtn.textContent =
-    "Create Mini League";
-}
+      resetCreateButton();
+    }
   }
 );
