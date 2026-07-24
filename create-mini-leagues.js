@@ -306,21 +306,24 @@ createMiniLeagueForm.addEventListener(
           leagueReference.id
         )}`;
 
-    } catch (error) {
+  } catch (error) {
 
-      console.error(
-        "Could not create mini league:",
-        error
-      );
+  console.error(
+    "Could not create mini league:",
+    error
+  );
 
-      showMessage(
-        "The mini league could not be created. Please try again.",
-        "error"
-      );
+  showMessage(
+    `Could not create mini league: ${
+      error.code || error.message
+    }`,
+    "error"
+  );
 
-      createMiniLeagueBtn.disabled = false;
-      createMiniLeagueBtn.textContent =
-        "Create Mini League";
-    }
+  createMiniLeagueBtn.disabled = false;
+
+  createMiniLeagueBtn.textContent =
+    "Create Mini League";
+}
   }
 );
