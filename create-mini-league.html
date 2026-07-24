@@ -126,40 +126,10 @@
   </div>
 
 
-  <script>
-    const createMiniLeagueForm =
-      document.getElementById("createMiniLeagueForm");
-
-    const miniLeagueNameInput =
-      document.getElementById("miniLeagueName");
-
-    const createMiniLeagueMessage =
-      document.getElementById("createMiniLeagueMessage");
-
-
-    createMiniLeagueForm.addEventListener(
-      "submit",
-      event => {
-
-        event.preventDefault();
-
-        const miniLeagueName =
-          miniLeagueNameInput.value.trim();
-
-        if (miniLeagueName.length < 3) {
-
-          createMiniLeagueMessage.textContent =
-            "The mini league name must contain at least 3 characters.";
-
-          return;
-        }
-
-        createMiniLeagueMessage.textContent =
-          "Payment and mini league creation will be added next.";
-
-      }
-    );
-  </script>
+ <script
+  type="module"
+  src="create-mini-league.js?v=3"
+></script>
 
 </body>
 

@@ -129,10 +129,82 @@
   </div>
 
 
-  <script
-  type="module"
-  src="create-mini-league.js?v=1"
-></script>
+<script>
+
+const miniLeagueTitle =
+  document.getElementById(
+    "miniLeagueTitle"
+  );
+
+const miniLeagueMemberCount =
+  document.getElementById(
+    "miniLeagueMemberCount"
+  );
+
+const joinMiniLeagueBtn =
+  document.getElementById(
+    "joinMiniLeagueBtn"
+  );
+
+const miniLeagueMessage =
+  document.getElementById(
+    "miniLeagueMessage"
+  );
+
+
+const pageParameters =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const miniLeagueId =
+  pageParameters.get("id");
+
+
+if (!miniLeagueId) {
+
+  miniLeagueTitle.textContent =
+    "Mini League Not Found";
+
+  miniLeagueMemberCount.textContent =
+    "No mini league was selected.";
+
+  joinMiniLeagueBtn.style.display =
+    "none";
+
+  miniLeagueMessage.textContent =
+    "Return to the mini leagues page and select a league.";
+
+} else {
+
+  const temporaryLeagueName =
+    miniLeagueId
+      .replaceAll("-", " ")
+      .replace(
+        /\b\w/g,
+        letter => letter.toUpperCase()
+      );
+
+  miniLeagueTitle.textContent =
+    temporaryLeagueName;
+
+  miniLeagueMemberCount.textContent =
+    "0 members";
+
+}
+
+
+joinMiniLeagueBtn.addEventListener(
+  "click",
+  () => {
+
+    miniLeagueMessage.textContent =
+      "Payment and league membership will be added later.";
+
+  }
+);
+
+</script>
 
 </body>
 
