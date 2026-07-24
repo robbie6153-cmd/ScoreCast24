@@ -1,11 +1,22 @@
 import {
+  auth,
   db
 } from "./firebase.js?v=108";
 
 import {
+  collection,
   doc,
-  getDoc
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  runTransaction,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 
 const miniLeagueTitle =
@@ -21,6 +32,11 @@ const miniLeagueMemberCount =
 const joinMiniLeagueBtn =
   document.getElementById(
     "joinMiniLeagueBtn"
+  );
+
+const joinMiniLeagueInfo =
+  document.getElementById(
+    "joinMiniLeagueInfo"
   );
 
 const miniLeagueLeaderboard =
@@ -43,10 +59,170 @@ const miniLeagueId =
   pageParameters.get("id");
 
 
+let currentUser = null;
+let leagueData = null;
+
+
+/* =========================
+   SHOW MESSAGE
+========================= */
+
+function showMessage(message) {
+  miniLeagueMessage.textContent =
+    message;
+}
+
+
+/* =========================
+   SAFE HTML
+========================= */
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+/* =========================
+   MEMBER BUTTON STATUS
+========================= */
+
+async function updateJoinButton() {
+
+  if (!currentUser || !miniLeagueId) {
+    joinMiniLeagueBtn.textContent =
+      "Log In to Join This League";
+
+    joinMiniLeagueBtn.disabled = false;
+    return;
+  }
+
+  const memberReference =
+    doc(
+      db,
+      "score_prediction_mini_leagues",
+      miniLeagueId,
+      "members",
+      currentUser.uid
+    );
+
+  const memberSnapshot =
+    await getDoc(
+      memberReference
+    );
+
+  if (memberSnapshot.exists()) {
+    joinMiniLeagueBtn.textContent =
+      "You Have Joined This League";
+
+    joinMiniLeagueBtn.disabled = true;
+
+    if (joinMiniLeagueInfo) {
+      joinMiniLeagueInfo.style.display =
+        "none";
+    }
+
+    return;
+  }
+
+  joinMiniLeagueBtn.textContent =
+    "Join This League — £1";
+
+  joinMiniLeagueBtn.disabled = false;
+}
+
+
+/* =========================
+   LOAD LEAGUE MEMBERS
+========================= */
+
+async function loadLeagueMembers() {
+
+  const membersQuery =
+    query(
+      collection(
+        db,
+        "score_prediction_mini_leagues",
+        miniLeagueId,
+        "members"
+      ),
+      orderBy(
+        "username",
+        "asc"
+      )
+    );
+
+  const membersSnapshot =
+    await getDocs(
+      membersQuery
+    );
+
+  if (membersSnapshot.empty) {
+    miniLeagueLeaderboard.innerHTML =
+      "<p>This mini league currently has no members.</p>";
+
+    return;
+  }
+
+  const members = [];
+
+  membersSnapshot.forEach(
+    memberDocument => {
+
+      const memberData =
+        memberDocument.data();
+
+      members.push({
+        username:
+          memberData.username ||
+          "ScoreCast24 Player",
+
+        points:
+          Number(
+            memberData.points || 0
+          )
+      });
+    }
+  );
+
+  members.sort(
+    (firstMember, secondMember) =>
+      secondMember.points -
+      firstMember.points
+  );
+
+  miniLeagueLeaderboard.innerHTML =
+    members.map(
+      (member, index) => `
+        <div class="leaderboard-row">
+          <span class="leaderboard-position">
+            ${index + 1}
+          </span>
+
+          <span class="leaderboard-player">
+            ${escapeHtml(member.username)}
+          </span>
+
+          <span class="leaderboard-points">
+            ${member.points}
+          </span>
+        </div>
+      `
+    ).join("");
+}
+
+
+/* =========================
+   LOAD MINI LEAGUE
+========================= */
+
 async function loadMiniLeague() {
 
   if (!miniLeagueId) {
-
     miniLeagueTitle.textContent =
       "Mini League Not Found";
 
@@ -56,12 +232,8 @@ async function loadMiniLeague() {
     joinMiniLeagueBtn.style.display =
       "none";
 
-    miniLeagueLeaderboard.innerHTML =
-      "<p>Return to the mini leagues page and select a league.</p>";
-
     return;
   }
-
 
   try {
 
@@ -77,9 +249,7 @@ async function loadMiniLeague() {
         leagueReference
       );
 
-
     if (!leagueSnapshot.exists()) {
-
       miniLeagueTitle.textContent =
         "Mini League Not Found";
 
@@ -89,26 +259,20 @@ async function loadMiniLeague() {
       joinMiniLeagueBtn.style.display =
         "none";
 
-      miniLeagueLeaderboard.innerHTML =
-        "<p>The selected mini league could not be found.</p>";
-
       return;
     }
 
-
-    const leagueData =
+    leagueData =
       leagueSnapshot.data();
 
-
     miniLeagueTitle.textContent =
-      leagueData.name || "Mini League";
-
+      leagueData.name ||
+      "Mini League";
 
     const memberCount =
       Number(
         leagueData.memberCount || 0
       );
-
 
     miniLeagueMemberCount.textContent =
       `${memberCount} ${
@@ -117,17 +281,8 @@ async function loadMiniLeague() {
           : "members"
       }`;
 
-
-    if (memberCount === 0) {
-
-      miniLeagueLeaderboard.innerHTML =
-        "<p>This mini league currently has no members.</p>";
-
-    } else {
-
-      miniLeagueLeaderboard.innerHTML =
-        "<p>League members and scores will appear here next.</p>";
-    }
+    await loadLeagueMembers();
+    await updateJoinButton();
 
   } catch (error) {
 
@@ -136,29 +291,164 @@ async function loadMiniLeague() {
       error
     );
 
-    miniLeagueTitle.textContent =
-      "Mini League";
-
-    miniLeagueMemberCount.textContent =
-      "Could not load league details.";
-
-    miniLeagueMessage.textContent =
+    showMessage(
       `Could not load mini league: ${
         error.code || error.message
-      }`;
+      }`
+    );
   }
 }
 
 
+/* =========================
+   JOIN MINI LEAGUE
+========================= */
+
 joinMiniLeagueBtn.addEventListener(
   "click",
-  () => {
+  async () => {
 
-    miniLeagueMessage.textContent =
-      "Payment and league membership will be added later.";
+    if (!currentUser) {
+      window.location.href =
+        "login.html";
 
+      return;
+    }
+
+    if (!miniLeagueId) {
+      return;
+    }
+
+    joinMiniLeagueBtn.disabled = true;
+    joinMiniLeagueBtn.textContent =
+      "Joining...";
+
+    try {
+
+      const leagueReference =
+        doc(
+          db,
+          "score_prediction_mini_leagues",
+          miniLeagueId
+        );
+
+      const memberReference =
+        doc(
+          db,
+          "score_prediction_mini_leagues",
+          miniLeagueId,
+          "members",
+          currentUser.uid
+        );
+
+      const username =
+        localStorage.getItem(
+          "scorecast24Username"
+        ) ||
+        currentUser.displayName ||
+        currentUser.email ||
+        "ScoreCast24 Player";
+
+      await runTransaction(
+        db,
+        async transaction => {
+
+          const leagueSnapshot =
+            await transaction.get(
+              leagueReference
+            );
+
+          const memberSnapshot =
+            await transaction.get(
+              memberReference
+            );
+
+          if (!leagueSnapshot.exists()) {
+            throw new Error(
+              "This mini league no longer exists."
+            );
+          }
+
+          if (memberSnapshot.exists()) {
+            return;
+          }
+
+          const currentMemberCount =
+            Number(
+              leagueSnapshot.data()
+                .memberCount || 0
+            );
+
+          transaction.set(
+            memberReference,
+            {
+              uid:
+                currentUser.uid,
+
+              username:
+                username,
+
+              email:
+                currentUser.email || "",
+
+              joinedAt:
+                serverTimestamp(),
+
+              role:
+                "member",
+
+              points:
+                0
+            }
+          );
+
+          transaction.update(
+            leagueReference,
+            {
+              memberCount:
+                currentMemberCount + 1
+            }
+          );
+        }
+      );
+
+      showMessage(
+        "You have joined this mini league."
+      );
+
+      await loadMiniLeague();
+
+    } catch (error) {
+
+      console.error(
+        "Could not join mini league:",
+        error
+      );
+
+      showMessage(
+        `Could not join mini league: ${
+          error.code || error.message
+        }`
+      );
+
+      joinMiniLeagueBtn.disabled = false;
+      joinMiniLeagueBtn.textContent =
+        "Join This League — £1";
+    }
   }
 );
 
 
-loadMiniLeague();
+/* =========================
+   AUTHENTICATION
+========================= */
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    currentUser = user;
+
+    loadMiniLeague();
+  }
+);
