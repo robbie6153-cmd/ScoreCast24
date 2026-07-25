@@ -1143,3 +1143,30 @@ h1 {
   color: #111;
   text-decoration: none;
 }
+.dream-mini-league-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  width: 100%;
+  margin: 12px 0;
+  padding: 18px;
+
+  background: #fff;
+  color: #111;
+
+  border: 3px solid #f2cb3f;
+  border-radius: 16px;
+
+  text-decoration: none;
+}
+
+.dream-mini-league-list-item strong {
+  font-size: 20px;
+}
+
+.dream-mini-league-list-item span {
+  white-space: nowrap;
+  font-size: 16px;
+}
