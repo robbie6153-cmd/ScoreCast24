@@ -194,17 +194,20 @@ async function updateJoinButton() {
       memberReference
     );
 
-if (member.entryId) {
-  row.addEventListener(
-    "click",
-    () => {
-      window.location.href =
-        `dream-team-view.html?id=${encodeURIComponent(
-          member.entryId
-        )}`;
+  if (memberSnapshot.exists()) {
+    joinMiniLeagueBtn.textContent =
+      "You Have Joined This League";
+
+    joinMiniLeagueBtn.disabled =
+      true;
+
+    if (joinMiniLeagueInfo) {
+      joinMiniLeagueInfo.style.display =
+        "none";
     }
-  );
-}
+
+    return;
+  }
 
   joinMiniLeagueBtn.textContent =
     "Join This League — £1";
