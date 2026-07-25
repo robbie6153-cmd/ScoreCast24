@@ -42,7 +42,14 @@ const results = {
 
 let leaderboardRows = [];
 
-
+const myUsername =
+  (
+    localStorage.getItem(
+      "scorecast24Username"
+    ) || ""
+  )
+    .trim()
+    .toLowerCase();
 /* =========================
    TIMEOUT
 ========================= */
@@ -171,11 +178,19 @@ function displayLeaderboard(heading) {
 
   leaderboardRows.forEach(
     (row, index) => {
-      const div =
-        document.createElement("div");
+    const div =
+  document.createElement("div");
 
-      div.className =
-        "leaderboard-row";
+const isMe =
+  row.username
+    .trim()
+    .toLowerCase() ===
+  myUsername;
+
+div.className =
+  isMe
+    ? "leaderboard-row my-row"
+    : "leaderboard-row";
 
       div.innerHTML = `
         <div>#${index + 1}</div>
