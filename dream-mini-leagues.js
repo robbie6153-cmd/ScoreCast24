@@ -5,9 +5,7 @@ import {
 
 import {
   collection,
-  getDocs,
-  query,
-  where
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
@@ -42,32 +40,22 @@ function showMessage(message) {
 }
 
 
-async function loadMyDreamMiniLeagues(user) {
+async function loadDreamMiniLeagues() {
   if (!dreamMiniLeagueContainer) {
     return;
   }
 
   showMessage(
-    "Loading your Dream Team mini leagues..."
+    "Loading Dream Team mini leagues..."
   );
 
   try {
-    const leaguesQuery =
-      query(
+    const leaguesSnapshot =
+      await getDocs(
         collection(
           db,
           "dream_team_mini_leagues"
-        ),
-        where(
-          "creatorUid",
-          "==",
-          user.uid
         )
-      );
-
-    const leaguesSnapshot =
-      await getDocs(
-        leaguesQuery
       );
 
     if (leaguesSnapshot.empty) {
@@ -150,14 +138,12 @@ onAuthStateChanged(
   user => {
     if (!user) {
       showMessage(
-        "Log in to view your Dream Team mini leagues."
+        "Log in to view Dream Team mini leagues."
       );
 
       return;
     }
 
-    loadMyDreamMiniLeagues(
-      user
-    );
+    loadDreamMiniLeagues();
   }
 );
