@@ -41,14 +41,13 @@ function showMessage(message) {
   `;
 }
 
-
-async function loadMyDreamMiniLeagues(user) {
+async function loadDreamMiniLeagues() {
   if (!dreamMiniLeagueContainer) {
     return;
   }
 
   showMessage(
-    "Loading your Dream Team mini leagues..."
+    "Loading Dream Team mini leagues..."
   );
 
   try {
@@ -57,11 +56,6 @@ async function loadMyDreamMiniLeagues(user) {
         collection(
           db,
           "dream_team_mini_leagues"
-        ),
-        where(
-          "creatorUid",
-          "==",
-          user.uid
         )
       );
 
@@ -156,8 +150,6 @@ onAuthStateChanged(
       return;
     }
 
-    loadMyDreamMiniLeagues(
-      user
-    );
+   loadDreamMiniLeagues();
   }
 );
