@@ -1,4 +1,4 @@
- * {
+mini * {
   box-sizing: border-box;
 }
 
@@ -1108,4 +1108,38 @@ h1 {
 
 .create-mini-circle:hover {
   transform: scale(1.05);
+}
+.mini-league-promo-buttons {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.mini-league-main-button,
+.mini-league-view-button {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 64px;
+  padding: 12px;
+
+  background: #f2cb3f;
+  color: #111;
+
+  border: 3px solid #f2cb3f;
+  border-radius: 14px;
+
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.mini-league-main-button:hover,
+.mini-league-view-button:hover {
+  background: #fff;
+  color: #111;
+  text-decoration: none;
 }
