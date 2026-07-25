@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -9,18 +10,18 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Dream Team Created | ScoreCast24</title>
+  <title>Dream Team Submitted | ScoreCast24</title>
 
   <meta
     name="description"
-    content="Your ScoreCast24 weekly Dream Team has been created."
+    content="Your ScoreCast24 weekly Dream Team has been submitted successfully."
   >
 
-  <!-- Keep this stylesheet name the same as your other ScoreCast24 pages -->
   <link
     rel="stylesheet"
     href="style.css?v=1"
   >
+
 </head>
 
 <body>
@@ -32,11 +33,13 @@
       class="site-logo-link"
       aria-label="ScoreCast24 home"
     >
+
       <img
         src="scorecast24-logo.png"
         alt="ScoreCast24"
         class="site-logo"
       >
+
     </a>
 
   </header>
@@ -49,24 +52,31 @@
       <div class="dream-confirmation-box">
 
         <h1 id="dreamConfirmationHeading">
-          Your team has been created!
+          Your Dream Team has been submitted!
         </h1>
 
         <p class="dream-confirmation-text">
-          Your weekly Dream Team has been saved successfully.
+          Your weekly Dream Team has been submitted successfully.
         </p>
 
         <div class="dream-confirmation-actions">
 
           <a
-            href="dream-team-leaderboard.html"
+            href="dream-leaderboard.html"
             class="dream-yellow-button"
           >
             View Dream Team Leaderboard
           </a>
 
           <a
-            href="dream.html"
+            href="dream-mini-leagues.html"
+            class="dream-yellow-button"
+          >
+            Dream Team Mini Leagues
+          </a>
+
+          <a
+            href="dream-team-view.html"
             class="dream-yellow-button"
           >
             View My Dream Team
@@ -89,6 +99,7 @@
 
 
   <script>
+
     const confirmationHeading =
       document.getElementById(
         "dreamConfirmationHeading"
@@ -110,16 +121,21 @@
       "";
 
     if (username) {
+
       confirmationHeading.textContent =
-        `${username}, your team has been created!`;
+        `${username}, your Dream Team has been submitted!`;
+
     } else {
+
       confirmationHeading.textContent =
-        "Your team has been created!";
+        "Your Dream Team has been submitted!";
+
     }
 
     sessionStorage.removeItem(
       "dreamTeamSubmittedUsername"
     );
+
   </script>
 
 </body>

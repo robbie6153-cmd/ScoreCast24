@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Create a Dream Team Mini League - ScoreCast24
+  </title>
+
+  <meta
+    name="description"
+    content="Create a ScoreCast24 Dream Team mini league and compete against other managers throughout the football season."
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=26"
+  />
+
+</head>
+
+<body>
+
+  <div class="page">
+
+    <header class="top-bar">
+
+      <a
+        href="dream-mini-leagues.html"
+        class="menu-btn"
+        aria-label="Back to Dream Team mini leagues"
+      >
+        ←
+      </a>
+
+    </header>
+
+
+    <main class="leaderboard-page">
+
+
+      <div class="yellow-box">
+
+        <p>
+          Create your own Dream Team mini league
+          for a <strong>one-off £1 registration fee</strong>.
+        </p>
+
+        <p>
+          Your registration lasts until the end of the
+          current football season.
+        </p>
+
+        <p>
+          <strong>
+            This is not a subscription and there are no
+            recurring payments.
+          </strong>
+        </p>
+
+      </div>
+
+
+      <form
+        id="createDreamMiniLeagueForm"
+        class="mini-league-form"
+      >
+
+        <label for="dreamMiniLeagueName">
+          Mini League Name
+        </label>
+
+        <input
+          id="dreamMiniLeagueName"
+          name="dreamMiniLeagueName"
+          type="text"
+          maxlength="40"
+          placeholder="Enter a mini league name"
+          autocomplete="off"
+          required
+        />
+
+        <p class="form-help">
+          Choose a name between 3 and 40 characters.
+        </p>
+
+
+        <button
+          id="createDreamMiniLeagueBtn"
+          class="primary-btn"
+          type="submit"
+        >
+          Create Mini League
+        </button>
+
+      </form>
+
+
+      <p
+        id="createDreamMiniLeagueMessage"
+        class="form-message"
+        aria-live="polite"
+      ></p>
+
+
+      <a
+        href="dream-mini-leagues.html"
+        class="secondary-btn"
+      >
+        Back to Dream Team Mini Leagues
+      </a>
+
+    </main>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="create-dream-mini-leagues.js?v=1"
+  ></script>
+
+</body>
+
+</html>

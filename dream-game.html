@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -8,9 +10,18 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Weekly Dream Team | ScoreCast24</title>
+  <title>Build Your Weekly Dream Team | ScoreCast24</title>
 
-  <link rel="stylesheet" href="dream.css?v=3">
+  <meta
+    name="description"
+    content="Build and submit your weekly ScoreCast24 Dream Team."
+  >
+
+  <link
+    rel="stylesheet"
+    href="dream.css?v=3"
+  >
+
 </head>
 
 <body>
@@ -19,7 +30,10 @@
 
     <section class="dream-game-header">
 
-      <a href="dream.html" class="back-home-link">
+      <a
+        href="dream.html"
+        class="back-home-link"
+      >
         ← Dream Team Home
       </a>
 
@@ -29,18 +43,23 @@
         class="dream-game-logo"
       >
 
-      <h1>Build Your Weekly Dream Team</h1>
+      <h1>
+        Build Your Weekly Dream Team
+      </h1>
 
       <p id="dreamLoginStatus">
         Checking your ScoreCast24 account...
       </p>
-<div
-  id="dreamDeadlineCountdown"
-  class="dream-deadline-countdown"
->
-  Loading submission deadline...
-</div>
+
+      <div
+        id="dreamDeadlineCountdown"
+        class="dream-deadline-countdown"
+      >
+        Loading submission deadline...
+      </div>
+
     </section>
+
 
     <section class="dream-controls">
 
@@ -49,7 +68,11 @@
       </label>
 
       <select id="formationSelect">
-        <option value="">Choose formation</option>
+
+        <option value="">
+          Choose formation
+        </option>
+
         <option value="4-4-2">4-4-2</option>
         <option value="4-3-3">4-3-3</option>
         <option value="4-5-1">4-5-1</option>
@@ -57,27 +80,51 @@
         <option value="5-4-1">5-4-1</option>
         <option value="3-4-3">3-4-3</option>
         <option value="3-5-2">3-5-2</option>
+
       </select>
+
 
       <label for="clubFilter">
         Club
       </label>
 
       <select id="clubFilter">
-        <option value="ALL">All clubs</option>
+
+        <option value="ALL">
+          All clubs
+        </option>
+
       </select>
+
 
       <label for="positionFilter">
         Position
       </label>
 
       <select id="positionFilter">
-        <option value="ALL">All positions</option>
-        <option value="Goalkeeper">Goalkeepers</option>
-        <option value="Defender">Defenders</option>
-        <option value="Midfielder">Midfielders</option>
-        <option value="Attacker">Attackers</option>
+
+        <option value="ALL">
+          All positions
+        </option>
+
+        <option value="Goalkeeper">
+          Goalkeepers
+        </option>
+
+        <option value="Defender">
+          Defenders
+        </option>
+
+        <option value="Midfielder">
+          Midfielders
+        </option>
+
+        <option value="Attacker">
+          Attackers
+        </option>
+
       </select>
+
 
       <label for="playerSearch">
         Search
@@ -88,98 +135,149 @@
         type="search"
         placeholder="Search player name"
       >
-<label for="ratingFilter">
-  Rating
-</label>
 
-<select id="ratingFilter">
-  <option value="ALL">All ratings</option>
-  <option value="60-69">60–69</option>
-  <option value="70-79">70–79</option>
-  <option value="80-89">80–89</option>
-  <option value="90+">90+</option>
-</select>
+
+      <label for="ratingFilter">
+        Rating
+      </label>
+
+      <select id="ratingFilter">
+
+        <option value="ALL">
+          All ratings
+        </option>
+
+        <option value="60-69">
+          60–69
+        </option>
+
+        <option value="70-79">
+          70–79
+        </option>
+
+        <option value="80-89">
+          80–89
+        </option>
+
+        <option value="90+">
+          90+
+        </option>
+
+      </select>
+
     </section>
+
 
     <section class="dream-summary">
 
       <div>
         Players:
-        <strong id="selectedCount">0/11</strong>
+        <strong id="selectedCount">
+          0/11
+        </strong>
       </div>
 
       <div>
         Rating:
-        <strong id="ratingTotal">0/888</strong>
+        <strong id="ratingTotal">
+          0/888
+        </strong>
       </div>
 
       <div>
         Formation:
-        <strong id="formationStatus">Not selected</strong>
+        <strong id="formationStatus">
+          Not selected
+        </strong>
       </div>
 
     </section>
 
-    <p id="dreamMessage" class="dream-message"></p>
+
+    <p
+      id="dreamMessage"
+      class="dream-message"
+    ></p>
+
 
     <section class="selected-team-section">
 
-      <h2>Your Selected Team</h2>
+      <h2>
+        Your Selected Team
+      </h2>
 
-      <div id="selectedTeam" class="selected-team">
-        <p>No players selected yet.</p>
+      <div
+        id="selectedTeam"
+        class="selected-team"
+      >
+        <p>
+          No players selected yet.
+        </p>
       </div>
 
     </section>
 
+
     <section class="dream-submit-section">
 
-  <button
-    id="submitDreamTeamBtn"
-    class="dream-yellow-button"
-    type="button"
-    disabled
-  >
-    Submit Dream Team
-  </button>
+      <button
+        id="submitDreamTeamBtn"
+        class="dream-yellow-button"
+        type="button"
+        disabled
+      >
+        Submit Dream Team
+      </button>
 
-  <a
-    href="dream-leaderboard.html"
-    class="dream-yellow-button"
-  >
-    View Leaderboard
-  </a>
+      <a
+        href="dream-leaderboard.html"
+        class="dream-yellow-button"
+      >
+        View Leaderboard
+      </a>
 
-  <a
-    href="rules.html"
-    class="dream-yellow-button"
-  >
-    Rules
-  </a>
+      <a
+        href="dream-mini-leagues.html"
+        class="dream-yellow-button"
+      >
+        Mini Leagues
+      </a>
 
-  <div
-    id="dreamDeadlineCountdown"
-    class="dream-deadline-countdown"
-  ></div>
+      <a
+        href="rules.html"
+        class="dream-yellow-button"
+      >
+        Rules
+      </a>
 
-</section>
+    </section>
 
-<section class="available-players-section">
 
-  <h2>Available Players</h2>
+    <section class="available-players-section">
 
-  <div
-    id="playerList"
-    class="player-list"
-  >
-    <p>Loading players...</p>
-  </div>
+      <h2>
+        Available Players
+      </h2>
 
-</section>
+      <div
+        id="playerList"
+        class="player-list"
+      >
+        <p>
+          Loading players...
+        </p>
+      </div>
 
-</main>
+    </section>
 
-<script type="module" src="dream.js?v=112"></script>
+  </main>
+
+
+  <script
+    type="module"
+    src="dream.js?v=112"
+  ></script>
 
 </body>
+
 </html>

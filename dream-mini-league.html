@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Dream Team Mini League Leaderboard - ScoreCast24
+  </title>
+
+  <meta
+    name="description"
+    content="View a ScoreCast24 Dream Team mini league leaderboard and join the league for the current football season."
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=26"
+  />
+
+</head>
+
+<body>
+
+  <div class="page">
+
+    <header class="top-bar">
+
+      <a
+        href="dream-mini-leagues.html"
+        class="menu-btn"
+        aria-label="Back to Dream Team mini leagues"
+      >
+        ←
+      </a>
+
+    </header>
+
+
+    <main class="leaderboard-page">
+
+      <h1 id="miniLeagueTitle">
+        Dream Team Mini League
+      </h1>
+
+
+      <p
+        id="miniLeagueMemberCount"
+        class="leaderboard-hint"
+      >
+        Loading league details...
+      </p>
+
+
+      <button
+        id="joinMiniLeagueBtn"
+        class="primary-btn"
+        type="button"
+      >
+        Join This League — £1
+      </button>
+
+
+      <div
+        id="joinMiniLeagueInfo"
+        class="yellow-box"
+      >
+
+        <p>
+          Join this Dream Team mini league for a
+          <strong>one-off £1 registration fee</strong>.
+        </p>
+
+        <p>
+          Membership lasts until the end of the
+          current football season.
+        </p>
+
+        <p>
+          <strong>
+            This is not a subscription.
+          </strong>
+        </p>
+
+      </div>
+
+
+      <div class="leaderboard-tabs">
+
+        <button
+          id="miniWeekLeaderboardTab"
+          class="leaderboard-tab active"
+          type="button"
+        >
+          Week One
+        </button>
+
+        <button
+          id="miniSeasonLeaderboardTab"
+          class="leaderboard-tab"
+          type="button"
+        >
+          Season
+        </button>
+
+      </div>
+
+
+      <p class="leaderboard-hint">
+        Tap a player to view their Dream Team.
+      </p>
+
+
+      <div id="miniLeagueLeaderboard">
+
+        <p>
+          This Dream Team mini league currently has no members.
+        </p>
+
+      </div>
+
+
+      <p
+        id="miniLeagueMessage"
+        class="form-message"
+        aria-live="polite"
+      ></p>
+
+
+      <a
+        href="dream-mini-leagues.html"
+        class="secondary-btn"
+      >
+        Back to Dream Team Mini Leagues
+      </a>
+
+    </main>
+
+  </div>
+
+  <script
+    type="module"
+    src="dream-mini-league.js?v=1"
+  ></script>
+
+</body>
+
+</html>
