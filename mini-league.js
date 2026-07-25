@@ -99,7 +99,14 @@ const pageParameters =
   new URLSearchParams(
     window.location.search
   );
-
+const myUsername =
+  (
+    localStorage.getItem(
+      "scorecast24Username"
+    ) || ""
+  )
+    .trim()
+    .toLowerCase();
 const miniLeagueId =
   pageParameters.get("id");
 
@@ -322,8 +329,16 @@ function displayMiniLeaderboard(heading) {
           "div"
         );
 
-      row.className =
-        "leaderboard-row";
+    const isMe =
+  member.username
+    .trim()
+    .toLowerCase() ===
+  myUsername;
+
+row.className =
+  isMe
+    ? "leaderboard-row my-row"
+    : "leaderboard-row";
 
       row.innerHTML = `
         <span class="leaderboard-position">
