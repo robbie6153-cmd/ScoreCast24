@@ -64,8 +64,37 @@ const miniLeagueMessage =
   document.getElementById(
     "miniLeagueMessage"
   );
+const miniWeekLeaderboardTab =
+  document.getElementById(
+    "miniWeekLeaderboardTab"
+  );
+
+const miniSeasonLeaderboardTab =
+  document.getElementById(
+    "miniSeasonLeaderboardTab"
+  );
+const currentRound =
+  "English League Week One";
 
 
+const results = {
+  1: { homeScore: null, awayScore: null },
+  2: { homeScore: null, awayScore: null },
+  3: { homeScore: null, awayScore: null },
+  4: { homeScore: null, awayScore: null },
+  5: { homeScore: null, awayScore: null },
+  6: { homeScore: null, awayScore: null },
+  7: { homeScore: null, awayScore: null },
+  8: { homeScore: null, awayScore: null },
+  9: { homeScore: null, awayScore: null },
+  10: { homeScore: null, awayScore: null },
+  11: { homeScore: null, awayScore: null },
+  12: { homeScore: null, awayScore: null },
+  13: { homeScore: null, awayScore: null }
+};
+
+
+let miniLeaderboardRows = [];
 const pageParameters =
   new URLSearchParams(
     window.location.search
@@ -109,7 +138,83 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+/* =========================
+   CALCULATE POINTS
+========================= */
 
+function calculatePoints(predictions = []) {
+  let total = 0;
+  let hasAnyResult = false;
+
+  predictions.forEach(
+    prediction => {
+      const result =
+        results[prediction.fixtureId];
+
+      if (!result) {
+        return;
+      }
+
+      if (
+        result.homeScore === null ||
+        result.awayScore === null
+      ) {
+        return;
+      }
+
+      hasAnyResult = true;
+
+      const predictedHome =
+        Number(
+          prediction.predictedHome
+        );
+
+      const predictedAway =
+        Number(
+          prediction.predictedAway
+        );
+
+      const actualHome =
+        Number(
+          result.homeScore
+        );
+
+      const actualAway =
+        Number(
+          result.awayScore
+        );
+
+      if (
+        predictedHome === actualHome &&
+        predictedAway === actualAway
+      ) {
+        total += 5;
+
+      } else if (
+        predictedHome === predictedAway &&
+        actualHome === actualAway
+      ) {
+        total += 3;
+
+      } else if (
+        predictedHome > predictedAway &&
+        actualHome > actualAway
+      ) {
+        total += 1;
+
+      } else if (
+        predictedHome < predictedAway &&
+        actualHome < actualAway
+      ) {
+        total += 2;
+      }
+    }
+  );
+
+  return hasAnyResult
+    ? total
+    : null;
+}
 /* =========================
    MEMBER BUTTON STATUS
 ========================= */
@@ -168,6 +273,110 @@ async function updateJoinButton() {
 
 
 /* =========================
+   ACTIVE TAB
+========================= */
+
+function setActiveMiniTab(activeTab) {
+  if (miniWeekLeaderboardTab) {
+    miniWeekLeaderboardTab.classList.remove(
+      "active"
+    );
+  }
+
+  if (miniSeasonLeaderboardTab) {
+    miniSeasonLeaderboardTab.classList.remove(
+      "active"
+    );
+  }
+
+  if (activeTab) {
+    activeTab.classList.add(
+      "active"
+    );
+  }
+}
+
+
+/* =========================
+   DISPLAY MINI LEADERBOARD
+========================= */
+
+function displayMiniLeaderboard(heading) {
+  if (miniLeaderboardRows.length === 0) {
+    miniLeagueLeaderboard.innerHTML = `
+      <h2>${heading}</h2>
+      <p>This mini league currently has no members.</p>
+    `;
+
+    return;
+  }
+
+  miniLeagueLeaderboard.innerHTML = `
+    <h2>${heading} 🏆</h2>
+  `;
+
+  miniLeaderboardRows.forEach(
+    (member, index) => {
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "leaderboard-row";
+
+      row.innerHTML = `
+        <span class="leaderboard-position">
+          ${index + 1}
+        </span>
+
+        <span class="leaderboard-player">
+          ${escapeHtml(member.username)}
+
+          <span class="view-predictions-text">
+            View predictions
+          </span>
+        </span>
+
+        <span class="leaderboard-points">
+          ${
+            member.points === null ||
+            member.points === undefined
+              ? "Score pending"
+              : `${member.points} pts`
+          }
+        </span>
+      `;
+
+      if (member.predictionId) {
+        row.addEventListener(
+          "click",
+          () => {
+            localStorage.setItem(
+              "viewPredictionId",
+              member.predictionId
+            );
+
+            localStorage.setItem(
+              "viewPredictionUsername",
+              member.username
+            );
+
+            window.location.href =
+              "view-predictions.html";
+          }
+        );
+      }
+
+      miniLeagueLeaderboard.appendChild(
+        row
+      );
+    }
+  );
+}
+
+
+/* =========================
    LOAD LEAGUE MEMBERS
 ========================= */
 
@@ -192,59 +401,123 @@ async function loadLeagueMembers() {
     );
 
   if (membersSnapshot.empty) {
-    miniLeagueLeaderboard.innerHTML =
-      "<p>This mini league currently has no members.</p>";
+    miniLeaderboardRows = [];
+
+    displayMiniLeaderboard(
+      "Week One Leaderboard"
+    );
 
     return;
   }
 
-  const members = [];
+  const predictionsSnapshot =
+    await getDocs(
+      collection(
+        db,
+        "scorecast24_predictions"
+      )
+    );
+
+  const predictionsByUsername =
+    new Map();
+
+  predictionsSnapshot.forEach(
+    predictionDocument => {
+      const predictionData =
+        predictionDocument.data();
+
+      if (
+        predictionData.round !==
+        currentRound
+      ) {
+        return;
+      }
+
+      const cleanUsername =
+        String(
+          predictionData.username || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      if (!cleanUsername) {
+        return;
+      }
+
+      predictionsByUsername.set(
+        cleanUsername,
+        {
+          id:
+            predictionDocument.id,
+
+          points:
+            calculatePoints(
+              predictionData.predictions || []
+            )
+        }
+      );
+    }
+  );
+
+  miniLeaderboardRows = [];
 
   membersSnapshot.forEach(
     memberDocument => {
       const memberData =
         memberDocument.data();
 
-      members.push({
+      const username =
+        memberData.username ||
+        "ScoreCast24 Player";
+
+      const cleanUsername =
+        String(username)
+          .trim()
+          .toLowerCase();
+
+      const prediction =
+        predictionsByUsername.get(
+          cleanUsername
+        );
+
+      miniLeaderboardRows.push({
         username:
-          memberData.username ||
-          "ScoreCast24 Player",
+          username,
+
+        predictionId:
+          prediction?.id || null,
 
         points:
-          Number(
-            memberData.points || 0
-          )
+          prediction
+            ? prediction.points
+            : null
       });
     }
   );
 
-  members.sort(
-    (firstMember, secondMember) =>
-      secondMember.points -
-      firstMember.points
+  miniLeaderboardRows.sort(
+    (firstMember, secondMember) => {
+      const firstPoints =
+        firstMember.points ?? -1;
+
+      const secondPoints =
+        secondMember.points ?? -1;
+
+      return (
+        secondPoints -
+        firstPoints
+      );
+    }
   );
 
-  miniLeagueLeaderboard.innerHTML =
-    members.map(
-      (member, index) => `
-        <div class="leaderboard-row">
-          <span class="leaderboard-position">
-            ${index + 1}
-          </span>
+  setActiveMiniTab(
+    miniWeekLeaderboardTab
+  );
 
-          <span class="leaderboard-player">
-            ${escapeHtml(member.username)}
-          </span>
-
-          <span class="leaderboard-points">
-            ${member.points}
-          </span>
-        </div>
-      `
-    ).join("");
+  displayMiniLeaderboard(
+    "Week One Leaderboard"
+  );
 }
-
-
 /* =========================
    LOAD MINI LEAGUE
 ========================= */
@@ -341,7 +614,44 @@ async function loadMiniLeague() {
   }
 }
 
+/* =========================
+   TAB CLICKS
+========================= */
 
+if (miniWeekLeaderboardTab) {
+  miniWeekLeaderboardTab.addEventListener(
+    "click",
+    () => {
+      setActiveMiniTab(
+        miniWeekLeaderboardTab
+      );
+
+      displayMiniLeaderboard(
+        "Week One Leaderboard"
+      );
+    }
+  );
+}
+
+
+if (miniSeasonLeaderboardTab) {
+  miniSeasonLeaderboardTab.addEventListener(
+    "click",
+    () => {
+      setActiveMiniTab(
+        miniSeasonLeaderboardTab
+      );
+
+      /*
+        During Week One, the season
+        leaderboard is the same table.
+      */
+      displayMiniLeaderboard(
+        "Season Leaderboard"
+      );
+    }
+  );
+}
 /* =========================
    JOIN MINI LEAGUE
 ========================= */
