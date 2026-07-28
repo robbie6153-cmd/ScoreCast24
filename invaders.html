@@ -9,11 +9,16 @@
     content="width=device-width, initial-scale=1.0, user-scalable=no"
   >
 
+  <meta
+    name="theme-color"
+    content="#000000"
+  >
+
   <title>The Invaders</title>
 
   <link
     rel="stylesheet"
-    href="invaders.css?v=2"
+    href="invaders.css?v=1"
   >
 </head>
 
@@ -21,36 +26,45 @@
 
   <main class="game-page">
 
+    <!-- START SCREEN -->
     <section
       id="startScreen"
-      class="screen-panel"
+      class="screen-panel start-screen"
     >
-      <h1>THE INVADERS</h1>
+      <h1>
+        THE INVADERS
+      </h1>
 
-      <p>
-        Destroy the invasion before the invaders reach you.
+      <p class="intro-text">
+        Destroy every invader before they reach the bottom.
       </p>
 
       <div class="instructions">
+
         <p>
           <strong>Phone:</strong>
-          Drag your finger to move and hold to rapid-fire.
+          Drag left and right to move.
+          Hold the screen to rapid-fire.
         </p>
 
         <p>
           <strong>Computer:</strong>
-          Arrow keys or A/D to move. Hold Space to fire.
+          Use the left and right arrow keys,
+          or A and D, to move.
+          Hold Space to rapid-fire.
         </p>
 
         <p>
-          Bottom row: 1 hit<br>
-          Middle row: 2 hits<br>
-          Top row: 3 hits
+          Top-row invaders need three hits.
+          Middle-row invaders need two hits.
+          Bottom-row invaders need one hit.
         </p>
+
       </div>
 
       <button
         id="startButton"
+        class="main-button"
         type="button"
       >
         START GAME
@@ -58,79 +72,149 @@
     </section>
 
 
+    <!-- GAME SCREEN -->
     <section
-      id="gameContainer"
-      class="game-container hidden"
+      id="gameScreen"
+      class="game-screen hidden"
+      aria-label="Invaders game"
     >
 
-      <div class="game-header">
+      <header class="game-header">
 
-        <div>
-          SCORE:
+        <div class="score-box">
+          <span class="header-label">
+            SCORE
+          </span>
+
           <span id="scoreDisplay">
             0
           </span>
         </div>
 
-        <div>
-          LIVES:
+        <div class="lives-box">
+          <span class="header-label">
+            LIVES
+          </span>
+
           <span id="livesDisplay">
             3
           </span>
         </div>
 
-        <button
-          id="soundButton"
-          class="sound-button"
-          type="button"
-        >
-          SOUND ON
-        </button>
-
-      </div>
+      </header>
 
 
       <div
-        id="canvasWrapper"
-        class="canvas-wrapper"
+        id="gameContainer"
+        class="game-container"
       >
 
         <canvas
           id="gameCanvas"
-          width="900"
-          height="650"
+          aria-label="Space Invaders style game"
         >
           Your browser does not support canvas.
         </canvas>
 
-        <div
-          id="messageOverlay"
-          class="message-overlay hidden"
+
+        <!-- PAUSE BUTTON -->
+        <button
+          id="pauseButton"
+          class="pause-button"
+          type="button"
+          aria-label="Pause game"
         >
-          <h2 id="messageTitle">
+          II
+        </button>
+
+
+        <!-- PAUSED MESSAGE -->
+        <div
+          id="pausePanel"
+          class="overlay-panel hidden"
+        >
+          <h2>
+            PAUSED
+          </h2>
+
+          <button
+            id="resumeButton"
+            class="main-button"
+            type="button"
+          >
+            CONTINUE
+          </button>
+        </div>
+
+
+        <!-- GAME OVER MESSAGE -->
+        <div
+          id="gameOverPanel"
+          class="overlay-panel hidden"
+        >
+          <h2>
             GAME OVER
           </h2>
 
-          <p id="messageText">
-            Final score: 0
+          <p>
+            Final score:
+            <strong id="finalScoreDisplay">
+              0
+            </strong>
           </p>
 
           <button
             id="restartButton"
+            class="main-button"
             type="button"
           >
             PLAY AGAIN
+          </button>
+
+          <button
+            id="gameOverHomeButton"
+            class="secondary-button"
+            type="button"
+          >
+            HOME
+          </button>
+        </div>
+
+
+        <!-- LEVEL COMPLETE MESSAGE -->
+        <div
+          id="levelCompletePanel"
+          class="overlay-panel hidden"
+        >
+          <h2>
+            WAVE DESTROYED
+          </h2>
+
+          <p>
+            Get ready for the next invasion.
+          </p>
+
+          <button
+            id="nextWaveButton"
+            class="main-button"
+            type="button"
+          >
+            NEXT WAVE
           </button>
         </div>
 
       </div>
 
 
-      <div class="mobile-controls">
+      <!-- MOBILE CONTROLS -->
+      <div
+        id="mobileControls"
+        class="mobile-controls"
+      >
 
         <button
-          id="leftButton"
-          class="control-button"
+          id="moveLeftButton"
+          class="control-button direction-button"
           type="button"
           aria-label="Move left"
         >
@@ -139,15 +223,16 @@
 
         <button
           id="fireButton"
-          class="fire-button"
+          class="control-button fire-button"
           type="button"
+          aria-label="Fire"
         >
           FIRE
         </button>
 
         <button
-          id="rightButton"
-          class="control-button"
+          id="moveRightButton"
+          class="control-button direction-button"
           type="button"
           aria-label="Move right"
         >
@@ -156,27 +241,79 @@
 
       </div>
 
+
+      <button
+        id="homeButton"
+        class="home-button"
+        type="button"
+      >
+        HOME
+      </button>
+
     </section>
 
   </main>
 
 
+  <!-- GAME IMAGES -->
+  <div
+    id="gameAssets"
+    class="game-assets"
+    aria-hidden="true"
+  >
+
+    <img
+      id="alien1Image"
+      src="alien1.jpg"
+      alt=""
+    >
+
+    <img
+      id="alien2Image"
+      src="alien2.jpg"
+      alt=""
+    >
+
+    <img
+      id="alien3Image"
+      src="alien3.jpg"
+      alt=""
+    >
+
+    <img
+      id="barrierImage"
+      src="barrier.jpg"
+      alt=""
+    >
+
+    <img
+      id="gunImage"
+      src="gun.jpg"
+      alt=""
+    >
+
+  </div>
+
+
+  <!-- GAME AUDIO -->
   <audio
-    id="normalMusic"
+    id="gameMusic"
     src="loop.mp3"
-    loop
     preload="auto"
+    loop
   ></audio>
 
   <audio
-    id="dangerMusic"
+    id="deathMusic"
     src="loop2.mp3"
-    loop
     preload="auto"
   ></audio>
 
 
-  <script src="invaders.js?v=5"></script>
+  <script
+    src="invaders.js?v=1"
+    defer
+  ></script>
 
 </body>
 

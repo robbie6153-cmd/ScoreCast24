@@ -10,9 +10,9 @@ const startScreen =
     "startScreen"
   );
 
-const gameContainer =
+const gameScreen =
   document.getElementById(
-    "gameContainer"
+    "gameScreen"
   );
 
 const startButton =
@@ -20,44 +20,49 @@ const startButton =
     "startButton"
   );
 
+const homeButton =
+  document.getElementById(
+    "homeButton"
+  );
+
+const gameOverHomeButton =
+  document.getElementById(
+    "gameOverHomeButton"
+  );
+
 const restartButton =
   document.getElementById(
     "restartButton"
   );
 
-const soundButton =
+const nextWaveButton =
   document.getElementById(
-    "soundButton"
+    "nextWaveButton"
   );
 
-const leftButton =
+const pauseButton =
   document.getElementById(
-    "leftButton"
+    "pauseButton"
   );
 
-const rightButton =
+const resumeButton =
   document.getElementById(
-    "rightButton"
+    "resumeButton"
   );
 
-const fireButton =
+const pausePanel =
   document.getElementById(
-    "fireButton"
+    "pausePanel"
   );
 
-const messageOverlay =
+const gameOverPanel =
   document.getElementById(
-    "messageOverlay"
+    "gameOverPanel"
   );
 
-const messageTitle =
+const levelCompletePanel =
   document.getElementById(
-    "messageTitle"
-  );
-
-const messageText =
-  document.getElementById(
-    "messageText"
+    "levelCompletePanel"
   );
 
 const scoreDisplay =
@@ -70,351 +75,476 @@ const livesDisplay =
     "livesDisplay"
   );
 
+const finalScoreDisplay =
+  document.getElementById(
+    "finalScoreDisplay"
+  );
+
+const gameContainer =
+  document.getElementById(
+    "gameContainer"
+  );
+
 const canvas =
   document.getElementById(
     "gameCanvas"
   );
 
-const context =
-  canvas.getContext("2d");
-
-const normalMusic =
-  document.getElementById(
-    "normalMusic"
+const ctx =
+  canvas.getContext(
+    "2d"
   );
 
-const dangerMusic =
+const moveLeftButton =
   document.getElementById(
-    "dangerMusic"
+    "moveLeftButton"
+  );
+
+const moveRightButton =
+  document.getElementById(
+    "moveRightButton"
+  );
+
+const fireButton =
+  document.getElementById(
+    "fireButton"
   );
 
 
 /* =========================
-   CANVAS SETTINGS
+   IMAGES
+========================= */
+
+const alien1Image =
+  document.getElementById(
+    "alien1Image"
+  );
+
+const alien2Image =
+  document.getElementById(
+    "alien2Image"
+  );
+
+const alien3Image =
+  document.getElementById(
+    "alien3Image"
+  );
+
+const barrierImage =
+  document.getElementById(
+    "barrierImage"
+  );
+
+const gunImage =
+  document.getElementById(
+    "gunImage"
+  );
+
+
+/* =========================
+   AUDIO
+========================= */
+
+const gameMusic =
+  document.getElementById(
+    "gameMusic"
+  );
+
+const deathMusic =
+  document.getElementById(
+    "deathMusic"
+  );
+
+gameMusic.volume = 0.45;
+deathMusic.volume = 0.75;
+
+
+/* =========================
+   GAME SETTINGS
 ========================= */
 
 const GAME_WIDTH = 900;
-const GAME_HEIGHT = 650;
+const GAME_HEIGHT = 1100;
 
-canvas.width = GAME_WIDTH;
-canvas.height = GAME_HEIGHT;
+const PLAYER_SIZE = 84;
+const PLAYER_SPEED = 520;
 
+const PLAYER_BULLET_WIDTH = 8;
+const PLAYER_BULLET_HEIGHT = 28;
+const PLAYER_BULLET_SPEED = 850;
 
-/* =========================
-   IMAGE LOADING
-========================= */
+const ENEMY_BULLET_WIDTH = 9;
+const ENEMY_BULLET_HEIGHT = 24;
+const ENEMY_BULLET_SPEED = 320;
 
-function loadImage(source) {
-  const image = new Image();
-  image.src = source;
-  return image;
-}
+const RAPID_FIRE_DELAY = 145;
 
-const playerImage =
-  loadImage("fun.jpg");
+const ALIEN_WIDTH = 72;
+const ALIEN_HEIGHT = 54;
+const ALIEN_GAP_X = 14;
+const ALIEN_GAP_Y = 22;
 
-const barrierImage =
-  loadImage("barrier.jpg");
+const TOP_ALIEN_COUNT = 8;
+const MIDDLE_ALIEN_COUNT = 8;
+const BOTTOM_ALIEN_COUNT = 10;
 
-const alienImages = [
-  loadImage("alien1.jpg"),
-  loadImage("alien2.jpg"),
-  loadImage("alien3.jpg")
-];
+const BARRIER_WIDTH = 155;
+const BARRIER_HEIGHT = 92;
+const BARRIER_COUNT = 3;
 
+const STARTING_LIVES = 3;
 
-/* =========================
-   GAME CONSTANTS
-========================= */
-
-const PLAYER_WIDTH = 56;
-const PLAYER_HEIGHT = 56;
-
-const PLAYER_Y =
-  GAME_HEIGHT -
-  PLAYER_HEIGHT -
-  15;
-
-const PLAYER_SPEED = 480;
-
-const PLAYER_BULLET_SPEED = 720;
-const ALIEN_BULLET_SPEED = 310;
-
-const RAPID_FIRE_DELAY = 125;
-
-const ALIEN_WIDTH = 58;
-const ALIEN_HEIGHT = 43;
-
-const ALIEN_COLUMNS = 9;
-const ALIEN_ROWS = 3;
-
-const ALIEN_HORIZONTAL_GAP = 25;
-const ALIEN_VERTICAL_GAP = 22;
-
-const ALIEN_START_X = 75;
-const ALIEN_START_Y = 70;
-
-const ALIEN_DROP_DISTANCE = 24;
-
-const BARRIER_WIDTH = 115;
-const BARRIER_HEIGHT = 62;
-const BARRIER_Y = 475;
-
-const DANGER_LINE_Y = 350;
-
-const STAR_COUNT = 90;
+const ALIEN_DROP_DISTANCE = 30;
 
 
 /* =========================
-   GAME VARIABLES
+   GAME STATE
 ========================= */
 
 let animationFrameId = null;
-
-let lastFrameTime = 0;
-let lastPlayerShotTime = 0;
-let lastAlienShotTime = 0;
+let lastTime = 0;
 
 let gameRunning = false;
+let gamePaused = false;
 let gameOver = false;
-let soundEnabled = true;
-let dangerMusicActive = false;
+let waveComplete = false;
 
 let score = 0;
-let lives = 3;
+let lives = STARTING_LIVES;
+let wave = 1;
 
 let alienDirection = 1;
-let alienSpeed = 52;
+let alienSpeed = 48;
 
-let leftPressed = false;
-let rightPressed = false;
-let firePressed = false;
+let enemyFireTimer = 0;
+let enemyFireDelay = 900;
+
+let lastPlayerShot = 0;
+
+let moveLeft = false;
+let moveRight = false;
+let firing = false;
 
 let touchDragging = false;
 
 let player = null;
 let aliens = [];
 let playerBullets = [];
-let alienBullets = [];
+let enemyBullets = [];
 let barriers = [];
-let stars = [];
 let explosions = [];
+
+let canvasScaleX = 1;
+let canvasScaleY = 1;
 
 
 /* =========================
-   OBJECT CREATION
+   PLAYER
 ========================= */
 
 function createPlayer() {
-  return {
+  player = {
     x:
-      (GAME_WIDTH / 2) -
-      (PLAYER_WIDTH / 2),
+      GAME_WIDTH / 2 -
+      PLAYER_SIZE / 2,
 
-    y: PLAYER_Y,
+    y:
+      GAME_HEIGHT -
+      PLAYER_SIZE -
+      44,
 
-    width: PLAYER_WIDTH,
-    height: PLAYER_HEIGHT,
+    width:
+      PLAYER_SIZE,
 
-    invulnerableUntil: 0
+    height:
+      PLAYER_SIZE,
+
+    invulnerable:
+      false,
+
+    invulnerableTimer:
+      0
   };
 }
 
 
-function createAliens() {
-  const createdAliens = [];
+/* =========================
+   ALIENS
+========================= */
 
-  for (
-    let row = 0;
-    row < ALIEN_ROWS;
-    row += 1
-  ) {
-    for (
-      let column = 0;
-      column < ALIEN_COLUMNS;
-      column += 1
-    ) {
-      const health =
-        3 - row;
+function createAlienRow({
+  count,
+  row,
+  health,
+  image,
+  points
+}) {
+  const totalWidth =
+    count * ALIEN_WIDTH +
+    (count - 1) * ALIEN_GAP_X;
 
-      createdAliens.push({
-        x:
-          ALIEN_START_X +
-          column *
-          (
-            ALIEN_WIDTH +
-            ALIEN_HORIZONTAL_GAP
-          ),
+  const startX =
+    (GAME_WIDTH - totalWidth) / 2;
 
-        y:
-          ALIEN_START_Y +
-          row *
-          (
-            ALIEN_HEIGHT +
-            ALIEN_VERTICAL_GAP
-          ),
-
-        width: ALIEN_WIDTH,
-        height: ALIEN_HEIGHT,
-
-        row,
-        column,
-
-        health,
-        maximumHealth: health,
-
-        alive: true,
-
-        flashUntil: 0
-      });
-    }
-  }
-
-  return createdAliens;
-}
-
-
-function createBarriers() {
-  const barrierGap =
-    (
-      GAME_WIDTH -
-      (BARRIER_WIDTH * 3)
-    ) / 4;
-
-  return [
-    {
-      x: barrierGap,
-      y: BARRIER_Y,
-      width: BARRIER_WIDTH,
-      height: BARRIER_HEIGHT,
-      health: 10,
-      maximumHealth: 10
-    },
-
-    {
-      x:
-        barrierGap * 2 +
-        BARRIER_WIDTH,
-
-      y: BARRIER_Y,
-      width: BARRIER_WIDTH,
-      height: BARRIER_HEIGHT,
-      health: 10,
-      maximumHealth: 10
-    },
-
-    {
-      x:
-        barrierGap * 3 +
-        BARRIER_WIDTH * 2,
-
-      y: BARRIER_Y,
-      width: BARRIER_WIDTH,
-      height: BARRIER_HEIGHT,
-      health: 10,
-      maximumHealth: 10
-    }
-  ];
-}
-
-
-function createStars() {
-  const createdStars = [];
+  const startY =
+    120 +
+    row *
+      (
+        ALIEN_HEIGHT +
+        ALIEN_GAP_Y
+      );
 
   for (
     let index = 0;
-    index < STAR_COUNT;
+    index < count;
     index += 1
   ) {
-    createdStars.push({
+    aliens.push({
       x:
-        Math.random() *
-        GAME_WIDTH,
+        startX +
+        index *
+          (
+            ALIEN_WIDTH +
+            ALIEN_GAP_X
+          ),
 
       y:
-        Math.random() *
-        GAME_HEIGHT,
+        startY,
 
-      size:
-        Math.random() * 2.2 +
-        0.4,
+      width:
+        ALIEN_WIDTH,
 
-      speed:
-        Math.random() * 20 +
-        8,
+      height:
+        ALIEN_HEIGHT,
 
-      brightness:
-        Math.random() * 0.7 +
-        0.3
+      health:
+        health,
+
+      maxHealth:
+        health,
+
+      image:
+        image,
+
+      points:
+        points,
+
+      alive:
+        true,
+
+      flashTimer:
+        0
     });
   }
+}
 
-  return createdStars;
+
+function createAliens() {
+  aliens = [];
+
+  createAlienRow({
+    count:
+      TOP_ALIEN_COUNT,
+
+    row:
+      0,
+
+    health:
+      3,
+
+    image:
+      alien1Image,
+
+    points:
+      30
+  });
+
+  createAlienRow({
+    count:
+      MIDDLE_ALIEN_COUNT,
+
+    row:
+      1,
+
+    health:
+      2,
+
+    image:
+      alien2Image,
+
+    points:
+      20
+  });
+
+  createAlienRow({
+    count:
+      BOTTOM_ALIEN_COUNT,
+
+    row:
+      2,
+
+    health:
+      1,
+
+    image:
+      alien3Image,
+
+    points:
+      10
+  });
 }
 
 
 /* =========================
-   GAME START AND RESET
+   BARRIERS
 ========================= */
+
+function createBarriers() {
+  barriers = [];
+
+  const sideGap =
+    (
+      GAME_WIDTH -
+      BARRIER_COUNT *
+        BARRIER_WIDTH
+    ) /
+    (
+      BARRIER_COUNT +
+      1
+    );
+
+  for (
+    let index = 0;
+    index < BARRIER_COUNT;
+    index += 1
+  ) {
+    barriers.push({
+      x:
+        sideGap +
+        index *
+          (
+            BARRIER_WIDTH +
+            sideGap
+          ),
+
+      y:
+        GAME_HEIGHT -
+        245,
+
+      width:
+        BARRIER_WIDTH,
+
+      height:
+        BARRIER_HEIGHT,
+
+      health:
+        12,
+
+      maxHealth:
+        12,
+
+      alive:
+        true
+    });
+  }
+}
+
+
+/* =========================
+   CANVAS SIZE
+========================= */
+
+function resizeCanvas() {
+  canvas.width =
+    GAME_WIDTH;
+
+  canvas.height =
+    GAME_HEIGHT;
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+  canvasScaleX =
+    GAME_WIDTH /
+    rect.width;
+
+  canvasScaleY =
+    GAME_HEIGHT /
+    rect.height;
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================
+   START AND RESET
+========================= */
+
+function resetGame() {
+  score = 0;
+  lives = STARTING_LIVES;
+  wave = 1;
+
+  alienSpeed = 48;
+  alienDirection = 1;
+
+  enemyFireTimer = 0;
+  enemyFireDelay = 900;
+
+  playerBullets = [];
+  enemyBullets = [];
+  explosions = [];
+
+  createPlayer();
+  createAliens();
+  createBarriers();
+
+  updateScoreDisplay();
+  updateLivesDisplay();
+}
+
 
 function startGame() {
   cancelAnimationFrame(
     animationFrameId
   );
 
-  score = 0;
-  lives = 3;
-
-  alienDirection = 1;
-  alienSpeed = 52;
-
-  playerBullets = [];
-  alienBullets = [];
-  explosions = [];
-
-  player =
-    createPlayer();
-
-  aliens =
-    createAliens();
-
-  barriers =
-    createBarriers();
-
-  stars =
-    createStars();
-
-  leftPressed = false;
-  rightPressed = false;
-  firePressed = false;
-  touchDragging = false;
-
-  lastFrameTime =
-    performance.now();
-
-  lastPlayerShotTime = 0;
-  lastAlienShotTime = 0;
-
-  gameRunning = true;
-  gameOver = false;
-  dangerMusicActive = false;
+  resizeCanvas();
+  resetGame();
 
   startScreen.classList.add(
     "hidden"
   );
 
-  gameContainer.classList.remove(
+  gameScreen.classList.remove(
     "hidden"
   );
 
-  messageOverlay.classList.add(
+  pausePanel.classList.add(
     "hidden"
   );
 
-  updateScoreDisplay();
-  updateLivesDisplay();
+  gameOverPanel.classList.add(
+    "hidden"
+  );
 
-  startNormalMusic();
+  levelCompletePanel.classList.add(
+    "hidden"
+  );
+
+  gameRunning = true;
+  gamePaused = false;
+  gameOver = false;
+  waveComplete = false;
+
+  lastTime =
+    performance.now();
+
+  startGameMusic();
 
   animationFrameId =
     requestAnimationFrame(
@@ -423,103 +553,97 @@ function startGame() {
 }
 
 
+function restartGame() {
+  stopDeathMusic();
+  startGame();
+}
+
+
+function returnHome() {
+  gameRunning = false;
+  gamePaused = false;
+  gameOver = false;
+  waveComplete = false;
+
+  cancelAnimationFrame(
+    animationFrameId
+  );
+
+  stopAllAudio();
+
+  clearControls();
+
+  gameScreen.classList.add(
+    "hidden"
+  );
+
+  pausePanel.classList.add(
+    "hidden"
+  );
+
+  gameOverPanel.classList.add(
+    "hidden"
+  );
+
+  levelCompletePanel.classList.add(
+    "hidden"
+  );
+
+  startScreen.classList.remove(
+    "hidden"
+  );
+}
+
+
 /* =========================
-   MUSIC
+   NEXT WAVE
 ========================= */
 
-function playAudio(audioElement) {
-  if (!soundEnabled) {
-    return;
-  }
+function startNextWave() {
+  wave += 1;
 
-  const playPromise =
-    audioElement.play();
-
-  if (
-    playPromise &&
-    typeof playPromise.catch ===
-      "function"
-  ) {
-    playPromise.catch(
-      () => {
-        // Browser may wait for another user interaction.
-      }
+  alienSpeed =
+    Math.min(
+      145,
+      48 +
+      (wave - 1) * 13
     );
-  }
-}
 
+  enemyFireDelay =
+    Math.max(
+      340,
+      900 -
+      (wave - 1) * 80
+    );
 
-function stopAudio(audioElement) {
-  audioElement.pause();
-  audioElement.currentTime = 0;
-}
+  alienDirection = 1;
+  enemyFireTimer = 0;
 
+  playerBullets = [];
+  enemyBullets = [];
+  explosions = [];
 
-function startNormalMusic() {
-  if (!soundEnabled) {
-    return;
-  }
+  createPlayer();
+  createAliens();
+  createBarriers();
 
-  if (dangerMusicActive) {
-    return;
-  }
+  waveComplete = false;
+  gamePaused = false;
+  gameRunning = true;
 
-  dangerMusic.pause();
+  levelCompletePanel.classList.add(
+    "hidden"
+  );
 
-  if (normalMusic.paused) {
-    playAudio(normalMusic);
-  }
-}
+  startGameMusic();
 
+  lastTime =
+    performance.now();
 
-function startDangerMusic() {
-  if (!soundEnabled) {
-    return;
-  }
-
-  if (dangerMusicActive) {
-    return;
-  }
-
-  dangerMusicActive = true;
-
-  normalMusic.pause();
-  normalMusic.currentTime = 0;
-
-  dangerMusic.currentTime = 0;
-  playAudio(dangerMusic);
-}
-
-
-function stopAllMusic() {
-  stopAudio(normalMusic);
-  stopAudio(dangerMusic);
-}
-
-
-function toggleSound() {
-  soundEnabled =
-    !soundEnabled;
-
-  soundButton.textContent =
-    soundEnabled
-      ? "SOUND ON"
-      : "SOUND OFF";
-
-  if (!soundEnabled) {
-    stopAllMusic();
-    return;
-  }
-
-  if (!gameRunning) {
-    return;
-  }
-
-  if (dangerMusicActive) {
-    playAudio(dangerMusic);
-  } else {
-    playAudio(normalMusic);
-  }
+  animationFrameId =
+    requestAnimationFrame(
+      gameLoop
+    );
 }
 
 
@@ -528,7 +652,11 @@ function toggleSound() {
 ========================= */
 
 function gameLoop(currentTime) {
-  if (!gameRunning) {
+  if (
+    !gameRunning ||
+    gameOver ||
+    waveComplete
+  ) {
     return;
   }
 
@@ -536,22 +664,24 @@ function gameLoop(currentTime) {
     Math.min(
       (
         currentTime -
-        lastFrameTime
-      ) / 1000,
+        lastTime
+      ) /
+      1000,
+
       0.04
     );
 
-  lastFrameTime =
+  lastTime =
     currentTime;
 
-  updateGame(
-    deltaTime,
-    currentTime
-  );
+  if (!gamePaused) {
+    updateGame(
+      deltaTime,
+      currentTime
+    );
+  }
 
-  drawGame(
-    currentTime
-  );
+  drawGame();
 
   animationFrameId =
     requestAnimationFrame(
@@ -561,31 +691,34 @@ function gameLoop(currentTime) {
 
 
 /* =========================
-   GAME UPDATES
+   UPDATE GAME
 ========================= */
 
 function updateGame(
   deltaTime,
   currentTime
 ) {
-  updateStars(
-    deltaTime
-  );
-
   updatePlayer(
-    deltaTime,
-    currentTime
+    deltaTime
   );
 
-  updateAliens(
-    deltaTime
+  updatePlayerFiring(
+    currentTime
   );
 
   updatePlayerBullets(
     deltaTime
   );
 
-  updateAlienBullets(
+  updateAliens(
+    deltaTime
+  );
+
+  updateEnemyFiring(
+    deltaTime
+  );
+
+  updateEnemyBullets(
     deltaTime
   );
 
@@ -593,154 +726,102 @@ function updateGame(
     deltaTime
   );
 
-  checkPlayerBulletCollisions(
-    currentTime
+  updateInvulnerability(
+    deltaTime
   );
 
-  checkAlienBulletCollisions(
-    currentTime
-  );
-
-  checkAlienDanger();
-
-  attemptAlienShot(
-    currentTime
-  );
-
-  removeFinishedObjects();
-
-  checkWinCondition();
+  checkPlayerBulletCollisions();
+  checkEnemyBulletCollisions();
+  checkAlienBarrierCollisions();
+  checkAlienPlayerCollision();
+  checkWaveComplete();
 }
 
 
-function updateStars(deltaTime) {
-  for (const star of stars) {
-    star.y +=
-      star.speed *
-      deltaTime;
-
-    if (
-      star.y >
-      GAME_HEIGHT
-    ) {
-      star.y = 0;
-      star.x =
-        Math.random() *
-        GAME_WIDTH;
-    }
-  }
-}
-
+/* =========================
+   PLAYER MOVEMENT
+========================= */
 
 function updatePlayer(
-  deltaTime,
-  currentTime
+  deltaTime
 ) {
-  if (leftPressed) {
+  if (moveLeft) {
     player.x -=
       PLAYER_SPEED *
       deltaTime;
   }
 
-  if (rightPressed) {
+  if (moveRight) {
     player.x +=
       PLAYER_SPEED *
       deltaTime;
   }
 
   player.x =
-    clamp(
-      player.x,
+    Math.max(
       0,
-      GAME_WIDTH -
-      player.width
-    );
+      Math.min(
+        GAME_WIDTH -
+        player.width,
 
-  if (
-    firePressed &&
-    currentTime -
-      lastPlayerShotTime >=
-      RAPID_FIRE_DELAY
-  ) {
-    firePlayerBullet(
-      currentTime
+        player.x
+      )
     );
-  }
 }
 
 
-function updateAliens(deltaTime) {
-  const livingAliens =
-    aliens.filter(
-      alien => alien.alive
-    );
+/* =========================
+   PLAYER FIRING
+========================= */
+
+function updatePlayerFiring(
+  currentTime
+) {
+  if (!firing) {
+    return;
+  }
 
   if (
-    livingAliens.length === 0
+    currentTime -
+    lastPlayerShot <
+    RAPID_FIRE_DELAY
   ) {
     return;
   }
 
-  let shouldDrop = false;
+  firePlayerBullet();
 
-  for (
-    const alien of livingAliens
+  lastPlayerShot =
+    currentTime;
+}
+
+
+function firePlayerBullet() {
+  if (
+    !gameRunning ||
+    gamePaused ||
+    gameOver ||
+    waveComplete
   ) {
-    const nextX =
-      alien.x +
-      alienSpeed *
-      alienDirection *
-      deltaTime;
-
-    if (
-      nextX <= 10 ||
-      nextX +
-        alien.width >=
-        GAME_WIDTH - 10
-    ) {
-      shouldDrop = true;
-      break;
-    }
+    return;
   }
 
-  if (shouldDrop) {
-    alienDirection *= -1;
+  playerBullets.push({
+    x:
+      player.x +
+      player.width / 2 -
+      PLAYER_BULLET_WIDTH / 2,
 
-    for (
-      const alien of livingAliens
-    ) {
-      alien.y +=
-        ALIEN_DROP_DISTANCE;
-    }
+    y:
+      player.y -
+      PLAYER_BULLET_HEIGHT,
 
-    alienSpeed += 4;
-  } else {
-    for (
-      const alien of livingAliens
-    ) {
-      alien.x +=
-        alienSpeed *
-        alienDirection *
-        deltaTime;
-    }
-  }
+    width:
+      PLAYER_BULLET_WIDTH,
 
-  for (
-    const alien of livingAliens
-  ) {
-    if (
-      alien.y +
-        alien.height >=
-        BARRIER_Y + 20
-    ) {
-      endGame(
-        false,
-        "THE ALIENS LANDED!"
-      );
-
-      return;
-    }
-  }
+    height:
+      PLAYER_BULLET_HEIGHT
+  });
 }
 
 
@@ -754,69 +835,28 @@ function updatePlayerBullets(
       PLAYER_BULLET_SPEED *
       deltaTime;
   }
-}
 
-
-function updateAlienBullets(
-  deltaTime
-) {
-  for (
-    const bullet of alienBullets
-  ) {
-    bullet.y +=
-      ALIEN_BULLET_SPEED *
-      deltaTime;
-  }
-}
-
-
-function updateExplosions(
-  deltaTime
-) {
-  for (
-    const explosion of explosions
-  ) {
-    explosion.life -=
-      deltaTime;
-
-    explosion.radius +=
-      80 *
-      deltaTime;
-  }
+  playerBullets =
+    playerBullets.filter(
+      bullet =>
+        bullet.y +
+        bullet.height >
+        0
+    );
 }
 
 
 /* =========================
-   SHOOTING
+   ALIEN MOVEMENT
 ========================= */
 
-function firePlayerBullet(
-  currentTime
-) {
-  lastPlayerShotTime =
-    currentTime;
-
-  playerBullets.push({
-    x:
-      player.x +
-      player.width / 2 -
-      3,
-
-    y:
-      player.y - 15,
-
-    width: 6,
-    height: 19
-  });
-}
-
-
-function attemptAlienShot(
-  currentTime
+function updateAliens(
+  deltaTime
 ) {
   const livingAliens =
     aliens.filter(
-      alien => alien.alive
+      alien =>
+        alien.alive
     );
 
   if (
@@ -825,100 +865,205 @@ function attemptAlienShot(
     return;
   }
 
-  const shotDelay =
-    Math.max(
-      320,
-      950 -
-      (
-        27 -
-        livingAliens.length
-      ) *
-      20
-    );
+  let leftEdge =
+    Infinity;
+
+  let rightEdge =
+    -Infinity;
+
+  for (
+    const alien of livingAliens
+  ) {
+    leftEdge =
+      Math.min(
+        leftEdge,
+        alien.x
+      );
+
+    rightEdge =
+      Math.max(
+        rightEdge,
+        alien.x +
+        alien.width
+      );
+  }
+
+  const distance =
+    alienSpeed *
+    alienDirection *
+    deltaTime;
+
+  const willHitRight =
+    alienDirection > 0 &&
+    rightEdge +
+      distance >=
+      GAME_WIDTH -
+      10;
+
+  const willHitLeft =
+    alienDirection < 0 &&
+    leftEdge +
+      distance <=
+      10;
 
   if (
-    currentTime -
-      lastAlienShotTime <
-      shotDelay
+    willHitRight ||
+    willHitLeft
+  ) {
+    alienDirection *= -1;
+
+    for (
+      const alien of livingAliens
+    ) {
+      alien.y +=
+        ALIEN_DROP_DISTANCE;
+    }
+  } else {
+    for (
+      const alien of livingAliens
+    ) {
+      alien.x +=
+        distance;
+    }
+  }
+
+  for (
+    const alien of livingAliens
+  ) {
+    if (
+      alien.flashTimer >
+      0
+    ) {
+      alien.flashTimer -=
+        deltaTime;
+    }
+  }
+}
+
+
+/* =========================
+   ENEMY FIRING
+========================= */
+
+function updateEnemyFiring(
+  deltaTime
+) {
+  enemyFireTimer +=
+    deltaTime * 1000;
+
+  if (
+    enemyFireTimer <
+    enemyFireDelay
   ) {
     return;
   }
 
-  lastAlienShotTime =
-    currentTime;
+  enemyFireTimer = 0;
 
-  const bottomAliens =
-    getBottomAliensByColumn();
+  const shooters =
+    getBottomAliens();
 
   if (
-    bottomAliens.length === 0
+    shooters.length === 0
   ) {
     return;
   }
 
   const shooter =
-    bottomAliens[
+    shooters[
       Math.floor(
         Math.random() *
-        bottomAliens.length
+        shooters.length
       )
     ];
 
-  alienBullets.push({
+  enemyBullets.push({
     x:
       shooter.x +
       shooter.width / 2 -
-      4,
+      ENEMY_BULLET_WIDTH / 2,
 
     y:
       shooter.y +
       shooter.height,
 
-    width: 8,
-    height: 19
+    width:
+      ENEMY_BULLET_WIDTH,
+
+    height:
+      ENEMY_BULLET_HEIGHT
   });
 }
 
 
-function getBottomAliensByColumn() {
-  const bottomAliens = [];
+function getBottomAliens() {
+  const livingAliens =
+    aliens.filter(
+      alien =>
+        alien.alive
+    );
+
+  const columnGroups =
+    new Map();
 
   for (
-    let column = 0;
-    column < ALIEN_COLUMNS;
-    column += 1
+    const alien of livingAliens
   ) {
-    const aliensInColumn =
-      aliens
-        .filter(
-          alien =>
-            alien.alive &&
-            alien.column === column
+    const column =
+      Math.round(
+        alien.x /
+        (
+          ALIEN_WIDTH +
+          ALIEN_GAP_X
         )
-        .sort(
-          (
-            firstAlien,
-            secondAlien
-          ) =>
-            secondAlien.y -
-            firstAlien.y
-        );
+      );
+
+    const current =
+      columnGroups.get(
+        column
+      );
 
     if (
-      aliensInColumn.length > 0
+      !current ||
+      alien.y >
+      current.y
     ) {
-      bottomAliens.push(
-        aliensInColumn[0]
+      columnGroups.set(
+        column,
+        alien
       );
     }
   }
 
-  return bottomAliens;
+  return Array.from(
+    columnGroups.values()
+  );
+}
+
+
+function updateEnemyBullets(
+  deltaTime
+) {
+  for (
+    const bullet of enemyBullets
+  ) {
+    bullet.y +=
+      ENEMY_BULLET_SPEED *
+      deltaTime;
+  }
+
+  enemyBullets =
+    enemyBullets.filter(
+      bullet =>
+        bullet.y <
+        GAME_HEIGHT +
+        bullet.height
+    );
 }
 
 
 /* =========================
-   COLLISION DETECTION
+   COLLISION HELPERS
 ========================= */
 
 function rectanglesOverlap(
@@ -945,23 +1090,30 @@ function rectanglesOverlap(
 }
 
 
-function checkPlayerBulletCollisions(
-  currentTime
-) {
+/* =========================
+   PLAYER BULLET COLLISIONS
+========================= */
+
+function checkPlayerBulletCollisions() {
   for (
-    const bullet of playerBullets
+    let bulletIndex =
+      playerBullets.length - 1;
+
+    bulletIndex >= 0;
+
+    bulletIndex -= 1
   ) {
-    if (bullet.destroyed) {
-      continue;
-    }
+    const bullet =
+      playerBullets[
+        bulletIndex
+      ];
+
+    let bulletRemoved = false;
 
     for (
       const alien of aliens
     ) {
-      if (
-        !alien.alive ||
-        bullet.destroyed
-      ) {
+      if (!alien.alive) {
         continue;
       }
 
@@ -971,155 +1123,305 @@ function checkPlayerBulletCollisions(
           alien
         )
       ) {
-        bullet.destroyed = true;
-
-        alien.health -= 1;
-        alien.flashUntil =
-          currentTime + 110;
-
-        createExplosion(
-          bullet.x,
-          bullet.y,
-          0.18
+        playerBullets.splice(
+          bulletIndex,
+          1
         );
 
-        if (
-          alien.health <= 0
-        ) {
-          alien.alive = false;
+        bulletRemoved = true;
 
-          score +=
-            alien.maximumHealth *
-            100;
+        damageAlien(
+          alien
+        );
 
-          createExplosion(
-            alien.x +
-              alien.width / 2,
-
-            alien.y +
-              alien.height / 2,
-
-            0.42
-          );
-
-          updateScoreDisplay();
-        } else {
-          score += 20;
-          updateScoreDisplay();
-        }
+        break;
       }
     }
 
-    checkBulletAgainstBarriers(
-      bullet,
-      1
-    );
+    if (bulletRemoved) {
+      continue;
+    }
+
+    for (
+      const barrier of barriers
+    ) {
+      if (!barrier.alive) {
+        continue;
+      }
+
+      if (
+        rectanglesOverlap(
+          bullet,
+          barrier
+        )
+      ) {
+        playerBullets.splice(
+          bulletIndex,
+          1
+        );
+
+        damageBarrier(
+          barrier,
+          1
+        );
+
+        break;
+      }
+    }
   }
 }
 
 
-function checkAlienBulletCollisions(
-  currentTime
+function damageAlien(
+  alien
 ) {
-  for (
-    const bullet of alienBullets
-  ) {
-    if (bullet.destroyed) {
-      continue;
-    }
+  alien.health -= 1;
+  alien.flashTimer = 0.1;
 
-    checkBulletAgainstBarriers(
-      bullet,
-      1
+  if (
+    alien.health <= 0
+  ) {
+    alien.alive = false;
+
+    score +=
+      alien.points;
+
+    createExplosion(
+      alien.x +
+      alien.width / 2,
+
+      alien.y +
+      alien.height / 2,
+
+      42
     );
 
-    if (
-      bullet.destroyed
+    updateScoreDisplay();
+
+    increaseAlienSpeed();
+  }
+}
+
+
+function increaseAlienSpeed() {
+  const livingCount =
+    aliens.filter(
+      alien =>
+        alien.alive
+    ).length;
+
+  const totalCount =
+    aliens.length;
+
+  const destroyedRatio =
+    1 -
+    livingCount /
+    totalCount;
+
+  alienSpeed =
+    Math.min(
+      180,
+
+      48 +
+      (wave - 1) *
+        13 +
+      destroyedRatio *
+        80
+    );
+}
+
+
+/* =========================
+   ENEMY BULLET COLLISIONS
+========================= */
+
+function checkEnemyBulletCollisions() {
+  for (
+    let bulletIndex =
+      enemyBullets.length - 1;
+
+    bulletIndex >= 0;
+
+    bulletIndex -= 1
+  ) {
+    const bullet =
+      enemyBullets[
+        bulletIndex
+      ];
+
+    let bulletRemoved = false;
+
+    for (
+      const barrier of barriers
     ) {
+      if (!barrier.alive) {
+        continue;
+      }
+
+      if (
+        rectanglesOverlap(
+          bullet,
+          barrier
+        )
+      ) {
+        enemyBullets.splice(
+          bulletIndex,
+          1
+        );
+
+        damageBarrier(
+          barrier,
+          1
+        );
+
+        bulletRemoved = true;
+
+        break;
+      }
+    }
+
+    if (bulletRemoved) {
       continue;
     }
 
     if (
+      !player.invulnerable &&
       rectanglesOverlap(
         bullet,
         player
       )
     ) {
-      bullet.destroyed = true;
-
-      if (
-        currentTime <
-        player.invulnerableUntil
-      ) {
-        continue;
-      }
-
-      loseLife(
-        currentTime
+      enemyBullets.splice(
+        bulletIndex,
+        1
       );
+
+      loseLife();
     }
   }
 }
 
 
-function checkBulletAgainstBarriers(
-  bullet,
-  damage
+/* =========================
+   BARRIER DAMAGE
+========================= */
+
+function damageBarrier(
+  barrier,
+  amount
 ) {
-  for (
-    const barrier of barriers
+  barrier.health -=
+    amount;
+
+  if (
+    barrier.health <= 0
   ) {
-    if (
-      barrier.health <= 0 ||
-      bullet.destroyed
+    barrier.health = 0;
+    barrier.alive = false;
+
+    createExplosion(
+      barrier.x +
+      barrier.width / 2,
+
+      barrier.y +
+      barrier.height / 2,
+
+      55
+    );
+  }
+}
+
+
+/* =========================
+   ALIEN COLLISIONS
+========================= */
+
+function checkAlienBarrierCollisions() {
+  for (
+    const alien of aliens
+  ) {
+    if (!alien.alive) {
+      continue;
+    }
+
+    for (
+      const barrier of barriers
     ) {
+      if (!barrier.alive) {
+        continue;
+      }
+
+      if (
+        rectanglesOverlap(
+          alien,
+          barrier
+        )
+      ) {
+        damageBarrier(
+          barrier,
+          barrier.maxHealth
+        );
+      }
+    }
+  }
+}
+
+
+function checkAlienPlayerCollision() {
+  for (
+    const alien of aliens
+  ) {
+    if (!alien.alive) {
       continue;
     }
 
     if (
       rectanglesOverlap(
-        bullet,
-        barrier
-      )
+        alien,
+        player
+      ) ||
+      alien.y +
+        alien.height >=
+        player.y
     ) {
-      bullet.destroyed = true;
-      barrier.health -= damage;
+      endGame();
 
-      createExplosion(
-        bullet.x,
-        bullet.y,
-        0.12
-      );
+      return;
     }
   }
 }
 
 
-function loseLife(currentTime) {
+/* =========================
+   PLAYER LIFE
+========================= */
+
+function loseLife() {
+  if (
+    player.invulnerable ||
+    gameOver
+  ) {
+    return;
+  }
+
   lives -= 1;
 
   updateLivesDisplay();
 
-  dangerMusicActive = false;
-  startDangerMusic();
-
   createExplosion(
     player.x +
-      player.width / 2,
+    player.width / 2,
 
     player.y +
-      player.height / 2,
+    player.height / 2,
 
-    0.7
+    65
   );
 
-  alienBullets = [];
-
-  if (lives <= 0) {
-    endGame(
-      false,
-      "GAME OVER"
-    );
+  if (
+    lives <= 0
+  ) {
+    endGame();
 
     return;
   }
@@ -1128,127 +1430,96 @@ function loseLife(currentTime) {
     GAME_WIDTH / 2 -
     player.width / 2;
 
-  player.invulnerableUntil =
-    currentTime + 1800;
+  player.invulnerable = true;
+  player.invulnerableTimer = 2;
+
+  enemyBullets = [];
 }
 
 
-function checkAlienDanger() {
-  const livingAliens =
-    aliens.filter(
-      alien => alien.alive
-    );
-
+function updateInvulnerability(
+  deltaTime
+) {
   if (
-    livingAliens.length === 0
+    !player.invulnerable
   ) {
     return;
   }
 
-  const lowestAlienY =
-    Math.max(
-      ...livingAliens.map(
-        alien =>
-          alien.y +
-          alien.height
-      )
-    );
+  player.invulnerableTimer -=
+    deltaTime;
 
   if (
-    lowestAlienY >=
-    DANGER_LINE_Y
+    player.invulnerableTimer <=
+    0
   ) {
-    startDangerMusic();
+    player.invulnerable = false;
+    player.invulnerableTimer = 0;
   }
 }
 
 
 /* =========================
-   GAME CONDITIONS
+   WAVE AND GAME OVER
 ========================= */
 
-function checkWinCondition() {
-  const anyAliensAlive =
+function checkWaveComplete() {
+  const anyAlive =
     aliens.some(
-      alien => alien.alive
+      alien =>
+        alien.alive
     );
 
-  if (!anyAliensAlive) {
-    endGame(
-      true,
-      "YOU SAVED EARTH!"
-    );
-  }
-}
-
-
-function endGame(
-  playerWon,
-  title
-) {
-  if (gameOver) {
+  if (anyAlive) {
     return;
   }
 
+  waveComplete = true;
   gameRunning = false;
-  gameOver = true;
 
-  leftPressed = false;
-  rightPressed = false;
-  firePressed = false;
+  stopGameMusic();
 
-  stopAllMusic();
+  setTimeout(
+    () => {
+      levelCompletePanel.classList.remove(
+        "hidden"
+      );
+    },
 
-  if (
-    !playerWon &&
-    soundEnabled
-  ) {
-    dangerMusic.currentTime = 0;
-    playAudio(dangerMusic);
-  }
-
-  messageTitle.textContent =
-    title;
-
-  messageText.textContent =
-    playerWon
-      ? `Victory! Final score: ${score}`
-      : `Final score: ${score}`;
-
-  messageOverlay.classList.remove(
-    "hidden"
+    350
   );
 }
 
 
-/* =========================
-   CLEANUP
-========================= */
+function endGame() {
+  if (gameOver) {
+    return;
+  }
 
-function removeFinishedObjects() {
-  playerBullets =
-    playerBullets.filter(
-      bullet =>
-        !bullet.destroyed &&
-        bullet.y +
-          bullet.height >
-          0
+  gameOver = true;
+  gameRunning = false;
+
+  clearControls();
+
+  stopGameMusic();
+  playDeathMusic();
+
+  finalScoreDisplay.textContent =
+    String(
+      score
     );
 
-  alienBullets =
-    alienBullets.filter(
-      bullet =>
-        !bullet.destroyed &&
-        bullet.y <
-          GAME_HEIGHT +
-          bullet.height
-    );
+  setTimeout(
+    () => {
+      gameOverPanel.classList.remove(
+        "hidden"
+      );
+    },
 
-  explosions =
-    explosions.filter(
-      explosion =>
-        explosion.life > 0
-    );
+    350
+  );
+
+  drawGame();
 }
 
 
@@ -1259,24 +1530,52 @@ function removeFinishedObjects() {
 function createExplosion(
   x,
   y,
-  life
+  size
 ) {
   explosions.push({
-    x,
-    y,
-    life,
-    maximumLife: life,
-    radius: 5
+    x:
+      x,
+
+    y:
+      y,
+
+    size:
+      size,
+
+    life:
+      0.35,
+
+    maxLife:
+      0.35
   });
 }
 
 
+function updateExplosions(
+  deltaTime
+) {
+  for (
+    const explosion of explosions
+  ) {
+    explosion.life -=
+      deltaTime;
+  }
+
+  explosions =
+    explosions.filter(
+      explosion =>
+        explosion.life >
+        0
+    );
+}
+
+
 /* =========================
-   DRAWING
+   DRAW GAME
 ========================= */
 
-function drawGame(currentTime) {
-  context.clearRect(
+function drawGame() {
+  ctx.clearRect(
     0,
     0,
     GAME_WIDTH,
@@ -1285,44 +1584,21 @@ function drawGame(currentTime) {
 
   drawBackground();
   drawStars();
-  drawDangerLine();
+  drawAliens();
   drawBarriers();
-  drawAliens(currentTime);
   drawPlayerBullets();
-  drawAlienBullets();
-  drawPlayer(currentTime);
+  drawEnemyBullets();
+  drawPlayer();
   drawExplosions();
+  drawWaveNumber();
 }
 
 
 function drawBackground() {
-  const gradient =
-    context.createLinearGradient(
-      0,
-      0,
-      0,
-      GAME_HEIGHT
-    );
+  ctx.fillStyle =
+    "#02030a";
 
-  gradient.addColorStop(
-    0,
-    "#07142d"
-  );
-
-  gradient.addColorStop(
-    0.55,
-    "#020713"
-  );
-
-  gradient.addColorStop(
-    1,
-    "#000000"
-  );
-
-  context.fillStyle =
-    gradient;
-
-  context.fillRect(
+  ctx.fillRect(
     0,
     0,
     GAME_WIDTH,
@@ -1332,89 +1608,60 @@ function drawBackground() {
 
 
 function drawStars() {
+  ctx.fillStyle =
+    "rgba(255, 255, 255, 0.65)";
+
+  const starPositions = [
+    [58, 74],
+    [145, 42],
+    [239, 87],
+    [332, 39],
+    [422, 77],
+    [519, 31],
+    [620, 83],
+    [705, 49],
+    [830, 92],
+    [90, 340],
+    [187, 295],
+    [291, 372],
+    [401, 305],
+    [507, 348],
+    [604, 302],
+    [734, 360],
+    [847, 316],
+    [44, 650],
+    [160, 585],
+    [280, 690],
+    [388, 610],
+    [505, 670],
+    [650, 590],
+    [770, 678],
+    [858, 615],
+    [100, 912],
+    [220, 850],
+    [365, 935],
+    [530, 870],
+    [690, 940],
+    [810, 865]
+  ];
+
   for (
-    const star of stars
+    const [
+      x,
+      y
+    ] of starPositions
   ) {
-    context.globalAlpha =
-      star.brightness;
-
-    context.fillStyle =
-      "#ffffff";
-
-    context.beginPath();
-
-    context.arc(
-      star.x,
-      star.y,
-      star.size,
-      0,
-      Math.PI * 2
+    ctx.fillRect(
+      x,
+      y,
+      3,
+      3
     );
-
-    context.fill();
   }
-
-  context.globalAlpha = 1;
 }
 
 
-function drawDangerLine() {
-  context.save();
-
-  context.globalAlpha = 0.14;
-  context.strokeStyle = "#ff0000";
-  context.lineWidth = 2;
-
-  context.setLineDash([
-    14,
-    13
-  ]);
-
-  context.beginPath();
-
-  context.moveTo(
-    0,
-    DANGER_LINE_Y
-  );
-
-  context.lineTo(
-    GAME_WIDTH,
-    DANGER_LINE_Y
-  );
-
-  context.stroke();
-
-  context.restore();
-}
-
-
-function drawPlayer(currentTime) {
-  if (
-    currentTime <
-    player.invulnerableUntil
-  ) {
-    const flash =
-      Math.floor(
-        currentTime / 100
-      ) % 2;
-
-    if (flash === 0) {
-      return;
-    }
-  }
-
-  drawImageSafely(
-    playerImage,
-    player.x,
-    player.y,
-    player.width,
-    player.height,
-    "#39ff7a"
-  );
-}
-
-
-function drawAliens(currentTime) {
+function drawAliens() {
   for (
     const alien of aliens
   ) {
@@ -1422,81 +1669,73 @@ function drawAliens(currentTime) {
       continue;
     }
 
+    ctx.save();
+
     if (
-      currentTime <
-      alien.flashUntil
+      alien.flashTimer >
+      0
     ) {
-      context.save();
-
-      context.shadowBlur = 24;
-      context.shadowColor =
-        "#ffffff";
-
-      context.fillStyle =
-        "#ffffff";
-
-      context.fillRect(
-        alien.x,
-        alien.y,
-        alien.width,
-        alien.height
-      );
-
-      context.restore();
-
-      continue;
+      ctx.globalAlpha = 0.45;
     }
 
     drawImageSafely(
-      alienImages[alien.row],
+      alien.image,
       alien.x,
       alien.y,
       alien.width,
       alien.height,
-      "#ff32cf"
+      "#39ff14"
     );
 
     drawAlienHealth(
       alien
     );
+
+    ctx.restore();
   }
 }
 
 
-function drawAlienHealth(alien) {
+function drawAlienHealth(
+  alien
+) {
   if (
-    alien.maximumHealth <= 1
+    alien.maxHealth <= 1 ||
+    alien.health ===
+      alien.maxHealth
   ) {
     return;
   }
 
-  const healthWidth =
-    alien.width *
-    (
-      alien.health /
-      alien.maximumHealth
-    );
+  const barWidth =
+    alien.width;
 
-  context.fillStyle =
-    "rgba(0, 0, 0, 0.7)";
+  const barHeight =
+    6;
 
-  context.fillRect(
+  const healthRatio =
+    alien.health /
+    alien.maxHealth;
+
+  ctx.fillStyle =
+    "rgba(0, 0, 0, 0.8)";
+
+  ctx.fillRect(
     alien.x,
-    alien.y - 7,
-    alien.width,
-    4
+    alien.y - 10,
+    barWidth,
+    barHeight
   );
 
-  context.fillStyle =
-    alien.health === 1
-      ? "#ff3434"
-      : "#ffe600";
+  ctx.fillStyle =
+    "#ffeb3b";
 
-  context.fillRect(
+  ctx.fillRect(
     alien.x,
-    alien.y - 7,
-    healthWidth,
-    4
+    alien.y - 10,
+    barWidth *
+      healthRatio,
+    barHeight
   );
 }
 
@@ -1505,80 +1744,85 @@ function drawBarriers() {
   for (
     const barrier of barriers
   ) {
-    if (
-      barrier.health <= 0
-    ) {
+    if (!barrier.alive) {
       continue;
     }
 
     const healthRatio =
       barrier.health /
-      barrier.maximumHealth;
+      barrier.maxHealth;
 
-    context.save();
+    ctx.save();
 
-    context.globalAlpha =
-      0.4 +
-      healthRatio * 0.6;
+    ctx.globalAlpha =
+      0.3 +
+      healthRatio *
+        0.7;
 
-    if (
-      barrier.health <= 3
-    ) {
-      const shake =
-        Math.random() * 4 -
-        2;
-
-      drawImageSafely(
-        barrierImage,
-        barrier.x + shake,
-        barrier.y,
-        barrier.width,
-        barrier.height,
-        "#00d9ff"
-      );
-    } else {
-      drawImageSafely(
-        barrierImage,
-        barrier.x,
-        barrier.y,
-        barrier.width,
-        barrier.height,
-        "#00d9ff"
-      );
-    }
-
-    context.restore();
-
-    context.fillStyle =
-      "rgba(0, 0, 0, 0.65)";
-
-    context.fillRect(
+    drawImageSafely(
+      barrierImage,
       barrier.x,
-      barrier.y +
-        barrier.height +
-        4,
-
+      barrier.y,
       barrier.width,
-      5
+      barrier.height,
+      "#00d95f"
     );
 
-    context.fillStyle =
-      healthRatio > 0.4
-        ? "#40ff63"
-        : "#ff3232";
+    ctx.restore();
 
-    context.fillRect(
+    ctx.fillStyle =
+      "rgba(0, 0, 0, 0.7)";
+
+    ctx.fillRect(
       barrier.x,
       barrier.y +
         barrier.height +
-        4,
+        7,
+      barrier.width,
+      6
+    );
 
+    ctx.fillStyle =
+      "#26ff75";
+
+    ctx.fillRect(
+      barrier.x,
+      barrier.y +
+        barrier.height +
+        7,
       barrier.width *
         healthRatio,
-
-      5
+      6
     );
   }
+}
+
+
+function drawPlayer() {
+  if (
+    player.invulnerable
+  ) {
+    const visible =
+      Math.floor(
+        player.invulnerableTimer *
+        10
+      ) %
+        2 ===
+      0;
+
+    if (!visible) {
+      return;
+    }
+  }
+
+  drawImageSafely(
+    gunImage,
+    player.x,
+    player.y,
+    player.width,
+    player.height,
+    "#ffffff"
+  );
 }
 
 
@@ -1586,68 +1830,46 @@ function drawPlayerBullets() {
   for (
     const bullet of playerBullets
   ) {
-    const gradient =
-      context.createLinearGradient(
-        bullet.x,
-        bullet.y,
-        bullet.x,
-        bullet.y +
-          bullet.height
-      );
-
-    gradient.addColorStop(
-      0,
-      "#ffffff"
-    );
-
-    gradient.addColorStop(
-      0.35,
-      "#fff700"
-    );
-
-    gradient.addColorStop(
-      1,
-      "#ff6a00"
-    );
-
-    context.fillStyle =
-      gradient;
-
-    context.shadowBlur = 12;
-    context.shadowColor =
+    ctx.fillStyle =
       "#fff700";
 
-    context.fillRect(
+    ctx.shadowColor =
+      "#fff700";
+
+    ctx.shadowBlur = 14;
+
+    ctx.fillRect(
       bullet.x,
       bullet.y,
       bullet.width,
       bullet.height
     );
 
-    context.shadowBlur = 0;
+    ctx.shadowBlur = 0;
   }
 }
 
 
-function drawAlienBullets() {
+function drawEnemyBullets() {
   for (
-    const bullet of alienBullets
+    const bullet of enemyBullets
   ) {
-    context.fillStyle =
-      "#ff254f";
+    ctx.fillStyle =
+      "#ff3030";
 
-    context.shadowBlur = 12;
-    context.shadowColor =
-      "#ff0044";
+    ctx.shadowColor =
+      "#ff3030";
 
-    context.fillRect(
+    ctx.shadowBlur = 12;
+
+    ctx.fillRect(
       bullet.x,
       bullet.y,
       bullet.width,
       bullet.height
     );
 
-    context.shadowBlur = 0;
+    ctx.shadowBlur = 0;
   }
 }
 
@@ -1656,65 +1878,76 @@ function drawExplosions() {
   for (
     const explosion of explosions
   ) {
-    const lifeRatio =
+    const progress =
       explosion.life /
-      explosion.maximumLife;
+      explosion.maxLife;
 
-    context.save();
-
-    context.globalAlpha =
-      Math.max(
-        0,
-        lifeRatio
+    const radius =
+      explosion.size *
+      (
+        1 -
+        progress * 0.4
       );
 
-    const gradient =
-      context.createRadialGradient(
-        explosion.x,
-        explosion.y,
-        0,
+    ctx.save();
 
-        explosion.x,
-        explosion.y,
-        explosion.radius
-      );
+    ctx.globalAlpha =
+      progress;
 
-    gradient.addColorStop(
-      0,
-      "#ffffff"
-    );
+    ctx.beginPath();
 
-    gradient.addColorStop(
-      0.25,
-      "#fff000"
-    );
-
-    gradient.addColorStop(
-      0.6,
-      "#ff5200"
-    );
-
-    gradient.addColorStop(
-      1,
-      "rgba(255, 0, 0, 0)"
-    );
-
-    context.fillStyle =
-      gradient;
-
-    context.beginPath();
-
-    context.arc(
+    ctx.arc(
       explosion.x,
       explosion.y,
-      explosion.radius,
+      radius,
       0,
       Math.PI * 2
     );
 
-    context.fill();
-    context.restore();
+    ctx.fillStyle =
+      "#ffea00";
+
+    ctx.fill();
+
+    ctx.beginPath();
+
+    ctx.arc(
+      explosion.x,
+      explosion.y,
+      radius * 0.55,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle =
+      "#ff4d00";
+
+    ctx.fill();
+
+    ctx.restore();
   }
+}
+
+
+function drawWaveNumber() {
+  ctx.save();
+
+  ctx.fillStyle =
+    "rgba(255, 255, 255, 0.8)";
+
+  ctx.font =
+    "bold 23px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    `WAVE ${wave}`,
+    GAME_WIDTH / 2,
+    40
+  );
+
+  ctx.restore();
 }
 
 
@@ -1727,10 +1960,11 @@ function drawImageSafely(
   fallbackColour
 ) {
   if (
+    image &&
     image.complete &&
     image.naturalWidth > 0
   ) {
-    context.drawImage(
+    ctx.drawImage(
       image,
       x,
       y,
@@ -1741,10 +1975,10 @@ function drawImageSafely(
     return;
   }
 
-  context.fillStyle =
+  ctx.fillStyle =
     fallbackColour;
 
-  context.fillRect(
+  ctx.fillRect(
     x,
     y,
     width,
@@ -1754,18 +1988,140 @@ function drawImageSafely(
 
 
 /* =========================
-   DISPLAY UPDATES
+   SCORE AND LIVES
 ========================= */
 
 function updateScoreDisplay() {
   scoreDisplay.textContent =
-    String(score);
+    String(
+      score
+    );
 }
 
 
 function updateLivesDisplay() {
   livesDisplay.textContent =
-    String(lives);
+    String(
+      lives
+    );
+}
+
+
+/* =========================
+   AUDIO FUNCTIONS
+========================= */
+
+function startGameMusic() {
+  deathMusic.pause();
+  deathMusic.currentTime = 0;
+
+  gameMusic.currentTime = 0;
+
+  const playPromise =
+    gameMusic.play();
+
+  if (
+    playPromise !== undefined
+  ) {
+    playPromise.catch(
+      () => {
+        // The browser may block audio
+        // until another screen tap.
+      }
+    );
+  }
+}
+
+
+function stopGameMusic() {
+  gameMusic.pause();
+  gameMusic.currentTime = 0;
+}
+
+
+function playDeathMusic() {
+  deathMusic.currentTime = 0;
+
+  const playPromise =
+    deathMusic.play();
+
+  if (
+    playPromise !== undefined
+  ) {
+    playPromise.catch(
+      () => {
+        // Audio may be blocked by
+        // the browser.
+      }
+    );
+  }
+}
+
+
+function stopDeathMusic() {
+  deathMusic.pause();
+  deathMusic.currentTime = 0;
+}
+
+
+function stopAllAudio() {
+  stopGameMusic();
+  stopDeathMusic();
+}
+
+
+/* =========================
+   PAUSE
+========================= */
+
+function pauseGame() {
+  if (
+    !gameRunning ||
+    gameOver ||
+    waveComplete
+  ) {
+    return;
+  }
+
+  gamePaused = true;
+
+  clearControls();
+
+  pausePanel.classList.remove(
+    "hidden"
+  );
+
+  gameMusic.pause();
+}
+
+
+function resumeGame() {
+  if (
+    gameOver ||
+    waveComplete
+  ) {
+    return;
+  }
+
+  gamePaused = false;
+
+  pausePanel.classList.add(
+    "hidden"
+  );
+
+  const playPromise =
+    gameMusic.play();
+
+  if (
+    playPromise !== undefined
+  ) {
+    playPromise.catch(
+      () => {}
+    );
+  }
+
+  lastTime =
+    performance.now();
 }
 
 
@@ -1776,32 +2132,52 @@ function updateLivesDisplay() {
 document.addEventListener(
   "keydown",
   event => {
+    const key =
+      event.key.toLowerCase();
+
     if (
-      event.code ===
-        "ArrowLeft" ||
-      event.code ===
-        "KeyA"
+      key ===
+        "arrowleft" ||
+      key ===
+        "a"
     ) {
-      leftPressed = true;
       event.preventDefault();
+      moveLeft = true;
     }
 
     if (
-      event.code ===
-        "ArrowRight" ||
-      event.code ===
-        "KeyD"
+      key ===
+        "arrowright" ||
+      key ===
+        "d"
     ) {
-      rightPressed = true;
       event.preventDefault();
+      moveRight = true;
     }
 
     if (
       event.code ===
       "Space"
     ) {
-      firePressed = true;
       event.preventDefault();
+
+      if (!firing) {
+        firing = true;
+        firePlayerBullet();
+        lastPlayerShot =
+          performance.now();
+      }
+    }
+
+    if (
+      key ===
+      "p"
+    ) {
+      if (gamePaused) {
+        resumeGame();
+      } else {
+        pauseGame();
+      }
     }
   }
 );
@@ -1810,93 +2186,176 @@ document.addEventListener(
 document.addEventListener(
   "keyup",
   event => {
+    const key =
+      event.key.toLowerCase();
+
     if (
-      event.code ===
-        "ArrowLeft" ||
-      event.code ===
-        "KeyA"
+      key ===
+        "arrowleft" ||
+      key ===
+        "a"
     ) {
-      leftPressed = false;
+      moveLeft = false;
     }
 
     if (
-      event.code ===
-        "ArrowRight" ||
-      event.code ===
-        "KeyD"
+      key ===
+        "arrowright" ||
+      key ===
+        "d"
     ) {
-      rightPressed = false;
+      moveRight = false;
     }
 
     if (
       event.code ===
       "Space"
     ) {
-      firePressed = false;
+      firing = false;
     }
   }
 );
 
 
 /* =========================
-   CANVAS TOUCH CONTROLS
+   MOBILE BUTTON CONTROLS
 ========================= */
 
-function getCanvasPosition(
-  clientX,
-  clientY
+function beginLeftMovement(
+  event
 ) {
-  const rectangle =
-    canvas.getBoundingClientRect();
-
-  return {
-    x:
-      (
-        clientX -
-        rectangle.left
-      ) *
-      (
-        canvas.width /
-        rectangle.width
-      ),
-
-    y:
-      (
-        clientY -
-        rectangle.top
-      ) *
-      (
-        canvas.height /
-        rectangle.height
-      )
-  };
+  event.preventDefault();
+  moveLeft = true;
 }
 
 
-function movePlayerToPointer(
-  clientX,
-  clientY
+function endLeftMovement(
+  event
 ) {
-  if (
-    !gameRunning ||
-    !player
-  ) {
-    return;
+  event.preventDefault();
+  moveLeft = false;
+}
+
+
+function beginRightMovement(
+  event
+) {
+  event.preventDefault();
+  moveRight = true;
+}
+
+
+function endRightMovement(
+  event
+) {
+  event.preventDefault();
+  moveRight = false;
+}
+
+
+function beginFiring(
+  event
+) {
+  event.preventDefault();
+
+  if (!firing) {
+    firing = true;
+    firePlayerBullet();
+
+    lastPlayerShot =
+      performance.now();
   }
+}
 
-  const position =
-    getCanvasPosition(
-      clientX,
-      clientY
-    );
 
-  player.x =
-    clamp(
-      position.x -
-        player.width / 2,
-      0,
-      GAME_WIDTH -
-        player.width
+function endFiring(
+  event
+) {
+  event.preventDefault();
+  firing = false;
+}
+
+
+moveLeftButton.addEventListener(
+  "pointerdown",
+  beginLeftMovement
+);
+
+moveLeftButton.addEventListener(
+  "pointerup",
+  endLeftMovement
+);
+
+moveLeftButton.addEventListener(
+  "pointercancel",
+  endLeftMovement
+);
+
+moveLeftButton.addEventListener(
+  "pointerleave",
+  endLeftMovement
+);
+
+
+moveRightButton.addEventListener(
+  "pointerdown",
+  beginRightMovement
+);
+
+moveRightButton.addEventListener(
+  "pointerup",
+  endRightMovement
+);
+
+moveRightButton.addEventListener(
+  "pointercancel",
+  endRightMovement
+);
+
+moveRightButton.addEventListener(
+  "pointerleave",
+  endRightMovement
+);
+
+
+fireButton.addEventListener(
+  "pointerdown",
+  beginFiring
+);
+
+fireButton.addEventListener(
+  "pointerup",
+  endFiring
+);
+
+fireButton.addEventListener(
+  "pointercancel",
+  endFiring
+);
+
+fireButton.addEventListener(
+  "pointerleave",
+  endFiring
+);
+
+
+/* =========================
+   DRAG PLAYER ON CANVAS
+========================= */
+
+function getCanvasPointerX(
+  event
+) {
+  const rect =
+    canvas.getBoundingClientRect();
+
+  return (
+    event.clientX -
+    rect.left
+  ) *
+    (
+      GAME_WIDTH /
+      rect.width
     );
 }
 
@@ -1904,23 +2363,48 @@ function movePlayerToPointer(
 canvas.addEventListener(
   "pointerdown",
   event => {
-    if (!gameRunning) {
+    if (
+      !gameRunning ||
+      gamePaused ||
+      gameOver ||
+      waveComplete
+    ) {
       return;
     }
 
+    event.preventDefault();
+
     touchDragging = true;
-    firePressed = true;
+    firing = true;
 
     canvas.setPointerCapture(
       event.pointerId
     );
 
-    movePlayerToPointer(
-      event.clientX,
-      event.clientY
-    );
+    const pointerX =
+      getCanvasPointerX(
+        event
+      );
 
-    event.preventDefault();
+    player.x =
+      pointerX -
+      player.width / 2;
+
+    player.x =
+      Math.max(
+        0,
+        Math.min(
+          GAME_WIDTH -
+          player.width,
+
+          player.x
+        )
+      );
+
+    firePlayerBullet();
+
+    lastPlayerShot =
+      performance.now();
   }
 );
 
@@ -1932,159 +2416,64 @@ canvas.addEventListener(
       return;
     }
 
-    movePlayerToPointer(
-      event.clientX,
-      event.clientY
-    );
-
     event.preventDefault();
+
+    const pointerX =
+      getCanvasPointerX(
+        event
+      );
+
+    player.x =
+      pointerX -
+      player.width / 2;
+
+    player.x =
+      Math.max(
+        0,
+        Math.min(
+          GAME_WIDTH -
+          player.width,
+
+          player.x
+        )
+      );
   }
 );
+
+
+function endCanvasTouch(
+  event
+) {
+  event.preventDefault();
+
+  touchDragging = false;
+  firing = false;
+
+  if (
+    canvas.hasPointerCapture(
+      event.pointerId
+    )
+  ) {
+    canvas.releasePointerCapture(
+      event.pointerId
+    );
+  }
+}
 
 
 canvas.addEventListener(
   "pointerup",
-  event => {
-    touchDragging = false;
-    firePressed = false;
-
-    if (
-      canvas.hasPointerCapture(
-        event.pointerId
-      )
-    ) {
-      canvas.releasePointerCapture(
-        event.pointerId
-      );
-    }
-
-    event.preventDefault();
-  }
+  endCanvasTouch
 );
-
 
 canvas.addEventListener(
   "pointercancel",
-  () => {
-    touchDragging = false;
-    firePressed = false;
-  }
+  endCanvasTouch
 );
 
 
 /* =========================
-   BUTTON CONTROLS
-========================= */
-
-function addHoldControl(
-  button,
-  onStart,
-  onEnd
-) {
-  button.addEventListener(
-    "pointerdown",
-    event => {
-      onStart();
-
-      button.classList.add(
-        "button-active"
-      );
-
-      button.setPointerCapture(
-        event.pointerId
-      );
-
-      event.preventDefault();
-    }
-  );
-
-  const stopControl =
-    event => {
-      onEnd();
-
-      button.classList.remove(
-        "button-active"
-      );
-
-      if (
-        event.pointerId !==
-          undefined &&
-        button.hasPointerCapture(
-          event.pointerId
-        )
-      ) {
-        button.releasePointerCapture(
-          event.pointerId
-        );
-      }
-
-      event.preventDefault();
-    };
-
-  button.addEventListener(
-    "pointerup",
-    stopControl
-  );
-
-  button.addEventListener(
-    "pointercancel",
-    stopControl
-  );
-
-  button.addEventListener(
-    "pointerleave",
-    event => {
-      if (
-        event.buttons === 0
-      ) {
-        stopControl(event);
-      }
-    }
-  );
-}
-
-
-addHoldControl(
-  leftButton,
-
-  () => {
-    leftPressed = true;
-  },
-
-  () => {
-    leftPressed = false;
-  }
-);
-
-
-addHoldControl(
-  rightButton,
-
-  () => {
-    rightPressed = true;
-  },
-
-  () => {
-    rightPressed = false;
-  }
-);
-
-
-addHoldControl(
-  fireButton,
-
-  () => {
-    firePressed = true;
-  },
-
-  () => {
-    firePressed = false;
-  }
-);
-
-
-/* =========================
-   GENERAL BUTTON EVENTS
+   BUTTON EVENTS
 ========================= */
 
 startButton.addEventListener(
@@ -2094,26 +2483,60 @@ startButton.addEventListener(
 
 restartButton.addEventListener(
   "click",
-  startGame
+  restartGame
 );
 
-soundButton.addEventListener(
+nextWaveButton.addEventListener(
   "click",
-  toggleSound
+  startNextWave
+);
+
+pauseButton.addEventListener(
+  "click",
+  pauseGame
+);
+
+resumeButton.addEventListener(
+  "click",
+  resumeGame
+);
+
+homeButton.addEventListener(
+  "click",
+  returnHome
+);
+
+gameOverHomeButton.addEventListener(
+  "click",
+  returnHome
 );
 
 
 /* =========================
-   SAFETY EVENTS
+   PAGE SAFETY
 ========================= */
+
+function clearControls() {
+  moveLeft = false;
+  moveRight = false;
+  firing = false;
+  touchDragging = false;
+}
+
 
 window.addEventListener(
   "blur",
   () => {
-    leftPressed = false;
-    rightPressed = false;
-    firePressed = false;
-    touchDragging = false;
+    clearControls();
+
+    if (
+      gameRunning &&
+      !gamePaused &&
+      !gameOver &&
+      !waveComplete
+    ) {
+      pauseGame();
+    }
   }
 );
 
@@ -2121,42 +2544,23 @@ window.addEventListener(
 document.addEventListener(
   "visibilitychange",
   () => {
-    if (document.hidden) {
-      leftPressed = false;
-      rightPressed = false;
-      firePressed = false;
-      touchDragging = false;
-
-      normalMusic.pause();
-      dangerMusic.pause();
-    } else if (
+    if (
+      document.hidden &&
       gameRunning &&
-      soundEnabled
+      !gamePaused &&
+      !gameOver &&
+      !waveComplete
     ) {
-      if (dangerMusicActive) {
-        playAudio(dangerMusic);
-      } else {
-        playAudio(normalMusic);
-      }
+      pauseGame();
     }
   }
 );
 
 
 /* =========================
-   HELPER FUNCTIONS
+   INITIAL PAGE
 ========================= */
 
-function clamp(
-  value,
-  minimum,
-  maximum
-) {
-  return Math.max(
-    minimum,
-    Math.min(
-      maximum,
-      value
-    )
-  );
-}
+resizeCanvas();
+updateScoreDisplay();
+updateLivesDisplay();
