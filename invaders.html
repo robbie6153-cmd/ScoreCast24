@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  >
+
+  <title>Alien Invaders</title>
+
+  <link
+    rel="stylesheet"
+    href="Invaders.css"
+  >
+</head>
+
+<body>
+
+  <main class="game-page">
+
+    <section
+      id="startScreen"
+      class="screen-panel"
+    >
+      <h1>ALIEN INVADERS</h1>
+
+      <p>
+        Destroy the invasion before the aliens reach you.
+      </p>
+
+      <div class="instructions">
+        <p>
+          <strong>Phone:</strong>
+          Drag your finger to move and hold to rapid-fire.
+        </p>
+
+        <p>
+          <strong>Computer:</strong>
+          Arrow keys or A/D to move. Hold Space to fire.
+        </p>
+
+        <p>
+          Bottom row: 1 hit<br>
+          Middle row: 2 hits<br>
+          Top row: 3 hits
+        </p>
+      </div>
+
+      <button
+        id="startButton"
+        type="button"
+      >
+        START GAME
+      </button>
+    </section>
+
+
+    <section
+      id="gameContainer"
+      class="game-container hidden"
+    >
+
+      <div class="game-header">
+
+        <div>
+          SCORE:
+          <span id="scoreDisplay">
+            0
+          </span>
+        </div>
+
+        <div>
+          LIVES:
+          <span id="livesDisplay">
+            3
+          </span>
+        </div>
+
+        <button
+          id="soundButton"
+          class="sound-button"
+          type="button"
+        >
+          SOUND ON
+        </button>
+
+      </div>
+
+
+      <div
+        id="canvasWrapper"
+        class="canvas-wrapper"
+      >
+
+        <canvas
+          id="gameCanvas"
+          width="900"
+          height="650"
+        >
+          Your browser does not support canvas.
+        </canvas>
+
+        <div
+          id="messageOverlay"
+          class="message-overlay hidden"
+        >
+          <h2 id="messageTitle">
+            GAME OVER
+          </h2>
+
+          <p id="messageText">
+            Final score: 0
+          </p>
+
+          <button
+            id="restartButton"
+            type="button"
+          >
+            PLAY AGAIN
+          </button>
+        </div>
+
+      </div>
+
+
+      <div class="mobile-controls">
+
+        <button
+          id="leftButton"
+          class="control-button"
+          type="button"
+          aria-label="Move left"
+        >
+          ◀
+        </button>
+
+        <button
+          id="fireButton"
+          class="fire-button"
+          type="button"
+        >
+          FIRE
+        </button>
+
+        <button
+          id="rightButton"
+          class="control-button"
+          type="button"
+          aria-label="Move right"
+        >
+          ▶
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <audio
+    id="normalMusic"
+    src="loop.mp3"
+    loop
+    preload="auto"
+  ></audio>
+
+  <audio
+    id="dangerMusic"
+    src="loop2.mp3"
+    loop
+    preload="auto"
+  ></audio>
+
+
+  <script src="Invaders.js"></script>
+
+</body>
+
+</html>
