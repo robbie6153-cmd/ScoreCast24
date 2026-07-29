@@ -179,20 +179,14 @@ const ENEMY_BULLET_SPEED = 320;
 
 const RAPID_FIRE_DELAY = 145;
 
-const ALIEN_WIDTH =105;
+const ALIEN_WIDTH = 105;
 const ALIEN_HEIGHT = 79;
-const ALIEN_GAP_X = 4;
+const ALIEN_GAP_X = 18;
 const ALIEN_GAP_Y = 28;
 
-const TOP_ALIEN_COUNT = 6;
-const MIDDLE_ALIEN_COUNT = 6;
-const BOTTOM_ALIEN_COUNT = 8;
-
-const BARRIER_WIDTH = 155;
-const BARRIER_HEIGHT = 92;
-const BARRIER_COUNT = 3;
-
-const STARTING_LIVES = 3;
+const TOP_ALIEN_COUNT = 5;
+const MIDDLE_ALIEN_COUNT = 5;
+const BOTTOM_ALIEN_COUNT = 6;
 
 const ALIEN_DROP_DISTANCE = 18;
 
@@ -215,7 +209,7 @@ let wave = 1;
 
 let alienDirection = 1;
 let alienSpeed = 18;
-let alienEdgeTurns = 0;
+
 
 let enemyFireTimer = 0;
 let enemyFireDelay = 750;
@@ -351,13 +345,13 @@ function createAliens() {
       0,
 
     health:
-      3,
+      5,
 
     image:
       alien1Image,
 
     points:
-      30
+      50
   });
 
   createAlienRow({
@@ -368,13 +362,13 @@ function createAliens() {
       1,
 
     health:
-      2,
+      3,
 
     image:
       alien2Image,
 
     points:
-      20
+      30
   });
 
   createAlienRow({
@@ -385,15 +379,33 @@ function createAliens() {
       2,
 
     health:
-      1,
+      2,
 
     image:
       alien3Image,
 
     points:
-      10
+      20
   });
 }
+
+  createAlienRow({
+    count:
+      BOTTOM_ALIEN_COUNT,
+
+    row:
+      2,
+
+    health:
+      2,
+
+    image:
+      alien3Image,
+
+    points:
+      20
+  });
+
 
 
 /* =========================
@@ -492,7 +504,6 @@ function resetGame() {
 
   alienSpeed = 18;
   alienDirection = 1;
-alienEdgeTurns = 0;
   enemyFireTimer = 0;
   enemyFireDelay = 750;
 
@@ -619,7 +630,6 @@ enemyFireDelay =
 
   alienDirection = 1;
   enemyFireTimer = 0;
-alienEdgeTurns = 0;
   playerBullets = [];
   enemyBullets = [];
   explosions = [];
@@ -911,21 +921,12 @@ function updateAliens(
     willHitLeft
   ) {
     alienDirection *= -1;
-    alienEdgeTurns += 1;
 
-    /*
-      Only descend after every
-      fourth change of direction.
-    */
-    if (
-      alienEdgeTurns % 4 === 0
+    for (
+      const alien of livingAliens
     ) {
-      for (
-        const alien of livingAliens
-      ) {
-        alien.y +=
-          ALIEN_DROP_DISTANCE;
-      }
+      alien.y +=
+        ALIEN_DROP_DISTANCE;
     }
   } else {
     for (
@@ -948,8 +949,6 @@ function updateAliens(
     }
   }
 }
-
-
 /* =========================
    ENEMY FIRING
 ========================= */
