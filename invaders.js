@@ -166,7 +166,7 @@ deathMusic.volume = 0.75;
 const GAME_WIDTH = 900;
 const GAME_HEIGHT = 1100;
 
-const PLAYER_SIZE = 84;
+const PLAYER_SIZE = 104;
 const PLAYER_SPEED = 520;
 
 const PLAYER_BULLET_WIDTH = 8;
@@ -179,14 +179,14 @@ const ENEMY_BULLET_SPEED = 320;
 
 const RAPID_FIRE_DELAY = 145;
 
-const ALIEN_WIDTH = 72;
-const ALIEN_HEIGHT = 54;
-const ALIEN_GAP_X = 14;
-const ALIEN_GAP_Y = 22;
+const ALIEN_WIDTH =105;
+const ALIEN_HEIGHT = 79;
+const ALIEN_GAP_X = 4;
+const ALIEN_GAP_Y = 28;
 
-const TOP_ALIEN_COUNT = 8;
-const MIDDLE_ALIEN_COUNT = 8;
-const BOTTOM_ALIEN_COUNT = 10;
+const TOP_ALIEN_COUNT = 6;
+const MIDDLE_ALIEN_COUNT = 6;
+const BOTTOM_ALIEN_COUNT = 8;
 
 const BARRIER_WIDTH = 155;
 const BARRIER_HEIGHT = 92;
@@ -194,7 +194,7 @@ const BARRIER_COUNT = 3;
 
 const STARTING_LIVES = 3;
 
-const ALIEN_DROP_DISTANCE = 30;
+const ALIEN_DROP_DISTANCE = 18;
 
 
 /* =========================
@@ -214,10 +214,11 @@ let lives = STARTING_LIVES;
 let wave = 1;
 
 let alienDirection = 1;
-let alienSpeed = 48;
+let alienSpeed = 18;
+let alienEdgeTurns = 0;
 
 let enemyFireTimer = 0;
-let enemyFireDelay = 900;
+let enemyFireDelay = 750;
 
 let lastPlayerShot = 0;
 
@@ -489,11 +490,11 @@ function resetGame() {
   lives = STARTING_LIVES;
   wave = 1;
 
-  alienSpeed = 48;
+  alienSpeed = 18;
   alienDirection = 1;
-
+alienEdgeTurns = 0;
   enemyFireTimer = 0;
-  enemyFireDelay = 900;
+  enemyFireDelay = 750;
 
   playerBullets = [];
   enemyBullets = [];
@@ -604,21 +605,21 @@ function startNextWave() {
 
   alienSpeed =
     Math.min(
-      145,
-      48 +
+      75,
+      20 +
       (wave - 1) * 13
     );
 
-  enemyFireDelay =
-    Math.max(
-      340,
-      900 -
-      (wave - 1) * 80
-    );
+enemyFireDelay =
+  Math.max(
+    380,
+    7500 -
+    (wave - 1) * 55
+  );
 
   alienDirection = 1;
   enemyFireTimer = 0;
-
+alienEdgeTurns = 0;
   playerBullets = [];
   enemyBullets = [];
   explosions = [];
@@ -849,7 +850,6 @@ function updatePlayerBullets(
 /* =========================
    ALIEN MOVEMENT
 ========================= */
-
 function updateAliens(
   deltaTime
 ) {
@@ -911,12 +911,21 @@ function updateAliens(
     willHitLeft
   ) {
     alienDirection *= -1;
+    alienEdgeTurns += 1;
 
-    for (
-      const alien of livingAliens
+    /*
+      Only descend after every
+      fourth change of direction.
+    */
+    if (
+      alienEdgeTurns % 4 === 0
     ) {
-      alien.y +=
-        ALIEN_DROP_DISTANCE;
+      for (
+        const alien of livingAliens
+      ) {
+        alien.y +=
+          ALIEN_DROP_DISTANCE;
+      }
     }
   } else {
     for (
@@ -1220,13 +1229,11 @@ function increaseAlienSpeed() {
 
   alienSpeed =
     Math.min(
-      180,
+      90,
 
-      48 +
-      (wave - 1) *
-        13 +
-      destroyedRatio *
-        80
+      18 +
+      (wave - 1) * 6 +
+      destroyedRatio * 30
     );
 }
 
