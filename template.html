@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    The Smiling Template
+  </title>
+
+  <meta
+    name="description"
+    content="The Smiling Template photo, video and merchandise website."
+  >
+
+  <link
+    rel="stylesheet"
+    href="template.css?v=4"
+  >
+
+</head>
+
+<body>
+
+
+  <!-- =========================
+       ACCOUNT STATUS BAR
+  ========================== -->
+
+  <section
+    id="accountStatusBar"
+    class="account-status-bar"
+  >
+
+    <p id="accountStatusText">
+      Checking login...
+    </p>
+
+    <div class="account-status-actions">
+
+      <a
+        id="adminPanelLink"
+        class="account-admin-link hidden"
+        href="template-admin.html"
+      >
+        Admin Panel
+      </a>
+
+      <button
+        id="mainLogoutButton"
+        class="account-logout-button hidden"
+        type="button"
+      >
+        Log Out
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <div class="site-wrapper">
+
+
+    <!-- =========================
+         SITE HEADER
+    ========================== -->
+
+    <header class="site-header">
+
+      <div class="header-image-wrapper">
+
+        <img
+          src="smile.jpg"
+          alt="The Smiling Template"
+          class="header-image"
+        >
+
+        <div class="header-overlay">
+
+          <h1>
+            The Smiling Template
+          </h1>
+
+          <p>
+            Photos, videos and exclusive merchandise.
+          </p>
+
+          <a
+            id="memberLoginBox"
+            href="template-login.html"
+            class="login-box"
+          >
+
+            <span class="login-title">
+              👤 Member Login
+            </span>
+
+            <span class="login-subtitle">
+              Create Account
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           NAVIGATION
+      ========================== -->
+
+      <nav
+        class="main-navigation"
+        aria-label="Main navigation"
+      >
+
+        <button
+          type="button"
+          class="nav-button active"
+          data-section="homeSection"
+        >
+          Home
+        </button>
+
+        <button
+          type="button"
+          class="nav-button"
+          data-section="photoSection"
+        >
+          Photos
+        </button>
+
+        <button
+          type="button"
+          class="nav-button"
+          data-section="videoSection"
+        >
+          Videos
+        </button>
+
+        <button
+          type="button"
+          class="nav-button"
+          data-section="merchandiseSection"
+        >
+          Merchandise
+        </button>
+
+      </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+
+      <!-- =========================
+           HOME SECTION
+      ========================== -->
+
+      <section
+        id="homeSection"
+        class="content-section active-section"
+      >
+
+        <div class="welcome-panel">
+
+          <p class="section-label">
+            Welcome
+          </p>
+
+          <h2>
+            Discover The Smiling Template
+          </h2>
+
+          <p class="section-description">
+            Browse the latest photographs, watch uploaded
+            videos and discover merchandise available
+            from the creator.
+          </p>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+
+          <!-- PHOTO FEATURE -->
+
+          <article class="feature-card">
+
+            <div class="feature-icon">
+              📸
+            </div>
+
+            <h3>
+              Photo Gallery
+            </h3>
+
+            <p>
+              Browse free photographs and subscriber-only
+              exclusive uploads.
+            </p>
+
+            <button
+              type="button"
+              class="primary-button section-link-button"
+              data-section="photoSection"
+            >
+              View Photos
+            </button>
+
+          </article>
+
+
+          <!-- VIDEO FEATURE -->
+
+          <article class="feature-card">
+
+            <div class="feature-icon">
+              ▶
+            </div>
+
+            <h3>
+              Video Gallery
+            </h3>
+
+            <p>
+              Watch the latest uploaded videos from one
+              simple and easy-to-use gallery.
+            </p>
+
+            <button
+              type="button"
+              class="primary-button section-link-button"
+              data-section="videoSection"
+            >
+              Watch Videos
+            </button>
+
+          </article>
+
+
+          <!-- MERCHANDISE FEATURE -->
+
+          <article class="feature-card merchandise-card">
+
+            <div class="feature-icon">
+              🛍️
+            </div>
+
+            <h3>
+              Merchandise For Sale
+            </h3>
+
+            <p>
+              Browse clothing, accessories and other
+              exclusive merchandise.
+            </p>
+
+            <button
+              type="button"
+              class="primary-button section-link-button"
+              data-section="merchandiseSection"
+            >
+              View Merchandise
+            </button>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           PHOTO GALLERY
+      ========================== -->
+
+      <section
+        id="photoSection"
+        class="content-section hidden-section"
+      >
+
+        <div class="section-heading gallery-heading">
+
+          <div>
+
+            <p class="section-label">
+              Latest Uploads
+            </p>
+
+            <h2>
+              Photo Gallery
+            </h2>
+
+          </div>
+
+          <p class="gallery-description">
+            Browse free and subscriber-exclusive photographs.
+          </p>
+
+        </div>
+
+
+        <div
+          id="photoGalleryLoading"
+          class="gallery-message"
+        >
+          Loading photos...
+        </div>
+
+
+        <div
+          id="photoGalleryEmpty"
+          class="gallery-message hidden"
+        >
+          No photographs have been uploaded yet.
+        </div>
+
+
+        <div
+          id="photoGalleryError"
+          class="gallery-message gallery-error hidden"
+        >
+          The photo gallery could not be loaded.
+        </div>
+
+
+        <div
+          id="photoGallery"
+          class="gallery-grid photo-gallery"
+        ></div>
+
+      </section>
+
+
+      <!-- =========================
+           VIDEO GALLERY
+      ========================== -->
+
+      <section
+        id="videoSection"
+        class="content-section hidden-section"
+      >
+
+        <div class="section-heading">
+
+          <p class="section-label">
+            Watch
+          </p>
+
+          <h2>
+            Video Gallery
+          </h2>
+
+          <p>
+            Uploaded videos will appear in this section.
+          </p>
+
+        </div>
+
+
+        <div class="gallery-grid video-gallery">
+
+          <article class="video-card">
+
+            <div class="video-placeholder">
+
+              <button
+                type="button"
+                class="play-button"
+                aria-label="Play example video"
+              >
+                ▶
+              </button>
+
+            </div>
+
+            <div class="gallery-information">
+
+              <h3>
+                Featured Video
+              </h3>
+
+              <p>
+                Uploaded videos will be connected to this
+                section next.
+              </p>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           MERCHANDISE
+      ========================== -->
+
+      <section
+        id="merchandiseSection"
+        class="content-section hidden-section"
+      >
+
+        <div class="section-heading">
+
+          <p class="section-label">
+            Shop
+          </p>
+
+          <h2>
+            Merchandise For Sale
+          </h2>
+
+          <p>
+            Products uploaded through the admin panel
+            will appear here later.
+          </p>
+
+        </div>
+
+
+        <div class="merchandise-grid">
+
+          <article class="product-card">
+
+            <div class="product-image-placeholder">
+              Product Image
+            </div>
+
+            <div class="product-information">
+
+              <h3>
+                Merchandise Coming Soon
+              </h3>
+
+              <p>
+                Products and payment links will be
+                connected later.
+              </p>
+
+              <button
+                type="button"
+                class="primary-button"
+                disabled
+              >
+                Coming Soon
+              </button>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="site-footer">
+
+      <p>
+        ©
+        <span id="currentYear"></span>
+        The Smiling Template
+      </p>
+
+      <p class="footer-note">
+        Photo, video and merchandise template website.
+      </p>
+
+    </footer>
+
+  </div>
+
+
+  <!-- =========================
+       LARGE PHOTO VIEWER
+  ========================== -->
+
+  <div
+    id="photoViewer"
+    class="photo-viewer hidden"
+    aria-hidden="true"
+  >
+
+    <button
+      id="closePhotoViewer"
+      class="photo-viewer-close"
+      type="button"
+      aria-label="Close photo viewer"
+    >
+      ×
+    </button>
+
+
+    <div class="photo-viewer-content">
+
+      <div class="photo-viewer-image-wrap">
+
+        <img
+          id="photoViewerImage"
+          src=""
+          alt=""
+        >
+
+        <span
+          id="photoViewerWatermark"
+          class="photo-viewer-watermark"
+        ></span>
+
+      </div>
+
+
+      <div class="photo-viewer-information">
+
+        <p
+          id="photoViewerAccess"
+          class="photo-access-badge"
+        ></p>
+
+        <h2 id="photoViewerTitle">
+          Photo
+        </h2>
+
+        <p id="photoViewerDescription"></p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="template.js?v=7"
+  ></script>
+
+</body>
+
+</html>
