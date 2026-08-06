@@ -29,7 +29,7 @@ export const DREAM_CONFIG = {
     "./goalkeepers.json?v=1",
     "./defenders.json?v=1",
     "./midfielders.json?v=1",
-    "./attackers.json?v=1"
+    "./attackers.json?v=2"
   ],
 
   /*
