@@ -47,9 +47,15 @@
     "name": "Rory Wilson",
     "club": "Aston Villa",
     "position": "Attacker",
+    "rating": 78
+  },
+  {
+    "id": "evann-guessand",
+    "name": "Evan Guessand",
+    "club": "Aston Villa",
+    "position": "Attacker",
     "rating": 68
   },
-
   {
     "id": "evanilson",
     "name": "Evanilson",
@@ -92,6 +98,13 @@
     "club": "Brentford",
     "position": "Attacker",
     "rating": 84
+  },
+    {
+    "id": "callum-wilson",
+    "name": "Callum Wilson",
+    "club": "Brentford",
+    "position": "Attacker",
+    "rating": 72
   },
   {
     "id": "gustavo-nunes",
@@ -172,13 +185,7 @@
     "position": "Attacker",
     "rating": 79
   },
-  {
-    "id": "david-datro-fofana",
-    "name": "David Datro Fofana",
-    "club": "Chelsea",
-    "position": "Attacker",
-    "rating": 73
-  },
+
   {
     "id": "deivid-washington",
     "name": "Deivid Washington",
@@ -251,13 +258,7 @@
     "position": "Attacker",
     "rating": 79
   },
-  {
-    "id": "odsonne-edouard",
-    "name": "Odsonne Édouard",
-    "club": "Crystal Palace",
-    "position": "Attacker",
-    "rating": 76
-  },
+
   {
     "id": "romain-esse",
     "name": "Romain Esse",
@@ -315,6 +316,13 @@
     "club": "Fulham",
     "position": "Attacker",
     "rating": 81
+  },
+    {
+    "id": "gonzalo-garcia",
+    "name": "Gonzalo Garcia",
+    "club": "Fulham",
+    "position": "Attacker",
+    "rating": 72
   },
   {
     "id": "jonah-kusi-asare",
@@ -738,12 +746,6 @@
     "club": "Tottenham Hotspur",
     "position": "Attacker",
     "rating": 72
-  },
-  {
-    "id": "manor-solomon",
-    "name": "Manor Solomon",
-    "club": "Tottenham Hotspur",
-    "position": "Attacker",
-    "rating": 78
   }
+
 ]
