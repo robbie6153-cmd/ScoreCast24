@@ -13,7 +13,7 @@ import {
 
 import {
   DREAM_CONFIG
-} from "./dream-config.js?v=2";
+} from "./dream-config.js?v=3";
 
 
 /* =========================
