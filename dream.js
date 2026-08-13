@@ -4,7 +4,9 @@ import {
   doc,
   getDoc,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  collection,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
@@ -48,8 +50,10 @@ let currentUsername = "";
 
 let gameIsLocked =
   DREAM_CONFIG.manualLock;
+
 let playerFilesLoaded = false;
 let rolloverPromptOpen = false;
+
 /*
   If an existing team was saved using the old
   round-ID format, keep using that document when
@@ -57,6 +61,7 @@ let rolloverPromptOpen = false;
 */
 let currentEntryDocumentId = null;
 let currentEntryRoundId = null;
+
 
 /* =========================
    PAGE ELEMENTS
@@ -80,7 +85,6 @@ const playerSearch =
 const playerList =
   document.getElementById("playerList");
 
-
 const selectedCount =
   document.getElementById("selectedCount");
 
@@ -101,6 +105,8 @@ const dreamLoginStatus =
 
 const viewMyTeamBtn =
   document.getElementById("viewMyTeamBtn");
+
+
 /* =========================
    MESSAGES
 ========================= */
@@ -119,6 +125,103 @@ function showMessage(
 
 function clearMessage() {
   showMessage("");
+}
+
+
+/* =========================
+   VIEW MY TEAM BUTTON
+========================= */
+
+async function setupViewMyTeamButton(user) {
+  if (!viewMyTeamBtn) {
+    return;
+  }
+
+  if (!user) {
+    viewMyTeamBtn.href =
+      "index.html";
+
+    viewMyTeamBtn.textContent =
+      "Log In to View My Team";
+
+    return;
+  }
+
+  viewMyTeamBtn.textContent =
+    "Loading My Team...";
+
+  viewMyTeamBtn.removeAttribute(
+    "href"
+  );
+
+  try {
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "dream_team_entries"
+        )
+      );
+
+    const entries =
+      snapshot.docs.map(
+        documentSnapshot => ({
+          id:
+            documentSnapshot.id,
+
+          ...documentSnapshot.data()
+        })
+      );
+
+    const userEntry =
+      entries.find(entry => {
+
+        if (
+          entry.uid &&
+          entry.uid === user.uid
+        ) {
+          return true;
+        }
+
+        return String(
+          entry.id || ""
+        ).includes(
+          user.uid
+        );
+      });
+
+    if (!userEntry) {
+      viewMyTeamBtn.href =
+        "#";
+
+      viewMyTeamBtn.textContent =
+        "No Team Selected Yet";
+
+      return;
+    }
+
+    viewMyTeamBtn.href =
+      `dream-team-view.html?id=${
+        encodeURIComponent(
+          userEntry.id
+        )
+      }`;
+
+    viewMyTeamBtn.textContent =
+      "View My Team";
+
+  } catch (error) {
+    console.error(
+      "View My Team error:",
+      error
+    );
+
+    viewMyTeamBtn.href =
+      "#";
+
+    viewMyTeamBtn.textContent =
+      "View My Team";
+  }
 }
 
 
@@ -161,6 +264,7 @@ function refreshLockStatus() {
 
   updateDreamTeamDisplay();
 }
+
 
 /* =========================
    PLAYER POSITION NAMES
@@ -423,9 +527,9 @@ function renderPlayers() {
               player.id
           );
 
-      const disabled =
-  gameIsLocked ||
-  !currentUser;
+        const disabled =
+          gameIsLocked ||
+          !currentUser;
 
         return `
           <article
@@ -456,13 +560,13 @@ function renderPlayers() {
               data-player-id="${escapeHtml(player.id)}"
               ${disabled ? "disabled" : ""}
             >
-            ${
-  gameIsLocked
-    ? "Locked"
-    : alreadySelected
-      ? "Remove"
-      : "Add"
-}
+              ${
+                gameIsLocked
+                  ? "Locked"
+                  : alreadySelected
+                    ? "Remove"
+                    : "Add"
+              }
             </button>
 
           </article>
@@ -471,32 +575,32 @@ function renderPlayers() {
       .join("");
 
   document
-  .querySelectorAll(
-    ".add-player-button"
-  )
-  .forEach(button => {
+    .querySelectorAll(
+      ".add-player-button"
+    )
+    .forEach(button => {
 
-    button.addEventListener(
-      "click",
-      () => {
-        const playerId =
-          button.dataset.playerId;
+      button.addEventListener(
+        "click",
+        () => {
+          const playerId =
+            button.dataset.playerId;
 
-        const alreadySelected =
-          selectedPlayers.some(
-            player =>
-              player.id === playerId
-          );
+          const alreadySelected =
+            selectedPlayers.some(
+              player =>
+                player.id === playerId
+            );
 
-        if (alreadySelected) {
-          removePlayer(playerId);
-        } else {
-          addPlayer(playerId);
+          if (alreadySelected) {
+            removePlayer(playerId);
+          } else {
+            addPlayer(playerId);
+          }
         }
-      }
-    );
+      );
 
-  });
+    });
 }
 
 
@@ -791,7 +895,7 @@ function updateControlAvailability() {
 
 
 /* =========================
-   DISPLAY SELECTED TEAM
+   DISPLAY TEAM SUMMARY
 ========================= */
 
 function updateDreamTeamDisplay() {
@@ -813,8 +917,6 @@ function updateDreamTeamDisplay() {
     totalRating > MAX_RATING
   );
 
-  
-
   updateControlAvailability();
 
   submitDreamTeamBtn.textContent =
@@ -827,6 +929,12 @@ function updateDreamTeamDisplay() {
 
   renderPlayers();
 }
+
+
+/* =========================
+   SAVE DREAM TEAM
+========================= */
+
 async function saveDreamTeamEntry({
   players,
   formation,
@@ -847,13 +955,6 @@ async function saveDreamTeamEntry({
     );
   }
 
-  /*
-    If the user loaded an existing Week One entry,
-    update that same Firestore document.
-
-    Otherwise create the normal document for the
-    manually selected current round.
-  */
   const entryId =
     currentEntryDocumentId ||
     `${roundId}_${currentUser.uid}`;
@@ -933,6 +1034,7 @@ async function saveDreamTeamEntry({
   currentEntryRoundId =
     roundId;
 }
+
 
 /* =========================
    FIRESTORE ENTRIES
@@ -1021,21 +1123,19 @@ async function loadExistingDreamTeam() {
         getCurrentRoundIds()
       );
 
-if (!savedResult) {
-  currentEntryDocumentId =
-    null;
+    if (!savedResult) {
+      currentEntryDocumentId =
+        null;
 
-  currentEntryRoundId =
-    null;
+      currentEntryRoundId =
+        null;
 
-  updateViewMyTeamButton();
-
-  return false;
-}
+      return false;
+    }
 
     currentEntryDocumentId =
       savedResult.id;
-updateViewMyTeamButton();
+
     currentEntryRoundId =
       savedResult.data.roundId ||
       savedResult.roundId;
@@ -1198,6 +1298,7 @@ function showRolloverPrompt(
   );
 }
 
+
 async function checkForPreviousTeam() {
   if (
     !currentUser ||
@@ -1219,10 +1320,6 @@ async function checkForPreviousTeam() {
     const previousEntry = {
       ...previousResult.data,
 
-      /*
-        Ensure the rollover record knows the
-        previous round even on older documents.
-      */
       roundId:
         previousResult.data.roundId ||
         previousResult.roundId
@@ -1239,6 +1336,7 @@ async function checkForPreviousTeam() {
     );
   }
 }
+
 
 /* =========================
    SUBMIT PREVIOUS TEAM
@@ -1284,9 +1382,9 @@ async function submitPreviousTeam(
       formation:
         formationSelect.value,
 
-    rolloverFromRound:
-  previousEntry.roundId ||
-  getPreviousRoundIds()[0]
+      rolloverFromRound:
+        previousEntry.roundId ||
+        getPreviousRoundIds()[0]
     });
 
     completeSubmission();
@@ -1468,31 +1566,7 @@ function escapeHtml(
 /* =========================
    PAGE EVENTS
 ========================= */
-function updateViewMyTeamButton() {
-  if (!viewMyTeamBtn) {
-    return;
-  }
 
-  if (currentEntryDocumentId) {
-    viewMyTeamBtn.href =
-      `dream-team-view.html?id=${encodeURIComponent(currentEntryDocumentId)}`;
-
-    viewMyTeamBtn.style.pointerEvents =
-      "auto";
-
-    viewMyTeamBtn.style.opacity =
-      "1";
-  } else {
-    viewMyTeamBtn.href =
-      "#";
-
-    viewMyTeamBtn.style.pointerEvents =
-      "none";
-
-    viewMyTeamBtn.style.opacity =
-      "0.5";
-  }
-}
 formationSelect.addEventListener(
   "change",
   () => {
@@ -1564,6 +1638,10 @@ onAuthStateChanged(
   auth,
   async user => {
     currentUser = user;
+
+    await setupViewMyTeamButton(
+      user
+    );
 
     refreshLockStatus();
 
