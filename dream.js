@@ -80,8 +80,6 @@ const playerSearch =
 const playerList =
   document.getElementById("playerList");
 
-const selectedTeam =
-  document.getElementById("selectedTeam");
 
 const selectedCount =
   document.getElementById("selectedCount");
@@ -458,13 +456,13 @@ function renderPlayers() {
               data-player-id="${escapeHtml(player.id)}"
               ${disabled ? "disabled" : ""}
             >
-              ${
-                alreadySelected
-                  ? "Selected"
-                  : gameIsLocked
-                    ? "Locked"
-                    : "Add"
-              }
+            ${
+  gameIsLocked
+    ? "Locked"
+    : alreadySelected
+      ? "Remove"
+      : "Add"
+}
             </button>
 
           </article>
@@ -477,15 +475,25 @@ function renderPlayers() {
       ".add-player-button"
     )
     .forEach(button => {
-      button.addEventListener(
-        "click",
-        () => {
-          addPlayer(
-            button.dataset.playerId
-          );
-        }
+button.addEventListener(
+  "click",
+  () => {
+    const playerId =
+      button.dataset.playerId;
+
+    const alreadySelected =
+      selectedPlayers.some(
+        player =>
+          player.id === playerId
       );
-    });
+
+    if (alreadySelected) {
+      removePlayer(playerId);
+    } else {
+      addPlayer(playerId);
+    }
+  }
+);
 }
 
 
@@ -802,80 +810,7 @@ function updateDreamTeamDisplay() {
     totalRating > MAX_RATING
   );
 
-  if (!selectedPlayers.length) {
-    selectedTeam.innerHTML = `
-      <p>No players selected yet.</p>
-    `;
-  } else {
-    const positionOrder = {
-      Goalkeeper: 1,
-      Defender: 2,
-      Midfielder: 3,
-      Attacker: 4
-    };
-
-    const orderedPlayers =
-      [...selectedPlayers]
-        .sort((a, b) => {
-          return (
-            positionOrder[a.position] -
-            positionOrder[b.position]
-          );
-        });
-
-    selectedTeam.innerHTML =
-      orderedPlayers
-        .map(player => `
-          <article
-            class="selected-player-card ${player.position.toLowerCase()}"
-          >
-
-            <div>
-              <strong>
-                ${escapeHtml(player.name)}
-              </strong>
-
-              <span>
-                ${escapeHtml(player.club)}
-                ·
-                ${escapeHtml(player.position)}
-                ·
-                ${player.rating} points
-              </span>
-            </div>
-
-            <button
-              type="button"
-              class="remove-player-button"
-              data-player-id="${escapeHtml(player.id)}"
-              ${gameIsLocked ? "disabled" : ""}
-            >
-              ${
-                gameIsLocked
-                  ? "Locked"
-                  : "Remove"
-              }
-            </button>
-
-          </article>
-        `)
-        .join("");
-
-    document
-      .querySelectorAll(
-        ".remove-player-button"
-      )
-      .forEach(button => {
-        button.addEventListener(
-          "click",
-          () => {
-            removePlayer(
-              button.dataset.playerId
-            );
-          }
-        );
-      });
-  }
+  
 
   updateControlAvailability();
 
