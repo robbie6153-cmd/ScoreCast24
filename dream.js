@@ -99,7 +99,8 @@ const dreamMessage =
 const dreamLoginStatus =
   document.getElementById("dreamLoginStatus");
 
-
+const viewMyTeamBtn =
+  document.getElementById("viewMyTeamBtn");
 /* =========================
    MESSAGES
 ========================= */
@@ -1020,19 +1021,21 @@ async function loadExistingDreamTeam() {
         getCurrentRoundIds()
       );
 
-    if (!savedResult) {
-      currentEntryDocumentId =
-        null;
+if (!savedResult) {
+  currentEntryDocumentId =
+    null;
 
-      currentEntryRoundId =
-        null;
+  currentEntryRoundId =
+    null;
 
-      return false;
-    }
+  updateViewMyTeamButton();
+
+  return false;
+}
 
     currentEntryDocumentId =
       savedResult.id;
-
+updateViewMyTeamButton();
     currentEntryRoundId =
       savedResult.data.roundId ||
       savedResult.roundId;
@@ -1465,7 +1468,31 @@ function escapeHtml(
 /* =========================
    PAGE EVENTS
 ========================= */
+function updateViewMyTeamButton() {
+  if (!viewMyTeamBtn) {
+    return;
+  }
 
+  if (currentEntryDocumentId) {
+    viewMyTeamBtn.href =
+      `dream-team-view.html?id=${encodeURIComponent(currentEntryDocumentId)}`;
+
+    viewMyTeamBtn.style.pointerEvents =
+      "auto";
+
+    viewMyTeamBtn.style.opacity =
+      "1";
+  } else {
+    viewMyTeamBtn.href =
+      "#";
+
+    viewMyTeamBtn.style.pointerEvents =
+      "none";
+
+    viewMyTeamBtn.style.opacity =
+      "0.5";
+  }
+}
 formationSelect.addEventListener(
   "change",
   () => {
