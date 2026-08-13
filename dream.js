@@ -422,10 +422,9 @@ function renderPlayers() {
               player.id
           );
 
-        const disabled =
-          alreadySelected ||
-          gameIsLocked ||
-          !currentUser;
+      const disabled =
+  gameIsLocked ||
+  !currentUser;
 
         return `
           <article
@@ -471,29 +470,32 @@ function renderPlayers() {
       .join("");
 
   document
-    .querySelectorAll(
-      ".add-player-button"
-    )
-    .forEach(button => {
-button.addEventListener(
-  "click",
-  () => {
-    const playerId =
-      button.dataset.playerId;
+  .querySelectorAll(
+    ".add-player-button"
+  )
+  .forEach(button => {
 
-    const alreadySelected =
-      selectedPlayers.some(
-        player =>
-          player.id === playerId
-      );
+    button.addEventListener(
+      "click",
+      () => {
+        const playerId =
+          button.dataset.playerId;
 
-    if (alreadySelected) {
-      removePlayer(playerId);
-    } else {
-      addPlayer(playerId);
-    }
-  }
-);
+        const alreadySelected =
+          selectedPlayers.some(
+            player =>
+              player.id === playerId
+          );
+
+        if (alreadySelected) {
+          removePlayer(playerId);
+        } else {
+          addPlayer(playerId);
+        }
+      }
+    );
+
+  });
 }
 
 
