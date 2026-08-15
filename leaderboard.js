@@ -298,17 +298,24 @@ async function initialiseLeaderboard() {
     "Loading English League leaderboard...";
 
   try {
-const predictionsQuery =
-query(
-  collection(
-    db,
-    "scorecast24_predictions"
-  ),
-  where(
-    "round",
-    "==",
-    currentRound)
-  );
+    const predictionsQuery =
+      query(
+        collection(
+          db,
+          "scorecast24_predictions"
+        ),
+        where(
+          "round",
+          "==",
+          currentRound
+        )
+      );
+
+    const predictionsSnap =
+      await Promise.race([
+        getDocs(predictionsQuery),
+        timeoutPromise(12000)
+      ]);
 
     leaderboardRows = [];
 
@@ -316,7 +323,6 @@ query(
       (docSnap) => {
         const data =
           docSnap.data();
-
 
         leaderboardRows.push({
           id: docSnap.id,
