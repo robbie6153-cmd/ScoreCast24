@@ -37,8 +37,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Wolves",
     away: "Blackburn",
-    homeScore: null,
-    awayScore: null
+    homeScore: 2,
+    awayScore: 2
   },
   {
     id: "2",
@@ -46,8 +46,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Bolton",
     away: "Preston",
-    homeScore: null,
-    awayScore: null
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: "3",
@@ -55,8 +55,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Bristol City",
     away: "Millwall",
-    homeScore: null,
-    awayScore: null
+    homeScore: 0,
+    awayScore: 2
   },
   {
     id: "4",
@@ -64,8 +64,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Charlton",
     away: "Derby",
-    homeScore: null,
-    awayScore: null
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: "5",
@@ -73,8 +73,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Middlesbrough",
     away: "Lincoln",
-    homeScore: null,
-    awayScore: null
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: "6",
@@ -82,8 +82,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Norwich",
     away: "West Brom",
-    homeScore: null,
-    awayScore: null
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: "7",
@@ -91,8 +91,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Portsmouth",
     away: "QPR",
-    homeScore: null,
-    awayScore: null
+    homeScore: 1,
+    awayScore: 3
   },
   {
     id: "8",
@@ -100,8 +100,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Stoke",
     away: "Swansea",
-    homeScore: null,
-    awayScore: null
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: "9",
