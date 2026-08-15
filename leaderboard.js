@@ -1,10 +1,12 @@
 console.log("leaderboard.js loaded English League v4");
 
-import { db } from "./firebase.js?v=7";
+import { db } from "./firebase.js?v=107";
 
 import {
   collection,
-  getDocs
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 
@@ -296,16 +298,17 @@ async function initialiseLeaderboard() {
     "Loading English League leaderboard...";
 
   try {
-    const predictionsSnap =
-      await Promise.race([
-        getDocs(
-          collection(
-            db,
-            "scorecast24_predictions"
-          )
-        ),
-        timeoutPromise(40000)
-      ]);
+const predictionsQuery =
+query(
+  collection(
+    db,
+    "scorecast24_predictions"
+  ),
+  where(
+    "round",
+    "==",
+    currentRound)
+  );
 
     leaderboardRows = [];
 
@@ -314,11 +317,6 @@ async function initialiseLeaderboard() {
         const data =
           docSnap.data();
 
-        if (
-          data.round !== currentRound
-        ) {
-          return;
-        }
 
         leaderboardRows.push({
           id: docSnap.id,
