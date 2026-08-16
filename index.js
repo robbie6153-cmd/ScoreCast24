@@ -109,8 +109,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Sheffield United",
     away: "Birmingham",
-    homeScore: null,
-    awayScore: null
+    homeScore: 0,
+    awayScore: 0
   },
   {
     id: "10",
