@@ -118,8 +118,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Watford",
     away: "Southampton",
-    homeScore: null,
-    awayScore: null
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: "11",
@@ -128,8 +128,8 @@ const englishLeagueFixtures = [
     home: "Arsenal",
     away: "Manchester City",
     venue: "Principality Stadium, Cardiff",
-    homeScore: null,
-    awayScore: null
+    homeScore: 3,
+    awayScore: 0
   },
   {
     id: "12",
@@ -137,8 +137,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Burnley",
     away: "West Ham",
-    homeScore: null,
-    awayScore: null
+    homeScore: 2,
+    awayScore: 2
   },
   {
     id: "13",

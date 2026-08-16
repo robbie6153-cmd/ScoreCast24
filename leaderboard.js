@@ -35,9 +35,9 @@ const results = {
   7: { homeScore: 1, awayScore: 3 },
   8: { homeScore: 1, awayScore: 2 },
   9: { homeScore: 0, awayScore: 0 },
-  10: { homeScore: null, awayScore: null },
-  11: { homeScore: null, awayScore: null },
-  12: { homeScore: null, awayScore: null },
+  10: { homeScore: 2, awayScore: 1 },
+  11: { homeScore: 3, awayScore: 0 },
+  12: { homeScore: 2, awayScore: 2 },
   13: { homeScore: null, awayScore: null }
 };
 
