@@ -336,13 +336,16 @@ function cleanUsername(name) {
 }
 
 
-function getPredictionDocId(uid) {
+function getPredictionDocId(username) {
   const cleanRound =
     currentRound
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  return `${uid}-${cleanRound}`;
+  const cleanUser =
+    cleanUsername(username);
+
+  return `${cleanUser}-${cleanRound}`;
 }
 
 
@@ -790,17 +793,21 @@ if (startGameBtn) {
             entryCheckTimeout()
           ]);
 
-        if (alreadySubmitted) {
-          localStorage.setItem(
-            submittedStorageKey,
-            "true"
-          );
+     if (alreadySubmitted) {
+  localStorage.setItem(
+    submittedStorageKey,
+    "true"
+  );
 
-          window.location.href =
-            "leaderboard.html";
+  alert(
+    "You have already submitted your predictions for this round."
+  );
 
-          return;
-        }
+  window.location.href =
+    "leaderboard.html";
+
+  return;
+}
 
         renderFixtures();
         showPredictions();
