@@ -146,8 +146,8 @@ const englishLeagueFixtures = [
     group: "Championship",
     home: "Cardiff",
     away: "Wrexham",
-    homeScore: null,
-    awayScore: null
+    homeScore: 1,
+    awayScore: 1
   }
 ];
 
