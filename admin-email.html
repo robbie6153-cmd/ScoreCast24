@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Send Email - ScoreCast24 Admin
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css?v=26"
+  />
+</head>
+
+
+<body>
+
+  <div class="page">
+
+    <header class="top-bar">
+
+      <a
+        href="index.html"
+        class="menu-btn"
+        aria-label="Back to home"
+      >
+        ⌂
+      </a>
+
+      <div class="logo-text">
+        ScoreCast24 Admin
+      </div>
+
+    </header>
+
+
+    <main class="leaderboard-page">
+
+      <h1>
+        Email Users
+      </h1>
+
+      <p class="leaderboard-hint">
+        Send a ScoreCast24 announcement
+        to registered users.
+      </p>
+
+
+      <div class="yellow-box">
+
+        <p>
+          <strong>Important:</strong>
+          Only the ScoreCast24 administrator
+          account can use this page.
+        </p>
+
+      </div>
+
+
+      <div
+        style="
+          width:100%;
+          max-width:600px;
+          margin:20px auto;
+        "
+      >
+
+        <label for="emailSubject">
+          <strong>Email subject</strong>
+        </label>
+
+        <input
+          id="emailSubject"
+          type="text"
+          maxlength="150"
+          placeholder="e.g. Week Two is now open!"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            padding:12px;
+            margin:8px 0 20px;
+          "
+        />
+
+
+        <label for="emailMessage">
+          <strong>Message</strong>
+        </label>
+
+        <textarea
+          id="emailMessage"
+          maxlength="5000"
+          rows="10"
+          placeholder="Enter your email message..."
+          style="
+            width:100%;
+            box-sizing:border-box;
+            padding:12px;
+            margin:8px 0 20px;
+          "
+        ></textarea>
+
+
+        <label for="emailButtonText">
+          <strong>
+            Button text (optional)
+          </strong>
+        </label>
+
+        <input
+          id="emailButtonText"
+          type="text"
+          maxlength="80"
+          placeholder="e.g. Submit Predictions"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            padding:12px;
+            margin:8px 0 20px;
+          "
+        />
+
+
+        <label for="emailButtonUrl">
+          <strong>
+            Button destination (optional)
+          </strong>
+        </label>
+
+        <input
+          id="emailButtonUrl"
+          type="url"
+          placeholder="https://scorecast24.com/"
+          value="https://scorecast24.com/"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            padding:12px;
+            margin:8px 0 25px;
+          "
+        />
+
+
+        <button
+          id="sendEmailBtn"
+          class="start-btn"
+          type="button"
+        >
+          Send Email to All Users
+        </button>
+
+
+        <p
+          id="emailStatus"
+          class="form-message"
+          aria-live="polite"
+          style="
+            margin-top:20px;
+          "
+        ></p>
+
+      </div>
+
+
+      <a
+        href="index.html"
+        class="secondary-btn"
+      >
+        Back to Home
+      </a>
+
+    </main>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="admin-email.js?v=1"
+  ></script>
+
+</body>
+
+</html>
