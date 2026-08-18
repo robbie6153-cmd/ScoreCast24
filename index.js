@@ -12,143 +12,263 @@ import {
 
 
 /* =========================
-   ENGLISH LEAGUE WEEK ONE
+   ENGLISH LEAGUE WEEK TWO
 ========================= */
 
 const predictionsDeadline =
-  new Date("2026-08-14T20:00:00+01:00");
+  new Date("2026-08-21T20:00:00+01:00");
 
 const currentRound =
-  "English League Week One";
+  "English League Week Two";
 
 const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
 
+
+/* =========================
+   DEADLINE CHECK
+========================= */
 
 function predictionsAreClosed() {
   return new Date() >= predictionsDeadline;
 }
 
 
+/* =========================
+   WEEK TWO FIXTURES
+========================= */
+
 const englishLeagueFixtures = [
+
+  /* =========================
+     PREMIER LEAGUE
+  ========================= */
+
   {
     id: "1",
-    date: "Fri 14 Aug 2026, 20:00",
-    group: "Championship",
-    home: "Wolves",
-    away: "Blackburn",
-    homeScore: 2,
-    awayScore: 2
+    date: "Fri 21 Aug 2026, 20:00",
+    group: "Premier League",
+    home: "Arsenal",
+    away: "Coventry City",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "2",
-    date: "Sat 15 Aug 2026, 12:30",
-    group: "Championship",
-    home: "Bolton",
-    away: "Preston",
-    homeScore: 2,
-    awayScore: 1
+    date: "Sat 22 Aug 2026, 12:30",
+    group: "Premier League",
+    home: "Hull City",
+    away: "Manchester United",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "3",
-    date: "Sat 15 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Bristol City",
-    away: "Millwall",
-    homeScore: 0,
-    awayScore: 2
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Premier League",
+    home: "Everton",
+    away: "Crystal Palace",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "4",
-    date: "Sat 15 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Charlton",
-    away: "Derby",
-    homeScore: 2,
-    awayScore: 1
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Premier League",
+    home: "Ipswich Town",
+    away: "Sunderland",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "5",
-    date: "Sat 15 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Middlesbrough",
-    away: "Lincoln",
-    homeScore: 2,
-    awayScore: 1
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Premier League",
+    home: "Nottingham Forest",
+    away: "Leeds United",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "6",
-    date: "Sat 15 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Norwich",
-    away: "West Brom",
-    homeScore: 1,
-    awayScore: 2
+    date: "Sat 22 Aug 2026, 17:30",
+    group: "Premier League",
+    home: "Brentford",
+    away: "Tottenham Hotspur",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "7",
-    date: "Sat 15 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Portsmouth",
-    away: "QPR",
-    homeScore: 1,
-    awayScore: 3
+    date: "Sun 23 Aug 2026, 14:00",
+    group: "Premier League",
+    home: "Brighton & Hove Albion",
+    away: "Aston Villa",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "8",
-    date: "Sat 15 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Stoke",
-    away: "Swansea",
-    homeScore: 1,
-    awayScore: 2
+    date: "Sun 23 Aug 2026, 14:00",
+    group: "Premier League",
+    home: "Manchester City",
+    away: "AFC Bournemouth",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "9",
-    date: "Sat 15 Aug 2026, 17:30",
-    group: "Championship",
-    home: "Sheffield United",
-    away: "Birmingham",
-    homeScore: 0,
-    awayScore: 0
+    date: "Sun 23 Aug 2026, 16:30",
+    group: "Premier League",
+    home: "Newcastle United",
+    away: "Liverpool",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "10",
-    date: "Sun 16 Aug 2026, 13:30",
-    group: "Championship",
-    home: "Watford",
-    away: "Southampton",
-    homeScore: 2,
-    awayScore: 1
+    date: "Mon 24 Aug 2026, 20:00",
+    group: "Premier League",
+    home: "Fulham",
+    away: "Chelsea",
+    homeScore: null,
+    awayScore: null
   },
+
+
+  /* =========================
+     EFL CHAMPIONSHIP
+  ========================= */
+
   {
     id: "11",
-    date: "Sun 16 Aug 2026, 15:00",
-    group: "Community Shield",
-    home: "Arsenal",
-    away: "Manchester City",
-    venue: "Principality Stadium, Cardiff",
-    homeScore: 3,
-    awayScore: 0
+    date: "Sat 22 Aug 2026, 12:30",
+    group: "Championship",
+    home: "Birmingham City",
+    away: "Bristol City",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "12",
-    date: "Sun 16 Aug 2026, 16:00",
+    date: "Sat 22 Aug 2026, 12:30",
     group: "Championship",
-    home: "Burnley",
-    away: "West Ham",
-    homeScore: 2,
-    awayScore: 2
+    home: "Lincoln City",
+    away: "Portsmouth",
+    homeScore: null,
+    awayScore: null
   },
+
   {
     id: "13",
-    date: "Mon 17 Aug 2026, 20:00",
+    date: "Sat 22 Aug 2026, 12:30",
     group: "Championship",
-    home: "Cardiff",
-    away: "Wrexham",
-    homeScore: 1,
-    awayScore: 1
+    home: "Millwall",
+    away: "Norwich City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "14",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Blackburn Rovers",
+    away: "Middlesbrough",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "15",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Derby County",
+    away: "Cardiff City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "16",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Preston North End",
+    away: "Wolverhampton Wanderers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "17",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Queens Park Rangers",
+    away: "Bolton Wanderers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "18",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Southampton",
+    away: "Stoke City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "19",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Swansea City",
+    away: "Sheffield United",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "20",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "West Ham United",
+    away: "Charlton Athletic",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "21",
+    date: "Sat 22 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Wrexham",
+    away: "Watford",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "22",
+    date: "Sun 23 Aug 2026, 12:00",
+    group: "Championship",
+    home: "West Bromwich Albion",
+    away: "Burnley",
+    homeScore: null,
+    awayScore: null
   }
+
 ];
 
 
@@ -419,7 +539,7 @@ if (submitPredictionsBtn) {
     async () => {
       if (predictionsAreClosed()) {
         alert(
-          "English League Week One predictions are now closed."
+          `${currentRound} predictions are now closed.`
         );
 
         return;
@@ -549,9 +669,13 @@ function calculatePoints(
   const actualAway =
     fixture.awayScore;
 
+  /*
+    Using == null deliberately checks
+    for BOTH null and undefined.
+  */
   if (
-    actualHome === null ||
-    actualAway === null
+    actualHome == null ||
+    actualAway == null
   ) {
     return null;
   }
@@ -618,7 +742,7 @@ if (startGameBtn) {
 
       if (predictionsAreClosed()) {
         alert(
-          "English League Week One predictions are now closed."
+          `${currentRound} predictions are now closed.`
         );
 
         return;
@@ -640,9 +764,9 @@ if (startGameBtn) {
       }
 
       /*
-        Once this device has already
-        confirmed an entry, go directly
-        to the full leaderboard.
+        The storage key contains the
+        round name, so submitting Week One
+        does NOT prevent a Week Two entry.
       */
       if (
         localStorage.getItem(
@@ -730,7 +854,6 @@ if (dreamTeamBtn) {
 }
 
 
-
 /* =========================
    HOME LEADERBOARD PREVIEW
 ========================= */
@@ -757,6 +880,10 @@ async function renderHomeLeaderboardPreview() {
         const data =
           docSnap.data();
 
+        /*
+          Home preview is ONLY for
+          the current week.
+        */
         if (
           data.round !== currentRound
         ) {
@@ -885,8 +1012,8 @@ function renderHomeFixturesPreview() {
     fixtures
       .filter(
         (fixture) =>
-          fixture.homeScore !== null &&
-          fixture.awayScore !== null
+          fixture.homeScore != null &&
+          fixture.awayScore != null
       )
       .sort(
         (a, b) =>
@@ -975,10 +1102,15 @@ if (menuToggle && dropdownMenu) {
 
 
 /* =========================
-   WEEK ONE COUNTDOWN
+   PREDICTIONS COUNTDOWN
 ========================= */
 
-function updateWeekOneCountdown() {
+function updatePredictionsCountdown() {
+  /*
+    Keeping the existing HTML ID means
+    you do NOT need to alter index.html
+    immediately.
+  */
   const countdownBox =
     document.getElementById(
       "weekOneCountdown"
@@ -993,7 +1125,7 @@ function updateWeekOneCountdown() {
   if (timeLeft <= 0) {
     countdownBox.innerHTML = `
       <strong>
-        English League Week One predictions are now closed.
+        ${currentRound} predictions are now closed.
       </strong>
     `;
 
@@ -1098,22 +1230,22 @@ window.addEventListener(
 
 showHome();
 
-
 renderHomeLeaderboardPreview();
+
 renderHomeFixturesPreview();
 
-updateWeekOneCountdown();
+updatePredictionsCountdown();
 
 
 setInterval(
-  updateWeekOneCountdown,
+  updatePredictionsCountdown,
   1000
 );
 
 
 /*
-  Refresh the top-three preview every
-  minute instead of every ten seconds.
+  Refresh the current week's
+  top-three preview every minute.
 */
 setInterval(
   renderHomeLeaderboardPreview,

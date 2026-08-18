@@ -74,7 +74,9 @@
 
         <p>
           Join this mini league for a
-          <strong>one-off £1 registration fee</strong>.
+          <strong>
+            one-off £1 registration fee
+          </strong>.
         </p>
 
         <p>
@@ -91,36 +93,44 @@
       </div>
 
 
-    <div class="leaderboard-tabs">
+      <!-- =========================
+           LEADERBOARD TABS
+      ========================== -->
 
-  <button
-    id="miniWeekLeaderboardTab"
-    class="leaderboard-tab active"
-    type="button"
-  >
-    Week One
-  </button>
+      <div class="leaderboard-tabs">
 
-  <button
-    id="miniSeasonLeaderboardTab"
-    class="leaderboard-tab"
-    type="button"
-  >
-    Season
-  </button>
+        <button
+          id="miniWeekLeaderboardTab"
+          class="leaderboard-tab active"
+          type="button"
+        >
+          Weekly
+        </button>
 
-</div>
+        <button
+          id="miniSeasonLeaderboardTab"
+          class="leaderboard-tab"
+          type="button"
+        >
+          Season
+        </button>
+
+      </div>
 
 
-<p class="leaderboard-hint">
-  Tap a player to view their predictions.
-</p>
+      <p class="leaderboard-hint">
+        Tap a player to view their predictions.
+      </p>
 
+
+      <!-- =========================
+           LEADERBOARD
+      ========================== -->
 
       <div id="miniLeagueLeaderboard">
 
         <p>
-          This mini league currently has no members.
+          Loading mini league...
         </p>
 
       </div>
@@ -144,10 +154,15 @@
 
   </div>
 
-<script
-  type="module"
-  src="mini-league.js?v=6"
-></script>
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script
+    type="module"
+    src="mini-league.js?v=7"
+  ></script>
 
 </body>
 

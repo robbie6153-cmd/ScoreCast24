@@ -22,6 +22,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-functions.js";
 
 
+/* =========================
+   FIREBASE FUNCTIONS
+========================= */
+
 const functions =
   getFunctions(
     undefined,
@@ -34,6 +38,10 @@ const createJoinMiniLeagueCheckout =
     "createJoinMiniLeagueCheckout"
   );
 
+
+/* =========================
+   PAGE ELEMENTS
+========================= */
 
 const miniLeagueTitle =
   document.getElementById(
@@ -64,6 +72,7 @@ const miniLeagueMessage =
   document.getElementById(
     "miniLeagueMessage"
   );
+
 const miniWeekLeaderboardTab =
   document.getElementById(
     "miniWeekLeaderboardTab"
@@ -73,32 +82,235 @@ const miniSeasonLeaderboardTab =
   document.getElementById(
     "miniSeasonLeaderboardTab"
   );
+
+
+/* =========================
+   CURRENT ROUND
+========================= */
+
 const currentRound =
-  "English League Week One";
+  "English League Week Two";
+
+const currentWeekHeading =
+  "Week Two Leaderboard";
 
 
-const results = {
-  1: { homeScore: 2, awayScore: 2 },
-  2: { homeScore: 2, awayScore: 1 },
-  3: { homeScore: 0, awayScore: 2 },
-  4: { homeScore: 2, awayScore: 1 },
-  5: { homeScore: 2, awayScore: 1 },
-  6: { homeScore: 1, awayScore: 2 },
-  7: { homeScore: 1, awayScore: 3 },
-  8: { homeScore: 1, awayScore: 2 },
-  9: { homeScore: 0, awayScore: 0 },
-  10: { homeScore: 2, awayScore: 1 },
-  11: { homeScore: 3, awayScore: 0 },
-  12: { homeScore: 2, awayScore: 2 },
-  13: { homeScore: 1, awayScore: 1 }
+/* =========================
+   RESULTS BY ROUND
+========================= */
+
+const resultsByRound = {
+
+  /* =========================
+     WEEK ONE
+  ========================= */
+
+  "English League Week One": {
+
+    1: {
+      homeScore: 2,
+      awayScore: 2
+    },
+
+    2: {
+      homeScore: 2,
+      awayScore: 1
+    },
+
+    3: {
+      homeScore: 0,
+      awayScore: 2
+    },
+
+    4: {
+      homeScore: 2,
+      awayScore: 1
+    },
+
+    5: {
+      homeScore: 2,
+      awayScore: 1
+    },
+
+    6: {
+      homeScore: 1,
+      awayScore: 2
+    },
+
+    7: {
+      homeScore: 1,
+      awayScore: 3
+    },
+
+    8: {
+      homeScore: 1,
+      awayScore: 2
+    },
+
+    9: {
+      homeScore: 0,
+      awayScore: 0
+    },
+
+    10: {
+      homeScore: 2,
+      awayScore: 1
+    },
+
+    11: {
+      homeScore: 3,
+      awayScore: 0
+    },
+
+    12: {
+      homeScore: 2,
+      awayScore: 2
+    },
+
+    13: {
+      homeScore: 1,
+      awayScore: 1
+    }
+
+  },
+
+
+  /* =========================
+     WEEK TWO
+  ========================= */
+
+  "English League Week Two": {
+
+    1: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    2: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    3: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    4: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    5: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    6: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    7: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    8: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    9: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    10: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    11: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    12: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    13: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    14: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    15: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    16: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    17: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    18: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    19: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    20: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    21: {
+      homeScore: null,
+      awayScore: null
+    },
+
+    22: {
+      homeScore: null,
+      awayScore: null
+    }
+
+  }
+
 };
 
 
-let miniLeaderboardRows = [];
+/* =========================
+   PAGE STATE
+========================= */
+
+let miniWeekLeaderboardRows = [];
+
+let miniSeasonLeaderboardRows = [];
+
+
 const pageParameters =
   new URLSearchParams(
     window.location.search
   );
+
+
 const myUsername =
   (
     localStorage.getItem(
@@ -107,14 +319,18 @@ const myUsername =
   )
     .trim()
     .toLowerCase();
+
+
 const miniLeagueId =
   pageParameters.get("id");
+
 
 const paymentStatus =
   pageParameters.get("payment");
 
 
 let currentUser = null;
+
 let leagueData = null;
 
 
@@ -123,6 +339,7 @@ let leagueData = null;
 ========================= */
 
 function showMessage(message) {
+
   if (!miniLeagueMessage) {
     return;
   }
@@ -137,6 +354,7 @@ function showMessage(message) {
 ========================= */
 
 function escapeHtml(value) {
+
   return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -145,31 +363,73 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+
 /* =========================
-   CALCULATE POINTS
+   NORMALISE USERNAME
 ========================= */
 
-function calculatePoints(predictions = []) {
+function normaliseUsername(username) {
+
+  return String(
+    username || ""
+  )
+    .trim()
+    .toLowerCase();
+
+}
+
+
+/* =========================
+   CALCULATE ROUND POINTS
+========================= */
+
+function calculatePoints(
+  predictions = [],
+  round
+) {
+
+  const roundResults =
+    resultsByRound[round];
+
+  if (!roundResults) {
+    return null;
+  }
+
+
   let total = 0;
+
   let hasAnyResult = false;
+
 
   predictions.forEach(
     prediction => {
+
       const result =
-        results[prediction.fixtureId];
+        roundResults[
+          prediction.fixtureId
+        ];
+
 
       if (!result) {
         return;
       }
 
+
+      /*
+        Deliberately catches both
+        null and undefined.
+      */
+
       if (
-        result.homeScore === null ||
-        result.awayScore === null
+        result.homeScore == null ||
+        result.awayScore == null
       ) {
         return;
       }
 
+
       hasAnyResult = true;
+
 
       const predictedHome =
         Number(
@@ -191,43 +451,137 @@ function calculatePoints(predictions = []) {
           result.awayScore
         );
 
+
+      /* EXACT SCORE = 5 */
+
       if (
         predictedHome === actualHome &&
         predictedAway === actualAway
       ) {
+
         total += 5;
 
-      } else if (
+        return;
+      }
+
+
+      /* DRAW = 3 */
+
+      if (
         predictedHome === predictedAway &&
         actualHome === actualAway
       ) {
+
         total += 3;
 
-      } else if (
+        return;
+      }
+
+
+      /* HOME WIN = 1 */
+
+      if (
         predictedHome > predictedAway &&
         actualHome > actualAway
       ) {
+
         total += 1;
 
-      } else if (
+        return;
+      }
+
+
+      /* AWAY WIN = 2 */
+
+      if (
         predictedHome < predictedAway &&
         actualHome < actualAway
       ) {
+
         total += 2;
       }
+
     }
   );
+
 
   return hasAnyResult
     ? total
     : null;
+
 }
+
+
+/* =========================
+   SORT LEADERBOARD
+========================= */
+
+function sortMiniLeaderboard(rows) {
+
+  rows.sort(
+    (firstMember, secondMember) => {
+
+      /*
+        Pending entries are shown
+        below scored entries.
+      */
+
+      if (
+        firstMember.points == null &&
+        secondMember.points != null
+      ) {
+        return 1;
+      }
+
+      if (
+        firstMember.points != null &&
+        secondMember.points == null
+      ) {
+        return -1;
+      }
+
+
+      const firstPoints =
+        firstMember.points || 0;
+
+      const secondPoints =
+        secondMember.points || 0;
+
+
+      if (
+        secondPoints !== firstPoints
+      ) {
+
+        return (
+          secondPoints -
+          firstPoints
+        );
+      }
+
+
+      return firstMember.username.localeCompare(
+        secondMember.username
+      );
+
+    }
+  );
+
+}
+
+
 /* =========================
    MEMBER BUTTON STATUS
 ========================= */
 
 async function updateJoinButton() {
+
+  if (!joinMiniLeagueBtn) {
+    return;
+  }
+
+
   if (!currentUser || !miniLeagueId) {
+
     joinMiniLeagueBtn.textContent =
       "Log In to Join This League";
 
@@ -236,6 +590,7 @@ async function updateJoinButton() {
 
     return;
   }
+
 
   const memberReference =
     doc(
@@ -246,25 +601,32 @@ async function updateJoinButton() {
       currentUser.uid
     );
 
+
   const memberSnapshot =
     await getDoc(
       memberReference
     );
 
+
   if (memberSnapshot.exists()) {
+
     joinMiniLeagueBtn.textContent =
       "You Have Joined This League";
 
     joinMiniLeagueBtn.disabled =
       true;
 
+
     if (joinMiniLeagueInfo) {
+
       joinMiniLeagueInfo.style.display =
         "none";
+
     }
 
     return;
   }
+
 
   joinMiniLeagueBtn.textContent =
     "Join This League — £1";
@@ -272,10 +634,14 @@ async function updateJoinButton() {
   joinMiniLeagueBtn.disabled =
     false;
 
+
   if (joinMiniLeagueInfo) {
+
     joinMiniLeagueInfo.style.display =
       "";
+
   }
+
 }
 
 
@@ -283,24 +649,36 @@ async function updateJoinButton() {
    ACTIVE TAB
 ========================= */
 
-function setActiveMiniTab(activeTab) {
+function setActiveMiniTab(
+  activeTab
+) {
+
   if (miniWeekLeaderboardTab) {
+
     miniWeekLeaderboardTab.classList.remove(
       "active"
     );
+
   }
 
+
   if (miniSeasonLeaderboardTab) {
+
     miniSeasonLeaderboardTab.classList.remove(
       "active"
     );
+
   }
 
+
   if (activeTab) {
+
     activeTab.classList.add(
       "active"
     );
+
   }
+
 }
 
 
@@ -308,65 +686,102 @@ function setActiveMiniTab(activeTab) {
    DISPLAY MINI LEADERBOARD
 ========================= */
 
-function displayMiniLeaderboard(heading) {
-  if (miniLeaderboardRows.length === 0) {
+function displayMiniLeaderboard(
+  rows,
+  heading
+) {
+
+  if (!miniLeagueLeaderboard) {
+    return;
+  }
+
+
+  if (rows.length === 0) {
+
     miniLeagueLeaderboard.innerHTML = `
       <h2>${heading}</h2>
-      <p>This mini league currently has no members.</p>
+
+      <p>
+        This mini league currently has no members.
+      </p>
     `;
 
     return;
   }
 
+
   miniLeagueLeaderboard.innerHTML = `
     <h2>${heading} 🏆</h2>
   `;
 
-  miniLeaderboardRows.forEach(
+
+  rows.forEach(
     (member, index) => {
+
       const row =
         document.createElement(
           "div"
         );
 
-    const isMe =
-  member.username
-    .trim()
-    .toLowerCase() ===
-  myUsername;
 
-row.className =
-  isMe
-    ? "leaderboard-row my-row"
-    : "leaderboard-row";
+      const isMe =
+        normaliseUsername(
+          member.username
+        ) === myUsername;
+
+
+      row.className =
+        isMe
+          ? "leaderboard-row my-row"
+          : "leaderboard-row";
+
 
       row.innerHTML = `
-        <span class="leaderboard-position">
+        <span
+          class="leaderboard-position"
+        >
           ${index + 1}
         </span>
 
-        <span class="leaderboard-player">
-          ${escapeHtml(member.username)}
+        <span
+          class="leaderboard-player"
+        >
+          ${escapeHtml(
+            member.username
+          )}
 
-          <span class="view-predictions-text">
-            View predictions
-          </span>
+          ${
+            member.predictionId
+              ? `
+                <span
+                  class="view-predictions-text"
+                >
+                  View predictions
+                </span>
+              `
+              : ""
+          }
+
         </span>
 
-        <span class="leaderboard-points">
+        <span
+          class="leaderboard-points"
+        >
           ${
-            member.points === null ||
-            member.points === undefined
+            member.points == null
               ? "Score pending"
               : `${member.points} pts`
           }
         </span>
       `;
 
+
       if (member.predictionId) {
+
         row.addEventListener(
           "click",
           () => {
+
             localStorage.setItem(
               "viewPredictionId",
               member.predictionId
@@ -377,17 +792,322 @@ row.className =
               member.username
             );
 
+
+            if (member.predictionRound) {
+
+              localStorage.setItem(
+                "viewPredictionRound",
+                member.predictionRound
+              );
+
+            }
+
+
             window.location.href =
               "view-predictions.html";
+
           }
         );
+
       }
+
 
       miniLeagueLeaderboard.appendChild(
         row
       );
+
     }
   );
+
+}
+
+
+/* =========================
+   BUILD MEMBER PREDICTIONS
+========================= */
+
+function buildPredictionMap(
+  predictionsSnapshot
+) {
+
+  const predictionsByUsername =
+    new Map();
+
+
+  predictionsSnapshot.forEach(
+    predictionDocument => {
+
+      const predictionData =
+        predictionDocument.data();
+
+
+      /*
+        Ignore any rounds that are not
+        part of this English League
+        season.
+      */
+
+      if (
+        !resultsByRound[
+          predictionData.round
+        ]
+      ) {
+        return;
+      }
+
+
+      const cleanUsername =
+        normaliseUsername(
+          predictionData.username
+        );
+
+
+      if (!cleanUsername) {
+        return;
+      }
+
+
+      if (
+        !predictionsByUsername.has(
+          cleanUsername
+        )
+      ) {
+
+        predictionsByUsername.set(
+          cleanUsername,
+          []
+        );
+
+      }
+
+
+      predictionsByUsername
+        .get(cleanUsername)
+        .push({
+
+          id:
+            predictionDocument.id,
+
+          round:
+            predictionData.round,
+
+          predictions:
+            Array.isArray(
+              predictionData.predictions
+            )
+              ? predictionData.predictions
+              : []
+
+        });
+
+    }
+  );
+
+
+  return predictionsByUsername;
+
+}
+
+
+/* =========================
+   BUILD WEEK LEADERBOARD
+========================= */
+
+function buildMiniWeekLeaderboard(
+  membersSnapshot,
+  predictionsByUsername
+) {
+
+  miniWeekLeaderboardRows = [];
+
+
+  membersSnapshot.forEach(
+    memberDocument => {
+
+      const memberData =
+        memberDocument.data();
+
+
+      const username =
+        memberData.username ||
+        "ScoreCast24 Player";
+
+
+      const cleanUsername =
+        normaliseUsername(
+          username
+        );
+
+
+      const playerPredictions =
+        predictionsByUsername.get(
+          cleanUsername
+        ) || [];
+
+
+      const currentEntry =
+        playerPredictions.find(
+          entry =>
+            entry.round ===
+            currentRound
+        );
+
+
+      miniWeekLeaderboardRows.push({
+
+        username,
+
+        predictionId:
+          currentEntry?.id ||
+          null,
+
+        predictionRound:
+          currentEntry?.round ||
+          null,
+
+        points:
+          currentEntry
+            ? calculatePoints(
+                currentEntry.predictions,
+                currentRound
+              )
+            : null
+
+      });
+
+    }
+  );
+
+
+  sortMiniLeaderboard(
+    miniWeekLeaderboardRows
+  );
+
+}
+
+
+/* =========================
+   BUILD SEASON LEADERBOARD
+========================= */
+
+function buildMiniSeasonLeaderboard(
+  membersSnapshot,
+  predictionsByUsername
+) {
+
+  miniSeasonLeaderboardRows = [];
+
+
+  membersSnapshot.forEach(
+    memberDocument => {
+
+      const memberData =
+        memberDocument.data();
+
+
+      const username =
+        memberData.username ||
+        "ScoreCast24 Player";
+
+
+      const cleanUsername =
+        normaliseUsername(
+          username
+        );
+
+
+      const playerPredictions =
+        predictionsByUsername.get(
+          cleanUsername
+        ) || [];
+
+
+      let totalPoints = 0;
+
+      let hasAnyResult = false;
+
+      let predictionId = null;
+
+      let predictionRound = null;
+
+
+      playerPredictions.forEach(
+        entry => {
+
+          const roundPoints =
+            calculatePoints(
+              entry.predictions,
+              entry.round
+            );
+
+
+          if (roundPoints !== null) {
+
+            totalPoints +=
+              roundPoints;
+
+            hasAnyResult =
+              true;
+
+          }
+
+
+          /*
+            Prefer the current round
+            for the View Predictions
+            link.
+          */
+
+          if (
+            entry.round ===
+              currentRound
+          ) {
+
+            predictionId =
+              entry.id;
+
+            predictionRound =
+              entry.round;
+
+          } else if (
+            !predictionId
+          ) {
+
+            predictionId =
+              entry.id;
+
+            predictionRound =
+              entry.round;
+
+          }
+
+        }
+      );
+
+
+      miniSeasonLeaderboardRows.push({
+
+        username,
+
+        predictionId,
+
+        predictionRound,
+
+        points:
+          hasAnyResult
+            ? totalPoints
+            : null
+
+      });
+
+    }
+  );
+
+
+  sortMiniLeaderboard(
+    miniSeasonLeaderboardRows
+  );
+
 }
 
 
@@ -396,6 +1116,7 @@ row.className =
 ========================= */
 
 async function loadLeagueMembers() {
+
   const membersQuery =
     query(
       collection(
@@ -410,20 +1131,39 @@ async function loadLeagueMembers() {
       )
     );
 
+
   const membersSnapshot =
     await getDocs(
       membersQuery
     );
 
+
   if (membersSnapshot.empty) {
-    miniLeaderboardRows = [];
+
+    miniWeekLeaderboardRows = [];
+
+    miniSeasonLeaderboardRows = [];
+
+
+    setActiveMiniTab(
+      miniWeekLeaderboardTab
+    );
+
 
     displayMiniLeaderboard(
-      "Week One Leaderboard"
+      miniWeekLeaderboardRows,
+      currentWeekHeading
     );
 
     return;
   }
+
+
+  /*
+    Load all prediction documents so
+    Week One + Week Two can be used for
+    the season standings.
+  */
 
   const predictionsSnapshot =
     await getDocs(
@@ -433,125 +1173,69 @@ async function loadLeagueMembers() {
       )
     );
 
+
   const predictionsByUsername =
-    new Map();
+    buildPredictionMap(
+      predictionsSnapshot
+    );
 
-  predictionsSnapshot.forEach(
-    predictionDocument => {
-      const predictionData =
-        predictionDocument.data();
 
-      if (
-        predictionData.round !==
-        currentRound
-      ) {
-        return;
-      }
-
-      const cleanUsername =
-        String(
-          predictionData.username || ""
-        )
-          .trim()
-          .toLowerCase();
-
-      if (!cleanUsername) {
-        return;
-      }
-
-      predictionsByUsername.set(
-        cleanUsername,
-        {
-          id:
-            predictionDocument.id,
-
-          points:
-            calculatePoints(
-              predictionData.predictions || []
-            )
-        }
-      );
-    }
+  buildMiniWeekLeaderboard(
+    membersSnapshot,
+    predictionsByUsername
   );
 
-  miniLeaderboardRows = [];
 
-  membersSnapshot.forEach(
-    memberDocument => {
-      const memberData =
-        memberDocument.data();
-
-      const username =
-        memberData.username ||
-        "ScoreCast24 Player";
-
-      const cleanUsername =
-        String(username)
-          .trim()
-          .toLowerCase();
-
-      const prediction =
-        predictionsByUsername.get(
-          cleanUsername
-        );
-
-      miniLeaderboardRows.push({
-        username:
-          username,
-
-        predictionId:
-          prediction?.id || null,
-
-        points:
-          prediction
-            ? prediction.points
-            : null
-      });
-    }
+  buildMiniSeasonLeaderboard(
+    membersSnapshot,
+    predictionsByUsername
   );
 
-  miniLeaderboardRows.sort(
-    (firstMember, secondMember) => {
-      const firstPoints =
-        firstMember.points ?? -1;
-
-      const secondPoints =
-        secondMember.points ?? -1;
-
-      return (
-        secondPoints -
-        firstPoints
-      );
-    }
-  );
 
   setActiveMiniTab(
     miniWeekLeaderboardTab
   );
 
+
   displayMiniLeaderboard(
-    "Week One Leaderboard"
+    miniWeekLeaderboardRows,
+    currentWeekHeading
   );
+
 }
+
+
 /* =========================
    LOAD MINI LEAGUE
 ========================= */
 
 async function loadMiniLeague() {
+
   if (!miniLeagueId) {
-    miniLeagueTitle.textContent =
-      "Mini League Not Found";
 
-    miniLeagueMemberCount.textContent =
-      "No mini league was selected.";
+    if (miniLeagueTitle) {
+      miniLeagueTitle.textContent =
+        "Mini League Not Found";
+    }
 
-    joinMiniLeagueBtn.style.display =
-      "none";
+
+    if (miniLeagueMemberCount) {
+      miniLeagueMemberCount.textContent =
+        "No mini league was selected.";
+    }
+
+
+    if (joinMiniLeagueBtn) {
+      joinMiniLeagueBtn.style.display =
+        "none";
+    }
 
     return;
   }
 
+
   try {
+
     const leagueReference =
       doc(
         db,
@@ -559,236 +1243,322 @@ async function loadMiniLeague() {
         miniLeagueId
       );
 
+
     const leagueSnapshot =
       await getDoc(
         leagueReference
       );
 
+
     if (!leagueSnapshot.exists()) {
-      miniLeagueTitle.textContent =
-        "Mini League Not Found";
 
-      miniLeagueMemberCount.textContent =
-        "This mini league does not exist.";
+      if (miniLeagueTitle) {
+        miniLeagueTitle.textContent =
+          "Mini League Not Found";
+      }
 
-      joinMiniLeagueBtn.style.display =
-        "none";
+
+      if (miniLeagueMemberCount) {
+        miniLeagueMemberCount.textContent =
+          "This mini league does not exist.";
+      }
+
+
+      if (joinMiniLeagueBtn) {
+        joinMiniLeagueBtn.style.display =
+          "none";
+      }
 
       return;
     }
 
+
     leagueData =
       leagueSnapshot.data();
 
-    miniLeagueTitle.textContent =
-      leagueData.name ||
-      "Mini League";
+
+    if (miniLeagueTitle) {
+
+      miniLeagueTitle.textContent =
+        leagueData.name ||
+        "Mini League";
+
+    }
+
 
     const memberCount =
       Number(
         leagueData.memberCount || 0
       );
 
-    miniLeagueMemberCount.textContent =
-      `${memberCount} ${
-        memberCount === 1
-          ? "member"
-          : "members"
-      }`;
+
+    if (miniLeagueMemberCount) {
+
+      miniLeagueMemberCount.textContent =
+        `${memberCount} ${
+          memberCount === 1
+            ? "member"
+            : "members"
+        }`;
+
+    }
+
 
     await loadLeagueMembers();
+
     await updateJoinButton();
 
+
     if (
-      paymentStatus === "cancelled"
+      paymentStatus ===
+      "cancelled"
     ) {
+
       showMessage(
         "Payment was cancelled. You have not joined this mini league."
       );
+
     }
 
+
     if (
-      paymentStatus === "success"
+      paymentStatus ===
+      "success"
     ) {
+
       showMessage(
         "Payment received. Your membership should appear shortly."
       );
+
     }
 
   } catch (error) {
+
     console.error(
       "Could not load mini league:",
       error
     );
 
+
     showMessage(
       `Could not load mini league: ${
-        error.code || error.message
+        error.code ||
+        error.message
       }`
     );
+
   }
+
 }
+
 
 /* =========================
    TAB CLICKS
 ========================= */
 
 if (miniWeekLeaderboardTab) {
+
   miniWeekLeaderboardTab.addEventListener(
     "click",
     () => {
+
       setActiveMiniTab(
         miniWeekLeaderboardTab
       );
 
+
       displayMiniLeaderboard(
-        "Week One Leaderboard"
+        miniWeekLeaderboardRows,
+        currentWeekHeading
       );
+
     }
   );
+
 }
 
 
 if (miniSeasonLeaderboardTab) {
+
   miniSeasonLeaderboardTab.addEventListener(
     "click",
     () => {
+
       setActiveMiniTab(
         miniSeasonLeaderboardTab
       );
 
-      /*
-        During Week One, the season
-        leaderboard is the same table.
-      */
+
       displayMiniLeaderboard(
+        miniSeasonLeaderboardRows,
         "Season Leaderboard"
       );
+
     }
   );
+
 }
+
+
 /* =========================
    JOIN MINI LEAGUE
 ========================= */
 
-joinMiniLeagueBtn.addEventListener(
-  "click",
-  async () => {
-    if (!currentUser) {
-      window.location.href =
-        "login.html";
+if (joinMiniLeagueBtn) {
 
-      return;
-    }
+  joinMiniLeagueBtn.addEventListener(
+    "click",
+    async () => {
 
-    if (!miniLeagueId) {
-      showMessage(
-        "This mini league could not be found."
-      );
+      if (!currentUser) {
 
-      return;
-    }
+        window.location.href =
+          "login.html";
 
-    joinMiniLeagueBtn.disabled =
-      true;
+        return;
+      }
 
-    joinMiniLeagueBtn.textContent =
-      "Opening payment...";
 
-    showMessage(
-      "Preparing your £1 secure payment..."
-    );
+      if (!miniLeagueId) {
 
-    try {
-      const username =
-        localStorage.getItem(
-          "scorecast24Username"
-        ) ||
-        currentUser.displayName ||
-        currentUser.email ||
-        "ScoreCast24 Player";
-
-      const result =
-        await createJoinMiniLeagueCheckout({
-          leagueId:
-            miniLeagueId,
-
-          username:
-            username
-        });
-
-      const checkoutUrl =
-        result?.data?.url;
-
-      if (!checkoutUrl) {
-        throw new Error(
-          "Stripe did not return a payment page."
+        showMessage(
+          "This mini league could not be found."
         );
+
+        return;
       }
 
-      showMessage(
-        "Taking you to Stripe..."
-      );
-
-      window.location.href =
-        checkoutUrl;
-
-    } catch (error) {
-      console.error(
-        "Could not open mini-league payment:",
-        error
-      );
-
-      let errorMessage =
-        "The payment page could not be opened. Please try again.";
-
-      if (
-        error?.code ===
-        "functions/already-exists"
-      ) {
-        errorMessage =
-          "You have already joined this mini league.";
-
-      } else if (
-        error?.code ===
-        "functions/not-found"
-      ) {
-        errorMessage =
-          "This mini league no longer exists.";
-
-      } else if (
-        error?.code ===
-        "functions/failed-precondition"
-      ) {
-        errorMessage =
-          "This mini league is not currently available to join.";
-
-      } else if (
-        error?.code ===
-        "functions/unauthenticated"
-      ) {
-        errorMessage =
-          "You must be logged in to join this mini league.";
-
-      } else if (
-        error?.message
-      ) {
-        errorMessage =
-          error.message;
-      }
-
-      showMessage(
-        errorMessage
-      );
 
       joinMiniLeagueBtn.disabled =
-        false;
+        true;
 
       joinMiniLeagueBtn.textContent =
-        "Join This League — £1";
+        "Opening payment...";
+
+
+      showMessage(
+        "Preparing your £1 secure payment..."
+      );
+
+
+      try {
+
+        const username =
+          localStorage.getItem(
+            "scorecast24Username"
+          ) ||
+          currentUser.displayName ||
+          currentUser.email ||
+          "ScoreCast24 Player";
+
+
+        const result =
+          await createJoinMiniLeagueCheckout({
+            leagueId:
+              miniLeagueId,
+
+            username:
+              username
+          });
+
+
+        const checkoutUrl =
+          result?.data?.url;
+
+
+        if (!checkoutUrl) {
+
+          throw new Error(
+            "Stripe did not return a payment page."
+          );
+
+        }
+
+
+        showMessage(
+          "Taking you to Stripe..."
+        );
+
+
+        window.location.href =
+          checkoutUrl;
+
+
+      } catch (error) {
+
+        console.error(
+          "Could not open mini-league payment:",
+          error
+        );
+
+
+        let errorMessage =
+          "The payment page could not be opened. Please try again.";
+
+
+        if (
+          error?.code ===
+          "functions/already-exists"
+        ) {
+
+          errorMessage =
+            "You have already joined this mini league.";
+
+
+        } else if (
+          error?.code ===
+          "functions/not-found"
+        ) {
+
+          errorMessage =
+            "This mini league no longer exists.";
+
+
+        } else if (
+          error?.code ===
+          "functions/failed-precondition"
+        ) {
+
+          errorMessage =
+            "This mini league is not currently available to join.";
+
+
+        } else if (
+          error?.code ===
+          "functions/unauthenticated"
+        ) {
+
+          errorMessage =
+            "You must be logged in to join this mini league.";
+
+
+        } else if (
+          error?.message
+        ) {
+
+          errorMessage =
+            error.message;
+
+        }
+
+
+        showMessage(
+          errorMessage
+        );
+
+
+        joinMiniLeagueBtn.disabled =
+          false;
+
+        joinMiniLeagueBtn.textContent =
+          "Join This League — £1";
+
+      }
+
     }
-  }
-);
+  );
+
+}
 
 
 /* =========================
@@ -798,9 +1568,11 @@ joinMiniLeagueBtn.addEventListener(
 onAuthStateChanged(
   auth,
   user => {
+
     currentUser =
       user;
 
     loadMiniLeague();
+
   }
 );
