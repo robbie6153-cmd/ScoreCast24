@@ -21,6 +21,9 @@ import {
   httpsCallable
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-functions.js";
 
+import {
+  resultsByRound
+} from "./results.js?v=1";
 
 /* =========================
    FIREBASE FUNCTIONS

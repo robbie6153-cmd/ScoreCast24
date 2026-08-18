@@ -10,7 +10,9 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-
+import {
+  resultsByRound
+} from "./results.js?v=1";
 /* =========================
    ENGLISH LEAGUE WEEK TWO
 ========================= */
@@ -334,13 +336,13 @@ function cleanUsername(name) {
 }
 
 
-function getPredictionDocId(savedUsername) {
+function getPredictionDocId(uid) {
   const cleanRound =
     currentRound
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  return `${cleanUsername(savedUsername)}-${cleanRound}`;
+  return `${uid}-${cleanRound}`;
 }
 
 
@@ -663,11 +665,17 @@ function calculatePoints(
   prediction,
   fixture
 ) {
-  const actualHome =
-    fixture.homeScore;
+const roundResults =
+  resultsByRound[currentRound] || {};
 
-  const actualAway =
-    fixture.awayScore;
+const result =
+  roundResults[fixture.id];
+
+const actualHome =
+  result?.homeScore;
+
+const actualAway =
+  result?.awayScore;
 
   /*
     Using == null deliberately checks
@@ -768,16 +776,7 @@ if (startGameBtn) {
         round name, so submitting Week One
         does NOT prevent a Week Two entry.
       */
-      if (
-        localStorage.getItem(
-          submittedStorageKey
-        ) === "true"
-      ) {
-        window.location.href =
-          "leaderboard.html";
-
-        return;
-      }
+    
 
       startGameBtn.disabled = true;
 

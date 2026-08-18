@@ -7,7 +7,9 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-
+import {
+  resultsByRound
+} from "./results.js?v=1";
 /* =========================
    PAGE ELEMENTS
 ========================= */
