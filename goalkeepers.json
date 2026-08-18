@@ -1,560 +1,80 @@
 [
-  {
-    "id": "arsenal-david-raya",
-    "name": "David Raya",
-    "club": "Arsenal",
-    "position": "GK",
-    "rating": 90
-  },
-  {
-    "id": "arsenal-kepa-arrizabalaga",
-    "name": "Kepa Arrizabalaga",
-    "club": "Arsenal",
-    "position": "GK",
-    "rating": 81
-  },
-  {
-    "id": "arsenal-tommy-setford",
-    "name": "Tommy Setford",
-    "club": "Arsenal",
-    "position": "GK",
-    "rating": 69
-  },
-  {
-    "id": "arsenal-alexei-rojas",
-    "name": "Alexei Rojas",
-    "club": "Arsenal",
-    "position": "GK",
-    "rating": 65
-  },
-  {
-    "id": "arsenal-jack-porter",
-    "name": "Jack Porter",
-    "club": "Arsenal",
-    "position": "GK",
-    "rating": 65
-  },
-  {
-    "id": "arsenal-khari-ranson",
-    "name": "Khari Ranson",
-    "club": "Arsenal",
-    "position": "GK",
-    "rating": 64
-  },
+  {"id":"arsenal-david-raya","name":"David Raya","club":"Arsenal","position":"GK","rating":91},
+  {"id":"arsenal-kepa-arrizabalaga","name":"Kepa Arrizabalaga","club":"Arsenal","position":"GK","rating":81},
+  {"id":"arsenal-illan-meslier","name":"Illan Meslier","club":"Arsenal","position":"GK","rating":76},
 
-  {
-    "id": "aston-villa-emiliano-martinez",
-    "name": "Emiliano Martínez",
-    "club": "Aston Villa",
-    "position": "GK",
-    "rating": 89
-  },
-  {
-    "id": "aston-villa-marco-bizot",
-    "name": "Marco Bizot",
-    "club": "Aston Villa",
-    "position": "GK",
-    "rating": 80
-  },
-  {
-    "id": "aston-villa-james-wright",
-    "name": "James Wright",
-    "club": "Aston Villa",
-    "position": "GK",
-    "rating": 67
-  },
-  {
-    "id": "aston-villa-ronnie-hollingshead",
-    "name": "Ronnie Hollingshead",
-    "club": "Aston Villa",
-    "position": "GK",
-    "rating": 66
-  },
-  {
-    "id": "aston-villa-sam-proctor",
-    "name": "Sam Proctor",
-    "club": "Aston Villa",
-    "position": "GK",
-    "rating": 65
-  },
+  {"id":"aston-villa-emiliano-martinez","name":"Emiliano Martínez","club":"Aston Villa","position":"GK","rating":88},
+  {"id":"aston-villa-marco-bizot","name":"Marco Bizot","club":"Aston Villa","position":"GK","rating":79},
 
-  {
-    "id": "bournemouth-djordje-petrovic",
-    "name": "Đorđe Petrović",
-    "club": "Bournemouth",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "bournemouth-christos-mandas",
-    "name": "Christos Mandas",
-    "club": "Bournemouth",
-    "position": "GK",
-    "rating": 77
-  },
-  {
-    "id": "bournemouth-fraser-forster",
-    "name": "Fraser Forster",
-    "club": "Bournemouth",
-    "position": "GK",
-    "rating": 73
-  },
-  {
-    "id": "bournemouth-callan-mckenna",
-    "name": "Callan McKenna",
-    "club": "Bournemouth",
-    "position": "GK",
-    "rating": 66
-  },
+  {"id":"bournemouth-djordje-petrovic","name":"Đorđe Petrović","club":"Bournemouth","position":"GK","rating":85},
+  {"id":"bournemouth-fraser-forster","name":"Fraser Forster","club":"Bournemouth","position":"GK","rating":74},
+  {"id":"bournemouth-will-dennis","name":"Will Dennis","club":"Bournemouth","position":"GK","rating":68},
 
-  {
-    "id": "brentford-caoimhin-kelleher",
-    "name": "Caoimhín Kelleher",
-    "club": "Brentford",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "brentford-hakon-valdimarsson",
-    "name": "Hákon Rafn Valdimarsson",
-    "club": "Brentford",
-    "position": "GK",
-    "rating": 74
-  },
-  {
-    "id": "brentford-ellery-balcombe",
-    "name": "Ellery Balcombe",
-    "club": "Brentford",
-    "position": "GK",
-    "rating": 69
-  },
-  {
-    "id": "brentford-julian-eyestone",
-    "name": "Julian Eyestone",
-    "club": "Brentford",
-    "position": "GK",
-    "rating": 66
-  },
+  {"id":"brentford-caoimhin-kelleher","name":"Caoimhín Kelleher","club":"Brentford","position":"GK","rating":86},
+  {"id":"brentford-hakon-valdimarsson","name":"Hákon Rafn Valdimarsson","club":"Brentford","position":"GK","rating":75},
+  {"id":"brentford-ellery-balcombe","name":"Ellery Balcombe","club":"Brentford","position":"GK","rating":70},
 
-  {
-    "id": "brighton-bart-verbruggen",
-    "name": "Bart Verbruggen",
-    "club": "Brighton & Hove Albion",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "brighton-jason-steele",
-    "name": "Jason Steele",
-    "club": "Brighton & Hove Albion",
-    "position": "GK",
-    "rating": 75
-  },
-  {
-    "id": "brighton-tom-mcgill",
-    "name": "Tom McGill",
-    "club": "Brighton & Hove Albion",
-    "position": "GK",
-    "rating": 68
-  },
+  {"id":"brighton-bart-verbruggen","name":"Bart Verbruggen","club":"Brighton & Hove Albion","position":"GK","rating":85},
+  {"id":"brighton-jason-steele","name":"Jason Steele","club":"Brighton & Hove Albion","position":"GK","rating":75},
+  {"id":"brighton-tom-mcgill","name":"Tom McGill","club":"Brighton & Hove Albion","position":"GK","rating":68},
 
-  {
-    "id": "chelsea-robert-sanchez",
-    "name": "Robert Sánchez",
-    "club": "Chelsea",
-    "position": "GK",
-    "rating": 83
-  },
-  {
-    "id": "chelsea-filip-jorgensen",
-    "name": "Filip Jörgensen",
-    "club": "Chelsea",
-    "position": "GK",
-    "rating": 79
-  },
-  {
-    "id": "chelsea-mike-penders",
-    "name": "Mike Penders",
-    "club": "Chelsea",
-    "position": "GK",
-    "rating": 74
-  },
-  {
-    "id": "chelsea-teddy-sharman-lowe",
-    "name": "Teddy Sharman-Lowe",
-    "club": "Chelsea",
-    "position": "GK",
-    "rating": 70
-  },
-  {
-    "id": "chelsea-gaga-slonina",
-    "name": "Gaga Slonina",
-    "club": "Chelsea",
-    "position": "GK",
-    "rating": 70
-  },
+  {"id":"chelsea-robert-sanchez","name":"Robert Sánchez","club":"Chelsea","position":"GK","rating":83},
+  {"id":"chelsea-mike-penders","name":"Mike Penders","club":"Chelsea","position":"GK","rating":76},
+  {"id":"chelsea-teddy-sharman-lowe","name":"Teddy Sharman-Lowe","club":"Chelsea","position":"GK","rating":70},
 
-  {
-    "id": "coventry-oliver-dovin",
-    "name": "Oliver Dovin",
-    "club": "Coventry City",
-    "position": "GK",
-    "rating": 76
-  },
-  {
-    "id": "coventry-carl-rushworth",
-    "name": "Carl Rushworth",
-    "club": "Coventry City",
-    "position": "GK",
-    "rating": 75
-  },
-  {
-    "id": "coventry-bradley-collins",
-    "name": "Bradley Collins",
-    "club": "Coventry City",
-    "position": "GK",
-    "rating": 71
-  },
-  {
-    "id": "coventry-ben-wilson",
-    "name": "Ben Wilson",
-    "club": "Coventry City",
-    "position": "GK",
-    "rating": 69
-  },
+  {"id":"coventry-carl-rushworth","name":"Carl Rushworth","club":"Coventry City","position":"GK","rating":78},
+  {"id":"coventry-oliver-dovin","name":"Oliver Dovin","club":"Coventry City","position":"GK","rating":76},
+  {"id":"coventry-ben-wilson","name":"Ben Wilson","club":"Coventry City","position":"GK","rating":71},
 
-  {
-    "id": "crystal-palace-dean-henderson",
-    "name": "Dean Henderson",
-    "club": "Crystal Palace",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "crystal-palace-walter-benitez",
-    "name": "Walter Benítez",
-    "club": "Crystal Palace",
-    "position": "GK",
-    "rating": 79
-  },
-  {
-    "id": "crystal-palace-remi-matthews",
-    "name": "Remi Matthews",
-    "club": "Crystal Palace",
-    "position": "GK",
-    "rating": 68
-  },
+  {"id":"crystal-palace-dean-henderson","name":"Dean Henderson","club":"Crystal Palace","position":"GK","rating":85},
+  {"id":"crystal-palace-walter-benitez","name":"Walter Benítez","club":"Crystal Palace","position":"GK","rating":80},
+  {"id":"crystal-palace-remi-matthews","name":"Remi Matthews","club":"Crystal Palace","position":"GK","rating":68},
 
-  {
-    "id": "everton-jordan-pickford",
-    "name": "Jordan Pickford",
-    "club": "Everton",
-    "position": "GK",
-    "rating": 88
-  },
-  {
-    "id": "everton-mark-travers",
-    "name": "Mark Travers",
-    "club": "Everton",
-    "position": "GK",
-    "rating": 77
-  },
-  {
-    "id": "everton-tom-king",
-    "name": "Tom King",
-    "club": "Everton",
-    "position": "GK",
-    "rating": 68
-  },
+  {"id":"everton-jordan-pickford","name":"Jordan Pickford","club":"Everton","position":"GK","rating":89},
+  {"id":"everton-mark-travers","name":"Mark Travers","club":"Everton","position":"GK","rating":77},
 
-  {
-    "id": "fulham-bernd-leno",
-    "name": "Bernd Leno",
-    "club": "Fulham",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "fulham-benjamin-lecomte",
-    "name": "Benjamin Lecomte",
-    "club": "Fulham",
-    "position": "GK",
-    "rating": 76
-  },
-  {
-    "id": "fulham-alfie-mcnally",
-    "name": "Alfie McNally",
-    "club": "Fulham",
-    "position": "GK",
-    "rating": 66
-  },
+  {"id":"fulham-bernd-leno","name":"Bernd Leno","club":"Fulham","position":"GK","rating":84},
+  {"id":"fulham-benjamin-lecomte","name":"Benjamin Lecomte","club":"Fulham","position":"GK","rating":76},
 
-  {
-    "id": "hull-jack-butland",
-    "name": "Jack Butland",
-    "club": "Hull City",
-    "position": "GK",
-    "rating": 78
-  },
-  {
-    "id": "hull-dillon-phillips",
-    "name": "Dillon Phillips",
-    "club": "Hull City",
-    "position": "GK",
-    "rating": 72
-  },
-  {
-    "id": "hull-harvey-cartwright",
-    "name": "Harvey Cartwright",
-    "club": "Hull City",
-    "position": "GK",
-    "rating": 69
-  },
-  {
-    "id": "hull-thimothee-lo-tutala",
-    "name": "Thimothée Lo-Tutala",
-    "club": "Hull City",
-    "position": "GK",
-    "rating": 67
-  },
+  {"id":"hull-konstantinos-tzolakis","name":"Konstantinos Tzolakis","club":"Hull City","position":"GK","rating":82},
+  {"id":"hull-jack-butland","name":"Jack Butland","club":"Hull City","position":"GK","rating":78},
+  {"id":"hull-dillon-phillips","name":"Dillon Phillips","club":"Hull City","position":"GK","rating":72},
 
-  {
-    "id": "ipswich-alex-palmer",
-    "name": "Alex Palmer",
-    "club": "Ipswich Town",
-    "position": "GK",
-    "rating": 77
-  },
-  {
-    "id": "ipswich-arijanet-muric",
-    "name": "Arijanet Murić",
-    "club": "Ipswich Town",
-    "position": "GK",
-    "rating": 75
-  },
-  {
-    "id": "ipswich-christian-walton",
-    "name": "Christian Walton",
-    "club": "Ipswich Town",
-    "position": "GK",
-    "rating": 73
-  },
-  {
-    "id": "ipswich-cieran-slicker",
-    "name": "Cieran Slicker",
-    "club": "Ipswich Town",
-    "position": "GK",
-    "rating": 68
-  },
+  {"id":"ipswich-kjell-scherpen","name":"Kjell Scherpen","club":"Ipswich Town","position":"GK","rating":79},
+  {"id":"ipswich-alex-palmer","name":"Alex Palmer","club":"Ipswich Town","position":"GK","rating":77},
+  {"id":"ipswich-kayne-van-oevelen","name":"Kayne van Oevelen","club":"Ipswich Town","position":"GK","rating":70},
+  {"id":"ipswich-christian-walton","name":"Christian Walton","club":"Ipswich Town","position":"GK","rating":73},
 
-  {
-    "id": "leeds-lucas-perri",
-    "name": "Lucas Perri",
-    "club": "Leeds United",
-    "position": "GK",
-    "rating": 82
-  },
-  {
-    "id": "leeds-illan-meslier",
-    "name": "Illan Meslier",
-    "club": "Leeds United",
-    "position": "GK",
-    "rating": 77
-  },
-  {
-    "id": "leeds-karl-darlow",
-    "name": "Karl Darlow",
-    "club": "Leeds United",
-    "position": "GK",
-    "rating": 74
-  },
-  {
-    "id": "leeds-alex-cairns",
-    "name": "Alex Cairns",
-    "club": "Leeds United",
-    "position": "GK",
-    "rating": 69
-  },
+  {"id":"leeds-james-trafford","name":"James Trafford","club":"Leeds United","position":"GK","rating":83},
+  {"id":"leeds-lucas-perri","name":"Lucas Perri","club":"Leeds United","position":"GK","rating":81},
+  {"id":"leeds-alex-cairns","name":"Alex Cairns","club":"Leeds United","position":"GK","rating":69},
 
-  {
-    "id": "liverpool-alisson-becker",
-    "name": "Alisson Becker",
-    "club": "Liverpool",
-    "position": "GK",
-    "rating": 92
-  },
-  {
-    "id": "liverpool-giorgi-mamardashvili",
-    "name": "Giorgi Mamardashvili",
-    "club": "Liverpool",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "liverpool-freddie-woodman",
-    "name": "Freddie Woodman",
-    "club": "Liverpool",
-    "position": "GK",
-    "rating": 72
-  },
-  {
-    "id": "liverpool-armin-pecsi",
-    "name": "Ármin Pécsi",
-    "club": "Liverpool",
-    "position": "GK",
-    "rating": 68
-  },
+  {"id":"liverpool-alisson-becker","name":"Alisson Becker","club":"Liverpool","position":"GK","rating":92},
+  {"id":"liverpool-giorgi-mamardashvili","name":"Giorgi Mamardashvili","club":"Liverpool","position":"GK","rating":86},
+  {"id":"liverpool-freddie-woodman","name":"Freddie Woodman","club":"Liverpool","position":"GK","rating":72},
 
-  {
-    "id": "man-city-gianluigi-donnarumma",
-    "name": "Gianluigi Donnarumma",
-    "club": "Manchester City",
-    "position": "GK",
-    "rating": 92
-  },
-  {
-    "id": "man-city-james-trafford",
-    "name": "James Trafford",
-    "club": "Manchester City",
-    "position": "GK",
-    "rating": 81
-  },
-  {
-    "id": "man-city-marcus-bettinelli",
-    "name": "Marcus Bettinelli",
-    "club": "Manchester City",
-    "position": "GK",
-    "rating": 69
-  },
+  {"id":"man-city-gianluigi-donnarumma","name":"Gianluigi Donnarumma","club":"Manchester City","position":"GK","rating":92},
+  {"id":"man-city-geronimo-rulli","name":"Gerónimo Rulli","club":"Manchester City","position":"GK","rating":83},
+  {"id":"man-city-marcus-bettinelli","name":"Marcus Bettinelli","club":"Manchester City","position":"GK","rating":69},
 
-  {
-    "id": "man-utd-senne-lammens",
-    "name": "Senne Lammens",
-    "club": "Manchester United",
-    "position": "GK",
-    "rating": 83
-  },
-  {
-    "id": "man-utd-altay-bayindir",
-    "name": "Altay Bayındır",
-    "club": "Manchester United",
-    "position": "GK",
-    "rating": 77
-  },
-  {
-    "id": "man-utd-tom-heaton",
-    "name": "Tom Heaton",
-    "club": "Manchester United",
-    "position": "GK",
-    "rating": 69
-  },
-  {
-    "id": "man-utd-dermot-mee",
-    "name": "Dermot Mee",
-    "club": "Manchester United",
-    "position": "GK",
-    "rating": 66
-  },
+  {"id":"man-utd-senne-lammens","name":"Senne Lammens","club":"Manchester United","position":"GK","rating":84},
+  {"id":"man-utd-karl-darlow","name":"Karl Darlow","club":"Manchester United","position":"GK","rating":74},
+  {"id":"man-utd-tom-heaton","name":"Tom Heaton","club":"Manchester United","position":"GK","rating":69},
 
-  {
-    "id": "newcastle-nick-pope",
-    "name": "Nick Pope",
-    "club": "Newcastle United",
-    "position": "GK",
-    "rating": 84
-  },
-  {
-    "id": "newcastle-aaron-ramsdale",
-    "name": "Aaron Ramsdale",
-    "club": "Newcastle United",
-    "position": "GK",
-    "rating": 82
-  },
-  {
-    "id": "newcastle-john-ruddy",
-    "name": "John Ruddy",
-    "club": "Newcastle United",
-    "position": "GK",
-    "rating": 69
-  },
-  {
-    "id": "newcastle-mark-gillespie",
-    "name": "Mark Gillespie",
-    "club": "Newcastle United",
-    "position": "GK",
-    "rating": 68
-  },
+  {"id":"newcastle-lukas-hornicek","name":"Lukáš Horníček","club":"Newcastle United","position":"GK","rating":81},
+  {"id":"newcastle-nick-pope","name":"Nick Pope","club":"Newcastle United","position":"GK","rating":84},
+  {"id":"newcastle-ewan-jaouen","name":"Ewan Jaouen","club":"Newcastle United","position":"GK","rating":73},
 
-  {
-    "id": "nottingham-forest-matz-sels",
-    "name": "Matz Sels",
-    "club": "Nottingham Forest",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "nottingham-forest-stefan-ortega",
-    "name": "Stefan Ortega",
-    "club": "Nottingham Forest",
-    "position": "GK",
-    "rating": 82
-  },
-  {
-    "id": "nottingham-forest-john-victor",
-    "name": "John Victor",
-    "club": "Nottingham Forest",
-    "position": "GK",
-    "rating": 76
-  },
-  {
-    "id": "nottingham-forest-angus-gunn",
-    "name": "Angus Gunn",
-    "club": "Nottingham Forest",
-    "position": "GK",
-    "rating": 75
-  },
+  {"id":"nottingham-forest-matz-sels","name":"Matz Sels","club":"Nottingham Forest","position":"GK","rating":85},
+  {"id":"nottingham-forest-john-victor","name":"John Victor","club":"Nottingham Forest","position":"GK","rating":77},
+  {"id":"nottingham-forest-steven-benda","name":"Steven Benda","club":"Nottingham Forest","position":"GK","rating":74},
 
-  {
-    "id": "sunderland-robin-roefs",
-    "name": "Robin Roefs",
-    "club": "Sunderland",
-    "position": "GK",
-    "rating": 83
-  },
-  {
-    "id": "sunderland-melker-ellborg",
-    "name": "Melker Ellborg",
-    "club": "Sunderland",
-    "position": "GK",
-    "rating": 74
-  },
-  {
-    "id": "sunderland-simon-moore",
-    "name": "Simon Moore",
-    "club": "Sunderland",
-    "position": "GK",
-    "rating": 69
-  },
+  {"id":"sunderland-robin-roefs","name":"Robin Roefs","club":"Sunderland","position":"GK","rating":84},
+  {"id":"sunderland-melker-ellborg","name":"Melker Ellborg","club":"Sunderland","position":"GK","rating":74},
+  {"id":"sunderland-simon-moore","name":"Simon Moore","club":"Sunderland","position":"GK","rating":69},
 
-  {
-    "id": "tottenham-guglielmo-vicario",
-    "name": "Guglielmo Vicario",
-    "club": "Tottenham Hotspur",
-    "position": "GK",
-    "rating": 85
-  },
-  {
-    "id": "tottenham-antonin-kinsky",
-    "name": "Antonín Kinský",
-    "club": "Tottenham Hotspur",
-    "position": "GK",
-    "rating": 76
-  },
-  {
-    "id": "tottenham-brandon-austin",
-    "name": "Brandon Austin",
-    "club": "Tottenham Hotspur",
-    "position": "GK",
-    "rating": 69
-  }
+  {"id":"tottenham-guglielmo-vicario","name":"Guglielmo Vicario","club":"Tottenham Hotspur","position":"GK","rating":84},
+  {"id":"tottenham-antonin-kinsky","name":"Antonín Kinský","club":"Tottenham Hotspur","position":"GK","rating":83},
+  {"id":"tottenham-martin-dubravka","name":"Martin Dúbravka","club":"Tottenham Hotspur","position":"GK","rating":78},
+  {"id":"tottenham-brandon-austin","name":"Brandon Austin","club":"Tottenham Hotspur","position":"GK","rating":69}
 ]
