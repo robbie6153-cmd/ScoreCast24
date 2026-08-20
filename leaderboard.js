@@ -1,4 +1,4 @@
-console.log("leaderboard.js loaded English League v5");
+console.log("leaderboard.js loaded English League v6");
 
 import { db } from "./firebase.js?v=107";
 
@@ -46,8 +46,6 @@ const currentWeekHeading =
   "Week Two Leaderboard";
 
 
-
-
 /* =========================
    LEADERBOARD DATA
 ========================= */
@@ -79,15 +77,21 @@ const myUsername =
 ========================= */
 
 function timeoutPromise(ms) {
+
   return new Promise((_, reject) => {
+
     setTimeout(() => {
+
       reject(
         new Error(
           "Leaderboard load timed out"
         )
       );
+
     }, ms);
+
   });
+
 }
 
 
@@ -96,30 +100,101 @@ function timeoutPromise(ms) {
 ========================= */
 
 function normaliseUsername(username) {
+
   return (
     username || ""
   )
     .trim()
     .toLowerCase();
+
 }
 
 
 /* =========================
-   CALCULATE ROUND POINTS
+   FIRESTORE TIMESTAMP
 ========================= */
 
-function calculatePoints(
-  predictions = [],
-  round
-) {
-  const roundResults =
-    resultsByRound[round];
+function timestampToMillis(timestamp) {
 
-  if (!roundResults) {
+  if (!timestamp) {
     return null;
   }
 
-  let total = 0;
+
+  /*
+    Normal Firestore Timestamp.
+  */
+
+  if (
+    typeof timestamp.toMillis ===
+    "function"
+  ) {
+
+    return timestamp.toMillis();
+
+  }
+
+
+  /*
+    Fallback if timestamp has been
+    converted to a Date.
+  */
+
+  if (timestamp instanceof Date) {
+
+    return timestamp.getTime();
+
+  }
+
+
+  /*
+    Fallback for timestamp-like
+    objects containing seconds.
+  */
+
+  if (
+    typeof timestamp.seconds ===
+    "number"
+  ) {
+
+    return (
+      timestamp.seconds * 1000
+    );
+
+  }
+
+
+  return null;
+
+}
+
+
+/* =========================
+   CALCULATE ROUND STATS
+========================= */
+
+function calculateRoundStats(
+  predictions = [],
+  round
+) {
+
+  const roundResults =
+    resultsByRound[round];
+
+
+  if (!roundResults) {
+
+    return {
+      points: null,
+      exactScores: 0
+    };
+
+  }
+
+
+  let totalPoints = 0;
+
+  let exactScores = 0;
 
   let hasAnyResult = false;
 
@@ -132,7 +207,10 @@ function calculatePoints(
           prediction.fixtureId
         ];
 
-      if (!result) return;
+
+      if (!result) {
+        return;
+      }
 
 
       /*
@@ -172,32 +250,45 @@ function calculatePoints(
         );
 
 
-      /* EXACT SCORE = 5 */
+      /* =========================
+         EXACT SCORE = 5 POINTS
+         ALSO COUNTS FOR TIEBREAK
+      ========================= */
 
       if (
         predictedHome === actualHome &&
         predictedAway === actualAway
       ) {
-        total += 5;
+
+        totalPoints += 5;
+
+        exactScores += 1;
 
         return;
+
       }
 
 
-      /* CORRECT DRAW = 3 */
+      /* =========================
+         CORRECT DRAW = 3 POINTS
+      ========================= */
 
       if (
         predictedHome ===
           predictedAway &&
         actualHome === actualAway
       ) {
-        total += 3;
+
+        totalPoints += 3;
 
         return;
+
       }
 
 
-      /* CORRECT HOME WIN = 1 */
+      /* =========================
+         CORRECT HOME WIN = 1 POINT
+      ========================= */
 
       if (
         predictedHome >
@@ -205,13 +296,17 @@ function calculatePoints(
         actualHome >
           actualAway
       ) {
-        total += 1;
+
+        totalPoints += 1;
 
         return;
+
       }
 
 
-      /* CORRECT AWAY WIN = 2 */
+      /* =========================
+         CORRECT AWAY WIN = 2 POINTS
+      ========================= */
 
       if (
         predictedHome <
@@ -219,16 +314,26 @@ function calculatePoints(
         actualHome <
           actualAway
       ) {
-        total += 2;
+
+        totalPoints += 2;
+
       }
 
     }
   );
 
 
-  return hasAnyResult
-    ? total
-    : null;
+  return {
+
+    points:
+      hasAnyResult
+        ? totalPoints
+        : null,
+
+    exactScores
+
+  };
+
 }
 
 
@@ -241,45 +346,197 @@ function sortLeaderboard(rows) {
   rows.sort((a, b) => {
 
     /*
-      Players with pending scores go
-      underneath players who already
-      have points.
+      Players whose matches have not
+      started yet go underneath players
+      who already have scored results.
     */
 
     if (
       a.points == null &&
       b.points != null
     ) {
+
       return 1;
+
     }
+
 
     if (
       a.points != null &&
       b.points == null
     ) {
+
       return -1;
-    }
 
-
-    const aPoints =
-      a.points || 0;
-
-    const bPoints =
-      b.points || 0;
-
-
-    if (bPoints !== aPoints) {
-      return bPoints - aPoints;
     }
 
 
     /*
-      Alphabetical order when tied.
+      If BOTH players are pending,
+      use submission time so the
+      ordering remains consistent.
+    */
+
+    if (
+      a.points == null &&
+      b.points == null
+    ) {
+
+      const aTime =
+        a.submittedAtMillis;
+
+      const bTime =
+        b.submittedAtMillis;
+
+
+      if (
+        aTime != null &&
+        bTime != null &&
+        aTime !== bTime
+      ) {
+
+        return aTime - bTime;
+
+      }
+
+
+      if (
+        aTime != null &&
+        bTime == null
+      ) {
+
+        return -1;
+
+      }
+
+
+      if (
+        aTime == null &&
+        bTime != null
+      ) {
+
+        return 1;
+
+      }
+
+
+      return a.username.localeCompare(
+        b.username
+      );
+
+    }
+
+
+    const aPoints =
+      a.points ?? 0;
+
+    const bPoints =
+      b.points ?? 0;
+
+
+    /* =========================
+       TIEBREAK RULE 1
+
+       HIGHEST POINTS
+    ========================= */
+
+    if (
+      bPoints !== aPoints
+    ) {
+
+      return bPoints - aPoints;
+
+    }
+
+
+    const aExactScores =
+      a.exactScores ?? 0;
+
+    const bExactScores =
+      b.exactScores ?? 0;
+
+
+    /* =========================
+       TIEBREAK RULE 2
+
+       MOST EXACT SCORES
+    ========================= */
+
+    if (
+      bExactScores !==
+      aExactScores
+    ) {
+
+      return (
+        bExactScores -
+        aExactScores
+      );
+
+    }
+
+
+    const aTime =
+      a.submittedAtMillis;
+
+    const bTime =
+      b.submittedAtMillis;
+
+
+    /* =========================
+       TIEBREAK RULE 3
+
+       EARLIEST SUBMISSION
+    ========================= */
+
+    if (
+      aTime != null &&
+      bTime != null &&
+      aTime !== bTime
+    ) {
+
+      return aTime - bTime;
+
+    }
+
+
+    /*
+      If only one entry has a valid
+      timestamp, favour that entry.
+    */
+
+    if (
+      aTime != null &&
+      bTime == null
+    ) {
+
+      return -1;
+
+    }
+
+
+    if (
+      aTime == null &&
+      bTime != null
+    ) {
+
+      return 1;
+
+    }
+
+
+    /*
+      Extremely unlikely final fallback:
+      same points, same exact scores and
+      identical/missing submission time.
+
+      Alphabetical ordering simply keeps
+      the display deterministic.
     */
 
     return a.username.localeCompare(
       b.username
     );
+
   });
 
 }
@@ -292,23 +549,29 @@ function sortLeaderboard(rows) {
 function setActiveTab(activeTab) {
 
   if (weekLeaderboardTab) {
+
     weekLeaderboardTab.classList.remove(
       "active"
     );
+
   }
 
 
   if (seasonLeaderboardTab) {
+
     seasonLeaderboardTab.classList.remove(
       "active"
     );
+
   }
 
 
   if (activeTab) {
+
     activeTab.classList.add(
       "active"
     );
+
   }
 
 }
@@ -339,6 +602,7 @@ function displayLeaderboard(
     `;
 
     return;
+
   }
 
 
@@ -408,13 +672,13 @@ function displayLeaderboard(
 
 
       /*
-        For the Week Two leaderboard,
-        this opens that person's
-        Week Two predictions.
+        For the current-week leaderboard,
+        this opens that person's current
+        round predictions.
 
         For the season leaderboard,
-        it uses their newest available
-        prediction document.
+        it uses their newest/preferred
+        available prediction document.
       */
 
       if (row.viewId) {
@@ -540,8 +804,17 @@ function buildWeekLeaderboard(
       if (
         entry.round !== currentRound
       ) {
+
         return;
+
       }
+
+
+      const stats =
+        calculateRoundStats(
+          entry.predictions || [],
+          currentRound
+        );
 
 
       weekLeaderboardRows.push({
@@ -560,16 +833,27 @@ function buildWeekLeaderboard(
           "Unknown",
 
         points:
-          calculatePoints(
-            entry.predictions || [],
-            currentRound
-          )
+          stats.points,
+
+        exactScores:
+          stats.exactScores,
+
+        submittedAtMillis:
+          entry.submittedAtMillis
 
       });
 
     }
   );
 
+
+  /*
+    Week ranking:
+
+    1. Points
+    2. Exact scores
+    3. Earliest submission
+  */
 
   sortLeaderboard(
     weekLeaderboardRows
@@ -604,7 +888,9 @@ function buildSeasonLeaderboard(
           entry.round
         ]
       ) {
+
         return;
+
       }
 
 
@@ -638,7 +924,12 @@ function buildSeasonLeaderboard(
 
             totalPoints: 0,
 
+            totalExactScores: 0,
+
             hasAnyResult: false,
+
+            earliestSubmission:
+              null,
 
             viewId: null,
 
@@ -658,25 +949,58 @@ function buildSeasonLeaderboard(
         );
 
 
-      const roundPoints =
-        calculatePoints(
+      const stats =
+        calculateRoundStats(
           entry.predictions || [],
           entry.round
         );
 
 
       /*
-        Add completed/scored rounds
-        to the running season total.
+        Add scored rounds to the
+        running season total.
       */
 
-      if (roundPoints !== null) {
+      if (
+        stats.points !== null
+      ) {
 
         player.totalPoints +=
-          roundPoints;
+          stats.points;
+
+        player.totalExactScores +=
+          stats.exactScores;
 
         player.hasAnyResult =
           true;
+
+      }
+
+
+      /*
+        Keep the player's earliest
+        submission time.
+
+        This becomes the final
+        season-level tiebreak after
+        points and exact scores.
+      */
+
+      if (
+        entry.submittedAtMillis != null
+      ) {
+
+        if (
+          player.earliestSubmission ==
+            null ||
+          entry.submittedAtMillis <
+            player.earliestSubmission
+        ) {
+
+          player.earliestSubmission =
+            entry.submittedAtMillis;
+
+        }
 
       }
 
@@ -712,7 +1036,7 @@ function buildSeasonLeaderboard(
 
         /*
           If the player hasn't entered
-          Week Two, allow their latest
+          the current week, allow an
           existing entry to be viewed.
         */
 
@@ -743,6 +1067,12 @@ function buildSeasonLeaderboard(
               ? player.totalPoints
               : null,
 
+          exactScores:
+            player.totalExactScores,
+
+          submittedAtMillis:
+            player.earliestSubmission,
+
           viewId:
             player.viewId,
 
@@ -752,6 +1082,14 @@ function buildSeasonLeaderboard(
         })
       );
 
+
+  /*
+    Season ranking:
+
+    1. Total season points
+    2. Total exact scores
+    3. Earliest submission
+  */
 
   sortLeaderboard(
     seasonLeaderboardRows
@@ -773,6 +1111,7 @@ async function initialiseLeaderboard() {
     );
 
     return;
+
   }
 
 
@@ -783,7 +1122,7 @@ async function initialiseLeaderboard() {
   try {
 
     /*
-      We now load the English League
+      Load the English League
       prediction documents and build
       TWO separate tables:
 
@@ -833,7 +1172,9 @@ async function initialiseLeaderboard() {
             data.round
           ]
         ) {
+
           return;
+
         }
 
 
@@ -854,7 +1195,12 @@ async function initialiseLeaderboard() {
               data.predictions
             )
               ? data.predictions
-              : []
+              : [],
+
+          submittedAtMillis:
+            timestampToMillis(
+              data.submittedAt
+            )
 
         });
 
@@ -862,21 +1208,27 @@ async function initialiseLeaderboard() {
     );
 
 
-    /* BUILD WEEK TWO */
+    /* =========================
+       BUILD CURRENT WEEK
+    ========================= */
 
     buildWeekLeaderboard(
       predictionDocuments
     );
 
 
-    /* BUILD SEASON */
+    /* =========================
+       BUILD SEASON
+    ========================= */
 
     buildSeasonLeaderboard(
       predictionDocuments
     );
 
 
-    /* OPEN ON WEEK TWO */
+    /* =========================
+       OPEN ON CURRENT WEEK
+    ========================= */
 
     activeLeaderboard =
       "week";
