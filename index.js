@@ -7,7 +7,9 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
@@ -31,20 +33,18 @@ const submittedStorageKey =
 ========================= */
 
 /*
-  Set this to true when you want to
-  stop ALL new Week Two entries.
+  Change to true when you want
+  to close ALL Week Two entries.
 */
 const roundClosed = false;
 
 
 /*
-  Fixture IDs in this list are VOID
-  for NEW entrants.
+  Fixtures listed here are void
+  for NEW entrants only.
 
   Fixture 1 =
   Arsenal v Coventry City
-
-  Existing submissions are NOT affected.
 */
 const voidFixtureIds = new Set([
   "1"
@@ -355,7 +355,7 @@ let username =
 
 
 function cleanUsername(name) {
-  return name
+  return String(name || "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-");
@@ -424,6 +424,7 @@ function renderFixtures() {
         ? "fixture-card fixture-void"
         : "fixture-card";
 
+
     card.innerHTML = `
       <div class="fixture-teams">
 
@@ -476,6 +477,7 @@ function renderFixtures() {
       </div>
 
       <div class="fixture-date">
+
         ${fixture.date} · ${fixture.group}
 
         ${
@@ -488,13 +490,9 @@ function renderFixtures() {
             : ""
         }
 
-        ${
-          fixture.venue
-            ? ` · ${fixture.venue}`
-            : ""
-        }
       </div>
     `;
+
 
     fixturesContainer.appendChild(card);
   });
@@ -515,6 +513,12 @@ async function hasAlreadySubmitted(
     return false;
   }
 
+
+  /*
+    FIRST:
+    Check expected document ID.
+  */
+
   const predictionRef = doc(
     db,
     "scorecast24_predictions",
@@ -524,16 +528,92 @@ async function hasAlreadySubmitted(
   const predictionSnap =
     await getDoc(predictionRef);
 
-  return predictionSnap.exists();
+
+  if (predictionSnap.exists()) {
+
+    const data =
+      predictionSnap.data();
+
+    if (
+      data.round === currentRound
+    ) {
+      return true;
+    }
+  }
+
+
+  /*
+    SECOND:
+    Search ALL Week Two entries.
+
+    This protects against older entries
+    whose document ID was created using
+    another format.
+  */
+
+  const roundQuery =
+    query(
+      collection(
+        db,
+        "scorecast24_predictions"
+      ),
+      where(
+        "round",
+        "==",
+        currentRound
+      )
+    );
+
+
+  const snapshot =
+    await getDocs(roundQuery);
+
+
+  const wantedUsername =
+    cleanUsername(savedUsername);
+
+
+  let found = false;
+
+
+  snapshot.forEach((docSnap) => {
+
+    if (found) return;
+
+
+    const data =
+      docSnap.data();
+
+
+    const storedUsername =
+      cleanUsername(
+        data.username
+      );
+
+
+    if (
+      storedUsername === wantedUsername
+    ) {
+      found = true;
+    }
+  });
+
+
+  return found;
 }
 
 
 function entryCheckTimeout(ms = 12000) {
   return new Promise((_, reject) => {
+
     setTimeout(() => {
+
       reject(
-        new Error("Entry check timed out")
+        new Error(
+          "Entry check timed out"
+        )
       );
+
     }, ms);
   });
 }
@@ -544,24 +624,36 @@ function entryCheckTimeout(ms = 12000) {
 ========================= */
 
 function getPredictionsFromPage() {
+
   const predictions = [];
+
 
   for (const fixture of fixtures) {
 
+
     /*
-      If this fixture is void for new
-      entries, record it as void instead
-      of asking for a score.
+      Void match for NEW entrant.
     */
-    if (fixtureIsVoid(fixture.id)) {
+
+    if (
+      fixtureIsVoid(fixture.id)
+    ) {
+
       predictions.push({
-        fixtureId: fixture.id,
-        home: fixture.home,
-        away: fixture.away,
-        predictedHome: null,
-        predictedAway: null,
-        void: true
+        fixtureId:
+          fixture.id,
+        home:
+          fixture.home,
+        away:
+          fixture.away,
+        predictedHome:
+          null,
+        predictedAway:
+          null,
+        void:
+          true
       });
+
 
       continue;
     }
@@ -572,12 +664,18 @@ function getPredictionsFromPage() {
         `home-${fixture.id}`
       );
 
+
     const awayInput =
       document.getElementById(
         `away-${fixture.id}`
       );
 
-    if (!homeInput || !awayInput) {
+
+    if (
+      !homeInput ||
+      !awayInput
+    ) {
+
       alert(
         "The prediction form could not be read."
       );
@@ -585,16 +683,20 @@ function getPredictionsFromPage() {
       return null;
     }
 
+
     const homePrediction =
       homeInput.value;
 
+
     const awayPrediction =
       awayInput.value;
+
 
     if (
       homePrediction === "" ||
       awayPrediction === ""
     ) {
+
       alert(
         `Please enter a score for ${fixture.home} v ${fixture.away}`
       );
@@ -602,17 +704,23 @@ function getPredictionsFromPage() {
       return null;
     }
 
+
     predictions.push({
-      fixtureId: fixture.id,
-      home: fixture.home,
-      away: fixture.away,
+      fixtureId:
+        fixture.id,
+      home:
+        fixture.home,
+      away:
+        fixture.away,
       predictedHome:
         Number(homePrediction),
       predictedAway:
         Number(awayPrediction),
-      void: false
+      void:
+        false
     });
   }
+
 
   return predictions;
 }
@@ -623,11 +731,16 @@ function getPredictionsFromPage() {
 ========================= */
 
 if (submitPredictionsBtn) {
+
   submitPredictionsBtn.addEventListener(
     "click",
     async () => {
 
-      if (predictionsAreClosed()) {
+
+      if (
+        predictionsAreClosed()
+      ) {
+
         alert(
           `${currentRound} predictions are now closed.`
         );
@@ -635,15 +748,18 @@ if (submitPredictionsBtn) {
         return;
       }
 
+
       username =
         localStorage.getItem(
           "scorecast24Username"
         );
 
+
       if (
         !username ||
         username.trim().length < 2
       ) {
+
         alert(
           "Please create your ScoreCast24 username first."
         );
@@ -654,16 +770,20 @@ if (submitPredictionsBtn) {
         return;
       }
 
-      const predictions =
-        getPredictionsFromPage();
 
-      if (!predictions) return;
+      /*
+        IMPORTANT:
+
+        Check Firestore BEFORE reading
+        or submitting anything.
+      */
 
       submitPredictionsBtn.disabled =
         true;
 
       submitPredictionsBtn.textContent =
-        "Submitting...";
+        "Checking entry...";
+
 
       try {
 
@@ -672,15 +792,19 @@ if (submitPredictionsBtn) {
             username
           );
 
+
         if (alreadySubmitted) {
+
           localStorage.setItem(
             submittedStorageKey,
             "true"
           );
 
+
           alert(
             "You have already submitted predictions for this round."
           );
+
 
           window.location.href =
             "leaderboard.html";
@@ -689,23 +813,84 @@ if (submitPredictionsBtn) {
         }
 
 
-        const predictionRef = doc(
-          db,
-          "scorecast24_predictions",
-          getPredictionDocId(username)
+        /*
+          Only read the form AFTER we know
+          this person hasn't entered.
+        */
+
+        const predictions =
+          getPredictionsFromPage();
+
+
+        if (!predictions) {
+
+          submitPredictionsBtn.disabled =
+            false;
+
+          submitPredictionsBtn.textContent =
+            "Submit Predictions";
+
+          return;
+        }
+
+
+        submitPredictionsBtn.textContent =
+          "Submitting...";
+
+
+        /*
+          SECOND DUPLICATE CHECK.
+
+          This is deliberate.
+
+          It prevents somebody opening
+          two tabs and submitting at
+          roughly the same time.
+        */
+
+        const finalDuplicateCheck =
+          await hasAlreadySubmitted(
+            username
+          );
+
+
+        if (finalDuplicateCheck) {
+
+          alert(
+            "You have already submitted predictions for this round."
+          );
+
+
+          window.location.href =
+            "leaderboard.html";
+
+          return;
+        }
+
+
+        const predictionRef =
+          doc(
+            db,
+            "scorecast24_predictions",
+            getPredictionDocId(username)
+          );
+
+
+        await setDoc(
+          predictionRef,
+          {
+            username,
+            predictions,
+            round:
+              currentRound,
+            submittedAt:
+              serverTimestamp(),
+            status:
+              "Score pending match results",
+            points:
+              null
+          }
         );
-
-
-        await setDoc(predictionRef, {
-          username,
-          predictions,
-          round: currentRound,
-          submittedAt:
-            serverTimestamp(),
-          status:
-            "Score pending match results",
-          points: null
-        });
 
 
         localStorage.setItem(
@@ -713,10 +898,15 @@ if (submitPredictionsBtn) {
           "true"
         );
 
-        alert("Predictions submitted!");
+
+        alert(
+          "Predictions submitted!"
+        );
+
 
         window.location.href =
           "leaderboard.html";
+
 
       } catch (error) {
 
@@ -725,10 +915,12 @@ if (submitPredictionsBtn) {
           error
         );
 
+
         alert(
           "Submission failed:\n\n" +
           error.message
         );
+
 
       } finally {
 
@@ -747,10 +939,20 @@ if (submitPredictionsBtn) {
    SCORING SYSTEM
 ========================= */
 
-function getResultType(home, away) {
-  if (home > away) return "home";
+function getResultType(
+  home,
+  away
+) {
 
-  if (away > home) return "away";
+  if (home > away) {
+    return "home";
+  }
+
+
+  if (away > home) {
+    return "away";
+  }
+
 
   return "draw";
 }
@@ -761,53 +963,66 @@ function calculatePoints(
   fixture
 ) {
 
+
   /*
-    Void fixture for this particular
-    entrant = completely ignored.
+    A fixture void for this entrant
+    contributes nothing.
   */
-  if (prediction.void === true) {
+
+  if (
+    prediction.void === true
+  ) {
+
     return null;
   }
 
 
   const roundResults =
-    resultsByRound[currentRound] || {};
+    resultsByRound[
+      currentRound
+    ] || {};
 
 
   const result =
-    roundResults[fixture.id];
+    roundResults[
+      fixture.id
+    ];
 
 
   const actualHome =
     result?.homeScore;
 
+
   const actualAway =
     result?.awayScore;
 
 
-  /*
-    Using == null deliberately checks
-    for BOTH null and undefined.
-  */
   if (
     actualHome == null ||
     actualAway == null
   ) {
+
     return null;
   }
 
 
   const predictedHome =
-    Number(prediction.predictedHome);
+    Number(
+      prediction.predictedHome
+    );
+
 
   const predictedAway =
-    Number(prediction.predictedAway);
+    Number(
+      prediction.predictedAway
+    );
 
 
   if (
     predictedHome === actualHome &&
     predictedAway === actualAway
   ) {
+
     return 5;
   }
 
@@ -830,6 +1045,7 @@ function calculatePoints(
     predictedResult === "draw" &&
     actualResult === "draw"
   ) {
+
     return 3;
   }
 
@@ -838,6 +1054,7 @@ function calculatePoints(
     predictedResult === "away" &&
     actualResult === "away"
   ) {
+
     return 2;
   }
 
@@ -846,6 +1063,7 @@ function calculatePoints(
     predictedResult === "home" &&
     actualResult === "home"
   ) {
+
     return 1;
   }
 
@@ -859,14 +1077,21 @@ function calculatePoints(
 ========================= */
 
 if (startGameBtn) {
+
   startGameBtn.addEventListener(
     "click",
     async () => {
 
-      if (!requireLogin()) return;
+
+      if (!requireLogin()) {
+        return;
+      }
 
 
-      if (predictionsAreClosed()) {
+      if (
+        predictionsAreClosed()
+      ) {
+
         alert(
           `${currentRound} predictions are now closed.`
         );
@@ -885,6 +1110,7 @@ if (startGameBtn) {
         !username ||
         username.trim().length < 2
       ) {
+
         window.location.href =
           "username.html";
 
@@ -892,7 +1118,9 @@ if (startGameBtn) {
       }
 
 
-      startGameBtn.disabled = true;
+      startGameBtn.disabled =
+        true;
+
 
       startGameBtn.textContent =
         "Checking your entry...";
@@ -902,21 +1130,27 @@ if (startGameBtn) {
 
         const alreadySubmitted =
           await Promise.race([
-            hasAlreadySubmitted(username),
+            hasAlreadySubmitted(
+              username
+            ),
             entryCheckTimeout()
           ]);
 
 
-        if (alreadySubmitted) {
+        if (
+          alreadySubmitted
+        ) {
 
           localStorage.setItem(
             submittedStorageKey,
             "true"
           );
 
+
           alert(
             "You have already submitted your predictions for this round."
           );
+
 
           window.location.href =
             "leaderboard.html";
@@ -924,6 +1158,11 @@ if (startGameBtn) {
           return;
         }
 
+
+        /*
+          No existing entry found,
+          so show prediction form.
+        */
 
         renderFixtures();
 
@@ -937,6 +1176,7 @@ if (startGameBtn) {
           error
         );
 
+
         alert(
           "We could not check your existing entry. Please check your connection and try again."
         );
@@ -944,7 +1184,9 @@ if (startGameBtn) {
 
       } finally {
 
-        startGameBtn.disabled = false;
+        startGameBtn.disabled =
+          false;
+
 
         startGameBtn.textContent =
           "Submit Your Score Predictions Now!";
@@ -959,10 +1201,15 @@ if (startGameBtn) {
 ========================= */
 
 if (premierLeagueBtn) {
+
   premierLeagueBtn.addEventListener(
     "click",
     () => {
-      if (!requireLogin()) return;
+
+      if (!requireLogin()) {
+        return;
+      }
+
 
       window.location.href =
         "index2.html";
@@ -972,10 +1219,14 @@ if (premierLeagueBtn) {
 
 
 if (dreamTeamBtn) {
+
   dreamTeamBtn.addEventListener(
     "click",
     () => {
-      if (!requireLogin()) return;
+
+      if (!requireLogin()) {
+        return;
+      }
     }
   );
 }
@@ -986,7 +1237,10 @@ if (dreamTeamBtn) {
 ========================= */
 
 async function renderHomeLeaderboardPreview() {
-  if (!homeLeaderboardPreview) return;
+
+  if (!homeLeaderboardPreview) {
+    return;
+  }
 
 
   homeLeaderboardPreview.innerHTML =
@@ -1010,20 +1264,24 @@ async function renderHomeLeaderboardPreview() {
     predictionsSnap.forEach(
       (docSnap) => {
 
+
         const data =
           docSnap.data();
 
 
         if (
-          data.round !== currentRound
+          data.round !==
+          currentRound
         ) {
+
           return;
         }
 
 
         let totalPoints = 0;
 
-        let hasScoredFixture = false;
+        let hasScoredFixture =
+          false;
 
 
         if (
@@ -1032,8 +1290,10 @@ async function renderHomeLeaderboardPreview() {
           )
         ) {
 
+
           data.predictions.forEach(
             (prediction) => {
+
 
               const fixture =
                 fixtures.find(
@@ -1043,7 +1303,9 @@ async function renderHomeLeaderboardPreview() {
                 );
 
 
-              if (!fixture) return;
+              if (!fixture) {
+                return;
+              }
 
 
               const points =
@@ -1053,11 +1315,16 @@ async function renderHomeLeaderboardPreview() {
                 );
 
 
-              if (points !== null) {
+              if (
+                points !== null
+              ) {
 
-                totalPoints += points;
+                totalPoints +=
+                  points;
 
-                hasScoredFixture = true;
+
+                hasScoredFixture =
+                  true;
               }
             }
           );
@@ -1066,7 +1333,8 @@ async function renderHomeLeaderboardPreview() {
 
         rows.push({
           username:
-            data.username || "?????",
+            data.username ||
+            "?????",
           points:
             totalPoints,
           status:
@@ -1078,7 +1346,9 @@ async function renderHomeLeaderboardPreview() {
     );
 
 
-    if (rows.length === 0) {
+    if (
+      rows.length === 0
+    ) {
 
       homeLeaderboardPreview.innerHTML = `
         <div class="preview-row">
@@ -1094,13 +1364,15 @@ async function renderHomeLeaderboardPreview() {
         </div>
       `;
 
+
       return;
     }
 
 
     rows.sort(
       (a, b) =>
-        b.points - a.points
+        b.points -
+        a.points
     );
 
 
@@ -1110,30 +1382,37 @@ async function renderHomeLeaderboardPreview() {
 
     rows
       .slice(0, 3)
-      .forEach((row, index) => {
-
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "preview-row";
+      .forEach(
+        (row, index) => {
 
 
-        div.innerHTML = `
-          <span>
-            ${index + 1}. ${row.username}
-          </span>
-
-          <span class="preview-points">
-            ${row.status}
-          </span>
-        `;
+          const div =
+            document.createElement(
+              "div"
+            );
 
 
-        homeLeaderboardPreview.appendChild(
-          div
-        );
-      });
+          div.className =
+            "preview-row";
+
+
+          div.innerHTML = `
+            <span>
+              ${index + 1}. ${row.username}
+            </span>
+
+            <span class="preview-points">
+              ${row.status}
+            </span>
+          `;
+
+
+          homeLeaderboardPreview
+            .appendChild(
+              div
+            );
+        }
+      );
 
 
   } catch (error) {
@@ -1166,10 +1445,14 @@ async function renderHomeLeaderboardPreview() {
 ========================= */
 
 function renderHomeFixturesPreview() {
-  if (!homeFixturesPreview) return;
+
+  if (!homeFixturesPreview) {
+    return;
+  }
 
 
-  homeFixturesPreview.innerHTML = "";
+  homeFixturesPreview.innerHTML =
+    "";
 
 
   const latestResults =
@@ -1181,12 +1464,15 @@ function renderHomeFixturesPreview() {
       )
       .sort(
         (a, b) =>
-          Number(b.id) - Number(a.id)
+          Number(b.id) -
+          Number(a.id)
       )
       .slice(0, 3);
 
 
-  if (latestResults.length === 0) {
+  if (
+    latestResults.length === 0
+  ) {
 
     homeFixturesPreview.innerHTML = `
       <div class="preview-row">
@@ -1202,6 +1488,7 @@ function renderHomeFixturesPreview() {
       </div>
     `;
 
+
     return;
   }
 
@@ -1209,8 +1496,12 @@ function renderHomeFixturesPreview() {
   latestResults.forEach(
     (fixture, index) => {
 
+
       const div =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       div.className =
         "preview-row";
@@ -1218,9 +1509,13 @@ function renderHomeFixturesPreview() {
 
       div.innerHTML = `
         <span>
+
           ${fixture.home}
+
           ${fixture.homeScore}-${fixture.awayScore}
+
           ${fixture.away}
+
         </span>
 
         <span>
@@ -1246,17 +1541,23 @@ const menuToggle =
     "menuToggle"
   );
 
+
 const dropdownMenu =
   document.getElementById(
     "dropdownMenu"
   );
 
 
-if (menuToggle && dropdownMenu) {
+if (
+  menuToggle &&
+  dropdownMenu
+) {
+
 
   menuToggle.addEventListener(
     "click",
     () => {
+
 
       dropdownMenu.classList.toggle(
         "hidden"
@@ -1269,6 +1570,7 @@ if (menuToggle && dropdownMenu) {
     "click",
     (event) => {
 
+
       if (
         !menuToggle.contains(
           event.target
@@ -1277,6 +1579,7 @@ if (menuToggle && dropdownMenu) {
           event.target
         )
       ) {
+
 
         dropdownMenu.classList.add(
           "hidden"
@@ -1293,20 +1596,26 @@ if (menuToggle && dropdownMenu) {
 
 function updatePredictionsCountdown() {
 
+
   /*
-    Keeping the existing HTML ID so
-    index.html does not need changing.
+    Keeping your existing HTML ID
+    so index.html does not need
+    changing.
   */
+
   const countdownBox =
     document.getElementById(
       "weekOneCountdown"
     );
 
 
-  if (!countdownBox) return;
+  if (!countdownBox) {
+    return;
+  }
 
 
   if (roundClosed) {
+
 
     countdownBox.innerHTML = `
       <strong>
@@ -1317,7 +1626,9 @@ function updatePredictionsCountdown() {
 
     if (startGameBtn) {
 
-      startGameBtn.disabled = true;
+      startGameBtn.disabled =
+        true;
+
 
       startGameBtn.textContent =
         "Predictions Closed";
@@ -1340,7 +1651,7 @@ function updatePredictionsCountdown() {
       Week Two predictions are still open
     </strong>
     <br>
-    Matches already started may be void
+    Matches already started are void
     for new entries.
   `;
 }
@@ -1357,7 +1668,9 @@ window.addEventListener(
   "beforeinstallprompt",
   (event) => {
 
+
     event.preventDefault();
+
 
     deferredPrompt =
       event;
@@ -1369,7 +1682,9 @@ window.addEventListener(
       );
 
 
-    if (!installBtn) return;
+    if (!installBtn) {
+      return;
+    }
 
 
     installBtn.style.display =
@@ -1380,7 +1695,10 @@ window.addEventListener(
       "click",
       async () => {
 
-        if (!deferredPrompt) return;
+
+        if (!deferredPrompt) {
+          return;
+        }
 
 
         deferredPrompt.prompt();
@@ -1418,7 +1736,7 @@ updatePredictionsCountdown();
 
 
 /*
-  Refresh the current week's
+  Refresh current week's
   top-three preview every minute.
 */
 setInterval(
