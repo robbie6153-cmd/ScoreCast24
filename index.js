@@ -13,12 +13,11 @@ import {
 import {
   resultsByRound
 } from "./results.js?v=1";
+
+
 /* =========================
    ENGLISH LEAGUE WEEK TWO
 ========================= */
-
-const predictionsDeadline =
-  new Date("2026-08-21T20:00:00+01:00");
 
 const currentRound =
   "English League Week Two";
@@ -28,11 +27,39 @@ const submittedStorageKey =
 
 
 /* =========================
-   DEADLINE CHECK
+   ENTRY / FIXTURE LOCKS
 ========================= */
 
+/*
+  Set this to true when you want to
+  stop ALL new Week Two entries.
+*/
+const roundClosed = false;
+
+
+/*
+  Fixture IDs in this list are VOID
+  for NEW entrants.
+
+  Fixture 1 =
+  Arsenal v Coventry City
+
+  Existing submissions are NOT affected.
+*/
+const voidFixtureIds = new Set([
+  "1"
+]);
+
+
 function predictionsAreClosed() {
-  return new Date() >= predictionsDeadline;
+  return roundClosed;
+}
+
+
+function fixtureIsVoid(fixtureId) {
+  return voidFixtureIds.has(
+    String(fixtureId)
+  );
 }
 
 
@@ -300,7 +327,6 @@ const dreamTeamBtn =
 const backHomeBtn =
   document.getElementById("backHomeBtn");
 
-
 const fixturesContainer =
   document.getElementById("fixturesContainer");
 
@@ -390,7 +416,13 @@ function renderFixtures() {
     const card =
       document.createElement("div");
 
-    card.className = "fixture-card";
+    const isVoid =
+      fixtureIsVoid(fixture.id);
+
+    card.className =
+      isVoid
+        ? "fixture-card fixture-void"
+        : "fixture-card";
 
     card.innerHTML = `
       <div class="fixture-teams">
@@ -399,23 +431,43 @@ function renderFixtures() {
           ${fixture.home}
         </div>
 
-        <input
-          class="score-input"
-          type="number"
-          min="0"
-          id="home-${fixture.id}"
-          placeholder="0"
-        >
+        ${
+          isVoid
+            ? `
+              <div class="void-score">
+                ✕
+              </div>
+            `
+            : `
+              <input
+                class="score-input"
+                type="number"
+                min="0"
+                id="home-${fixture.id}"
+                placeholder="0"
+              >
+            `
+        }
 
         <div class="vs">v</div>
 
-        <input
-          class="score-input"
-          type="number"
-          min="0"
-          id="away-${fixture.id}"
-          placeholder="0"
-        >
+        ${
+          isVoid
+            ? `
+              <div class="void-score">
+                ✕
+              </div>
+            `
+            : `
+              <input
+                class="score-input"
+                type="number"
+                min="0"
+                id="away-${fixture.id}"
+                placeholder="0"
+              >
+            `
+        }
 
         <div class="team-name">
           ${fixture.away}
@@ -425,6 +477,17 @@ function renderFixtures() {
 
       <div class="fixture-date">
         ${fixture.date} · ${fixture.group}
+
+        ${
+          isVoid
+            ? `
+              · <strong class="void-label">
+                VOID FOR LATE ENTRIES
+              </strong>
+            `
+            : ""
+        }
+
         ${
           fixture.venue
             ? ` · ${fixture.venue}`
@@ -484,6 +547,26 @@ function getPredictionsFromPage() {
   const predictions = [];
 
   for (const fixture of fixtures) {
+
+    /*
+      If this fixture is void for new
+      entries, record it as void instead
+      of asking for a score.
+    */
+    if (fixtureIsVoid(fixture.id)) {
+      predictions.push({
+        fixtureId: fixture.id,
+        home: fixture.home,
+        away: fixture.away,
+        predictedHome: null,
+        predictedAway: null,
+        void: true
+      });
+
+      continue;
+    }
+
+
     const homeInput =
       document.getElementById(
         `home-${fixture.id}`
@@ -526,7 +609,8 @@ function getPredictionsFromPage() {
       predictedHome:
         Number(homePrediction),
       predictedAway:
-        Number(awayPrediction)
+        Number(awayPrediction),
+      void: false
     });
   }
 
@@ -542,6 +626,7 @@ if (submitPredictionsBtn) {
   submitPredictionsBtn.addEventListener(
     "click",
     async () => {
+
       if (predictionsAreClosed()) {
         alert(
           `${currentRound} predictions are now closed.`
@@ -581,6 +666,7 @@ if (submitPredictionsBtn) {
         "Submitting...";
 
       try {
+
         const alreadySubmitted =
           await hasAlreadySubmitted(
             username
@@ -602,11 +688,13 @@ if (submitPredictionsBtn) {
           return;
         }
 
+
         const predictionRef = doc(
           db,
           "scorecast24_predictions",
           getPredictionDocId(username)
         );
+
 
         await setDoc(predictionRef, {
           username,
@@ -619,6 +707,7 @@ if (submitPredictionsBtn) {
           points: null
         });
 
+
         localStorage.setItem(
           submittedStorageKey,
           "true"
@@ -630,6 +719,7 @@ if (submitPredictionsBtn) {
           "leaderboard.html";
 
       } catch (error) {
+
         console.error(
           "Submission failed:",
           error
@@ -641,6 +731,7 @@ if (submitPredictionsBtn) {
         );
 
       } finally {
+
         submitPredictionsBtn.disabled =
           false;
 
@@ -658,6 +749,7 @@ if (submitPredictionsBtn) {
 
 function getResultType(home, away) {
   if (home > away) return "home";
+
   if (away > home) return "away";
 
   return "draw";
@@ -668,17 +760,30 @@ function calculatePoints(
   prediction,
   fixture
 ) {
-const roundResults =
-  resultsByRound[currentRound] || {};
 
-const result =
-  roundResults[fixture.id];
+  /*
+    Void fixture for this particular
+    entrant = completely ignored.
+  */
+  if (prediction.void === true) {
+    return null;
+  }
 
-const actualHome =
-  result?.homeScore;
 
-const actualAway =
-  result?.awayScore;
+  const roundResults =
+    resultsByRound[currentRound] || {};
+
+
+  const result =
+    roundResults[fixture.id];
+
+
+  const actualHome =
+    result?.homeScore;
+
+  const actualAway =
+    result?.awayScore;
+
 
   /*
     Using == null deliberately checks
@@ -691,11 +796,13 @@ const actualAway =
     return null;
   }
 
+
   const predictedHome =
     Number(prediction.predictedHome);
 
   const predictedAway =
     Number(prediction.predictedAway);
+
 
   if (
     predictedHome === actualHome &&
@@ -704,17 +811,20 @@ const actualAway =
     return 5;
   }
 
+
   const predictedResult =
     getResultType(
       predictedHome,
       predictedAway
     );
 
+
   const actualResult =
     getResultType(
       actualHome,
       actualAway
     );
+
 
   if (
     predictedResult === "draw" &&
@@ -723,6 +833,7 @@ const actualAway =
     return 3;
   }
 
+
   if (
     predictedResult === "away" &&
     actualResult === "away"
@@ -730,12 +841,14 @@ const actualAway =
     return 2;
   }
 
+
   if (
     predictedResult === "home" &&
     actualResult === "home"
   ) {
     return 1;
   }
+
 
   return 0;
 }
@@ -749,7 +862,9 @@ if (startGameBtn) {
   startGameBtn.addEventListener(
     "click",
     async () => {
+
       if (!requireLogin()) return;
+
 
       if (predictionsAreClosed()) {
         alert(
@@ -759,10 +874,12 @@ if (startGameBtn) {
         return;
       }
 
+
       username =
         localStorage.getItem(
           "scorecast24Username"
         );
+
 
       if (
         !username ||
@@ -774,45 +891,47 @@ if (startGameBtn) {
         return;
       }
 
-      /*
-        The storage key contains the
-        round name, so submitting Week One
-        does NOT prevent a Week Two entry.
-      */
-    
 
       startGameBtn.disabled = true;
 
       startGameBtn.textContent =
         "Checking your entry...";
 
+
       try {
+
         const alreadySubmitted =
           await Promise.race([
             hasAlreadySubmitted(username),
             entryCheckTimeout()
           ]);
 
-     if (alreadySubmitted) {
-  localStorage.setItem(
-    submittedStorageKey,
-    "true"
-  );
 
-  alert(
-    "You have already submitted your predictions for this round."
-  );
+        if (alreadySubmitted) {
 
-  window.location.href =
-    "leaderboard.html";
+          localStorage.setItem(
+            submittedStorageKey,
+            "true"
+          );
 
-  return;
-}
+          alert(
+            "You have already submitted your predictions for this round."
+          );
+
+          window.location.href =
+            "leaderboard.html";
+
+          return;
+        }
+
 
         renderFixtures();
+
         showPredictions();
 
+
       } catch (error) {
+
         console.error(
           "Entry check failed:",
           error
@@ -822,7 +941,9 @@ if (startGameBtn) {
           "We could not check your existing entry. Please check your connection and try again."
         );
 
+
       } finally {
+
         startGameBtn.disabled = false;
 
         startGameBtn.textContent =
@@ -867,10 +988,13 @@ if (dreamTeamBtn) {
 async function renderHomeLeaderboardPreview() {
   if (!homeLeaderboardPreview) return;
 
+
   homeLeaderboardPreview.innerHTML =
     "Loading standings...";
 
+
   try {
+
     const predictionsSnap =
       await getDocs(
         collection(
@@ -879,33 +1003,38 @@ async function renderHomeLeaderboardPreview() {
         )
       );
 
+
     const rows = [];
+
 
     predictionsSnap.forEach(
       (docSnap) => {
+
         const data =
           docSnap.data();
 
-        /*
-          Home preview is ONLY for
-          the current week.
-        */
+
         if (
           data.round !== currentRound
         ) {
           return;
         }
 
+
         let totalPoints = 0;
+
         let hasScoredFixture = false;
+
 
         if (
           Array.isArray(
             data.predictions
           )
         ) {
+
           data.predictions.forEach(
             (prediction) => {
+
               const fixture =
                 fixtures.find(
                   (item) =>
@@ -913,7 +1042,9 @@ async function renderHomeLeaderboardPreview() {
                     prediction.fixtureId
                 );
 
+
               if (!fixture) return;
+
 
               const points =
                 calculatePoints(
@@ -921,55 +1052,72 @@ async function renderHomeLeaderboardPreview() {
                   fixture
                 );
 
+
               if (points !== null) {
+
                 totalPoints += points;
+
                 hasScoredFixture = true;
               }
             }
           );
         }
 
+
         rows.push({
           username:
             data.username || "?????",
-          points: totalPoints,
-          status: hasScoredFixture
-            ? `${totalPoints} pts`
-            : "Pending"
+          points:
+            totalPoints,
+          status:
+            hasScoredFixture
+              ? `${totalPoints} pts`
+              : "Pending"
         });
       }
     );
 
+
     if (rows.length === 0) {
+
       homeLeaderboardPreview.innerHTML = `
         <div class="preview-row">
-          <span>No entries yet</span>
+
+          <span>
+            No entries yet
+          </span>
 
           <span class="preview-points">
             Pending
           </span>
+
         </div>
       `;
 
       return;
     }
 
+
     rows.sort(
       (a, b) =>
         b.points - a.points
     );
 
+
     homeLeaderboardPreview.innerHTML =
       "";
+
 
     rows
       .slice(0, 3)
       .forEach((row, index) => {
+
         const div =
           document.createElement("div");
 
         div.className =
           "preview-row";
+
 
         div.innerHTML = `
           <span>
@@ -981,24 +1129,32 @@ async function renderHomeLeaderboardPreview() {
           </span>
         `;
 
+
         homeLeaderboardPreview.appendChild(
           div
         );
       });
 
+
   } catch (error) {
+
     console.error(
       "Home leaderboard preview failed:",
       error
     );
 
+
     homeLeaderboardPreview.innerHTML = `
       <div class="preview-row">
-        <span>Could not load</span>
+
+        <span>
+          Could not load
+        </span>
 
         <span class="preview-points">
           —
         </span>
+
       </div>
     `;
   }
@@ -1012,7 +1168,9 @@ async function renderHomeLeaderboardPreview() {
 function renderHomeFixturesPreview() {
   if (!homeFixturesPreview) return;
 
+
   homeFixturesPreview.innerHTML = "";
+
 
   const latestResults =
     fixtures
@@ -1027,24 +1185,36 @@ function renderHomeFixturesPreview() {
       )
       .slice(0, 3);
 
+
   if (latestResults.length === 0) {
+
     homeFixturesPreview.innerHTML = `
       <div class="preview-row">
-        <span>No results yet</span>
-        <span>—</span>
+
+        <span>
+          No results yet
+        </span>
+
+        <span>
+          —
+        </span>
+
       </div>
     `;
 
     return;
   }
 
+
   latestResults.forEach(
     (fixture, index) => {
+
       const div =
         document.createElement("div");
 
       div.className =
         "preview-row";
+
 
       div.innerHTML = `
         <span>
@@ -1058,7 +1228,10 @@ function renderHomeFixturesPreview() {
         </span>
       `;
 
-      homeFixturesPreview.appendChild(div);
+
+      homeFixturesPreview.appendChild(
+        div
+      );
     }
   );
 }
@@ -1069,7 +1242,9 @@ function renderHomeFixturesPreview() {
 ========================= */
 
 const menuToggle =
-  document.getElementById("menuToggle");
+  document.getElementById(
+    "menuToggle"
+  );
 
 const dropdownMenu =
   document.getElementById(
@@ -1078,18 +1253,22 @@ const dropdownMenu =
 
 
 if (menuToggle && dropdownMenu) {
+
   menuToggle.addEventListener(
     "click",
     () => {
+
       dropdownMenu.classList.toggle(
         "hidden"
       );
     }
   );
 
+
   document.addEventListener(
     "click",
     (event) => {
+
       if (
         !menuToggle.contains(
           event.target
@@ -1098,6 +1277,7 @@ if (menuToggle && dropdownMenu) {
           event.target
         )
       ) {
+
         dropdownMenu.classList.add(
           "hidden"
         );
@@ -1108,80 +1288,60 @@ if (menuToggle && dropdownMenu) {
 
 
 /* =========================
-   PREDICTIONS COUNTDOWN
+   PREDICTIONS STATUS
 ========================= */
 
 function updatePredictionsCountdown() {
+
   /*
-    Keeping the existing HTML ID means
-    you do NOT need to alter index.html
-    immediately.
+    Keeping the existing HTML ID so
+    index.html does not need changing.
   */
   const countdownBox =
     document.getElementById(
       "weekOneCountdown"
     );
 
+
   if (!countdownBox) return;
 
-  const timeLeft =
-    predictionsDeadline.getTime() -
-    Date.now();
 
-  if (timeLeft <= 0) {
+  if (roundClosed) {
+
     countdownBox.innerHTML = `
       <strong>
         ${currentRound} predictions are now closed.
       </strong>
     `;
 
+
     if (startGameBtn) {
+
       startGameBtn.disabled = true;
 
       startGameBtn.textContent =
         "Predictions Closed";
     }
 
+
     if (submitPredictionsBtn) {
+
       submitPredictionsBtn.disabled =
         true;
     }
 
+
     return;
   }
 
-  const days =
-    Math.floor(
-      timeLeft /
-      (1000 * 60 * 60 * 24)
-    );
-
-  const hours =
-    Math.floor(
-      (
-        timeLeft /
-        (1000 * 60 * 60)
-      ) % 24
-    );
-
-  const minutes =
-    Math.floor(
-      (
-        timeLeft /
-        (1000 * 60)
-      ) % 60
-    );
-
-  const seconds =
-    Math.floor(
-      (timeLeft / 1000) % 60
-    );
 
   countdownBox.innerHTML = `
-    Predictions close in
     <strong>
-      ${days}d ${hours}h ${minutes}m ${seconds}s
+      Week Two predictions are still open
     </strong>
+    <br>
+    Matches already started may be void
+    for new entries.
   `;
 }
 
@@ -1196,35 +1356,49 @@ let deferredPrompt;
 window.addEventListener(
   "beforeinstallprompt",
   (event) => {
+
     event.preventDefault();
 
-    deferredPrompt = event;
+    deferredPrompt =
+      event;
+
 
     const installBtn =
       document.getElementById(
         "installBtn"
       );
 
+
     if (!installBtn) return;
+
 
     installBtn.style.display =
       "block";
 
+
     installBtn.addEventListener(
       "click",
       async () => {
+
         if (!deferredPrompt) return;
+
 
         deferredPrompt.prompt();
 
+
         await deferredPrompt.userChoice;
 
-        deferredPrompt = null;
+
+        deferredPrompt =
+          null;
+
 
         installBtn.style.display =
           "none";
       },
-      { once: true }
+      {
+        once: true
+      }
     );
   }
 );
@@ -1241,12 +1415,6 @@ renderHomeLeaderboardPreview();
 renderHomeFixturesPreview();
 
 updatePredictionsCountdown();
-
-
-setInterval(
-  updatePredictionsCountdown,
-  1000
-);
 
 
 /*
