@@ -128,8 +128,8 @@ export const resultsByRound = {
     },
 
     6: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 3,
+      awayScore: 0
     },
 
     7: {
