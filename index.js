@@ -36,7 +36,7 @@ const submittedStorageKey =
   Change to true when you want
   to close ALL Week Two entries.
 */
-const roundClosed = false;
+const roundClosed = true;
 
 
 /*
