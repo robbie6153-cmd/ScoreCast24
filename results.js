@@ -103,8 +103,8 @@ export const resultsByRound = {
   "English League Week Two": {
 
     1: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 3,
+      awayScore: 0
     },
 
     2: {
