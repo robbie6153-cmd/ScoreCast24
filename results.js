@@ -113,18 +113,18 @@ export const resultsByRound = {
     },
 
     3: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 0
     },
 
     4: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 1
     },
 
     5: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 0,
+      awayScore: 1
     },
 
     6: {
@@ -153,58 +153,58 @@ export const resultsByRound = {
     },
 
     11: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 2
     },
 
     12: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 1,
+      awayScore: 3
     },
 
     13: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 3,
+      awayScore: 0
     },
 
     14: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 1
     },
 
     15: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 2
     },
 
     16: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 1,
+      awayScore: 3
     },
 
     17: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 0,
+      awayScore: 0
     },
 
     18: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 3,
+      awayScore: 1
     },
 
     19: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 0,
+      awayScore: 0
     },
 
     20: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 1,
+      awayScore: 2
     },
 
     21: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 1,
+      awayScore: 1
     },
 
     22: {
