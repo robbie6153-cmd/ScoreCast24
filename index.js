@@ -1439,7 +1439,6 @@ async function renderHomeLeaderboardPreview() {
   }
 }
 
-
 /* =========================
    HOME FIXTURES PREVIEW
 ========================= */
@@ -1455,8 +1454,40 @@ function renderHomeFixturesPreview() {
     "";
 
 
+  /*
+    Get the official results for
+    the current round from results.js
+  */
+
+  const roundResults =
+    resultsByRound[
+      currentRound
+    ] || {};
+
+
+  /*
+    Match the results to the
+    fixture information.
+  */
+
   const latestResults =
     fixtures
+      .map((fixture) => {
+
+        const result =
+          roundResults[
+            fixture.id
+          ];
+
+
+        return {
+          ...fixture,
+          homeScore:
+            result?.homeScore,
+          awayScore:
+            result?.awayScore
+        };
+      })
       .filter(
         (fixture) =>
           fixture.homeScore != null &&
@@ -1469,6 +1500,10 @@ function renderHomeFixturesPreview() {
       )
       .slice(0, 3);
 
+
+  /*
+    No completed matches yet.
+  */
 
   if (
     latestResults.length === 0
@@ -1492,6 +1527,10 @@ function renderHomeFixturesPreview() {
     return;
   }
 
+
+  /*
+    Show latest three results.
+  */
 
   latestResults.forEach(
     (fixture, index) => {
@@ -1530,7 +1569,6 @@ function renderHomeFixturesPreview() {
     }
   );
 }
-
 
 /* =========================
    MENU
