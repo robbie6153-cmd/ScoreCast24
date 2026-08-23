@@ -678,9 +678,24 @@ async function hasAlreadySubmitted(
     !savedUsername ||
     savedUsername.trim().length < 2
   ) {
-
     return false;
   }
+
+
+  const predictionRef =
+    doc(
+      db,
+      "scorecast24_predictions",
+      getPredictionDocId(savedUsername)
+    );
+
+
+  const predictionSnap =
+    await getDoc(predictionRef);
+
+
+  return predictionSnap.exists();
+}
 
 
   /*
@@ -1026,25 +1041,6 @@ if (submitPredictionsBtn) {
           Final duplicate protection.
         */
 
-        const finalDuplicateCheck =
-          await hasAlreadySubmitted(
-            username
-          );
-
-
-        if (finalDuplicateCheck) {
-
-          alert(
-            "You have already submitted predictions for Week Three."
-          );
-
-
-          window.location.href =
-            "leaderboard.html";
-
-
-          return;
-        }
 
 
         const predictionRef =
