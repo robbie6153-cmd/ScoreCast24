@@ -208,8 +208,8 @@ export const resultsByRound = {
     },
 
     22: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 3,
+      awayScore: 1
     }
 
   }
