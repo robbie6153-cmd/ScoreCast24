@@ -1170,3 +1170,18 @@ h1 {
   white-space: nowrap;
   font-size: 16px;
 }
+.results-feature-card {
+  text-align: center;
+}
+
+.results-feature-card p {
+  margin: 12px 0 18px;
+  line-height: 1.5;
+  font-size: 1.05rem;
+}
+
+.results-feature-link {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
