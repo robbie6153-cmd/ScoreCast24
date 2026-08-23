@@ -173,51 +173,132 @@ async function loadUsername(user) {
   return "";
 }
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, user => {
   currentUser = user;
 
-  const loginStatus = document.getElementById("loginStatus");
-  const menuLinks = document.getElementById("dropdownMenu");
+  const loginStatus =
+    document.getElementById("loginStatus");
+
+  const menuLinks =
+    document.getElementById("dropdownMenu");
 
   if (user && user.emailVerified) {
-    const username = await loadUsername(user);
+
+    /*
+      Show logged-in state immediately.
+      Do not make the page wait for Firestore.
+    */
 
     if (loginStatus) {
-      if (username) {
-        loginStatus.textContent = `Logged in as ${username}`;
-      } else {
-        loginStatus.innerHTML = `
-          Logged in. 
-          <a href="username.html" style="color:#f5c542;text-decoration:underline;">
-            Create username
-          </a>
-        `;
-      }
+      loginStatus.textContent = "Logged in";
     }
 
-    if (menuLinks && !document.getElementById("logoutMenuBtn")) {
-      const logoutBtn = document.createElement("button");
-      logoutBtn.id = "logoutMenuBtn";
-      logoutBtn.className = "";
-      logoutBtn.textContent = "Log out";
 
-      logoutBtn.addEventListener("click", async () => {
-        await logoutUser();
-        window.location.href = "index.html";
+    /*
+      Load username afterwards.
+    */
+
+    loadUsername(user)
+      .then(username => {
+
+        if (!loginStatus) {
+          return;
+        }
+
+        if (username) {
+          loginStatus.textContent =
+            `Logged in as ${username}`;
+        } else {
+          loginStatus.innerHTML = `
+            Logged in
+            <a
+              href="username.html"
+              style="
+                color:#f5c542;
+                text-decoration:underline;
+              "
+            >
+              Create username
+            </a>
+          `;
+        }
+
+      })
+      .catch(error => {
+        console.error(
+          "Username display error:",
+          error
+        );
       });
 
-      menuLinks.appendChild(logoutBtn);
+
+    /*
+      ADD LOGOUT BUTTON
+    */
+
+    if (
+      menuLinks &&
+      !document.getElementById(
+        "logoutMenuBtn"
+      )
+    ) {
+      const logoutBtn =
+        document.createElement(
+          "button"
+        );
+
+      logoutBtn.id =
+        "logoutMenuBtn";
+
+      logoutBtn.className =
+        "";
+
+      logoutBtn.textContent =
+        "Log out";
+
+      logoutBtn.addEventListener(
+        "click",
+        async () => {
+          await logoutUser();
+
+          window.location.href =
+            "index.html";
+        }
+      );
+
+      menuLinks.appendChild(
+        logoutBtn
+      );
     }
+
   } else {
-    localStorage.removeItem("scorecast24Username");
-    localStorage.removeItem("scorecast24CleanUsername");
+
+    localStorage.removeItem(
+      "scorecast24Username"
+    );
+
+    localStorage.removeItem(
+      "scorecast24CleanUsername"
+    );
 
     if (loginStatus) {
-      loginStatus.textContent = "Not logged in";
+      loginStatus.textContent =
+        "Not logged in";
     }
 
-    const logoutBtn = document.getElementById("logoutMenuBtn");
-    if (logoutBtn) logoutBtn.remove();
+
+    /*
+      Remove logout button if present.
+    */
+
+    const logoutBtn =
+      document.getElementById(
+        "logoutMenuBtn"
+      );
+
+    if (logoutBtn) {
+      logoutBtn.remove();
+    }
   }
 });
 
