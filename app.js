@@ -297,6 +297,7 @@ async function loadExistingPrediction() {
   if (!user) return;
 
   try {
+    // First try the normal UID document
     const predictionSnapshot = await getDoc(
       doc(db, "premier_league_predictions", user.uid)
     );
@@ -304,7 +305,37 @@ async function loadExistingPrediction() {
     if (predictionSnapshot.exists()) {
       existingPrediction =
         predictionSnapshot.data().prediction || null;
+
+      return;
     }
+
+    // Fallback for older entries saved under a different document ID
+    const allPredictions = await getDocs(
+      collection(db, "premier_league_predictions")
+    );
+
+    const cleanUsername = getCleanUsername();
+
+    allPredictions.forEach(documentSnapshot => {
+      if (existingPrediction) return;
+
+      const data = documentSnapshot.data();
+
+      const sameUser =
+        data.userId === user.uid ||
+        (
+          cleanUsername &&
+          data.cleanUsername === cleanUsername
+        );
+
+      if (
+        sameUser &&
+        Array.isArray(data.prediction)
+      ) {
+        existingPrediction = data.prediction;
+      }
+    });
+
   } catch (error) {
     console.error("Could not load prediction:", error);
   }
