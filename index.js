@@ -666,9 +666,10 @@ function renderFixtures() {
 }
 
 
-/* =====================================================
+
+/* =========================
    ENTRY CHECK
-===================================================== */
+========================= */
 
 async function hasAlreadySubmitted(
   savedUsername
@@ -695,100 +696,6 @@ async function hasAlreadySubmitted(
 
 
   return predictionSnap.exists();
-}
-
-
-  /*
-    FIRST:
-    Check expected Week Three document ID.
-  */
-
-  const predictionRef =
-    doc(
-      db,
-      "scorecast24_predictions",
-      getPredictionDocId(savedUsername)
-    );
-
-
-  const predictionSnap =
-    await getDoc(predictionRef);
-
-
-  if (predictionSnap.exists()) {
-
-    const data =
-      predictionSnap.data();
-
-
-    if (
-      data.round === currentRound
-    ) {
-
-      return true;
-    }
-  }
-
-
-  /*
-    SECOND:
-    Search all Week Three entries.
-
-    This protects against entries whose
-    document ID used another format.
-  */
-
-  const roundQuery =
-    query(
-      collection(
-        db,
-        "scorecast24_predictions"
-      ),
-      where(
-        "round",
-        "==",
-        currentRound
-      )
-    );
-
-
-  const snapshot =
-    await getDocs(roundQuery);
-
-
-  const wantedUsername =
-    cleanUsername(savedUsername);
-
-
-  let found = false;
-
-
-  snapshot.forEach((docSnap) => {
-
-    if (found) return;
-
-
-    const data =
-      docSnap.data();
-
-
-    const storedUsername =
-      cleanUsername(
-        data.username
-      );
-
-
-    if (
-      storedUsername ===
-      wantedUsername
-    ) {
-
-      found = true;
-    }
-  });
-
-
-  return found;
 }
 
 
