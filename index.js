@@ -17,38 +17,45 @@ import {
 } from "./results.js?v=1";
 
 
-/* =========================
-   ENGLISH LEAGUE WEEK TWO
-========================= */
+/* =====================================================
+   ROUNDS
+===================================================== */
 
+/*
+  NEW entries are now for Week Three.
+*/
 const currentRound =
+  "English League Week Three";
+
+
+/*
+  The homepage leaderboard/results
+  continue showing Week Two until
+  Week Two is finished.
+*/
+const homePreviewRound =
   "English League Week Two";
+
 
 const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
 
 
-/* =========================
+/* =====================================================
    ENTRY / FIXTURE LOCKS
-========================= */
+===================================================== */
 
 /*
-  Change to true when you want
-  to close ALL Week Two entries.
+  Week Three is OPEN.
 */
-const roundClosed = true;
+const roundClosed = false;
 
 
 /*
-  Fixtures listed here are void
-  for NEW entrants only.
-
-  Fixture 1 =
-  Arsenal v Coventry City
+  No Week Three fixtures have started,
+  so nothing is void.
 */
-const voidFixtureIds = new Set([
-  "1"
-]);
+const voidFixtureIds = new Set([]);
 
 
 function predictionsAreClosed() {
@@ -63,237 +70,237 @@ function fixtureIsVoid(fixtureId) {
 }
 
 
-/* =========================
-   WEEK TWO FIXTURES
-========================= */
+/* =====================================================
+   WEEK THREE FIXTURES
+===================================================== */
 
 const englishLeagueFixtures = [
 
-  /* =========================
+  /* =================================================
      PREMIER LEAGUE
-  ========================= */
+  ================================================= */
 
   {
     id: "1",
-    date: "Fri 21 Aug 2026, 20:00",
+    date: "Fri 28 Aug 2026, 20:00",
     group: "Premier League",
-    home: "Arsenal",
-    away: "Coventry City",
+    home: "Crystal Palace",
+    away: "Manchester City",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "2",
-    date: "Sat 22 Aug 2026, 12:30",
+    date: "Sat 29 Aug 2026, 12:30",
     group: "Premier League",
-    home: "Hull City",
-    away: "Manchester United",
+    home: "Liverpool",
+    away: "Nottingham Forest",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "3",
-    date: "Sat 22 Aug 2026, 15:00",
+    date: "Sat 29 Aug 2026, 15:00",
     group: "Premier League",
-    home: "Everton",
-    away: "Crystal Palace",
+    home: "AFC Bournemouth",
+    away: "Everton",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "4",
-    date: "Sat 22 Aug 2026, 15:00",
+    date: "Sat 29 Aug 2026, 15:00",
     group: "Premier League",
-    home: "Ipswich Town",
-    away: "Sunderland",
+    home: "Coventry City",
+    away: "Hull City",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "5",
-    date: "Sat 22 Aug 2026, 15:00",
+    date: "Sat 29 Aug 2026, 17:30",
     group: "Premier League",
-    home: "Nottingham Forest",
-    away: "Leeds United",
+    home: "Tottenham Hotspur",
+    away: "Newcastle United",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "6",
-    date: "Sat 22 Aug 2026, 17:30",
+    date: "Sun 30 Aug 2026, 14:00",
     group: "Premier League",
-    home: "Brentford",
-    away: "Tottenham Hotspur",
+    home: "Chelsea",
+    away: "Brighton & Hove Albion",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "7",
-    date: "Sun 23 Aug 2026, 14:00",
+    date: "Sun 30 Aug 2026, 14:00",
     group: "Premier League",
-    home: "Brighton & Hove Albion",
-    away: "Aston Villa",
+    home: "Leeds United",
+    away: "Brentford",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "8",
-    date: "Sun 23 Aug 2026, 14:00",
+    date: "Sun 30 Aug 2026, 14:00",
     group: "Premier League",
-    home: "Manchester City",
-    away: "AFC Bournemouth",
+    home: "Sunderland",
+    away: "Fulham",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "9",
-    date: "Sun 23 Aug 2026, 16:30",
+    date: "Sun 30 Aug 2026, 16:30",
     group: "Premier League",
-    home: "Newcastle United",
-    away: "Liverpool",
+    home: "Manchester United",
+    away: "Ipswich Town",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "10",
-    date: "Mon 24 Aug 2026, 20:00",
+    date: "Mon 31 Aug 2026, 20:00",
     group: "Premier League",
-    home: "Fulham",
-    away: "Chelsea",
+    home: "Aston Villa",
+    away: "Arsenal",
     homeScore: null,
     awayScore: null
   },
 
 
-  /* =========================
+  /* =================================================
      EFL CHAMPIONSHIP
-  ========================= */
+  ================================================= */
 
   {
     id: "11",
-    date: "Sat 22 Aug 2026, 12:30",
+    date: "Fri 28 Aug 2026, 20:00",
     group: "Championship",
-    home: "Birmingham City",
-    away: "Bristol City",
+    home: "Wrexham",
+    away: "Birmingham City",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "12",
-    date: "Sat 22 Aug 2026, 12:30",
+    date: "Sat 29 Aug 2026, 12:30",
     group: "Championship",
-    home: "Lincoln City",
-    away: "Portsmouth",
+    home: "Derby County",
+    away: "Swansea City",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "13",
-    date: "Sat 22 Aug 2026, 12:30",
+    date: "Sat 29 Aug 2026, 12:30",
     group: "Championship",
-    home: "Millwall",
-    away: "Norwich City",
+    home: "Middlesbrough",
+    away: "West Bromwich Albion",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "14",
-    date: "Sat 22 Aug 2026, 15:00",
+    date: "Sat 29 Aug 2026, 12:30",
     group: "Championship",
-    home: "Blackburn Rovers",
-    away: "Middlesbrough",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "15",
-    date: "Sat 22 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Derby County",
-    away: "Cardiff City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "16",
-    date: "Sat 22 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Preston North End",
-    away: "Wolverhampton Wanderers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "17",
-    date: "Sat 22 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Queens Park Rangers",
-    away: "Bolton Wanderers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "18",
-    date: "Sat 22 Aug 2026, 15:00",
-    group: "Championship",
-    home: "Southampton",
+    home: "Wolverhampton Wanderers",
     away: "Stoke City",
     homeScore: null,
     awayScore: null
   },
 
   {
-    id: "19",
-    date: "Sat 22 Aug 2026, 15:00",
+    id: "15",
+    date: "Sat 29 Aug 2026, 15:00",
     group: "Championship",
-    home: "Swansea City",
+    home: "Blackburn Rovers",
+    away: "Queens Park Rangers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "16",
+    date: "Sat 29 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Bolton Wanderers",
+    away: "Lincoln City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "17",
+    date: "Sat 29 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Bristol City",
+    away: "Portsmouth",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "18",
+    date: "Sat 29 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Cardiff City",
     away: "Sheffield United",
     homeScore: null,
     awayScore: null
   },
 
   {
-    id: "20",
-    date: "Sat 22 Aug 2026, 15:00",
+    id: "19",
+    date: "Sat 29 Aug 2026, 15:00",
     group: "Championship",
-    home: "West Ham United",
-    away: "Charlton Athletic",
+    home: "Charlton Athletic",
+    away: "Preston North End",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "20",
+    date: "Sat 29 Aug 2026, 15:00",
+    group: "Championship",
+    home: "Norwich City",
+    away: "Burnley",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "21",
-    date: "Sat 22 Aug 2026, 15:00",
+    date: "Sat 29 Aug 2026, 15:00",
     group: "Championship",
-    home: "Wrexham",
-    away: "Watford",
+    home: "Southampton",
+    away: "Millwall",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "22",
-    date: "Sun 23 Aug 2026, 12:00",
+    date: "Sat 29 Aug 2026, 15:00",
     group: "Championship",
-    home: "West Bromwich Albion",
-    away: "Burnley",
+    home: "Watford",
+    away: "West Ham United",
     homeScore: null,
     awayScore: null
   }
@@ -305,9 +312,155 @@ const fixtures =
   englishLeagueFixtures;
 
 
-/* =========================
+/* =====================================================
+   WEEK TWO FIXTURE REFERENCES
+
+   These are retained ONLY so the homepage can continue
+   displaying the current Week Two results.
+
+   They are NOT available for new predictions.
+===================================================== */
+
+const weekTwoFixtures = [
+
+  {
+    id: "1",
+    home: "Arsenal",
+    away: "Coventry City"
+  },
+
+  {
+    id: "2",
+    home: "Hull City",
+    away: "Manchester United"
+  },
+
+  {
+    id: "3",
+    home: "Everton",
+    away: "Crystal Palace"
+  },
+
+  {
+    id: "4",
+    home: "Ipswich Town",
+    away: "Sunderland"
+  },
+
+  {
+    id: "5",
+    home: "Nottingham Forest",
+    away: "Leeds United"
+  },
+
+  {
+    id: "6",
+    home: "Brentford",
+    away: "Tottenham Hotspur"
+  },
+
+  {
+    id: "7",
+    home: "Brighton & Hove Albion",
+    away: "Aston Villa"
+  },
+
+  {
+    id: "8",
+    home: "Manchester City",
+    away: "AFC Bournemouth"
+  },
+
+  {
+    id: "9",
+    home: "Newcastle United",
+    away: "Liverpool"
+  },
+
+  {
+    id: "10",
+    home: "Fulham",
+    away: "Chelsea"
+  },
+
+  {
+    id: "11",
+    home: "Birmingham City",
+    away: "Bristol City"
+  },
+
+  {
+    id: "12",
+    home: "Lincoln City",
+    away: "Portsmouth"
+  },
+
+  {
+    id: "13",
+    home: "Millwall",
+    away: "Norwich City"
+  },
+
+  {
+    id: "14",
+    home: "Blackburn Rovers",
+    away: "Middlesbrough"
+  },
+
+  {
+    id: "15",
+    home: "Derby County",
+    away: "Cardiff City"
+  },
+
+  {
+    id: "16",
+    home: "Preston North End",
+    away: "Wolverhampton Wanderers"
+  },
+
+  {
+    id: "17",
+    home: "Queens Park Rangers",
+    away: "Bolton Wanderers"
+  },
+
+  {
+    id: "18",
+    home: "Southampton",
+    away: "Stoke City"
+  },
+
+  {
+    id: "19",
+    home: "Swansea City",
+    away: "Sheffield United"
+  },
+
+  {
+    id: "20",
+    home: "West Ham United",
+    away: "Charlton Athletic"
+  },
+
+  {
+    id: "21",
+    home: "Wrexham",
+    away: "Watford"
+  },
+
+  {
+    id: "22",
+    home: "West Bromwich Albion",
+    away: "Burnley"
+  }
+
+];
+
+
+/* =====================================================
    PAGE ELEMENTS
-========================= */
+===================================================== */
 
 const homePage =
   document.getElementById("homePage");
@@ -344,9 +497,9 @@ const homeFixturesPreview =
   );
 
 
-/* =========================
+/* =====================================================
    USERNAME
-========================= */
+===================================================== */
 
 let username =
   localStorage.getItem(
@@ -355,6 +508,7 @@ let username =
 
 
 function cleanUsername(name) {
+
   return String(name || "")
     .trim()
     .toLowerCase()
@@ -363,26 +517,31 @@ function cleanUsername(name) {
 
 
 function getPredictionDocId(username) {
+
   const cleanRound =
     currentRound
       .toLowerCase()
       .replace(/\s+/g, "-");
 
+
   const cleanUser =
     cleanUsername(username);
+
 
   return `${cleanUser}-${cleanRound}`;
 }
 
 
-/* =========================
+/* =====================================================
    PAGE SWITCHING
-========================= */
+===================================================== */
 
 function showHome() {
+
   if (homePage) {
     homePage.classList.remove("hidden");
   }
+
 
   if (predictionsPage) {
     predictionsPage.classList.add("hidden");
@@ -391,9 +550,11 @@ function showHome() {
 
 
 function showPredictions() {
+
   if (homePage) {
     homePage.classList.add("hidden");
   }
+
 
   if (predictionsPage) {
     predictionsPage.classList.remove(
@@ -403,21 +564,27 @@ function showPredictions() {
 }
 
 
-/* =========================
-   RENDER FIXTURES
-========================= */
+/* =====================================================
+   RENDER WEEK THREE FIXTURES
+===================================================== */
 
 function renderFixtures() {
+
   if (!fixturesContainer) return;
+
 
   fixturesContainer.innerHTML = "";
 
+
   fixtures.forEach((fixture) => {
+
     const card =
       document.createElement("div");
 
+
     const isVoid =
       fixtureIsVoid(fixture.id);
+
 
     card.className =
       isVoid
@@ -499,31 +666,35 @@ function renderFixtures() {
 }
 
 
-/* =========================
+/* =====================================================
    ENTRY CHECK
-========================= */
+===================================================== */
 
 async function hasAlreadySubmitted(
   savedUsername
 ) {
+
   if (
     !savedUsername ||
     savedUsername.trim().length < 2
   ) {
+
     return false;
   }
 
 
   /*
     FIRST:
-    Check expected document ID.
+    Check expected Week Three document ID.
   */
 
-  const predictionRef = doc(
-    db,
-    "scorecast24_predictions",
-    getPredictionDocId(savedUsername)
-  );
+  const predictionRef =
+    doc(
+      db,
+      "scorecast24_predictions",
+      getPredictionDocId(savedUsername)
+    );
+
 
   const predictionSnap =
     await getDoc(predictionRef);
@@ -534,9 +705,11 @@ async function hasAlreadySubmitted(
     const data =
       predictionSnap.data();
 
+
     if (
       data.round === currentRound
     ) {
+
       return true;
     }
   }
@@ -544,11 +717,10 @@ async function hasAlreadySubmitted(
 
   /*
     SECOND:
-    Search ALL Week Two entries.
+    Search all Week Three entries.
 
-    This protects against older entries
-    whose document ID was created using
-    another format.
+    This protects against entries whose
+    document ID used another format.
   */
 
   const roundQuery =
@@ -592,8 +764,10 @@ async function hasAlreadySubmitted(
 
 
     if (
-      storedUsername === wantedUsername
+      storedUsername ===
+      wantedUsername
     ) {
+
       found = true;
     }
   });
@@ -604,24 +778,27 @@ async function hasAlreadySubmitted(
 
 
 function entryCheckTimeout(ms = 12000) {
-  return new Promise((_, reject) => {
 
-    setTimeout(() => {
+  return new Promise(
+    (_, reject) => {
 
-      reject(
-        new Error(
-          "Entry check timed out"
-        )
-      );
+      setTimeout(() => {
 
-    }, ms);
-  });
+        reject(
+          new Error(
+            "Entry check timed out"
+          )
+        );
+
+      }, ms);
+    }
+  );
 }
 
 
-/* =========================
-   READ PREDICTIONS
-========================= */
+/* =====================================================
+   READ WEEK THREE PREDICTIONS
+===================================================== */
 
 function getPredictionsFromPage() {
 
@@ -631,25 +808,27 @@ function getPredictionsFromPage() {
   for (const fixture of fixtures) {
 
 
-    /*
-      Void match for NEW entrant.
-    */
-
     if (
       fixtureIsVoid(fixture.id)
     ) {
 
       predictions.push({
+
         fixtureId:
           fixture.id,
+
         home:
           fixture.home,
+
         away:
           fixture.away,
+
         predictedHome:
           null,
+
         predictedAway:
           null,
+
         void:
           true
       });
@@ -706,16 +885,22 @@ function getPredictionsFromPage() {
 
 
     predictions.push({
+
       fixtureId:
         fixture.id,
+
       home:
         fixture.home,
+
       away:
         fixture.away,
+
       predictedHome:
         Number(homePrediction),
+
       predictedAway:
         Number(awayPrediction),
+
       void:
         false
     });
@@ -726,9 +911,9 @@ function getPredictionsFromPage() {
 }
 
 
-/* =========================
-   SUBMIT PREDICTIONS
-========================= */
+/* =====================================================
+   SUBMIT WEEK THREE PREDICTIONS
+===================================================== */
 
 if (submitPredictionsBtn) {
 
@@ -764,22 +949,18 @@ if (submitPredictionsBtn) {
           "Please create your ScoreCast24 username first."
         );
 
+
         window.location.href =
           "username.html";
+
 
         return;
       }
 
 
-      /*
-        IMPORTANT:
-
-        Check Firestore BEFORE reading
-        or submitting anything.
-      */
-
       submitPredictionsBtn.disabled =
         true;
+
 
       submitPredictionsBtn.textContent =
         "Checking entry...";
@@ -802,21 +983,22 @@ if (submitPredictionsBtn) {
 
 
           alert(
-            "You have already submitted predictions for this round."
+            "You have already submitted predictions for Week Three."
           );
 
+
+          /*
+            Deliberately goes to the
+            Week Two leaderboard.
+          */
 
           window.location.href =
             "leaderboard.html";
 
+
           return;
         }
 
-
-        /*
-          Only read the form AFTER we know
-          this person hasn't entered.
-        */
 
         const predictions =
           getPredictionsFromPage();
@@ -827,8 +1009,10 @@ if (submitPredictionsBtn) {
           submitPredictionsBtn.disabled =
             false;
 
+
           submitPredictionsBtn.textContent =
             "Submit Predictions";
+
 
           return;
         }
@@ -839,13 +1023,7 @@ if (submitPredictionsBtn) {
 
 
         /*
-          SECOND DUPLICATE CHECK.
-
-          This is deliberate.
-
-          It prevents somebody opening
-          two tabs and submitting at
-          roughly the same time.
+          Final duplicate protection.
         */
 
         const finalDuplicateCheck =
@@ -857,12 +1035,13 @@ if (submitPredictionsBtn) {
         if (finalDuplicateCheck) {
 
           alert(
-            "You have already submitted predictions for this round."
+            "You have already submitted predictions for Week Three."
           );
 
 
           window.location.href =
             "leaderboard.html";
+
 
           return;
         }
@@ -879,14 +1058,20 @@ if (submitPredictionsBtn) {
         await setDoc(
           predictionRef,
           {
+
             username,
+
             predictions,
+
             round:
               currentRound,
+
             submittedAt:
               serverTimestamp(),
+
             status:
               "Score pending match results",
+
             points:
               null
           }
@@ -900,9 +1085,14 @@ if (submitPredictionsBtn) {
 
 
         alert(
-          "Predictions submitted!"
+          "Week Three predictions submitted!"
         );
 
+
+        /*
+          Keep showing the current
+          Week Two leaderboard.
+        */
 
         window.location.href =
           "leaderboard.html";
@@ -927,6 +1117,7 @@ if (submitPredictionsBtn) {
         submitPredictionsBtn.disabled =
           false;
 
+
         submitPredictionsBtn.textContent =
           "Submit Predictions";
       }
@@ -935,9 +1126,9 @@ if (submitPredictionsBtn) {
 }
 
 
-/* =========================
+/* =====================================================
    SCORING SYSTEM
-========================= */
+===================================================== */
 
 function getResultType(
   home,
@@ -958,16 +1149,19 @@ function getResultType(
 }
 
 
+/*
+  This now accepts a round explicitly.
+
+  That means the homepage can score
+  Week Two while the prediction form
+  is already accepting Week Three.
+*/
+
 function calculatePoints(
   prediction,
-  fixture
+  fixture,
+  scoringRound = currentRound
 ) {
-
-
-  /*
-    A fixture void for this entrant
-    contributes nothing.
-  */
 
   if (
     prediction.void === true
@@ -979,7 +1173,7 @@ function calculatePoints(
 
   const roundResults =
     resultsByRound[
-      currentRound
+      scoringRound
     ] || {};
 
 
@@ -1072,9 +1266,9 @@ function calculatePoints(
 }
 
 
-/* =========================
-   MAIN SCORE BUTTON
-========================= */
+/* =====================================================
+   MAIN SCORE PREDICTION BUTTON
+===================================================== */
 
 if (startGameBtn) {
 
@@ -1114,6 +1308,7 @@ if (startGameBtn) {
         window.location.href =
           "username.html";
 
+
         return;
       }
 
@@ -1130,10 +1325,13 @@ if (startGameBtn) {
 
         const alreadySubmitted =
           await Promise.race([
+
             hasAlreadySubmitted(
               username
             ),
+
             entryCheckTimeout()
+
           ]);
 
 
@@ -1148,21 +1346,17 @@ if (startGameBtn) {
 
 
           alert(
-            "You have already submitted your predictions for this round."
+            "You have already submitted your Week Three predictions."
           );
 
 
           window.location.href =
             "leaderboard.html";
 
+
           return;
         }
 
-
-        /*
-          No existing entry found,
-          so show prediction form.
-        */
 
         renderFixtures();
 
@@ -1196,15 +1390,16 @@ if (startGameBtn) {
 }
 
 
-/* =========================
+/* =====================================================
    OTHER GAME BUTTONS
-========================= */
+===================================================== */
 
 if (premierLeagueBtn) {
 
   premierLeagueBtn.addEventListener(
     "click",
     () => {
+
 
       if (!requireLogin()) {
         return;
@@ -1224,6 +1419,7 @@ if (dreamTeamBtn) {
     "click",
     () => {
 
+
       if (!requireLogin()) {
         return;
       }
@@ -1232,9 +1428,12 @@ if (dreamTeamBtn) {
 }
 
 
-/* =========================
+/* =====================================================
    HOME LEADERBOARD PREVIEW
-========================= */
+
+   IMPORTANT:
+   This deliberately displays WEEK TWO.
+===================================================== */
 
 async function renderHomeLeaderboardPreview() {
 
@@ -1269,9 +1468,14 @@ async function renderHomeLeaderboardPreview() {
           docSnap.data();
 
 
+        /*
+          Ignore Week Three entries here.
+          Homepage standings remain Week Two.
+        */
+
         if (
           data.round !==
-          currentRound
+          homePreviewRound
         ) {
 
           return;
@@ -1296,7 +1500,7 @@ async function renderHomeLeaderboardPreview() {
 
 
               const fixture =
-                fixtures.find(
+                weekTwoFixtures.find(
                   (item) =>
                     item.id ===
                     prediction.fixtureId
@@ -1311,7 +1515,8 @@ async function renderHomeLeaderboardPreview() {
               const points =
                 calculatePoints(
                   prediction,
-                  fixture
+                  fixture,
+                  homePreviewRound
                 );
 
 
@@ -1332,11 +1537,16 @@ async function renderHomeLeaderboardPreview() {
 
 
         rows.push({
+
           username:
             data.username ||
             "?????",
+
+
           points:
             totalPoints,
+
+
           status:
             hasScoredFixture
               ? `${totalPoints} pts`
@@ -1354,7 +1564,7 @@ async function renderHomeLeaderboardPreview() {
         <div class="preview-row">
 
           <span>
-            No entries yet
+            No Week Two entries
           </span>
 
           <span class="preview-points">
@@ -1439,9 +1649,13 @@ async function renderHomeLeaderboardPreview() {
   }
 }
 
-/* =========================
+
+/* =====================================================
    HOME FIXTURES PREVIEW
-========================= */
+
+   IMPORTANT:
+   This deliberately displays WEEK TWO results.
+===================================================== */
 
 function renderHomeFixturesPreview() {
 
@@ -1454,25 +1668,16 @@ function renderHomeFixturesPreview() {
     "";
 
 
-  /*
-    Get the official results for
-    the current round from results.js
-  */
-
   const roundResults =
     resultsByRound[
-      currentRound
+      homePreviewRound
     ] || {};
 
 
-  /*
-    Match the results to the
-    fixture information.
-  */
-
   const latestResults =
-    fixtures
+    weekTwoFixtures
       .map((fixture) => {
+
 
         const result =
           roundResults[
@@ -1481,9 +1686,12 @@ function renderHomeFixturesPreview() {
 
 
         return {
+
           ...fixture,
+
           homeScore:
             result?.homeScore,
+
           awayScore:
             result?.awayScore
         };
@@ -1500,10 +1708,6 @@ function renderHomeFixturesPreview() {
       )
       .slice(0, 3);
 
-
-  /*
-    No completed matches yet.
-  */
 
   if (
     latestResults.length === 0
@@ -1527,10 +1731,6 @@ function renderHomeFixturesPreview() {
     return;
   }
 
-
-  /*
-    Show latest three results.
-  */
 
   latestResults.forEach(
     (fixture, index) => {
@@ -1570,9 +1770,10 @@ function renderHomeFixturesPreview() {
   );
 }
 
-/* =========================
+
+/* =====================================================
    MENU
-========================= */
+===================================================== */
 
 const menuToggle =
   document.getElementById(
@@ -1628,17 +1829,16 @@ if (
 }
 
 
-/* =========================
+/* =====================================================
    PREDICTIONS STATUS
-========================= */
+===================================================== */
 
 function updatePredictionsCountdown() {
 
 
   /*
-    Keeping your existing HTML ID
-    so index.html does not need
-    changing.
+    Keeping your existing HTML ID.
+    No HTML change is required.
   */
 
   const countdownBox =
@@ -1657,7 +1857,7 @@ function updatePredictionsCountdown() {
 
     countdownBox.innerHTML = `
       <strong>
-        ${currentRound} predictions are now closed.
+        Week Three predictions are now closed.
       </strong>
     `;
 
@@ -1686,18 +1886,30 @@ function updatePredictionsCountdown() {
 
   countdownBox.innerHTML = `
     <strong>
-      Week Two predictions are still open
+      Week Three predictions are now open
     </strong>
     <br>
-    Matches already started are void
-    for new entries.
+    Predict all Premier League and
+    Championship matches for
+    28–31 August.
   `;
+
+
+  if (startGameBtn) {
+
+    startGameBtn.disabled =
+      false;
+
+
+    startGameBtn.textContent =
+      "Submit Your Score Predictions Now!";
+  }
 }
 
 
-/* =========================
+/* =====================================================
    INSTALL BUTTON
-========================= */
+===================================================== */
 
 let deferredPrompt;
 
@@ -1760,21 +1972,29 @@ window.addEventListener(
 );
 
 
-/* =========================
+/* =====================================================
    START
-========================= */
+===================================================== */
 
 showHome();
 
+
+/*
+  Homepage remains Week Two.
+*/
 renderHomeLeaderboardPreview();
 
 renderHomeFixturesPreview();
 
+
+/*
+  Prediction entry is Week Three.
+*/
 updatePredictionsCountdown();
 
 
 /*
-  Refresh current week's
+  Refresh the CURRENT Week Two
   top-three preview every minute.
 */
 setInterval(
