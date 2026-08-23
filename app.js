@@ -356,6 +356,7 @@ function showExistingPrediction() {
   tableContainer.innerHTML = `
     <div class="prediction-summary">
       <h2>My Premier Prediction</h2>
+      <h1>The Premier League will only be updated when all the week's fixtures have been played</h1>
       ${renderPredictionTable(existingPrediction)}
 
       <h3>You currently have ${matches} matching positions</h3>
