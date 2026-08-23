@@ -24,6 +24,16 @@ const submitPremierLeaguePrediction =
 
 const ADMIN_EMAIL = "robbie6153@icloud.com";
 
+/*
+  PREMIER LEAGUE PRIZE ENTRY STATUS
+
+  true = new entries can still play,
+         but are NOT eligible for the £500 prize.
+
+  false = normal prize-eligible entries.
+*/
+const PREMIER_LEAGUE_PRIZE_CLOSED = true;
+
 const teams = [
   "Arsenal",
   "Aston Villa",
@@ -220,6 +230,14 @@ homeBtn.addEventListener("click", () => {
 });
 
 startBtn.addEventListener("click", async () => {
+
+  if (PREMIER_LEAGUE_PRIZE_CLOSED) {
+    alert(
+      "The deadline for the £500 Premier League Predictor prize has now passed.\n\n" +
+      "You can still enter and play the Premier League Predictor, but any prediction submitted from now on will NOT be eligible for the £500 prize."
+    );
+  }
+
   homeScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
 
@@ -577,10 +595,13 @@ ${bestText}
 }
 
 submitBtn.addEventListener("click", async () => {
-  const sure = confirm(
-    "Are you sure you want to use one credit and submit this as your final prediction?"
-  );
-
+const sure = confirm(
+  PREMIER_LEAGUE_PRIZE_CLOSED
+    ? "The £500 prize entry deadline has passed.\n\n" +
+      "This prediction will NOT be eligible for the £500 prize.\n\n" +
+      "Are you sure you want to use one credit and submit your prediction?"
+    : "Are you sure you want to use one credit and submit this as your final prediction?"
+);
   if (!sure) return;
 
   const prediction = Array.from(
@@ -603,11 +624,12 @@ submitBtn.addEventListener("click", async () => {
     submitBtn.textContent = "Submitting...";
     message.textContent = "Checking credit and saving prediction...";
 
-    const result = await submitPremierLeaguePrediction({
-      username: getUsername(),
-      cleanUsername: getCleanUsername(),
-      prediction
-    });
+  const result = await submitPremierLeaguePrediction({
+  username: getUsername(),
+  cleanUsername: getCleanUsername(),
+  prediction,
+  prizeEligible: !PREMIER_LEAGUE_PRIZE_CLOSED
+});
 
     premierLeagueCredits =
       Number(result.data?.remainingCredits ?? 0);
