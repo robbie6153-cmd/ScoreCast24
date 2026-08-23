@@ -133,13 +133,13 @@ export const resultsByRound = {
     },
 
     7: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 4,
+      awayScore: 0
     },
 
     8: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 1
     },
 
     9: {
