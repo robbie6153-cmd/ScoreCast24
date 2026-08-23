@@ -1185,3 +1185,9 @@ h1 {
   font-weight: 700;
   font-size: 1.1rem;
 }
+.how-to-play-box {
+  display: block;
+  position: relative;
+  margin: 28px auto 40px;
+  z-index: 1;
+}
