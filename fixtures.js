@@ -120,7 +120,7 @@ function escapeHtml(value) {
 /* =====================================================
    DREAM TEAM RATING ROUNDING
 
-   Matches the ScoreCast24 scoring rule:
+   ScoreCast24 rule:
 
    6.4 -> 6
    6.5 -> 6
@@ -189,8 +189,7 @@ function getPlayerStatistics(
 
 
 /*
-  Only display a player if there is evidence
-  that he actually took part in the match.
+  Only display players who actually appeared.
 */
 
 function playerAppeared(
@@ -213,24 +212,31 @@ function playerAppeared(
   const rating =
     stats?.games?.rating;
 
-  const substitute =
-    Boolean(
-      stats?.games?.substitute
-    );
-
-  /*
-    API-Football normally supplies minutes
-    or a rating for players who appeared.
-
-    This also allows a substitute who entered
-    very late to be displayed.
-  */
-
   return (
     minutes > 0 ||
-    rating !== null &&
-    rating !== undefined &&
-    rating !== ""
+    (
+      rating !== null &&
+      rating !== undefined &&
+      rating !== ""
+    )
+  );
+}
+
+
+/* =====================================================
+   STARTER OR SUBSTITUTE
+===================================================== */
+
+function playerWasSubstitute(
+  playerRecord
+) {
+  const stats =
+    getPlayerStatistics(
+      playerRecord
+    );
+
+  return (
+    stats?.games?.substitute === true
   );
 }
 
@@ -266,6 +272,11 @@ function getPlayerEvents(
   const yellowCards =
     Number(
       stats?.cards?.yellow || 0
+    );
+
+  const yellowRedCards =
+    Number(
+      stats?.cards?.yellowred || 0
     );
 
   const redCards =
@@ -305,22 +316,29 @@ function getPlayerEvents(
   }
 
 
-  if (yellowCards === 1) {
+  if (
+    yellowRedCards > 0
+  ) {
+    events.push(
+      "Sent Off"
+    );
+  } else if (
+    redCards > 0
+  ) {
+    events.push(
+      "Sent Off"
+    );
+  } else if (
+    yellowCards === 1
+  ) {
     events.push(
       "Booked"
     );
-  }
-
-  if (yellowCards > 1) {
+  } else if (
+    yellowCards > 1
+  ) {
     events.push(
       `${yellowCards} Bookings`
-    );
-  }
-
-
-  if (redCards > 0) {
-    events.push(
-      "Sent Off"
     );
   }
 
@@ -357,8 +375,8 @@ function preparePlayer(
   const suppliedRating =
     stats?.games?.rating;
 
-  const roundedRating =
-    roundDreamRating(
+  const numericSuppliedRating =
+    Number(
       suppliedRating
     );
 
@@ -371,11 +389,20 @@ function preparePlayer(
       "Unknown Player",
 
     rating:
-      roundedRating,
+      roundDreamRating(
+        suppliedRating
+      ),
 
     suppliedRating:
-      Number(
-        suppliedRating
+      Number.isFinite(
+        numericSuppliedRating
+      )
+        ? numericSuppliedRating
+        : null,
+
+    substitute:
+      playerWasSubstitute(
+        playerRecord
       ),
 
     events:
@@ -387,13 +414,20 @@ function preparePlayer(
 
 
 /* =====================================================
-   FIND MATCH HIGHEST RATING
+   MAN OF THE MATCH
+
+   Use the original API rating rather than the
+   rounded ScoreCast24 display rating.
+
+   Example:
+   7.6 and 8.4 may both display as 8,
+   but 8.4 remains the higher API performance.
 ===================================================== */
 
-function getHighestMatchRating(
+function findManOfTheMatch(
   playerTeams
 ) {
-  let highest = null;
+  let bestPlayer = null;
 
   playerTeams.forEach(
     teamRecord => {
@@ -418,24 +452,26 @@ function getHighestMatchRating(
               );
 
             if (
-              player.rating === null
+              player.suppliedRating ===
+              null
             ) {
               return;
             }
 
             if (
-              highest === null ||
-              player.rating > highest
+              !bestPlayer ||
+              player.suppliedRating >
+                bestPlayer.suppliedRating
             ) {
-              highest =
-                player.rating;
+              bestPlayer =
+                player;
             }
           }
         );
     }
   );
 
-  return highest;
+  return bestPlayer;
 }
 
 
@@ -444,8 +480,7 @@ function getHighestMatchRating(
 ===================================================== */
 
 function renderPlayer(
-  player,
-  highestRating
+  player
 ) {
   const eventsText =
     player.events.length
@@ -459,40 +494,29 @@ function renderPlayer(
       ? "-"
       : player.rating;
 
-  const contents = `
-    ${escapeHtml(player.name)}
-    ${escapeHtml(ratingText)}
-    ${eventsText}
-  `;
-
-  if (
-    player.rating !== null &&
-    player.rating ===
-      highestRating
-  ) {
-    return `
-      <strong class="dream-match-star">
-        ${contents}
-      </strong>
-    `;
-  }
-
   return `
     <span class="dream-match-player">
-      ${contents}
+      ${escapeHtml(
+        player.name
+      )}
+      ${escapeHtml(
+        ratingText
+      )}${eventsText}
     </span>
   `;
 }
 
 
 /* =====================================================
-   TEAM PLAYER LINE
+   TEAM PLAYERS
+
+   Starting XI and substitutes are displayed
+   separately.
 ===================================================== */
 
 function renderTeamPlayers(
   teamRecord,
-  fallbackTeamName,
-  highestRating
+  fallbackTeamName
 ) {
   const teamName =
     teamRecord?.team?.name ||
@@ -515,6 +539,7 @@ function renderTeamPlayers(
         preparePlayer
       );
 
+
   if (
     !appearedPlayers.length
   ) {
@@ -531,22 +556,64 @@ function renderTeamPlayers(
     `;
   }
 
+
+  const starters =
+    appearedPlayers.filter(
+      player =>
+        !player.substitute
+    );
+
+  const substitutes =
+    appearedPlayers.filter(
+      player =>
+        player.substitute
+    );
+
+
+  const starterHtml =
+    starters.length
+      ? starters
+          .map(
+            renderPlayer
+          )
+          .join(", ")
+      : "Starting XI unavailable";
+
+
+  const substituteHtml =
+    substitutes.length
+      ? `
+        <div class="dream-result-subs">
+          <strong>
+            Substitutes:
+          </strong>
+
+          ${substitutes
+            .map(
+              renderPlayer
+            )
+            .join(", ")}
+        </div>
+      `
+      : "";
+
+
   return `
     <div class="dream-result-team">
 
-      <strong class="dream-result-team-name">
-        ${escapeHtml(teamName)}:
-      </strong>
+      <div class="dream-result-starting-xi">
 
-      ${appearedPlayers
-        .map(
-          player =>
-            renderPlayer(
-              player,
-              highestRating
-            )
-        )
-        .join(", ")}
+        <strong class="dream-result-team-name">
+          ${escapeHtml(
+            teamName
+          )}:
+        </strong>
+
+        ${starterHtml}
+
+      </div>
+
+      ${substituteHtml}
 
     </div>
   `;
@@ -592,6 +659,7 @@ function findTeamRecord(
     }
   }
 
+
   const normalisedName =
     String(teamName || "")
       .trim()
@@ -614,6 +682,7 @@ function findTeamRecord(
     }
   }
 
+
   return null;
 }
 
@@ -632,10 +701,6 @@ function renderPremierFixture(
       ? fixture.playerTeams
       : [];
 
-  const highestRating =
-    getHighestMatchRating(
-      playerTeams
-    );
 
   const homeTeamRecord =
     findTeamRecord(
@@ -644,12 +709,20 @@ function renderPremierFixture(
       fixture.homeTeam
     );
 
+
   const awayTeamRecord =
     findTeamRecord(
       playerTeams,
       fixture.awayTeamId,
       fixture.awayTeam
     );
+
+
+  const manOfTheMatch =
+    findManOfTheMatch(
+      playerTeams
+    );
+
 
   const homeGoals =
     Number.isFinite(
@@ -662,6 +735,7 @@ function renderPremierFixture(
         )
       : "-";
 
+
   const awayGoals =
     Number.isFinite(
       Number(
@@ -672,6 +746,21 @@ function renderPremierFixture(
           fixture.awayGoals
         )
       : "-";
+
+
+  const manOfTheMatchHtml =
+    manOfTheMatch
+      ? `
+        <div class="dream-result-motm">
+          <strong>
+            🏅 Man of the Match:
+            ${escapeHtml(
+              manOfTheMatch.name
+            )}
+          </strong>
+        </div>
+      `
+      : "";
 
 
   return `
@@ -707,16 +796,17 @@ function renderPremierFixture(
 
       ${renderTeamPlayers(
         homeTeamRecord,
-        fixture.homeTeam,
-        highestRating
+        fixture.homeTeam
       )}
 
 
       ${renderTeamPlayers(
         awayTeamRecord,
-        fixture.awayTeam,
-        highestRating
+        fixture.awayTeam
       )}
+
+
+      ${manOfTheMatchHtml}
 
     </article>
   `;
@@ -732,11 +822,13 @@ async function loadPremierLeagueResults() {
     return;
   }
 
+
   premierLeagueResults.innerHTML = `
     <p>
       Loading Premier League results...
     </p>
   `;
+
 
   try {
     const snapshot =
@@ -746,6 +838,7 @@ async function loadPremierLeagueResults() {
           "dream_team_fixtures"
         )
       );
+
 
     const fixtures =
       snapshot.docs
@@ -818,10 +911,6 @@ async function loadPremierLeagueResults() {
 
 /* =====================================================
    SCORE PREDICTION RESULT FORMAT
-
-   Supports a few possible shapes so this remains
-   compatible with results.js if its result object
-   has changed during development.
 ===================================================== */
 
 function extractScore(
@@ -837,10 +926,14 @@ function extractScore(
     result.length >= 2
   ) {
     const home =
-      Number(result[0]);
+      Number(
+        result[0]
+      );
 
     const away =
-      Number(result[1]);
+      Number(
+        result[1]
+      );
 
     if (
       Number.isFinite(home) &&
@@ -862,6 +955,7 @@ function extractScore(
     result.home_goals
   ];
 
+
   const possibleAwayValues = [
     result.away,
     result.awayScore,
@@ -878,6 +972,7 @@ function extractScore(
         value !== undefined &&
         value !== ""
     );
+
 
   const awayValue =
     possibleAwayValues.find(
@@ -922,6 +1017,7 @@ function loadChampionshipResults() {
   if (!championshipResults) {
     return;
   }
+
 
   const roundResults =
     resultsByRound[
