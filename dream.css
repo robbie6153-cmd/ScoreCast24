@@ -979,3 +979,20 @@ body {
   opacity: 0.9;
   white-space: nowrap;
 }
+.player-database {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.player-database h2 {
+  margin-top: 35px;
+  margin-bottom: 15px;
+}
+
+.player-database-row {
+  margin: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid #ddd;
+  line-height: 1.4;
+}
