@@ -996,3 +996,31 @@ body {
   border-bottom: 1px solid #ddd;
   line-height: 1.4;
 }
+.database-position {
+  margin-top: 32px;
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+
+.goalkeeper-heading {
+  color: #159447;
+}
+
+.defender-heading {
+  color: #1677d2;
+}
+
+.midfielder-heading {
+  color: #d62828;
+}
+
+.attacker-heading {
+  color: #d6a900;
+}
+
+.player-database-row {
+  margin: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid #ddd;
+  line-height: 1.4;
+}
