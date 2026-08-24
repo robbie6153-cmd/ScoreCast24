@@ -1,4 +1,4 @@
-console.log("leaderboard.js loaded English League v6");
+console.log("leaderboard.js loaded English League v7");
 
 import { db } from "./firebase.js?v=107";
 
@@ -12,9 +12,9 @@ import {
 } from "./results.js?v=1";
 
 
-/* =========================
+/* =====================================================
    PAGE ELEMENTS
-========================= */
+===================================================== */
 
 const leaderboardContainer =
   document.getElementById(
@@ -34,21 +34,66 @@ const seasonLeaderboardTab =
     "seasonLeaderboardTab"
   );
 
+const weekSelectorContainer =
+  document.getElementById(
+    "weekSelectorContainer"
+  );
 
-/* =========================
-   CURRENT ROUND
-========================= */
+const weekSelector =
+  document.getElementById(
+    "weekSelector"
+  );
+
+
+/* =====================================================
+   ENGLISH LEAGUE ROUNDS
+
+   Add each new week here when it opens.
+
+   The LAST round marked as current is what
+   initially appears on the Current Leaderboard.
+===================================================== */
+
+const englishLeagueRounds = [
+
+  {
+    id: "English League Week One",
+    label: "Week One"
+  },
+
+  {
+    id: "English League Week Two",
+    label: "Week Two"
+  },
+
+  {
+    id: "English League Week Three",
+    label: "Week Three"
+  }
+
+];
+
+
+/*
+  This is the OPEN week.
+
+  Week Three is open even though
+  Week Two has not completely finished.
+*/
 
 const currentRound =
-  "English League Week Two";
-
-const currentWeekHeading =
-  "Week Two Leaderboard";
+  "English League Week Three";
 
 
-/* =========================
+let selectedRound =
+  currentRound;
+
+
+/* =====================================================
    LEADERBOARD DATA
-========================= */
+===================================================== */
+
+let predictionDocuments = [];
 
 let weekLeaderboardRows = [];
 
@@ -58,9 +103,9 @@ let activeLeaderboard =
   "week";
 
 
-/* =========================
+/* =====================================================
    CURRENT USER
-========================= */
+===================================================== */
 
 const myUsername =
   (
@@ -72,9 +117,9 @@ const myUsername =
     .toLowerCase();
 
 
-/* =========================
+/* =====================================================
    TIMEOUT
-========================= */
+===================================================== */
 
 function timeoutPromise(ms) {
 
@@ -95,9 +140,9 @@ function timeoutPromise(ms) {
 }
 
 
-/* =========================
+/* =====================================================
    CLEAN USERNAME
-========================= */
+===================================================== */
 
 function normaliseUsername(username) {
 
@@ -110,9 +155,9 @@ function normaliseUsername(username) {
 }
 
 
-/* =========================
+/* =====================================================
    FIRESTORE TIMESTAMP
-========================= */
+===================================================== */
 
 function timestampToMillis(timestamp) {
 
@@ -120,10 +165,6 @@ function timestampToMillis(timestamp) {
     return null;
   }
 
-
-  /*
-    Normal Firestore Timestamp.
-  */
 
   if (
     typeof timestamp.toMillis ===
@@ -135,22 +176,14 @@ function timestampToMillis(timestamp) {
   }
 
 
-  /*
-    Fallback if timestamp has been
-    converted to a Date.
-  */
-
-  if (timestamp instanceof Date) {
+  if (
+    timestamp instanceof Date
+  ) {
 
     return timestamp.getTime();
 
   }
 
-
-  /*
-    Fallback for timestamp-like
-    objects containing seconds.
-  */
 
   if (
     typeof timestamp.seconds ===
@@ -169,9 +202,105 @@ function timestampToMillis(timestamp) {
 }
 
 
-/* =========================
+/* =====================================================
+   ROUND LABEL
+===================================================== */
+
+function getRoundLabel(roundId) {
+
+  const round =
+    englishLeagueRounds.find(
+      (item) =>
+        item.id === roundId
+    );
+
+
+  return round
+    ? round.label
+    : roundId;
+
+}
+
+
+/* =====================================================
+   IS ENGLISH LEAGUE ROUND
+===================================================== */
+
+function isEnglishLeagueRound(
+  roundId
+) {
+
+  return englishLeagueRounds.some(
+    (round) =>
+      round.id === roundId
+  );
+
+}
+
+
+/* =====================================================
+   BUILD WEEK SELECTOR
+===================================================== */
+
+function buildWeekSelector() {
+
+  if (!weekSelector) {
+    return;
+  }
+
+
+  weekSelector.innerHTML = "";
+
+
+  /*
+    Newest week first.
+
+    So Week Three appears above
+    Week Two and Week One.
+  */
+
+  [...englishLeagueRounds]
+    .reverse()
+    .forEach(
+      (round) => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+
+        option.value =
+          round.id;
+
+        option.textContent =
+          round.label;
+
+
+        if (
+          round.id ===
+          selectedRound
+        ) {
+
+          option.selected =
+            true;
+
+        }
+
+
+        weekSelector.appendChild(
+          option
+        );
+
+      }
+    );
+
+}
+
+
+/* =====================================================
    CALCULATE ROUND STATS
-========================= */
+===================================================== */
 
 function calculateRoundStats(
   predictions = [],
@@ -181,6 +310,16 @@ function calculateRoundStats(
   const roundResults =
     resultsByRound[round];
 
+
+  /*
+    This is perfectly valid.
+
+    An OPEN round may already have
+    predictions but no results yet.
+
+    In that case the leaderboard shows
+    the entrant with a pending score.
+  */
 
   if (!roundResults) {
 
@@ -213,15 +352,11 @@ function calculateRoundStats(
       }
 
 
-      /*
-        == null deliberately catches
-        BOTH null and undefined.
-      */
-
       if (
         result.homeScore == null ||
         result.awayScore == null
       ) {
+
         return;
       }
 
@@ -251,8 +386,7 @@ function calculateRoundStats(
 
 
       /* =========================
-         EXACT SCORE = 5 POINTS
-         ALSO COUNTS FOR TIEBREAK
+         EXACT SCORE = 5
       ========================= */
 
       if (
@@ -270,13 +404,14 @@ function calculateRoundStats(
 
 
       /* =========================
-         CORRECT DRAW = 3 POINTS
+         CORRECT DRAW = 3
       ========================= */
 
       if (
         predictedHome ===
           predictedAway &&
-        actualHome === actualAway
+        actualHome ===
+          actualAway
       ) {
 
         totalPoints += 3;
@@ -287,7 +422,7 @@ function calculateRoundStats(
 
 
       /* =========================
-         CORRECT HOME WIN = 1 POINT
+         CORRECT HOME WIN = 1
       ========================= */
 
       if (
@@ -305,7 +440,7 @@ function calculateRoundStats(
 
 
       /* =========================
-         CORRECT AWAY WIN = 2 POINTS
+         CORRECT AWAY WIN = 2
       ========================= */
 
       if (
@@ -337,18 +472,17 @@ function calculateRoundStats(
 }
 
 
-/* =========================
+/* =====================================================
    SORT LEADERBOARD
-========================= */
+===================================================== */
 
 function sortLeaderboard(rows) {
 
   rows.sort((a, b) => {
 
     /*
-      Players whose matches have not
-      started yet go underneath players
-      who already have scored results.
+      Scored players above
+      pending players.
     */
 
     if (
@@ -372,9 +506,13 @@ function sortLeaderboard(rows) {
 
 
     /*
-      If BOTH players are pending,
-      use submission time so the
-      ordering remains consistent.
+      If the entire round is pending,
+      rank entrants by earliest
+      submission time.
+
+      This also means you can see the
+      submission order before matches
+      have started.
     */
 
     if (
@@ -435,9 +573,8 @@ function sortLeaderboard(rows) {
 
 
     /* =========================
-       TIEBREAK RULE 1
-
-       HIGHEST POINTS
+       TIEBREAK 1
+       POINTS
     ========================= */
 
     if (
@@ -457,9 +594,8 @@ function sortLeaderboard(rows) {
 
 
     /* =========================
-       TIEBREAK RULE 2
-
-       MOST EXACT SCORES
+       TIEBREAK 2
+       EXACT SCORES
     ========================= */
 
     if (
@@ -483,8 +619,7 @@ function sortLeaderboard(rows) {
 
 
     /* =========================
-       TIEBREAK RULE 3
-
+       TIEBREAK 3
        EARLIEST SUBMISSION
     ========================= */
 
@@ -498,11 +633,6 @@ function sortLeaderboard(rows) {
 
     }
 
-
-    /*
-      If only one entry has a valid
-      timestamp, favour that entry.
-    */
 
     if (
       aTime != null &&
@@ -524,15 +654,6 @@ function sortLeaderboard(rows) {
     }
 
 
-    /*
-      Extremely unlikely final fallback:
-      same points, same exact scores and
-      identical/missing submission time.
-
-      Alphabetical ordering simply keeps
-      the display deterministic.
-    */
-
     return a.username.localeCompare(
       b.username
     );
@@ -542,9 +663,9 @@ function sortLeaderboard(rows) {
 }
 
 
-/* =========================
+/* =====================================================
    ACTIVE TAB
-========================= */
+===================================================== */
 
 function setActiveTab(activeTab) {
 
@@ -577,9 +698,37 @@ function setActiveTab(activeTab) {
 }
 
 
-/* =========================
+/* =====================================================
+   WEEK SELECTOR VISIBILITY
+===================================================== */
+
+function showWeekSelector() {
+
+  if (weekSelectorContainer) {
+
+    weekSelectorContainer.style.display =
+      "";
+
+  }
+
+}
+
+
+function hideWeekSelector() {
+
+  if (weekSelectorContainer) {
+
+    weekSelectorContainer.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =====================================================
    DISPLAY LEADERBOARD
-========================= */
+===================================================== */
 
 function displayLeaderboard(
   rows,
@@ -672,13 +821,8 @@ function displayLeaderboard(
 
 
       /*
-        For the current-week leaderboard,
-        this opens that person's current
-        round predictions.
-
-        For the season leaderboard,
-        it uses their newest/preferred
-        available prediction document.
+        Open the actual prediction
+        document for the selected week.
       */
 
       if (row.viewId) {
@@ -727,72 +871,12 @@ function displayLeaderboard(
 }
 
 
-/* =========================
-   WEEK TAB
-========================= */
-
-if (weekLeaderboardTab) {
-
-  weekLeaderboardTab.addEventListener(
-    "click",
-    () => {
-
-      activeLeaderboard =
-        "week";
-
-
-      setActiveTab(
-        weekLeaderboardTab
-      );
-
-
-      displayLeaderboard(
-        weekLeaderboardRows,
-        currentWeekHeading
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================
-   SEASON TAB
-========================= */
-
-if (seasonLeaderboardTab) {
-
-  seasonLeaderboardTab.addEventListener(
-    "click",
-    () => {
-
-      activeLeaderboard =
-        "season";
-
-
-      setActiveTab(
-        seasonLeaderboardTab
-      );
-
-
-      displayLeaderboard(
-        seasonLeaderboardRows,
-        "Season Leaderboard"
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================
-   BUILD WEEK LEADERBOARD
-========================= */
+/* =====================================================
+   BUILD SELECTED WEEK LEADERBOARD
+===================================================== */
 
 function buildWeekLeaderboard(
-  predictionDocuments
+  round
 ) {
 
   weekLeaderboardRows = [];
@@ -802,7 +886,7 @@ function buildWeekLeaderboard(
     (entry) => {
 
       if (
-        entry.round !== currentRound
+        entry.round !== round
       ) {
 
         return;
@@ -813,7 +897,7 @@ function buildWeekLeaderboard(
       const stats =
         calculateRoundStats(
           entry.predictions || [],
-          currentRound
+          round
         );
 
 
@@ -847,14 +931,6 @@ function buildWeekLeaderboard(
   );
 
 
-  /*
-    Week ranking:
-
-    1. Points
-    2. Exact scores
-    3. Earliest submission
-  */
-
   sortLeaderboard(
     weekLeaderboardRows
   );
@@ -862,13 +938,130 @@ function buildWeekLeaderboard(
 }
 
 
-/* =========================
-   BUILD SEASON LEADERBOARD
-========================= */
+/* =====================================================
+   DISPLAY SELECTED WEEK
+===================================================== */
 
-function buildSeasonLeaderboard(
-  predictionDocuments
-) {
+function displaySelectedWeek() {
+
+  buildWeekLeaderboard(
+    selectedRound
+  );
+
+
+  const label =
+    getRoundLabel(
+      selectedRound
+    );
+
+
+  displayLeaderboard(
+    weekLeaderboardRows,
+    `${label} Leaderboard`
+  );
+
+}
+
+
+/* =====================================================
+   CURRENT LEADERBOARD TAB
+===================================================== */
+
+if (weekLeaderboardTab) {
+
+  weekLeaderboardTab.addEventListener(
+    "click",
+    () => {
+
+      activeLeaderboard =
+        "week";
+
+
+      setActiveTab(
+        weekLeaderboardTab
+      );
+
+
+      showWeekSelector();
+
+
+      displaySelectedWeek();
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   WEEK DROPDOWN
+===================================================== */
+
+if (weekSelector) {
+
+  weekSelector.addEventListener(
+    "change",
+    () => {
+
+      selectedRound =
+        weekSelector.value;
+
+
+      activeLeaderboard =
+        "week";
+
+
+      setActiveTab(
+        weekLeaderboardTab
+      );
+
+
+      displaySelectedWeek();
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   SEASON TAB
+===================================================== */
+
+if (seasonLeaderboardTab) {
+
+  seasonLeaderboardTab.addEventListener(
+    "click",
+    () => {
+
+      activeLeaderboard =
+        "season";
+
+
+      setActiveTab(
+        seasonLeaderboardTab
+      );
+
+
+      hideWeekSelector();
+
+
+      displayLeaderboard(
+        seasonLeaderboardRows,
+        "Season Leaderboard"
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   BUILD SEASON LEADERBOARD
+===================================================== */
+
+function buildSeasonLeaderboard() {
 
   const playerMap =
     new Map();
@@ -878,15 +1071,13 @@ function buildSeasonLeaderboard(
     (entry) => {
 
       /*
-        Ignore prediction rounds that
-        do not belong to the current
-        English League season results.
+        Only English League rounds.
       */
 
       if (
-        !resultsByRound[
+        !isEnglishLeagueRound(
           entry.round
-        ]
+        )
       ) {
 
         return;
@@ -933,9 +1124,7 @@ function buildSeasonLeaderboard(
 
             viewId: null,
 
-            viewRound: null,
-
-            roundDocs: {}
+            viewRound: null
 
           }
         );
@@ -957,8 +1146,12 @@ function buildSeasonLeaderboard(
 
 
       /*
-        Add scored rounds to the
-        running season total.
+        Only completed/resulted matches
+        add points.
+
+        Week Three entries can therefore
+        exist without changing the season
+        score yet.
       */
 
       if (
@@ -976,15 +1169,6 @@ function buildSeasonLeaderboard(
 
       }
 
-
-      /*
-        Keep the player's earliest
-        submission time.
-
-        This becomes the final
-        season-level tiebreak after
-        points and exact scores.
-      */
 
       if (
         entry.submittedAtMillis != null
@@ -1006,18 +1190,8 @@ function buildSeasonLeaderboard(
 
 
       /*
-        Remember the document belonging
-        to each round.
-      */
-
-      player.roundDocs[
-        entry.round
-      ] = entry.id;
-
-
-      /*
-        Prefer the CURRENT round for
-        the View Predictions link.
+        Prefer the OPEN/CURRENT
+        round for View Predictions.
       */
 
       if (
@@ -1033,12 +1207,6 @@ function buildSeasonLeaderboard(
       } else if (
         !player.viewId
       ) {
-
-        /*
-          If the player hasn't entered
-          the current week, allow an
-          existing entry to be viewed.
-        */
 
         player.viewId =
           entry.id;
@@ -1083,14 +1251,6 @@ function buildSeasonLeaderboard(
       );
 
 
-  /*
-    Season ranking:
-
-    1. Total season points
-    2. Total exact scores
-    3. Earliest submission
-  */
-
   sortLeaderboard(
     seasonLeaderboardRows
   );
@@ -1098,9 +1258,9 @@ function buildSeasonLeaderboard(
 }
 
 
-/* =========================
+/* =====================================================
    LOAD FIRESTORE
-========================= */
+===================================================== */
 
 async function initialiseLeaderboard() {
 
@@ -1121,15 +1281,6 @@ async function initialiseLeaderboard() {
 
   try {
 
-    /*
-      Load the English League
-      prediction documents and build
-      TWO separate tables:
-
-      1. Current Week
-      2. Full Season
-    */
-
     const predictionsSnap =
       await Promise.race([
 
@@ -1147,8 +1298,7 @@ async function initialiseLeaderboard() {
       ]);
 
 
-    const predictionDocuments =
-      [];
+    predictionDocuments = [];
 
 
     predictionsSnap.forEach(
@@ -1159,18 +1309,20 @@ async function initialiseLeaderboard() {
 
 
         /*
-          Only keep rounds listed in
-          resultsByRound.
+          IMPORTANT CHANGE:
 
-          This prevents unrelated
-          prediction competitions from
-          entering this leaderboard.
+          Do NOT require resultsByRound
+          to exist.
+
+          An open future/current week
+          needs to appear even before
+          any results exist.
         */
 
         if (
-          !resultsByRound[
+          !isEnglishLeagueRound(
             data.round
-          ]
+          )
         ) {
 
           return;
@@ -1209,11 +1361,18 @@ async function initialiseLeaderboard() {
 
 
     /* =========================
+       BUILD DROPDOWN
+    ========================= */
+
+    buildWeekSelector();
+
+
+    /* =========================
        BUILD CURRENT WEEK
     ========================= */
 
     buildWeekLeaderboard(
-      predictionDocuments
+      selectedRound
     );
 
 
@@ -1221,9 +1380,7 @@ async function initialiseLeaderboard() {
        BUILD SEASON
     ========================= */
 
-    buildSeasonLeaderboard(
-      predictionDocuments
-    );
+    buildSeasonLeaderboard();
 
 
     /* =========================
@@ -1239,10 +1396,10 @@ async function initialiseLeaderboard() {
     );
 
 
-    displayLeaderboard(
-      weekLeaderboardRows,
-      currentWeekHeading
-    );
+    showWeekSelector();
+
+
+    displaySelectedWeek();
 
 
   } catch (error) {
@@ -1268,8 +1425,8 @@ async function initialiseLeaderboard() {
 }
 
 
-/* =========================
+/* =====================================================
    START
-========================= */
+===================================================== */
 
 initialiseLeaderboard();

@@ -15,7 +15,7 @@
 
   <meta
     name="description"
-    content="View the latest ScoreCast24 leaderboard and see how players are performing in this week's football prediction game."
+    content="View the latest ScoreCast24 leaderboard and see how players are performing in the football prediction game."
   />
 
   <meta
@@ -88,7 +88,7 @@
           class="round-tab active"
           type="button"
         >
-          Weekly Leaderboard
+          Current Leaderboard
         </button>
 
 
@@ -111,6 +111,49 @@
       </div>
 
 
+      <!-- =========================
+           WEEK SELECTOR
+      ========================== -->
+
+      <div
+        id="weekSelectorContainer"
+        class="week-selector-container"
+      >
+
+        <label
+          for="weekSelector"
+          class="week-selector-label"
+        >
+          Select week
+        </label>
+
+        <select
+          id="weekSelector"
+          class="week-selector"
+        >
+
+          <option
+            value="English League Week One"
+          >
+            Week One
+          </option>
+
+          <option
+            value="English League Week Two"
+            selected
+          >
+            Week Two
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- =========================
+           LEADERBOARD
+      ========================== -->
+
       <div id="leaderboardContainer">
         Loading leaderboard...
       </div>
@@ -130,7 +173,7 @@
 
   <script
     type="module"
-    src="leaderboard.js?v=15"
+    src="leaderboard.js?v=16"
   ></script>
 
 </body>
