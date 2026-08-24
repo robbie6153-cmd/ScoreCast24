@@ -61,7 +61,25 @@ let rolloverPromptOpen = false;
 */
 let currentEntryDocumentId = null;
 let currentEntryRoundId = null;
+/*
+  GRANDFATHERED TEAM
 
+  If a legitimately submitted team later rises above
+  MAX_RATING because player ratings are updated,
+  the exact saved squad remains valid.
+
+  Once the user changes the squad or formation,
+  the normal MAX_RATING rule applies again.
+*/
+
+let grandfatheredPlayerIds =
+  new Set();
+
+let grandfatheredFormation =
+  "";
+
+let hasGrandfatheredTeam =
+  false;
 
 /* =========================
    PAGE ELEMENTS
@@ -730,22 +748,36 @@ function addPlayer(
     return;
   }
 
-  const newRatingTotal =
-    calculateRatingTotal() +
-    player.rating;
+const newRatingTotal =
+  calculateRatingTotal() +
+  player.rating;
 
-  if (
-    newRatingTotal >
-    MAX_RATING
-  ) {
-    showMessage(
-      `Adding ${player.name} would take your team above ` +
-      `${MAX_RATING} rating points.`,
-      "error"
-    );
 
-    return;
-  }
+/*
+  Normally a player cannot be added if
+  they push the squad above MAX_RATING.
+
+  Exception:
+  an existing player's original submitted
+  squad can be reconstructed after later
+  rating increases.
+*/
+
+if (
+  newRatingTotal >
+    MAX_RATING &&
+  !prospectiveSelectionIsGrandfathered(
+    player
+  )
+) {
+  showMessage(
+    `Adding ${player.name} would take your team above ` +
+    `${MAX_RATING} rating points.`,
+    "error"
+  );
+
+  return;
+}
 
   selectedPlayers.push(player);
 
@@ -779,7 +811,155 @@ function removePlayer(
   updateDreamTeamDisplay();
 }
 
+/* =========================
+   GRANDFATHERED TEAM
+========================= */
 
+function setGrandfatheredTeam(
+  savedEntry
+) {
+  const savedPlayers =
+    Array.isArray(
+      savedEntry?.players
+    )
+      ? savedEntry.players
+      : [];
+
+  grandfatheredPlayerIds =
+    new Set(
+      savedPlayers
+        .map(player =>
+          String(
+            player.id || ""
+          )
+        )
+        .filter(Boolean)
+    );
+
+  grandfatheredFormation =
+    String(
+      savedEntry?.formation ||
+      ""
+    );
+
+  hasGrandfatheredTeam =
+    grandfatheredPlayerIds.size ===
+      MAX_PLAYERS &&
+    Boolean(
+      grandfatheredFormation
+    );
+}
+
+
+function selectedTeamMatchesGrandfathered() {
+  if (
+    !hasGrandfatheredTeam
+  ) {
+    return false;
+  }
+
+  if (
+    formationSelect.value !==
+    grandfatheredFormation
+  ) {
+    return false;
+  }
+
+  if (
+    selectedPlayers.length !==
+    MAX_PLAYERS
+  ) {
+    return false;
+  }
+
+  const selectedIds =
+    new Set(
+      selectedPlayers.map(
+        player =>
+          String(
+            player.id || ""
+          )
+      )
+    );
+
+  if (
+    selectedIds.size !==
+    grandfatheredPlayerIds.size
+  ) {
+    return false;
+  }
+
+  return [
+    ...grandfatheredPlayerIds
+  ].every(
+    playerId =>
+      selectedIds.has(
+        playerId
+      )
+  );
+}
+
+
+/*
+  Allows the user to rebuild their ORIGINAL
+  grandfathered squad even if updated ratings
+  now place it above MAX_RATING.
+
+  As soon as a newly selected player was not
+  part of that saved squad, the normal budget
+  rule applies.
+*/
+
+function prospectiveSelectionIsGrandfathered(
+  playerToAdd
+) {
+  if (
+    !hasGrandfatheredTeam
+  ) {
+    return false;
+  }
+
+  if (
+    formationSelect.value !==
+    grandfatheredFormation
+  ) {
+    return false;
+  }
+
+  const prospectivePlayers = [
+    ...selectedPlayers,
+    playerToAdd
+  ];
+
+  return prospectivePlayers.every(
+    player =>
+      grandfatheredPlayerIds.has(
+        String(
+          player.id || ""
+        )
+      )
+  );
+}
+
+
+function ratingLimitIsSatisfied() {
+  if (
+    calculateRatingTotal() <=
+    MAX_RATING
+  ) {
+    return true;
+  }
+
+  /*
+    Over-budget is allowed ONLY when
+    the entire squad is exactly the
+    previously submitted squad.
+  */
+
+  return (
+    selectedTeamMatchesGrandfathered()
+  );
+}
 /* =========================
    TEAM VALIDATION
 ========================= */
@@ -861,8 +1041,7 @@ function teamIsValid() {
     !gameIsLocked &&
     selectedPlayers.length ===
       MAX_PLAYERS &&
-    calculateRatingTotal() <=
-      MAX_RATING &&
+    ratingLimitIsSatisfied() &&
     formationIsComplete()
   );
 }
@@ -912,10 +1091,12 @@ function updateDreamTeamDisplay() {
     formationSelect.value ||
     "Not selected";
 
-  ratingTotal.classList.toggle(
-    "over-budget",
-    totalRating > MAX_RATING
-  );
+ ratingTotal.classList.toggle(
+  "over-budget",
+  totalRating >
+    MAX_RATING &&
+  !selectedTeamMatchesGrandfathered()
+);
 
   updateControlAvailability();
 
@@ -1087,17 +1268,44 @@ async function getEntryForRoundIds(
 function loadEntryIntoEditor(
   savedEntry
 ) {
+
+  /*
+    Remember the exact legitimately
+    submitted squad BEFORE replacing
+    its old ratings with current ratings.
+  */
+
+  setGrandfatheredTeam(
+    savedEntry
+  );
+
+
   formationSelect.value =
     savedEntry.formation || "";
 
+
   const savedPlayers =
-    Array.isArray(savedEntry.players)
+    Array.isArray(
+      savedEntry.players
+    )
       ? savedEntry.players
       : [];
+
+
+  /*
+    Load the current player database
+    versions so the user sees today's
+    ratings.
+
+    The grandfather information above
+    remembers which eleven players were
+    originally submitted.
+  */
 
   selectedPlayers =
     savedPlayers
       .map(savedPlayer => {
+
         const currentPlayer =
           allPlayers.find(
             player =>
@@ -1105,12 +1313,15 @@ function loadEntryIntoEditor(
               savedPlayer.id
           );
 
+
         return (
           currentPlayer ||
           savedPlayer
         );
+
       })
       .filter(Boolean);
+
 
   updateDreamTeamDisplay();
 }
