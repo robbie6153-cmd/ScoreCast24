@@ -56,29 +56,45 @@ const teams = [
   "Sunderland",
   "Tottenham Hotspur"
 ];
+let currentPremierLeagueTable = [];
 
-const currentPremierLeagueTable = [
-  "Liverpool",
-  "Manchester City",
-  "Arsenal",
-  "Chelsea",
-  "Newcastle United",
-  "Tottenham Hotspur",
-  "Manchester United",
-  "Aston Villa",
-  "Brighton & Hove Albion",
-  "Crystal Palace",
-  "Bournemouth",
-  "Brentford",
-  "Sunderland",
-  "Everton",
-  "Nottingham Forest",
-  "Leeds United",
-  "Ipswich Town",
-  "Fulham",
-  "Coventry City",
-  "Hull City"
-];
+async function loadCurrentPremierLeagueTable() {
+  try {
+    const tableSnapshot = await getDoc(
+      doc(db, "premier_league", "current_table")
+    );
+
+    if (!tableSnapshot.exists()) {
+      throw new Error(
+        "Current Premier League table does not exist."
+      );
+    }
+
+    const data = tableSnapshot.data();
+
+    if (!Array.isArray(data.teams) || data.teams.length !== 20) {
+      throw new Error(
+        "Current Premier League table is invalid."
+      );
+    }
+
+    currentPremierLeagueTable = data.teams;
+
+    console.log(
+      "Current Premier League table loaded:",
+      currentPremierLeagueTable
+    );
+
+  } catch (error) {
+    console.error(
+      "Could not load current Premier League table:",
+      error
+    );
+
+    currentPremierLeagueTable = [];
+  }
+}
+
 
 const homeScreen = document.getElementById("homeScreen");
 const gameScreen = document.getElementById("gameScreen");
@@ -257,10 +273,11 @@ startBtn.addEventListener("click", async () => {
 
   message.textContent = "Loading your account...";
 
-  await Promise.all([
-    loadExistingPrediction(),
-    loadCredits()
-  ]);
+await Promise.all([
+  loadExistingPrediction(),
+  loadCredits(),
+  loadCurrentPremierLeagueTable()
+]);
 
   message.textContent = "";
   renderCreditPanel();
