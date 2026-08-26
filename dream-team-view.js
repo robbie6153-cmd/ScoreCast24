@@ -2,7 +2,9 @@ import { db } from "./firebase.js?v=108";
 
 import {
   doc,
-  getDoc
+  getDoc,
+  collection,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 
@@ -50,7 +52,95 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function normaliseText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .replace(
+      /[^a-zA-Z0-9]/g,
+      ""
+    )
+    .toLowerCase();
+}
 
+
+function makePlayerKey(
+  club,
+  playerName
+) {
+  return (
+    `${normaliseText(club)}|` +
+    `${normaliseText(playerName)}`
+  );
+}
+async function loadPlayerScores() {
+  const snapshot =
+    await getDocs(
+      collection(
+        db,
+        "dream_team_player_scores"
+      )
+    );
+
+  const scoreDocuments = [];
+
+  snapshot.forEach(documentSnapshot => {
+    scoreDocuments.push(
+      documentSnapshot.data()
+    );
+  });
+
+  const roundIds =
+    [
+      ...new Set(
+        scoreDocuments
+          .map(item => item.roundId)
+          .filter(Boolean)
+      )
+    ].sort();
+
+  const currentRoundId =
+    roundIds.length > 0
+      ? roundIds[roundIds.length - 1]
+      : "";
+
+  const scoresByPlayer =
+    new Map();
+
+  for (const scoreDocument of scoreDocuments) {
+    const key =
+      makePlayerKey(
+        scoreDocument.club,
+        scoreDocument.playerName
+      );
+
+    if (!scoresByPlayer.has(key)) {
+      scoresByPlayer.set(key, {
+        weekScore: 0,
+        overallScore: 0
+      });
+    }
+
+    const scores =
+      scoresByPlayer.get(key);
+
+    const weekScore =
+      Number(scoreDocument.weekScore) || 0;
+
+    scores.overallScore += weekScore;
+
+    if (
+      scoreDocument.roundId === currentRoundId
+    ) {
+      scores.weekScore = weekScore;
+    }
+  }
+
+  return scoresByPlayer;
+}
 function showError(message) {
   if (dreamTeamViewTitle) {
     dreamTeamViewTitle.textContent =
@@ -153,12 +243,21 @@ function createFormationPlayer(player) {
       .trim()
       .toLowerCase();
 
+  const weeklyPoints =
+    Number(player.weeklyPoints || 0);
+
+  const overallPoints =
+    Number(player.overallPoints || 0);
   return `
     <div class="formation-player">
 
-      <div class="formation-player-name">
+         <div class="formation-player-name">
         ${escapeHtml(player.name || "Unknown player")}
       </div>
+
+   <div class="formation-player-score">
+  ${weeklyPoints}/${overallPoints}
+</div>
 
       <div class="formation-player-club">
         (${escapeHtml(player.club || "Unknown club")})
@@ -297,10 +396,40 @@ async function loadDreamTeam() {
       return;
     }
 
-    renderDreamTeam({
-      id: entrySnapshot.id,
-      ...entrySnapshot.data()
-    });
+ const scoresByPlayer =
+  await loadPlayerScores();
+
+const entryData = {
+  id: entrySnapshot.id,
+  ...entrySnapshot.data()
+};
+
+entryData.players =
+  Array.isArray(entryData.players)
+    ? entryData.players.map(player => {
+        const key =
+          makePlayerKey(
+            player.club,
+            player.name
+          );
+
+        const scores =
+          scoresByPlayer.get(key) || {
+            weekScore: 0,
+            overallScore: 0
+          };
+
+        return {
+          ...player,
+          weeklyPoints:
+            scores.weekScore,
+          overallPoints:
+            scores.overallScore
+        };
+      })
+    : [];
+
+renderDreamTeam(entryData);
 
   } catch (error) {
     console.error(
