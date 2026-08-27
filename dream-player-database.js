@@ -26,6 +26,10 @@ const PLAYER_FILES = [
 ];
 
 
+/* =========================
+   TEXT NORMALISATION
+========================= */
+
 function normaliseText(value) {
   return String(value || "")
     .replace(/Ø/g, "O")
@@ -37,10 +41,10 @@ function normaliseText(value) {
     .replace(/Ł/g, "L")
     .replace(/ł/g, "l")
     .replace(/ß/g, "ss")
-.replace(/Đ/g, "D")
-.replace(/đ/g, "d")
-.replace(/Þ/g, "Th")
-.replace(/þ/g, "th")
+    .replace(/Đ/g, "D")
+    .replace(/đ/g, "d")
+    .replace(/Þ/g, "Th")
+    .replace(/þ/g, "th")
     .normalize("NFD")
     .replace(
       /[\u0300-\u036f]/g,
@@ -52,6 +56,27 @@ function normaliseText(value) {
     )
     .toLowerCase();
 }
+
+
+/* =========================
+   EXACT PLAYER KEY
+========================= */
+
+function makePlayerKey(
+  club,
+  playerName
+) {
+  return (
+    `${normaliseText(club)}|` +
+    `${normaliseText(playerName)}`
+  );
+}
+
+
+/* =========================
+   ABBREVIATED PLAYER KEY
+========================= */
+
 function makePlayerMatchKey(
   club,
   playerName
@@ -69,6 +94,11 @@ function makePlayerMatchKey(
       .replace(/œ/g, "oe")
       .replace(/Ł/g, "L")
       .replace(/ł/g, "l")
+      .replace(/ß/g, "ss")
+      .replace(/Đ/g, "D")
+      .replace(/đ/g, "d")
+      .replace(/Þ/g, "Th")
+      .replace(/þ/g, "th")
       .normalize("NFD")
       .replace(
         /[\u0300-\u036f]/g,
@@ -94,7 +124,9 @@ function makePlayerMatchKey(
     parts[0].charAt(0);
 
   const surname =
-    parts[parts.length - 1];
+    parts[
+      parts.length - 1
+    ];
 
   return (
     `${normalisedClub}|` +
@@ -103,16 +135,10 @@ function makePlayerMatchKey(
   );
 }
 
-function makePlayerKey(
-  club,
-  playerName
-) {
-  return (
-    `${normaliseText(club)}|` +
-    `${normaliseText(playerName)}`
-  );
-}
 
+/* =========================
+   LOAD PLAYER SCORES
+========================= */
 
 async function loadPlayerScores() {
 
@@ -127,20 +153,27 @@ async function loadPlayerScores() {
 
   const scoreDocuments = [];
 
-  snapshot.forEach(documentSnapshot => {
+  snapshot.forEach(
+    documentSnapshot => {
 
-    scoreDocuments.push(
-      documentSnapshot.data()
-    );
+      scoreDocuments.push(
+        documentSnapshot.data()
+      );
 
-  });
+    }
+  );
 
 
   /*
     Find the most recent round.
 
-    Because the round IDs are formatted
-    like 2026-week-01, 2026-week-02 etc,
+    Because round IDs are formatted
+    like:
+
+    2026-week-01
+    2026-week-02
+    2026-week-03
+
     sorting them works correctly.
   */
 
@@ -148,7 +181,10 @@ async function loadPlayerScores() {
     [
       ...new Set(
         scoreDocuments
-          .map(item => item.roundId)
+          .map(
+            item =>
+              item.roundId
+          )
           .filter(Boolean)
       )
     ]
@@ -163,11 +199,26 @@ async function loadPlayerScores() {
       : "";
 
 
-  const scoresByPlayer =
-  new Map();
+  /*
+    Two matching systems:
 
-const scoresByPlayerMatch =
-  new Map();
+    1. Exact club + full name
+
+    2. Club + first initial + surname
+
+    This allows:
+
+    Martin Ødegaard
+    M. Ødegaard
+
+    to match each other.
+  */
+
+  const scoresByPlayer =
+    new Map();
+
+  const scoresByPlayerMatch =
+    new Map();
 
 
   for (
@@ -180,15 +231,23 @@ const scoresByPlayerMatch =
         scoreDocument.club,
         scoreDocument.playerName
       );
-const matchKey =
-  makePlayerMatchKey(
-    scoreDocument.club,
-    scoreDocument.playerName
-  );
+
+
+    const matchKey =
+      makePlayerMatchKey(
+        scoreDocument.club,
+        scoreDocument.playerName
+      );
+
+
+    /*
+      Create the exact-name score record.
+    */
 
     if (
       !scoresByPlayer.has(key)
     ) {
+
       scoresByPlayer.set(
         key,
         {
@@ -196,6 +255,7 @@ const matchKey =
           overallScore: 0
         }
       );
+
     }
 
 
@@ -211,7 +271,7 @@ const matchKey =
 
     /*
       Every round contributes to
-      the player's overall score.
+      the overall player score.
     */
 
     scores.overallScore +=
@@ -219,51 +279,82 @@ const matchKey =
 
 
     /*
-      Only the most recent round
-      contributes to Current Week.
+      Only the latest round contributes
+      to Current Week.
     */
 
     if (
       scoreDocument.roundId ===
       currentRoundId
     ) {
+
       scores.weekScore =
         weekScore;
+
+    }
+
+
+    /*
+      Also store the abbreviated-name
+      matching version.
+
+      Example:
+
+      Arsenal + Martin Ødegaard
+      Arsenal + M. Ødegaard
+
+      both become:
+
+      arsenal|m|odegaard
+    */
+
+    if (matchKey) {
+
+      scoresByPlayerMatch.set(
+        matchKey,
+        scores
+      );
+
     }
 
   }
 
- return {
-  scoresByPlayer,
-  scoresByPlayerMatch
-};
+
+  return {
+    scoresByPlayer,
+    scoresByPlayerMatch
+  };
 }
 
-if (matchKey) {
-  scoresByPlayerMatch.set(
-    matchKey,
-    scores
-  );
-}
+
+/* =========================
+   LOAD PLAYER DATABASE
+========================= */
+
 async function loadPlayerDatabase() {
 
-let scoresByPlayer =
-  new Map();
+  let scoresByPlayer =
+    new Map();
 
-let scoresByPlayerMatch =
-  new Map();
+  let scoresByPlayerMatch =
+    new Map();
 
 
   try {
 
-const loadedScores =
-  await loadPlayerScores();
+    const loadedScores =
+      await loadPlayerScores();
 
-scoresByPlayer =
-  loadedScores.scoresByPlayer;
 
-scoresByPlayerMatch =
-  loadedScores.scoresByPlayerMatch;
+    scoresByPlayer =
+      loadedScores
+        .scoresByPlayer;
+
+
+    scoresByPlayerMatch =
+      loadedScores
+        .scoresByPlayerMatch;
+
 
   } catch (error) {
 
@@ -307,19 +398,27 @@ scoresByPlayerMatch =
         await response.json();
 
 
-   displayPlayers(
-  container,
-  players,
-  scoresByPlayer,
-  scoresByPlayerMatch
-);
+      displayPlayers(
+        container,
+        players,
+        scoresByPlayer,
+        scoresByPlayerMatch
+      );
+
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        error
+      );
 
-      container.textContent =
-        "Unable to load players.";
+
+      if (container) {
+
+        container.textContent =
+          "Unable to load players.";
+
+      }
 
     }
 
@@ -328,12 +427,21 @@ scoresByPlayerMatch =
 }
 
 
+/* =========================
+   DISPLAY PLAYERS
+========================= */
+
 function displayPlayers(
   container,
   players,
   scoresByPlayer,
   scoresByPlayerMatch
 ) {
+
+  if (!container) {
+    return;
+  }
+
 
   container.innerHTML = "";
 
@@ -356,19 +464,27 @@ function displayPlayers(
       (a, b) => {
 
         const clubA =
-          (a.club || "")
+          String(
+            a.club || ""
+          )
             .toLowerCase();
 
         const clubB =
-          (b.club || "")
+          String(
+            b.club || ""
+          )
             .toLowerCase();
 
         const nameA =
-          (a.name || "")
+          String(
+            a.name || ""
+          )
             .toLowerCase();
 
         const nameB =
-          (b.name || "")
+          String(
+            b.name || ""
+          )
             .toLowerCase();
 
 
@@ -390,29 +506,47 @@ function displayPlayers(
     sortedPlayers
   ) {
 
-  const key =
-  makePlayerKey(
-    player.club,
-    player.name
-  );
+    /*
+      Try an exact full-name match first.
+    */
 
-const matchKey =
-  makePlayerMatchKey(
-    player.club,
-    player.name
-  );
+    const key =
+      makePlayerKey(
+        player.club,
+        player.name
+      );
 
 
-const scores =
-  scoresByPlayer.get(key) ||
-  scoresByPlayerMatch.get(matchKey) || {
-    weekScore: 0,
-    overallScore: 0
-  };
+    /*
+      If that fails, try:
+
+      club + first initial + surname.
+    */
+
+    const matchKey =
+      makePlayerMatchKey(
+        player.club,
+        player.name
+      );
+
+
+    const scores =
+      scoresByPlayer.get(
+        key
+      ) ||
+      scoresByPlayerMatch.get(
+        matchKey
+      ) ||
+      {
+        weekScore: 0,
+        overallScore: 0
+      };
 
 
     const row =
-      document.createElement("p");
+      document.createElement(
+        "p"
+      );
 
 
     row.className =
@@ -427,11 +561,17 @@ const scores =
       `Overall: ${scores.overallScore}`;
 
 
-    container.appendChild(row);
+    container.appendChild(
+      row
+    );
 
   }
 
 }
 
+
+/* =========================
+   START
+========================= */
 
 loadPlayerDatabase();
