@@ -1050,4 +1050,91 @@ body {
 .remove-dream-player:hover {
   background: #c62828;
   color: #fff;
+/* =====================================================
+   PLAYER DATABASE FILTERS
+===================================================== */
+
+.player-database-filters {
+  margin: 28px 0 36px;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(5, 20, 55, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.player-database-filter {
+  margin-bottom: 16px;
+}
+
+.player-database-filter label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.player-database-filter input,
+.player-database-filter select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid #f7c928;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #10214a;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.player-database-filter input:focus,
+.player-database-filter select:focus {
+  outline: none;
+  border-color: #ffffff;
+}
+
+.player-database-filter select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #10214a 50%
+    ),
+    linear-gradient(
+      135deg,
+      #10214a 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 19px) 20px,
+    calc(100% - 13px) 20px;
+
+  background-size:
+    6px 6px,
+    6px 6px;
+
+  background-repeat: no-repeat;
+
+  padding-right: 42px;
+}
+
+.database-clear-filters {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 12px;
+  background: #f7c928;
+  color: #10214a;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.database-clear-filters:active {
+  transform: scale(0.98);
 }
