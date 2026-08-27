@@ -1257,6 +1257,7 @@ currentEntryDocumentId =
 
 currentEntryRoundId =
   roundId;
+}
 
 /* =========================
    FIRESTORE ENTRIES
