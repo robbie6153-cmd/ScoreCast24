@@ -28,6 +28,19 @@ const PLAYER_FILES = [
 
 function normaliseText(value) {
   return String(value || "")
+    .replace(/Ø/g, "O")
+    .replace(/ø/g, "o")
+    .replace(/Æ/g, "AE")
+    .replace(/æ/g, "ae")
+    .replace(/Œ/g, "OE")
+    .replace(/œ/g, "oe")
+    .replace(/Ł/g, "L")
+    .replace(/ł/g, "l")
+    .replace(/ß/g, "ss")
+.replace(/Đ/g, "D")
+.replace(/đ/g, "d")
+.replace(/Þ/g, "Th")
+.replace(/þ/g, "th")
     .normalize("NFD")
     .replace(
       /[\u0300-\u036f]/g,
