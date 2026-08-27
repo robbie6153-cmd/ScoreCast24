@@ -59,8 +59,37 @@ let rolloverPromptOpen = false;
   round-ID format, keep using that document when
   the user edits and resubmits it.
 */
+
 let currentEntryDocumentId = null;
 let currentEntryRoundId = null;
+
+
+/*
+  REPLACEMENT MODE
+
+  When the user arrives from View My Team using:
+
+  dream-team-game.html?replace=PLAYER_ID
+
+  the existing saved team is loaded normally,
+  then that player is removed from the editor only.
+
+  Firestore remains unchanged until the user
+  submits a complete replacement squad.
+*/
+
+const pageParameters =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const replacementPlayerId =
+  pageParameters.get("replace");
+
+let replacementModeStarted =
+  false;
+
+
 /*
   GRANDFATHERED TEAM
 
@@ -80,6 +109,7 @@ let grandfatheredFormation =
 
 let hasGrandfatheredTeam =
   false;
+
 
 /* =========================
    PAGE ELEMENTS
@@ -748,36 +778,35 @@ function addPlayer(
     return;
   }
 
-const newRatingTotal =
-  calculateRatingTotal() +
-  player.rating;
+  const newRatingTotal =
+    calculateRatingTotal() +
+    player.rating;
 
+  /*
+    Normally a player cannot be added if
+    they push the squad above MAX_RATING.
 
-/*
-  Normally a player cannot be added if
-  they push the squad above MAX_RATING.
+    Exception:
+    an existing player's original submitted
+    squad can be reconstructed after later
+    rating increases.
+  */
 
-  Exception:
-  an existing player's original submitted
-  squad can be reconstructed after later
-  rating increases.
-*/
+  if (
+    newRatingTotal >
+      MAX_RATING &&
+    !prospectiveSelectionIsGrandfathered(
+      player
+    )
+  ) {
+    showMessage(
+      `Adding ${player.name} would take your team above ` +
+      `${MAX_RATING} rating points.`,
+      "error"
+    );
 
-if (
-  newRatingTotal >
-    MAX_RATING &&
-  !prospectiveSelectionIsGrandfathered(
-    player
-  )
-) {
-  showMessage(
-    `Adding ${player.name} would take your team above ` +
-    `${MAX_RATING} rating points.`,
-    "error"
-  );
-
-  return;
-}
+    return;
+  }
 
   selectedPlayers.push(player);
 
@@ -810,6 +839,7 @@ function removePlayer(
   clearMessage();
   updateDreamTeamDisplay();
 }
+
 
 /* =========================
    GRANDFATHERED TEAM
@@ -960,6 +990,8 @@ function ratingLimitIsSatisfied() {
     selectedTeamMatchesGrandfathered()
   );
 }
+
+
 /* =========================
    TEAM VALIDATION
 ========================= */
@@ -1091,12 +1123,12 @@ function updateDreamTeamDisplay() {
     formationSelect.value ||
     "Not selected";
 
- ratingTotal.classList.toggle(
-  "over-budget",
-  totalRating >
-    MAX_RATING &&
-  !selectedTeamMatchesGrandfathered()
-);
+  ratingTotal.classList.toggle(
+    "over-budget",
+    totalRating >
+      MAX_RATING &&
+    !selectedTeamMatchesGrandfathered()
+  );
 
   updateControlAvailability();
 
@@ -1185,37 +1217,46 @@ async function saveDreamTeamEntry({
           Number(player.points || 0)
       })),
 
-    status:
-      DREAM_CONFIG.manualLock
-        ? "locked"
-        : "submitted",
+ status:
+  DREAM_CONFIG.manualLock
+    ? "locked"
+    : "submitted",
 
-    totalPoints: 0,
+submittedAt:
+  serverTimestamp()
+};
 
-    submittedAt:
-      serverTimestamp()
-  };
 
-  if (rolloverFromRound) {
-    entryData.rolloverFromRound =
-      rolloverFromRound;
-  }
+/*
+  Only initialise points for a brand-new entry.
+  Never reset an existing team's points when
+  the squad is edited.
+*/
 
-  await setDoc(
-    entryReference,
-    entryData,
-    {
-      merge: true
-    }
-  );
-
-  currentEntryDocumentId =
-    entryId;
-
-  currentEntryRoundId =
-    roundId;
+if (!currentEntryDocumentId) {
+  entryData.totalPoints = 0;
 }
 
+
+if (rolloverFromRound) {
+  entryData.rolloverFromRound =
+    rolloverFromRound;
+}
+
+
+await setDoc(
+  entryReference,
+  entryData,
+  {
+    merge: true
+  }
+);
+
+currentEntryDocumentId =
+  entryId;
+
+currentEntryRoundId =
+  roundId;
 
 /* =========================
    FIRESTORE ENTRIES
@@ -1265,6 +1306,10 @@ async function getEntryForRoundIds(
 }
 
 
+/* =========================
+   LOAD SAVED TEAM INTO EDITOR
+========================= */
+
 function loadEntryIntoEditor(
   savedEntry
 ) {
@@ -1279,10 +1324,8 @@ function loadEntryIntoEditor(
     savedEntry
   );
 
-
   formationSelect.value =
     savedEntry.formation || "";
-
 
   const savedPlayers =
     Array.isArray(
@@ -1290,7 +1333,6 @@ function loadEntryIntoEditor(
     )
       ? savedEntry.players
       : [];
-
 
   /*
     Load the current player database
@@ -1313,7 +1355,6 @@ function loadEntryIntoEditor(
               savedPlayer.id
           );
 
-
         return (
           currentPlayer ||
           savedPlayer
@@ -1322,10 +1363,69 @@ function loadEntryIntoEditor(
       })
       .filter(Boolean);
 
-
   updateDreamTeamDisplay();
 }
 
+
+/* =========================
+   START REPLACEMENT MODE
+========================= */
+
+function startReplacementMode() {
+  if (
+    replacementModeStarted ||
+    !replacementPlayerId
+  ) {
+    return;
+  }
+
+  const playerToReplace =
+    selectedPlayers.find(
+      player =>
+        String(player.id) ===
+        String(replacementPlayerId)
+    );
+
+  if (!playerToReplace) {
+    showMessage(
+      "The selected player could not be found in your current squad.",
+      "error"
+    );
+
+    return;
+  }
+
+  replacementModeStarted = true;
+
+  selectedPlayers =
+    selectedPlayers.filter(
+      player =>
+        String(player.id) !==
+        String(replacementPlayerId)
+    );
+
+  /*
+    IMPORTANT:
+
+    This only changes selectedPlayers in the browser.
+
+    The submitted Firestore team remains untouched
+    until a complete valid squad is submitted.
+  */
+
+  updateDreamTeamDisplay();
+
+  showMessage(
+    `${playerToReplace.name} has been removed from the editor. ` +
+    `Choose a replacement and submit your updated Dream Team.`,
+    "success"
+  );
+}
+
+
+/* =========================
+   LOAD EXISTING DREAM TEAM
+========================= */
 
 async function loadExistingDreamTeam() {
   try {
@@ -1355,12 +1455,20 @@ async function loadExistingDreamTeam() {
       savedResult.data
     );
 
-    showMessage(
-      gameIsLocked
-        ? DREAM_CONFIG.messages.loadedLocked
-        : DREAM_CONFIG.messages.loadedEditable,
-      "success"
-    );
+    if (
+      replacementPlayerId &&
+      !gameIsLocked
+    ) {
+      startReplacementMode();
+
+    } else {
+      showMessage(
+        gameIsLocked
+          ? DREAM_CONFIG.messages.loadedLocked
+          : DREAM_CONFIG.messages.loadedEditable,
+        "success"
+      );
+    }
 
     return true;
 

@@ -1024,3 +1024,30 @@ body {
   border-bottom: 1px solid #ddd;
   line-height: 1.4;
 }
+.selected-player-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.selected-player-info {
+  flex: 1;
+}
+
+.remove-dream-player {
+  flex-shrink: 0;
+  border: 1px solid #c62828;
+  background: #fff;
+  color: #c62828;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.remove-dream-player:hover {
+  background: #c62828;
+  color: #fff;
+}
