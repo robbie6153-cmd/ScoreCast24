@@ -47,35 +47,160 @@
     </section>
 
 
+    <section
+      class="player-database-filters"
+      aria-label="Player database filters"
+    >
+
+      <div class="player-database-filter">
+
+        <label for="databasePlayerSearch">
+          Search player
+        </label>
+
+        <input
+          type="search"
+          id="databasePlayerSearch"
+          placeholder="Search player..."
+          autocomplete="off"
+        >
+
+      </div>
+
+
+      <div class="player-database-filter">
+
+        <label for="databasePositionFilter">
+          Position
+        </label>
+
+        <select id="databasePositionFilter">
+
+          <option value="ALL">
+            All positions
+          </option>
+
+          <option value="Goalkeeper">
+            Goalkeepers
+          </option>
+
+          <option value="Defender">
+            Defenders
+          </option>
+
+          <option value="Midfielder">
+            Midfielders
+          </option>
+
+          <option value="Attacker">
+            Attackers
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="player-database-filter">
+
+        <label for="databaseClubFilter">
+          Club
+        </label>
+
+        <select id="databaseClubFilter">
+
+          <option value="ALL">
+            All clubs
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        type="button"
+        id="clearDatabaseFilters"
+        class="database-clear-filters"
+      >
+        Clear filters
+      </button>
+
+    </section>
+
+
     <section class="player-database">
 
-   <h2 class="database-position goalkeeper-heading">
-  Goalkeepers
-</h2>
-<div id="goalkeepers">
-  Loading...
-</div>
+      <section
+        class="player-database-position-section"
+        data-position="Goalkeeper"
+      >
 
-<h2 class="database-position defender-heading">
-  Defenders
-</h2>
-<div id="defenders">
-  Loading...
-</div>
+        <h2
+          class="database-position goalkeeper-heading"
+        >
+          Goalkeepers
+        </h2>
 
-<h2 class="database-position midfielder-heading">
-  Midfielders
-</h2>
-<div id="midfielders">
-  Loading...
-</div>
+        <div id="goalkeepers">
+          Loading...
+        </div>
 
-<h2 class="database-position attacker-heading">
-  Attackers
-</h2>
-<div id="attackers">
-  Loading...
-</div>
+      </section>
+
+
+      <section
+        class="player-database-position-section"
+        data-position="Defender"
+      >
+
+        <h2
+          class="database-position defender-heading"
+        >
+          Defenders
+        </h2>
+
+        <div id="defenders">
+          Loading...
+        </div>
+
+      </section>
+
+
+      <section
+        class="player-database-position-section"
+        data-position="Midfielder"
+      >
+
+        <h2
+          class="database-position midfielder-heading"
+        >
+          Midfielders
+        </h2>
+
+        <div id="midfielders">
+          Loading...
+        </div>
+
+      </section>
+
+
+      <section
+        class="player-database-position-section"
+        data-position="Attacker"
+      >
+
+        <h2
+          class="database-position attacker-heading"
+        >
+          Attackers
+        </h2>
+
+        <div id="attackers">
+          Loading...
+        </div>
+
+      </section>
 
     </section>
 
@@ -84,7 +209,7 @@
 
   <script
     type="module"
-    src="dream-player-database.js?v=4"
+    src="dream-player-database.js?v=5"
   ></script>
 
 </body>

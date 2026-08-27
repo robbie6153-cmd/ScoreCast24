@@ -9,21 +9,63 @@ import {
 const PLAYER_FILES = [
   {
     file: "goalkeepers.json",
-    elementId: "goalkeepers"
+    elementId: "goalkeepers",
+    position: "Goalkeeper"
   },
   {
     file: "defenders.json",
-    elementId: "defenders"
+    elementId: "defenders",
+    position: "Defender"
   },
   {
     file: "midfielders.json",
-    elementId: "midfielders"
+    elementId: "midfielders",
+    position: "Midfielder"
   },
   {
     file: "attackers.json",
-    elementId: "attackers"
+    elementId: "attackers",
+    position: "Attacker"
   }
 ];
+
+
+/* =========================
+   PAGE ELEMENTS
+========================= */
+
+const databasePlayerSearch =
+  document.getElementById(
+    "databasePlayerSearch"
+  );
+
+const databasePositionFilter =
+  document.getElementById(
+    "databasePositionFilter"
+  );
+
+const databaseClubFilter =
+  document.getElementById(
+    "databaseClubFilter"
+  );
+
+const clearDatabaseFilters =
+  document.getElementById(
+    "clearDatabaseFilters"
+  );
+
+
+/* =========================
+   CURRENT DATABASE STATE
+========================= */
+
+let allDatabasePlayers = [];
+
+let scoresByPlayer =
+  new Map();
+
+let scoresByPlayerMatch =
+  new Map();
 
 
 /* =========================
@@ -164,19 +206,6 @@ async function loadPlayerScores() {
   );
 
 
-  /*
-    Find the most recent round.
-
-    Because round IDs are formatted
-    like:
-
-    2026-week-01
-    2026-week-02
-    2026-week-03
-
-    sorting them works correctly.
-  */
-
   const roundIds =
     [
       ...new Set(
@@ -199,25 +228,10 @@ async function loadPlayerScores() {
       : "";
 
 
-  /*
-    Two matching systems:
-
-    1. Exact club + full name
-
-    2. Club + first initial + surname
-
-    This allows:
-
-    Martin Ødegaard
-    M. Ødegaard
-
-    to match each other.
-  */
-
-  const scoresByPlayer =
+  const exactScores =
     new Map();
 
-  const scoresByPlayerMatch =
+  const matchScores =
     new Map();
 
 
@@ -240,15 +254,11 @@ async function loadPlayerScores() {
       );
 
 
-    /*
-      Create the exact-name score record.
-    */
-
     if (
-      !scoresByPlayer.has(key)
+      !exactScores.has(key)
     ) {
 
-      scoresByPlayer.set(
+      exactScores.set(
         key,
         {
           weekScore: 0,
@@ -260,7 +270,7 @@ async function loadPlayerScores() {
 
 
     const scores =
-      scoresByPlayer.get(key);
+      exactScores.get(key);
 
 
     const weekScore =
@@ -269,19 +279,9 @@ async function loadPlayerScores() {
       ) || 0;
 
 
-    /*
-      Every round contributes to
-      the overall player score.
-    */
-
     scores.overallScore +=
       weekScore;
 
-
-    /*
-      Only the latest round contributes
-      to Current Week.
-    */
 
     if (
       scoreDocument.roundId ===
@@ -294,23 +294,9 @@ async function loadPlayerScores() {
     }
 
 
-    /*
-      Also store the abbreviated-name
-      matching version.
-
-      Example:
-
-      Arsenal + Martin Ødegaard
-      Arsenal + M. Ødegaard
-
-      both become:
-
-      arsenal|m|odegaard
-    */
-
     if (matchKey) {
 
-      scoresByPlayerMatch.set(
+      matchScores.set(
         matchKey,
         scores
       );
@@ -321,61 +307,28 @@ async function loadPlayerScores() {
 
 
   return {
-    scoresByPlayer,
-    scoresByPlayerMatch
+    scoresByPlayer:
+      exactScores,
+
+    scoresByPlayerMatch:
+      matchScores
   };
 }
 
 
 /* =========================
-   LOAD PLAYER DATABASE
+   LOAD PLAYER FILES
 ========================= */
 
-async function loadPlayerDatabase() {
+async function loadPlayerFiles() {
 
-  let scoresByPlayer =
-    new Map();
-
-  let scoresByPlayerMatch =
-    new Map();
-
-
-  try {
-
-    const loadedScores =
-      await loadPlayerScores();
-
-
-    scoresByPlayer =
-      loadedScores
-        .scoresByPlayer;
-
-
-    scoresByPlayerMatch =
-      loadedScores
-        .scoresByPlayerMatch;
-
-
-  } catch (error) {
-
-    console.error(
-      "Could not load player scores:",
-      error
-    );
-
-  }
+  const loadedPlayers = [];
 
 
   for (
     const playerFile of
     PLAYER_FILES
   ) {
-
-    const container =
-      document.getElementById(
-        playerFile.elementId
-      );
-
 
     try {
 
@@ -398,45 +351,224 @@ async function loadPlayerDatabase() {
         await response.json();
 
 
-      displayPlayers(
-        container,
-        players,
-        scoresByPlayer,
-        scoresByPlayerMatch
-      );
+      if (
+        !Array.isArray(players)
+      ) {
+        continue;
+      }
+
+
+      for (
+        const player of
+        players
+      ) {
+
+        loadedPlayers.push({
+          ...player,
+
+          position:
+            player.position ||
+            playerFile.position,
+
+          databasePosition:
+            playerFile.position,
+
+          elementId:
+            playerFile.elementId
+        });
+
+      }
 
 
     } catch (error) {
 
       console.error(
+        "Player file loading error:",
         error
       );
-
-
-      if (container) {
-
-        container.textContent =
-          "Unable to load players.";
-
-      }
 
     }
 
   }
 
+
+  allDatabasePlayers =
+    loadedPlayers;
 }
 
 
 /* =========================
-   DISPLAY PLAYERS
+   CLUB FILTER
 ========================= */
 
-function displayPlayers(
-  container,
-  players,
-  scoresByPlayer,
-  scoresByPlayerMatch
+function populateClubFilter() {
+
+  if (!databaseClubFilter) {
+    return;
+  }
+
+
+  const clubs =
+    [
+      ...new Set(
+        allDatabasePlayers
+          .map(
+            player =>
+              player.club
+          )
+          .filter(Boolean)
+      )
+    ]
+      .sort(
+        (a, b) =>
+          a.localeCompare(b)
+      );
+
+
+  databaseClubFilter.innerHTML =
+    `
+      <option value="ALL">
+        All clubs
+      </option>
+    `;
+
+
+  clubs.forEach(club => {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      club;
+
+    option.textContent =
+      club;
+
+    databaseClubFilter
+      .appendChild(
+        option
+      );
+
+  });
+
+}
+
+
+/* =========================
+   FILTER PLAYERS
+========================= */
+
+function getFilteredPlayers() {
+
+  const searchValue =
+    normaliseText(
+      databasePlayerSearch
+        ?.value || ""
+    );
+
+
+  const selectedPosition =
+    databasePositionFilter
+      ?.value ||
+    "ALL";
+
+
+  const selectedClub =
+    databaseClubFilter
+      ?.value ||
+    "ALL";
+
+
+  return allDatabasePlayers
+    .filter(player => {
+
+      const matchesSearch =
+        !searchValue ||
+        normaliseText(
+          player.name
+        ).includes(
+          searchValue
+        );
+
+
+      const matchesPosition =
+        selectedPosition ===
+          "ALL" ||
+        player.databasePosition ===
+          selectedPosition;
+
+
+      const matchesClub =
+        selectedClub ===
+          "ALL" ||
+        player.club ===
+          selectedClub;
+
+
+      return (
+        matchesSearch &&
+        matchesPosition &&
+        matchesClub
+      );
+
+    });
+
+}
+
+
+/* =========================
+   GET PLAYER SCORE
+========================= */
+
+function getPlayerScores(
+  player
 ) {
+
+  const key =
+    makePlayerKey(
+      player.club,
+      player.name
+    );
+
+
+  const matchKey =
+    makePlayerMatchKey(
+      player.club,
+      player.name
+    );
+
+
+  return (
+    scoresByPlayer.get(
+      key
+    ) ||
+    scoresByPlayerMatch.get(
+      matchKey
+    ) ||
+    {
+      weekScore: 0,
+      overallScore: 0
+    }
+  );
+}
+
+
+/* =========================
+   DISPLAY ONE POSITION
+========================= */
+
+function displayPositionPlayers(
+  elementId,
+  players
+) {
+
+  const container =
+    document.getElementById(
+      elementId
+    );
+
 
   if (!container) {
     return;
@@ -446,13 +578,13 @@ function displayPlayers(
   container.innerHTML = "";
 
 
-  if (
-    !Array.isArray(players) ||
-    players.length === 0
-  ) {
+  if (!players.length) {
 
-    container.textContent =
-      "No players available.";
+    container.innerHTML = `
+      <p class="leaderboard-empty-message">
+        No matching players.
+      </p>
+    `;
 
     return;
 
@@ -506,41 +638,10 @@ function displayPlayers(
     sortedPlayers
   ) {
 
-    /*
-      Try an exact full-name match first.
-    */
-
-    const key =
-      makePlayerKey(
-        player.club,
-        player.name
-      );
-
-
-    /*
-      If that fails, try:
-
-      club + first initial + surname.
-    */
-
-    const matchKey =
-      makePlayerMatchKey(
-        player.club,
-        player.name
-      );
-
-
     const scores =
-      scoresByPlayer.get(
-        key
-      ) ||
-      scoresByPlayerMatch.get(
-        matchKey
-      ) ||
-      {
-        weekScore: 0,
-        overallScore: 0
-      };
+      getPlayerScores(
+        player
+      );
 
 
     const row =
@@ -566,6 +667,191 @@ function displayPlayers(
     );
 
   }
+
+}
+
+
+/* =========================
+   RENDER DATABASE
+========================= */
+
+function renderDatabase() {
+
+  const filteredPlayers =
+    getFilteredPlayers();
+
+
+  for (
+    const playerFile of
+    PLAYER_FILES
+  ) {
+
+    const positionPlayers =
+      filteredPlayers.filter(
+        player =>
+          player.databasePosition ===
+          playerFile.position
+      );
+
+
+    const section =
+      document.querySelector(
+        `.player-database-position-section[data-position="${playerFile.position}"]`
+      );
+
+
+    /*
+      Hide an entire position section
+      when there are no matching players.
+    */
+
+    if (section) {
+
+      section.hidden =
+        positionPlayers.length ===
+        0;
+
+    }
+
+
+    displayPositionPlayers(
+      playerFile.elementId,
+      positionPlayers
+    );
+
+  }
+
+}
+
+
+/* =========================
+   FILTER EVENTS
+========================= */
+
+function setupFilterEvents() {
+
+  if (
+    databasePlayerSearch
+  ) {
+
+    databasePlayerSearch
+      .addEventListener(
+        "input",
+        renderDatabase
+      );
+
+  }
+
+
+  if (
+    databasePositionFilter
+  ) {
+
+    databasePositionFilter
+      .addEventListener(
+        "change",
+        renderDatabase
+      );
+
+  }
+
+
+  if (
+    databaseClubFilter
+  ) {
+
+    databaseClubFilter
+      .addEventListener(
+        "change",
+        renderDatabase
+      );
+
+  }
+
+
+  if (
+    clearDatabaseFilters
+  ) {
+
+    clearDatabaseFilters
+      .addEventListener(
+        "click",
+        () => {
+
+          if (
+            databasePlayerSearch
+          ) {
+            databasePlayerSearch.value =
+              "";
+          }
+
+
+          if (
+            databasePositionFilter
+          ) {
+            databasePositionFilter.value =
+              "ALL";
+          }
+
+
+          if (
+            databaseClubFilter
+          ) {
+            databaseClubFilter.value =
+              "ALL";
+          }
+
+
+          renderDatabase();
+
+        }
+      );
+
+  }
+
+}
+
+
+/* =========================
+   LOAD DATABASE
+========================= */
+
+async function loadPlayerDatabase() {
+
+  try {
+
+    const loadedScores =
+      await loadPlayerScores();
+
+
+    scoresByPlayer =
+      loadedScores
+        .scoresByPlayer;
+
+
+    scoresByPlayerMatch =
+      loadedScores
+        .scoresByPlayerMatch;
+
+
+  } catch (error) {
+
+    console.error(
+      "Could not load player scores:",
+      error
+    );
+
+  }
+
+
+  await loadPlayerFiles();
+
+
+  populateClubFilter();
+
+  setupFilterEvents();
+
+  renderDatabase();
 
 }
 
