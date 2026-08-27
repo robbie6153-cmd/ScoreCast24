@@ -28,7 +28,7 @@ export const DREAM_CONFIG = {
   playerFiles: [
     "./goalkeepers.json?v=2",
     "./defenders.json?v=2",
-    "./midfielders.json?v=3",
+    "./midfielders.json?v=4",
     "./attackers.json?v=3"
   ],
 
