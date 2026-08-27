@@ -47,107 +47,57 @@
     </section>
 
 
-    <section
-      class="player-database-filters"
-      aria-label="Player database filters"
+    <section class="player-database-filters">
+
+  <div class="player-database-filter">
+    <label for="databasePlayerSearch">
+      Search player
+    </label>
+
+    <input
+      type="search"
+      id="databasePlayerSearch"
+      placeholder="Search player..."
+      autocomplete="off"
     >
-
-      <div class="player-database-filter">
-
-        <label for="databasePlayerSearch">
-          Search player
-        </label>
-
-        <input
-          type="search"
-          id="databasePlayerSearch"
-          placeholder="Search player..."
-          autocomplete="off"
-        >
-
-      </div>
+  </div>
 
 
-      <div class="player-database-filter">
+  <div class="player-database-filter">
+    <label for="databasePositionFilter">
+      Position
+    </label>
 
-        <label for="databasePositionFilter">
-          Position
-        </label>
-
-        <select id="databasePositionFilter">
-
-          <option value="ALL">
-            All positions
-          </option>
-
-          <option value="Goalkeeper">
-            Goalkeepers
-          </option>
-
-          <option value="Defender">
-            Defenders
-          </option>
-
-          <option value="Midfielder">
-            Midfielders
-          </option>
-
-          <option value="Attacker">
-            Attackers
-          </option>
-
-        </select>
-
-      </div>
+    <select id="databasePositionFilter">
+      <option value="ALL">All positions</option>
+      <option value="Goalkeeper">Goalkeepers</option>
+      <option value="Defender">Defenders</option>
+      <option value="Midfielder">Midfielders</option>
+      <option value="Attacker">Attackers</option>
+    </select>
+  </div>
 
 
-      <div class="player-database-filter">
+  <div class="player-database-filter">
+    <label for="databaseClubFilter">
+      Club
+    </label>
 
-        <label for="databaseClubFilter">
-          Club
-        </label>
-
-        <select id="databaseClubFilter">
-
-          <option value="ALL">
-            All clubs
-          </option>
-
-        </select>
-
-      </div>
+    <select id="databaseClubFilter">
+      <option value="ALL">All clubs</option>
+    </select>
+  </div>
 
 
-      <button
-        type="button"
-        id="clearDatabaseFilters"
-        class="database-clear-filters"
-      >
-        Clear filters
-      </button>
+  <button
+    type="button"
+    id="clearDatabaseFilters"
+    class="database-clear-filters"
+  >
+    Clear filters
+  </button>
 
-    </section>
-
-
-    <section class="player-database">
-
-      <section
-        class="player-database-position-section"
-        data-position="Goalkeeper"
-      >
-
-        <h2
-          class="database-position goalkeeper-heading"
-        >
-          Goalkeepers
-        </h2>
-
-        <div id="goalkeepers">
-          Loading...
-        </div>
-
-      </section>
-
+</section>
 
       <section
         class="player-database-position-section"
