@@ -52,7 +52,56 @@ function normaliseText(value) {
     )
     .toLowerCase();
 }
+function makePlayerMatchKey(
+  club,
+  playerName
+) {
+  const normalisedClub =
+    normaliseText(club);
 
+  const cleanedName =
+    String(playerName || "")
+      .replace(/Ø/g, "O")
+      .replace(/ø/g, "o")
+      .replace(/Æ/g, "AE")
+      .replace(/æ/g, "ae")
+      .replace(/Œ/g, "OE")
+      .replace(/œ/g, "oe")
+      .replace(/Ł/g, "L")
+      .replace(/ł/g, "l")
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+      .replace(
+        /[^a-zA-Z0-9\s]/g,
+        ""
+      )
+      .trim()
+      .toLowerCase();
+
+  const parts =
+    cleanedName
+      .split(/\s+/)
+      .filter(Boolean);
+
+  if (!parts.length) {
+    return "";
+  }
+
+  const firstInitial =
+    parts[0].charAt(0);
+
+  const surname =
+    parts[parts.length - 1];
+
+  return (
+    `${normalisedClub}|` +
+    `${firstInitial}|` +
+    `${surname}`
+  );
+}
 
 function makePlayerKey(
   club,
@@ -115,7 +164,10 @@ async function loadPlayerScores() {
 
 
   const scoresByPlayer =
-    new Map();
+  new Map();
+
+const scoresByPlayerMatch =
+  new Map();
 
 
   for (
@@ -128,7 +180,11 @@ async function loadPlayerScores() {
         scoreDocument.club,
         scoreDocument.playerName
       );
-
+const matchKey =
+  makePlayerMatchKey(
+    scoreDocument.club,
+    scoreDocument.playerName
+  );
 
     if (
       !scoresByPlayer.has(key)
@@ -177,21 +233,37 @@ async function loadPlayerScores() {
 
   }
 
-
-  return scoresByPlayer;
+ return {
+  scoresByPlayer,
+  scoresByPlayerMatch
+};
 }
 
-
+if (matchKey) {
+  scoresByPlayerMatch.set(
+    matchKey,
+    scores
+  );
+}
 async function loadPlayerDatabase() {
 
-  let scoresByPlayer =
-    new Map();
+let scoresByPlayer =
+  new Map();
+
+let scoresByPlayerMatch =
+  new Map();
 
 
   try {
 
-    scoresByPlayer =
-      await loadPlayerScores();
+const loadedScores =
+  await loadPlayerScores();
+
+scoresByPlayer =
+  loadedScores.scoresByPlayer;
+
+scoresByPlayerMatch =
+  loadedScores.scoresByPlayerMatch;
 
   } catch (error) {
 
@@ -235,12 +307,12 @@ async function loadPlayerDatabase() {
         await response.json();
 
 
-      displayPlayers(
-        container,
-        players,
-        scoresByPlayer
-      );
-
+   displayPlayers(
+  container,
+  players,
+  scoresByPlayer,
+  scoresByPlayerMatch
+);
 
     } catch (error) {
 
@@ -259,7 +331,8 @@ async function loadPlayerDatabase() {
 function displayPlayers(
   container,
   players,
-  scoresByPlayer
+  scoresByPlayer,
+  scoresByPlayerMatch
 ) {
 
   container.innerHTML = "";
@@ -317,18 +390,25 @@ function displayPlayers(
     sortedPlayers
   ) {
 
-    const key =
-      makePlayerKey(
-        player.club,
-        player.name
-      );
+  const key =
+  makePlayerKey(
+    player.club,
+    player.name
+  );
+
+const matchKey =
+  makePlayerMatchKey(
+    player.club,
+    player.name
+  );
 
 
-    const scores =
-      scoresByPlayer.get(key) || {
-        weekScore: 0,
-        overallScore: 0
-      };
+const scores =
+  scoresByPlayer.get(key) ||
+  scoresByPlayerMatch.get(matchKey) || {
+    weekScore: 0,
+    overallScore: 0
+  };
 
 
     const row =
