@@ -1,6 +1,7 @@
 [
   {"id":"benjamin-white","name":"Ben White","club":"Arsenal","position":"Defender","rating":84},
   {"id":"cristhian-mosquera","name":"Cristhian Mosquera","club":"Arsenal","position":"Defender","rating":82},
+  {"id":"ezri-konsa","name":"Ezri Konsa","club":"Arsenal","position":"Defender","rating":84},
   {"id":"gabriel-magalhaes","name":"Gabriel Magalhães","club":"Arsenal","position":"Defender","rating":91},
   {"id":"jurrien-timber","name":"Jurriën Timber","club":"Arsenal","position":"Defender","rating":89},
   {"id":"marli-salmon","name":"Marli Salmon","club":"Arsenal","position":"Defender","rating":70},
@@ -8,7 +9,6 @@
   {"id":"riccardo-calafiori","name":"Riccardo Calafiori","club":"Arsenal","position":"Defender","rating":85},
   {"id":"william-saliba","name":"William Saliba","club":"Arsenal","position":"Defender","rating":92},
 
-  {"id":"ezri-konsa","name":"Ezri Konsa","club":"Aston Villa","position":"Defender","rating":84},
   {"id":"ian-maatsen","name":"Ian Maatsen","club":"Aston Villa","position":"Defender","rating":82},
   {"id":"kosta-nedeljkovic","name":"Kosta Nedeljković","club":"Aston Villa","position":"Defender","rating":74},
   {"id":"matty-cash","name":"Matty Cash","club":"Aston Villa","position":"Defender","rating":83},
@@ -194,7 +194,6 @@
   {"id":"andrew-robertson","name":"Andrew Robertson","club":"Tottenham Hotspur","position":"Defender","rating":83},
   {"id":"ben-davies","name":"Ben Davies","club":"Tottenham Hotspur","position":"Defender","rating":76},
   {"id":"destiny-udogie","name":"Destiny Udogie","club":"Tottenham Hotspur","position":"Defender","rating":81},
-  {"id":"djed-spence","name":"Djed Spence","club":"Tottenham Hotspur","position":"Defender","rating":81},
   {"id":"jan-paul-van-hecke","name":"Jan Paul van Hecke","club":"Tottenham Hotspur","position":"Defender","rating":85},
   {"id":"kevin-danso","name":"Kevin Danso","club":"Tottenham Hotspur","position":"Defender","rating":80},
   {"id":"kota-takai","name":"Kota Takai","club":"Tottenham Hotspur","position":"Defender","rating":75},
