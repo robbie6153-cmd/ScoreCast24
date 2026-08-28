@@ -87,7 +87,11 @@ const currentRound =
 
 let selectedRound =
   currentRound;
+/* =====================================================
+   LIVE RESULTS FROM FIRESTORE
+===================================================== */
 
+let liveResultsByRound = {};
 
 /* =====================================================
    LEADERBOARD DATA
@@ -201,7 +205,70 @@ function timestampToMillis(timestamp) {
 
 }
 
+/* =====================================================
+   LOAD LIVE RESULTS FROM FIRESTORE
+===================================================== */
 
+async function loadLiveResults() {
+
+  liveResultsByRound = {};
+
+  const resultsSnap =
+    await getDocs(
+      collection(
+        db,
+        "scorecast24_results"
+      )
+    );
+
+
+  resultsSnap.forEach(
+    (docSnap) => {
+
+      const data =
+        docSnap.data();
+
+
+      const round =
+        data.round;
+
+      const fixtureId =
+        String(
+          data.fixtureId || ""
+        );
+
+
+      if (
+        !round ||
+        !fixtureId
+      ) {
+        return;
+      }
+
+
+      if (
+        !liveResultsByRound[round]
+      ) {
+
+        liveResultsByRound[round] = {};
+
+      }
+
+
+      liveResultsByRound[round][fixtureId] = {
+
+        homeScore:
+          data.homeScore ?? null,
+
+        awayScore:
+          data.awayScore ?? null
+
+      };
+
+    }
+  );
+
+}
 /* =====================================================
    ROUND LABEL
 ===================================================== */
@@ -307,8 +374,10 @@ function calculateRoundStats(
   round
 ) {
 
-  const roundResults =
-    resultsByRound[round];
+ const roundResults = {
+  ...(resultsByRound[round] || {}),
+  ...(liveResultsByRound[round] || {})
+};
 
 
   /*
@@ -1359,7 +1428,11 @@ async function initialiseLeaderboard() {
       }
     );
 
+/* =========================
+   LOAD LIVE RESULTS
+========================= */
 
+await loadLiveResults();
     /* =========================
        BUILD DROPDOWN
     ========================= */
