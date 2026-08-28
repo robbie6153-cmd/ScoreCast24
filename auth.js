@@ -250,7 +250,7 @@ onAuthStateChanged(auth, user => {
       logoutBtn.id =
         "logoutMenuBtn";
 
-     logoutBtn.className = "menu-link";
+    logoutBtn.className = "";
 
       logoutBtn.textContent =
         "Log out";
