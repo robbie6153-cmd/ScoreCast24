@@ -96,8 +96,15 @@ function makePlayerKey(
 /* =====================================================
    PLAYER SCORES
 ===================================================== */
-
 async function loadPlayerScores() {
+  const CURRENT_ROUND_ID =
+    "2026-week-02";
+
+  const SEASON_ROUND_IDS = [
+    "2026-week-01",
+    "2026-week-02"
+  ];
+
   const snapshot =
     await getDocs(
       collection(
@@ -106,67 +113,75 @@ async function loadPlayerScores() {
       )
     );
 
-  const scoreDocuments = [];
-
-  snapshot.forEach(documentSnapshot => {
-    scoreDocuments.push(
-      documentSnapshot.data()
-    );
-  });
-
-  const roundIds =
-    [
-      ...new Set(
-        scoreDocuments
-          .map(item => item.roundId)
-          .filter(Boolean)
-      )
-    ].sort();
-
-  const currentRoundId =
-    roundIds.length > 0
-      ? roundIds[roundIds.length - 1]
-      : "";
-
   const scoresByPlayer =
     new Map();
 
-  for (const scoreDocument of scoreDocuments) {
-    const key =
-      makePlayerKey(
-        scoreDocument.club,
-        scoreDocument.playerName
-      );
+  snapshot.forEach(
+    documentSnapshot => {
+      const scoreDocument =
+        documentSnapshot.data();
 
-    if (!scoresByPlayer.has(key)) {
-      scoresByPlayer.set(key, {
-        weekScore: 0,
-        overallScore: 0
-      });
-    }
+      /*
+        Ignore old testing rounds.
+      */
+      if (
+        !SEASON_ROUND_IDS.includes(
+          scoreDocument.roundId
+        )
+      ) {
+        return;
+      }
 
-    const scores =
-      scoresByPlayer.get(key);
+      const key =
+        makePlayerKey(
+          scoreDocument.club,
+          scoreDocument.playerName
+        );
 
-    const weekScore =
-      Number(
-        scoreDocument.weekScore
-      ) || 0;
+      if (
+        !scoresByPlayer.has(key)
+      ) {
+        scoresByPlayer.set(
+          key,
+          {
+            weekScore: 0,
+            overallScore: 0
+          }
+        );
+      }
 
-    scores.overallScore +=
-      weekScore;
+      const scores =
+        scoresByPlayer.get(key);
 
-    if (
-      scoreDocument.roundId ===
-      currentRoundId
-    ) {
-      scores.weekScore =
+      const weekScore =
+        Number(
+          scoreDocument.weekScore
+        ) || 0;
+
+      /*
+        Season total:
+        Week One + Week Two.
+      */
+      scores.overallScore +=
         weekScore;
+
+      /*
+        Current weekly score:
+        Week Two only.
+      */
+      if (
+        scoreDocument.roundId ===
+        CURRENT_ROUND_ID
+      ) {
+        scores.weekScore =
+          weekScore;
+      }
     }
-  }
+  );
 
   return scoresByPlayer;
 }
+
 
 
 /* =====================================================
