@@ -868,9 +868,9 @@ async function loadPremierLeagueResults() {
                 b.kickoff || 0
               ).getTime();
 
-            return (
-              dateA - dateB
-            );
+           return (
+  dateB - dateA
+);
           }
         );
 
