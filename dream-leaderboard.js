@@ -38,10 +38,10 @@ const viewMyDreamTeamBtn =
   to Week One.
 */
 
-const CURRENT_WEEK_NUMBER = 1;
+const CURRENT_WEEK_NUMBER = 2;
 
 const CURRENT_ROUND_ID =
-  "2026-week-01";
+  "2026-week-02";
 
 
 function escapeHtml(value) {
@@ -272,7 +272,7 @@ function renderLeaderboard(
   if (!entries.length) {
     showLeaderboardMessage(
       mode === "weekly"
-        ? "No Dream Teams have been submitted for Week One yet."
+        ? "No Dream Teams have been submitted for Week Two yet."
         : "No Dream Team season entries are available yet."
     );
 
@@ -426,7 +426,7 @@ async function getActiveRoundEntries() {
 
 async function loadWeeklyLeaderboard() {
   showLeaderboardMessage(
-   "Loading the Week One Dream Team leaderboard..."
+   "Loading the Week Two Dream Team leaderboard..."
   );
 
   try {
