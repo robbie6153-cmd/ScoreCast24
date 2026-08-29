@@ -393,13 +393,6 @@ function renderLeaderboard(
 
 
 async function getActiveRoundEntries() {
-  /*
-    At present, every stored Dream Team entry
-    belongs to Week One.
-
-    This also recovers entries saved under the
-    previous automatic date-based round IDs.
-  */
   const snapshot =
     await getDocs(
       collection(
@@ -408,19 +401,22 @@ async function getActiveRoundEntries() {
       )
     );
 
-  const entries =
-    snapshot.docs.map(
+  return snapshot.docs
+    .map(
       documentSnapshot => ({
         id:
           documentSnapshot.id,
 
         ...documentSnapshot.data()
       })
+    )
+    .filter(
+      entry =>
+        entry.roundId ===
+        CURRENT_ROUND_ID &&
+        entry.status ===
+        "submitted"
     );
-
-  return removeCurrentRoundDuplicates(
-    entries
-  );
 }
 
 
@@ -465,15 +461,27 @@ async function loadSeasonLeaderboard() {
         )
       );
 
-    const allEntries =
-      snapshot.docs.map(
-        documentSnapshot => ({
-          id:
-            documentSnapshot.id,
+ const allEntries =
+  snapshot.docs
+    .map(
+      documentSnapshot => ({
+        id:
+          documentSnapshot.id,
 
-          ...documentSnapshot.data()
-        })
-      );
+        ...documentSnapshot.data()
+      })
+    )
+    .filter(
+      entry =>
+        entry.status ===
+          "submitted" &&
+        (
+          entry.roundId ===
+            "2026-week-01" ||
+          entry.roundId ===
+            "2026-week-02"
+        )
+    );
 
     const entries =
       removeSeasonDuplicates(
