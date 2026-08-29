@@ -20,9 +20,9 @@ const seasonDreamLeaderboardTab =
     "seasonDreamLeaderboardTab"
   );
 
-const weeklyDreamLeaderboardTab =
+const dreamWeekSelector =
   document.getElementById(
-    "weeklyDreamLeaderboardTab"
+    "dreamWeekSelector"
   );
 
 const viewMyDreamTeamBtn =
@@ -272,7 +272,7 @@ function renderLeaderboard(
   if (!entries.length) {
     showLeaderboardMessage(
       mode === "weekly"
-        ? "No Dream Teams have been submitted for Week Two yet."
+        ? "No Dream Teams have been submitted for this week yet."
         : "No Dream Team season entries are available yet."
     );
 
@@ -392,7 +392,7 @@ function renderLeaderboard(
 }
 
 
-async function getActiveRoundEntries() {
+async function getActiveRoundEntries(roundId = CURRENT_ROUND_ID) {
   const snapshot =
     await getDocs(
       collection(
@@ -412,22 +412,26 @@ async function getActiveRoundEntries() {
     )
     .filter(
       entry =>
-        entry.roundId ===
-        CURRENT_ROUND_ID &&
+       entry.roundId ===
+  roundId &&
         entry.status ===
         "submitted"
     );
 }
 
 
-async function loadWeeklyLeaderboard() {
+async function loadWeeklyLeaderboard(
+  roundId = dreamWeekSelector?.value || CURRENT_ROUND_ID
+) {
   showLeaderboardMessage(
-   "Loading the Week Two Dream Team leaderboard..."
+   "Loading Dream Team leaderboard..."
   );
 
   try {
-    const entries =
-      await getActiveRoundEntries();
+  const entries =
+  await getActiveRoundEntries(
+    roundId
+  );
 
     renderLeaderboard(
       sortEntries(entries),
@@ -577,11 +581,6 @@ async function loadSeasonLeaderboard() {
 
 
 function showWeeklyTab() {
-  weeklyDreamLeaderboardTab
-    ?.classList.add(
-      "active"
-    );
-
   seasonDreamLeaderboardTab
     ?.classList.remove(
       "active"
@@ -597,11 +596,6 @@ function showSeasonTab() {
       "active"
     );
 
-  weeklyDreamLeaderboardTab
-    ?.classList.remove(
-      "active"
-    );
-
   loadSeasonLeaderboard();
 }
 
@@ -613,12 +607,12 @@ seasonDreamLeaderboardTab
   );
 
 
-weeklyDreamLeaderboardTab
-  ?.addEventListener(
-    "click",
-    showWeeklyTab
-  );
-
+dreamWeekSelector?.addEventListener(
+  "change",
+  () => {
+    showWeeklyTab();
+  }
+);
 
 onAuthStateChanged(
   auth,

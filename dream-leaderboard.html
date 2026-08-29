@@ -129,13 +129,18 @@
           Season Leaderboard
         </button>
 
-        <button
-          type="button"
-          id="weeklyDreamLeaderboardTab"
-          class="round-tab"
-        >
-          Current Week
-        </button>
+  <select
+  id="dreamWeekSelector"
+  class="round-tab"
+>
+  <option value="2026-week-01">
+    Week One
+  </option>
+
+  <option value="2026-week-02" selected>
+    Week Two
+  </option>
+</select>
 
       </div>
 
@@ -185,7 +190,7 @@
 
   <script
     type="module"
-    src="dream-leaderboard.js?v=8"
+    src="dream-leaderboard.js?v=9"
   ></script>
 
 </body>
