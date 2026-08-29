@@ -86,7 +86,7 @@ const currentRound =
 
 
 let selectedRound =
-  currentRound;
+  "English League Week Two";
 /* =====================================================
    LIVE RESULTS FROM FIRESTORE
 ===================================================== */
