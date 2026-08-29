@@ -84,9 +84,12 @@ const englishLeagueRounds = [
 const currentRound =
   "English League Week Three";
 
+const currentLeaderboardRound =
+  "English League Week Two";
+
 
 let selectedRound =
-  "English League Week Two";
+  currentLeaderboardRound;
 /* =====================================================
    LIVE RESULTS FROM FIRESTORE
 ===================================================== */
