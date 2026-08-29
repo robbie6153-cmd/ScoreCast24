@@ -212,221 +212,123 @@ export const resultsByRound = {
       awayScore: 1
     }
 
-  }
-
-};
-/* =========================
-   SCORECAST24 RESULTS
-========================= */
-
-
-/*
-  Add each week's results here.
-
-  Once a match finishes, replace:
-
-  homeScore: null,
-  awayScore: null
-
-  with the final score.
-
-  Both leaderboard.js and
-  mini-league.js can import
-  this same file.
-*/
-
-
-export const resultsByRound = {
-
-
-  /* =========================
-     ENGLISH LEAGUE WEEK ONE
-  ========================= */
-
-  "English League Week One": {
-
-    1: {
-      homeScore: 2,
-      awayScore: 2
-    },
-
-    2: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    3: {
-      homeScore: 0,
-      awayScore: 2
-    },
-
-    4: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    5: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    6: {
-      homeScore: 1,
-      awayScore: 2
-    },
-
-    7: {
-      homeScore: 1,
-      awayScore: 3
-    },
-
-    8: {
-      homeScore: 1,
-      awayScore: 2
-    },
-
-    9: {
-      homeScore: 0,
-      awayScore: 0
-    },
-
-    10: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    11: {
-      homeScore: 3,
-      awayScore: 0
-    },
-
-    12: {
-      homeScore: 2,
-      awayScore: 2
-    },
-
-    13: {
-      homeScore: 1,
-      awayScore: 1
-    }
-
   },
 
 
   /* =========================
-     ENGLISH LEAGUE WEEK TWO
+     ENGLISH LEAGUE WEEK THREE
   ========================= */
 
-  "English League Week Two": {
+  "English League Week Three": {
 
     1: {
-      homeScore: 3,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     2: {
-      homeScore: 2,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     3: {
-      homeScore: 2,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     4: {
-      homeScore: 2,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     },
 
     5: {
-      homeScore: 0,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     },
 
     6: {
-      homeScore: 3,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     7: {
-      homeScore: 4,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     8: {
-      homeScore: 2,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     },
 
     9: {
-      homeScore: 2,
-      awayScore: 2
+      homeScore: null,
+      awayScore: null
     },
 
     10: {
-      homeScore: 2,
-      awayScore: 3
+      homeScore: null,
+      awayScore: null
     },
 
     11: {
-      homeScore: 2,
-      awayScore: 2
+      homeScore: null,
+      awayScore: null
     },
 
     12: {
-      homeScore: 1,
-      awayScore: 3
+      homeScore: null,
+      awayScore: null
     },
 
     13: {
-      homeScore: 3,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     14: {
-      homeScore: 2,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     },
 
     15: {
-      homeScore: 2,
-      awayScore: 2
+      homeScore: null,
+      awayScore: null
     },
 
     16: {
-      homeScore: 1,
-      awayScore: 3
+      homeScore: null,
+      awayScore: null
     },
 
     17: {
-      homeScore: 0,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     18: {
-      homeScore: 3,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     },
 
     19: {
-      homeScore: 0,
-      awayScore: 0
+      homeScore: null,
+      awayScore: null
     },
 
     20: {
-      homeScore: 1,
-      awayScore: 2
+      homeScore: null,
+      awayScore: null
     },
 
     21: {
-      homeScore: 1,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     },
 
     22: {
-      homeScore: 3,
-      awayScore: 1
+      homeScore: null,
+      awayScore: null
     }
 
   }
