@@ -34,7 +34,7 @@ const currentRound =
   Week Two is finished.
 */
 const homePreviewRound =
-  "English League Week Two";
+  "English League Week Three";
 
 
 const submittedStorageKey =
