@@ -48,7 +48,7 @@ const submittedStorageKey =
 /*
   Week Three is OPEN.
 */
-const roundClosed = false;
+const roundClosed = true;
 
 
 /*
