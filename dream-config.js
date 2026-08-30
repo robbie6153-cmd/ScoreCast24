@@ -11,7 +11,7 @@ export const DREAM_CONFIG = {
     Manual gameweek controls
   */
 
-  manualLock: false,
+  manualLock: true,
 
   currentRoundId: "2026-week-01",
 
