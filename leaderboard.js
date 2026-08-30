@@ -69,6 +69,11 @@ const englishLeagueRounds = [
   {
     id: "English League Week Three",
     label: "Week Three"
+  },
+
+  {
+    id: "English League Week Four",
+    label: "Week Four"
   }
 
 ];
