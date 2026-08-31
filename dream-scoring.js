@@ -59,30 +59,34 @@ export function normaliseDreamTeamPosition(position) {
     .trim()
     .toLowerCase();
 
-  const positionNames = {
-    gk: "Goalkeeper",
-    goalkeeper: "Goalkeeper",
-    goalkeepers: "Goalkeeper",
+const positionNames = {
+  g: "Goalkeeper",
+  gk: "Goalkeeper",
+  goalkeeper: "Goalkeeper",
+  goalkeepers: "Goalkeeper",
 
-    def: "Defender",
-    df: "Defender",
-    defender: "Defender",
-    defenders: "Defender",
+  d: "Defender",
+  def: "Defender",
+  df: "Defender",
+  defender: "Defender",
+  defenders: "Defender",
 
-    mid: "Midfielder",
-    mf: "Midfielder",
-    midfielder: "Midfielder",
-    midfielders: "Midfielder",
+  m: "Midfielder",
+  mid: "Midfielder",
+  mf: "Midfielder",
+  midfielder: "Midfielder",
+  midfielders: "Midfielder",
 
-    att: "Attacker",
-    fw: "Attacker",
-    st: "Attacker",
-    forward: "Attacker",
-    forwards: "Attacker",
-    striker: "Attacker",
-    attacker: "Attacker",
-    attackers: "Attacker"
-  };
+  f: "Attacker",
+  att: "Attacker",
+  fw: "Attacker",
+  st: "Attacker",
+  forward: "Attacker",
+  forwards: "Attacker",
+  striker: "Attacker",
+  attacker: "Attacker",
+  attackers: "Attacker"
+};
 
   return positionNames[value] || position;
 }
@@ -160,7 +164,7 @@ export function calculateRatingPoints(rating) {
 
 
 /*
-  Goalkeeper goals-conceded scoring:
+ Goalkeeper and defender goals-conceded scoring:
 
   0 conceded: clean-sheet points are handled separately
   1 conceded: 0 points
@@ -170,7 +174,7 @@ export function calculateRatingPoints(rating) {
   5 conceded: -4 points
 */
 
-export function calculateGoalkeeperConcededPoints(
+export function calculateGoalsConcededPoints(
   goalsConceded
 ) {
   const conceded =
@@ -310,29 +314,34 @@ export function calculateDreamTeamPlayerScore(stats = {}) {
   let cleanSheetPoints = 0;
   let goalsConcededPoints = 0;
 
-  if (position === "Goalkeeper") {
-    penaltySavePoints =
-      penaltiesSaved *
-      DREAM_SCORING_RULES.penaltySaved;
+if (position === "Goalkeeper") {
+  penaltySavePoints =
+    penaltiesSaved *
+    DREAM_SCORING_RULES.penaltySaved;
 
-    if (cleanSheet) {
-      cleanSheetPoints =
-        DREAM_SCORING_RULES.cleanSheet.Goalkeeper;
-    }
-
-    goalsConcededPoints =
-      calculateGoalkeeperConcededPoints(
-        goalsConceded
-      );
+  if (cleanSheet) {
+    cleanSheetPoints =
+      DREAM_SCORING_RULES.cleanSheet.Goalkeeper;
   }
 
-  if (
-    position === "Defender" &&
-    cleanSheet
-  ) {
+  goalsConcededPoints =
+    calculateGoalsConcededPoints(
+      goalsConceded
+    );
+}
+
+
+if (position === "Defender") {
+  if (cleanSheet) {
     cleanSheetPoints =
       DREAM_SCORING_RULES.cleanSheet.Defender;
   }
+
+  goalsConcededPoints =
+    calculateGoalsConcededPoints(
+      goalsConceded
+    );
+}
 
   const breakdown = {
     goals: goalPoints,
@@ -417,3 +426,4 @@ export function calculateDreamTeamTotal(
     totalPoints
   };
 }
+  
