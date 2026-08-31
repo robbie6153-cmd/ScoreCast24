@@ -1,4 +1,4 @@
-mini * {
+* {
   box-sizing: border-box;
 }
 
@@ -61,7 +61,7 @@ body {
 .hero-buttons {
   position: absolute;
   left: 50%;
-  top: 42%;
+  top: 42vh;
   transform: translateX(-50%);
   width: 90%;
   max-width: 560px;
