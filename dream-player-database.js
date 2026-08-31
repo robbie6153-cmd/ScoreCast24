@@ -109,7 +109,7 @@ function makePlayerKey(
   playerName
 ) {
   return (
-    `${normaliseText(club)}|` +
+    `${normaliseClubName(club)}|` +
     `${normaliseText(playerName)}`
   );
 }
@@ -123,8 +123,8 @@ function makePlayerMatchKey(
   club,
   playerName
 ) {
-  const normalisedClub =
-    normaliseText(club);
+ const normalisedClub =
+  normaliseClubName(club);
 
   const cleanedName =
     String(playerName || "")
@@ -152,7 +152,18 @@ function makePlayerMatchKey(
       )
       .trim()
       .toLowerCase();
+function normaliseClubName(value) {
 
+  const club =
+    normaliseText(value);
+
+  const aliases = {
+    ipswich: "ipswichtown",
+    ipswichtown: "ipswichtown"
+  };
+
+  return aliases[club] || club;
+}
   const parts =
     cleanedName
       .split(/\s+/)
