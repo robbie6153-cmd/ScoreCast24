@@ -101,6 +101,30 @@ function normaliseText(value) {
 
 
 /* =========================
+   CLUB NAME NORMALISATION
+========================= */
+
+function normaliseClubName(value) {
+
+  const club =
+    normaliseText(value);
+
+  const aliases = {
+    ipswich:
+      "ipswichtown",
+
+    ipswichtown:
+      "ipswichtown"
+  };
+
+  return (
+    aliases[club] ||
+    club
+  );
+}
+
+
+/* =========================
    EXACT PLAYER KEY
 ========================= */
 
@@ -108,6 +132,7 @@ function makePlayerKey(
   club,
   playerName
 ) {
+
   return (
     `${normaliseClubName(club)}|` +
     `${normaliseText(playerName)}`
@@ -123,8 +148,11 @@ function makePlayerMatchKey(
   club,
   playerName
 ) {
- const normalisedClub =
-  normaliseClubName(club);
+
+  const normalisedClub =
+    normaliseClubName(
+      club
+    );
 
   const cleanedName =
     String(playerName || "")
@@ -152,26 +180,18 @@ function makePlayerMatchKey(
       )
       .trim()
       .toLowerCase();
-function normaliseClubName(value) {
 
-  const club =
-    normaliseText(value);
 
-  const aliases = {
-    ipswich: "ipswichtown",
-    ipswichtown: "ipswichtown"
-  };
-
-  return aliases[club] || club;
-}
   const parts =
     cleanedName
       .split(/\s+/)
       .filter(Boolean);
 
+
   if (!parts.length) {
     return "";
   }
+
 
   const firstInitial =
     parts[0].charAt(0);
@@ -180,6 +200,7 @@ function normaliseClubName(value) {
     parts[
       parts.length - 1
     ];
+
 
   return (
     `${normalisedClub}|` +
@@ -205,6 +226,7 @@ async function loadPlayerScores() {
 
 
   const scoreDocuments = [];
+
 
   snapshot.forEach(
     documentSnapshot => {
@@ -266,7 +288,9 @@ async function loadPlayerScores() {
 
 
     if (
-      !exactScores.has(key)
+      !exactScores.has(
+        key
+      )
     ) {
 
       exactScores.set(
@@ -281,7 +305,9 @@ async function loadPlayerScores() {
 
 
     const scores =
-      exactScores.get(key);
+      exactScores.get(
+        key
+      );
 
 
     const weekScore =
@@ -305,7 +331,9 @@ async function loadPlayerScores() {
     }
 
 
-    if (matchKey) {
+    if (
+      matchKey
+    ) {
 
       matchScores.set(
         matchKey,
@@ -333,7 +361,8 @@ async function loadPlayerScores() {
 
 async function loadPlayerFiles() {
 
-  const loadedPlayers = [];
+  const loadedPlayers =
+    [];
 
 
   for (
@@ -349,7 +378,9 @@ async function loadPlayerFiles() {
         );
 
 
-      if (!response.ok) {
+      if (
+        !response.ok
+      ) {
 
         throw new Error(
           `Could not load ${playerFile.file}`
@@ -363,7 +394,9 @@ async function loadPlayerFiles() {
 
 
       if (
-        !Array.isArray(players)
+        !Array.isArray(
+          players
+        )
       ) {
         continue;
       }
@@ -414,7 +447,9 @@ async function loadPlayerFiles() {
 
 function populateClubFilter() {
 
-  if (!databaseClubFilter) {
+  if (
+    !databaseClubFilter
+  ) {
     return;
   }
 
@@ -432,7 +467,9 @@ function populateClubFilter() {
     ]
       .sort(
         (a, b) =>
-          a.localeCompare(b)
+          a.localeCompare(
+            b
+          )
       );
 
 
@@ -444,25 +481,27 @@ function populateClubFilter() {
     `;
 
 
-  clubs.forEach(club => {
+  clubs.forEach(
+    club => {
 
-    const option =
-      document.createElement(
-        "option"
-      );
+      const option =
+        document.createElement(
+          "option"
+        );
 
-    option.value =
-      club;
+      option.value =
+        club;
 
-    option.textContent =
-      club;
+      option.textContent =
+        club;
 
-    databaseClubFilter
-      .appendChild(
-        option
-      );
+      databaseClubFilter
+        .appendChild(
+          option
+        );
 
-  });
+    }
+  );
 
 }
 
@@ -476,7 +515,8 @@ function getFilteredPlayers() {
   const searchValue =
     normaliseText(
       databasePlayerSearch
-        ?.value || ""
+        ?.value ||
+      ""
     );
 
 
@@ -493,38 +533,40 @@ function getFilteredPlayers() {
 
 
   return allDatabasePlayers
-    .filter(player => {
+    .filter(
+      player => {
 
-      const matchesSearch =
-        !searchValue ||
-        normaliseText(
-          player.name
-        ).includes(
-          searchValue
+        const matchesSearch =
+          !searchValue ||
+          normaliseText(
+            player.name
+          ).includes(
+            searchValue
+          );
+
+
+        const matchesPosition =
+          selectedPosition ===
+            "ALL" ||
+          player.databasePosition ===
+            selectedPosition;
+
+
+        const matchesClub =
+          selectedClub ===
+            "ALL" ||
+          player.club ===
+            selectedClub;
+
+
+        return (
+          matchesSearch &&
+          matchesPosition &&
+          matchesClub
         );
 
-
-      const matchesPosition =
-        selectedPosition ===
-          "ALL" ||
-        player.databasePosition ===
-          selectedPosition;
-
-
-      const matchesClub =
-        selectedClub ===
-          "ALL" ||
-        player.club ===
-          selectedClub;
-
-
-      return (
-        matchesSearch &&
-        matchesPosition &&
-        matchesClub
-      );
-
-    });
+      }
+    );
 
 }
 
@@ -581,21 +623,27 @@ function displayPositionPlayers(
     );
 
 
-  if (!container) {
+  if (
+    !container
+  ) {
     return;
   }
 
 
-  container.innerHTML = "";
+  container.innerHTML =
+    "";
 
 
-  if (!players.length) {
+  if (
+    !players.length
+  ) {
 
-    container.innerHTML = `
-      <p class="leaderboard-empty-message">
-        No matching players.
-      </p>
-    `;
+    container.innerHTML =
+      `
+        <p class="leaderboard-empty-message">
+          No matching players.
+        </p>
+      `;
 
     return;
 
@@ -603,45 +651,48 @@ function displayPositionPlayers(
 
 
   const sortedPlayers =
-    [...players].sort(
-      (a, b) => {
+    [
+      ...players
+    ]
+      .sort(
+        (a, b) => {
 
-        const clubA =
-          String(
-            a.club || ""
-          )
-            .toLowerCase();
+          const clubA =
+            String(
+              a.club || ""
+            )
+              .toLowerCase();
 
-        const clubB =
-          String(
-            b.club || ""
-          )
-            .toLowerCase();
+          const clubB =
+            String(
+              b.club || ""
+            )
+              .toLowerCase();
 
-        const nameA =
-          String(
-            a.name || ""
-          )
-            .toLowerCase();
+          const nameA =
+            String(
+              a.name || ""
+            )
+              .toLowerCase();
 
-        const nameB =
-          String(
-            b.name || ""
-          )
-            .toLowerCase();
+          const nameB =
+            String(
+              b.name || ""
+            )
+              .toLowerCase();
 
 
-        return (
-          clubA.localeCompare(
-            clubB
-          ) ||
-          nameA.localeCompare(
-            nameB
-          )
-        );
+          return (
+            clubA.localeCompare(
+              clubB
+            ) ||
+            nameA.localeCompare(
+              nameB
+            )
+          );
 
-      }
-    );
+        }
+      );
 
 
   for (
@@ -711,12 +762,9 @@ function renderDatabase() {
       );
 
 
-    /*
-      Hide an entire position section
-      when there are no matching players.
-    */
-
-    if (section) {
+    if (
+      section
+    ) {
 
       section.hidden =
         positionPlayers.length ===
@@ -792,24 +840,30 @@ function setupFilterEvents() {
           if (
             databasePlayerSearch
           ) {
+
             databasePlayerSearch.value =
               "";
+
           }
 
 
           if (
             databasePositionFilter
           ) {
+
             databasePositionFilter.value =
               "ALL";
+
           }
 
 
           if (
             databaseClubFilter
           ) {
+
             databaseClubFilter.value =
               "ALL";
+
           }
 
 
