@@ -1717,7 +1717,117 @@ async function loadPreviousDreamTeam() {
         previousResult.roundId
     };
 
+/* =========================
+   LOAD MOST RECENT DREAM TEAM
+========================= */
 
+async function loadMostRecentDreamTeam() {
+  if (
+    !currentUser ||
+    gameIsLocked
+  ) {
+    return false;
+  }
+
+  try {
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "dream_team_entries"
+        )
+      );
+
+    const entries =
+      snapshot.docs
+        .map(documentSnapshot => ({
+          id:
+            documentSnapshot.id,
+
+          ...documentSnapshot.data()
+        }))
+        .filter(entry => {
+          return (
+            entry.uid ===
+              currentUser.uid ||
+            String(
+              entry.id || ""
+            ).includes(
+              currentUser.uid
+            )
+          );
+        });
+
+    if (!entries.length) {
+      return false;
+    }
+
+    const previousEntries =
+      entries.filter(
+        entry =>
+          String(
+            entry.roundId || ""
+          ) !==
+          String(
+            DREAM_CONFIG.currentRoundId
+          )
+      );
+
+    if (!previousEntries.length) {
+      return false;
+    }
+
+    previousEntries.sort(
+      (a, b) => {
+        const aSeconds =
+          Number(
+            a.submittedAt?.seconds ||
+            0
+          );
+
+        const bSeconds =
+          Number(
+            b.submittedAt?.seconds ||
+            0
+          );
+
+        return (
+          bSeconds -
+          aSeconds
+        );
+      }
+    );
+
+    const latestEntry =
+      previousEntries[0];
+
+    currentEntryDocumentId =
+      null;
+
+    currentEntryRoundId =
+      null;
+
+    loadEntryIntoEditor(
+      latestEntry
+    );
+
+    showMessage(
+      "Your most recent Dream Team has been loaded. " +
+      "Remove any players you want to change, choose replacements, then submit your new weekly team.",
+      "success"
+    );
+
+    return true;
+
+  } catch (error) {
+    console.error(
+      "Could not load most recent Dream Team:",
+      error
+    );
+
+    return false;
+  }
+}
     /*
       IMPORTANT:
 
@@ -2269,20 +2379,24 @@ onAuthStateChanged(
       Firestore remains untouched until the
       user submits the new week's team.
     */
+if (!gameIsLocked) {
+  const previousLoaded =
+    await loadPreviousDreamTeam();
 
-    if (!gameIsLocked) {
-      const previousLoaded =
-        await loadPreviousDreamTeam();
+  if (!previousLoaded) {
+    const recentLoaded =
+      await loadMostRecentDreamTeam();
 
-      if (!previousLoaded) {
-        selectedPlayers = [];
+    if (!recentLoaded) {
+      selectedPlayers = [];
 
-        showMessage(
-          "Choose your formation and select your Dream Team.",
-          ""
-        );
-      }
+      showMessage(
+        "Choose your formation and select your Dream Team.",
+        ""
+      );
     }
+  }
+}
 
 
     if (gameIsLocked) {

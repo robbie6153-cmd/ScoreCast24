@@ -17,9 +17,6 @@ currentRoundId: "2026-week-03",
 
 previousRoundId: "2026-week-02",
 
-  previousRoundId: null,
-
-
   /*
     Player database files
 
@@ -30,8 +27,8 @@ previousRoundId: "2026-week-02",
   playerFiles: [
     "./goalkeepers.json?v=3",
     "./defenders.json?v=3",
-    "./midfielders.json?v=5",
-    "./attackers.json?v=4"
+    "./midfielders.json?v=6",
+    "./attackers.json?v=5"
   ],
 
   /*
