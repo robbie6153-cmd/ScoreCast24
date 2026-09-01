@@ -1988,27 +1988,124 @@ onAuthStateChanged(
 
     await loadPlayerFiles();
 
-    const currentEntryExists =
-      await loadExistingDreamTeam();
+const currentEntryExists =
+  await loadExistingDreamTeam();
 
-    if (
-      !currentEntryExists &&
-      !gameIsLocked
-    ) {
-      await checkForPreviousTeam();
-    }
 
-    if (
-      !currentEntryExists &&
-      gameIsLocked
-    ) {
-      showMessage(
-        DREAM_CONFIG.messages.lockedShort,
-        "error"
+/*
+  If there is no team submitted for the
+  current round, automatically load the
+  previous round's squad into the editor.
+
+  This means Change Dream Team starts with
+  the user's existing 11 players rather
+  than an empty squad.
+*/
+
+if (
+  !currentEntryExists &&
+  !gameIsLocked
+) {
+
+  try {
+
+    const previousResult =
+      await getEntryForRoundIds(
+        getPreviousRoundIds()
       );
+
+    if (previousResult) {
+
+      const previousEntry = {
+        ...previousResult.data,
+
+        roundId:
+          previousResult.data.roundId ||
+          previousResult.roundId
+      };
+
+
+      /*
+        IMPORTANT:
+        This is only loading the previous
+        squad into the editor.
+
+        It is NOT yet creating the new
+        week's Firestore entry.
+      */
+
+      currentEntryDocumentId =
+        null;
+
+      currentEntryRoundId =
+        null;
+
+
+      loadEntryIntoEditor(
+        previousEntry
+      );
+
+
+      /*
+        If Change Player was selected from
+        the View My Team page, remove that
+        player from the editor immediately.
+      */
+
+      if (
+        replacementPlayerId &&
+        !replacementModeStarted
+      ) {
+
+        startReplacementMode();
+
+      } else {
+
+        showMessage(
+          "Your previous Dream Team has been loaded. " +
+          "Remove any players you want to change, choose their replacements, then submit your team.",
+          "success"
+        );
+
+      }
+
+    } else {
+
+      /*
+        Genuine new player with no previous
+        Dream Team starts from an empty squad.
+      */
+
+      selectedPlayers = [];
+
     }
 
-    updateDreamTeamDisplay();
+  } catch (error) {
+
+    console.error(
+      "Could not load previous Dream Team:",
+      error
+    );
+
+  }
+
+}
+
+
+if (
+  !currentEntryExists &&
+  gameIsLocked
+) {
+
+  showMessage(
+    DREAM_CONFIG.messages.lockedShort,
+    "error"
+  );
+
+}
+
+
+updateDreamTeamDisplay();
   }
 );
 
