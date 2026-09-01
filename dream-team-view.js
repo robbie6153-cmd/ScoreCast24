@@ -7,46 +7,74 @@ import {
   doc,
   getDoc,
   collection,
-  getDocs,
-  updateDoc
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 
 const dreamTeamViewTitle =
-  document.getElementById("dreamTeamViewTitle");
+  document.getElementById(
+    "dreamTeamViewTitle"
+  );
 
 const dreamTeamViewStatus =
-  document.getElementById("dreamTeamViewStatus");
+  document.getElementById(
+    "dreamTeamViewStatus"
+  );
 
 const dreamTeamSummary =
-  document.getElementById("dreamTeamSummary");
+  document.getElementById(
+    "dreamTeamSummary"
+  );
 
 const viewDreamUsername =
-  document.getElementById("viewDreamUsername");
+  document.getElementById(
+    "viewDreamUsername"
+  );
 
 const viewDreamFormation =
-  document.getElementById("viewDreamFormation");
+  document.getElementById(
+    "viewDreamFormation"
+  );
 
 const viewDreamRating =
-  document.getElementById("viewDreamRating");
+  document.getElementById(
+    "viewDreamRating"
+  );
 
 const viewDreamPoints =
-  document.getElementById("viewDreamPoints");
+  document.getElementById(
+    "viewDreamPoints"
+  );
 
 const viewDreamTeamPlayers =
-  document.getElementById("viewDreamTeamPlayers");
+  document.getElementById(
+    "viewDreamTeamPlayers"
+  );
 
 const attackerFormationRow =
-  document.getElementById("attackerFormationRow");
+  document.getElementById(
+    "attackerFormationRow"
+  );
 
 const midfielderFormationRow =
-  document.getElementById("midfielderFormationRow");
+  document.getElementById(
+    "midfielderFormationRow"
+  );
 
 const defenderFormationRow =
-  document.getElementById("defenderFormationRow");
+  document.getElementById(
+    "defenderFormationRow"
+  );
 
 const goalkeeperFormationRow =
-  document.getElementById("goalkeeperFormationRow");
+  document.getElementById(
+    "goalkeeperFormationRow"
+  );
+
+const backToTeamSelection =
+  document.getElementById(
+    "backToTeamSelection"
+  );
 
 
 let currentEntry = null;
@@ -96,7 +124,9 @@ function makePlayerKey(
 /* =====================================================
    PLAYER SCORES
 ===================================================== */
+
 async function loadPlayerScores() {
+
   const CURRENT_ROUND_ID =
     "2026-week-02";
 
@@ -118,12 +148,15 @@ async function loadPlayerScores() {
 
   snapshot.forEach(
     documentSnapshot => {
+
       const scoreDocument =
         documentSnapshot.data();
+
 
       /*
         Ignore old testing rounds.
       */
+
       if (
         !SEASON_ROUND_IDS.includes(
           scoreDocument.roundId
@@ -132,11 +165,13 @@ async function loadPlayerScores() {
         return;
       }
 
+
       const key =
         makePlayerKey(
           scoreDocument.club,
           scoreDocument.playerName
         );
+
 
       if (
         !scoresByPlayer.has(key)
@@ -150,25 +185,31 @@ async function loadPlayerScores() {
         );
       }
 
+
       const scores =
         scoresByPlayer.get(key);
+
 
       const weekScore =
         Number(
           scoreDocument.weekScore
         ) || 0;
 
+
       /*
         Season total:
         Week One + Week Two.
       */
+
       scores.overallScore +=
         weekScore;
 
+
       /*
-        Current weekly score:
+        Current displayed weekly score:
         Week Two only.
       */
+
       if (
         scoreDocument.roundId ===
         CURRENT_ROUND_ID
@@ -179,9 +220,9 @@ async function loadPlayerScores() {
     }
   );
 
+
   return scoresByPlayer;
 }
-
 
 
 /* =====================================================
@@ -189,21 +230,27 @@ async function loadPlayerScores() {
 ===================================================== */
 
 function showError(message) {
+
   if (dreamTeamViewTitle) {
     dreamTeamViewTitle.textContent =
       "Dream Team Unavailable";
   }
+
 
   if (dreamTeamViewStatus) {
     dreamTeamViewStatus.textContent =
       message;
   }
 
+
   if (dreamTeamSummary) {
-    dreamTeamSummary.hidden = true;
+    dreamTeamSummary.hidden =
+      true;
   }
 
+
   if (viewDreamTeamPlayers) {
+
     viewDreamTeamPlayers.innerHTML = `
       <p class="leaderboard-empty-message">
         ${escapeHtml(message)}
@@ -218,6 +265,7 @@ function showError(message) {
 ===================================================== */
 
 function orderPlayers(players) {
+
   const positionOrder = {
     Goalkeeper: 1,
     Defender: 2,
@@ -225,17 +273,21 @@ function orderPlayers(players) {
     Attacker: 4
   };
 
+
   return [...players].sort(
     (a, b) => {
+
       const firstPosition =
         positionOrder[
           a.position
         ] || 99;
 
+
       const secondPosition =
         positionOrder[
           b.position
         ] || 99;
+
 
       if (
         firstPosition !==
@@ -246,6 +298,7 @@ function orderPlayers(players) {
           secondPosition
         );
       }
+
 
       return String(
         a.name || ""
@@ -260,134 +313,21 @@ function orderPlayers(players) {
 
 
 /* =====================================================
-   REMOVE PLAYER
-===================================================== */
-
-async function removePlayerFromSquad(
-  playerName
-) {
-  if (
-    !currentEntry ||
-    !currentEntryId
-  ) {
-    return;
-  }
-
-  const currentUser =
-    auth.currentUser;
-
-  if (!currentUser) {
-    alert(
-      "You must be logged in to change your Dream Team."
-    );
-    return;
-  }
-
-  if (
-    currentEntry.uid !==
-    currentUser.uid
-  ) {
-    alert(
-      "You can only change your own Dream Team."
-    );
-    return;
-  }
-
-  const player =
-    currentEntry.players.find(
-      item =>
-        item.name ===
-        playerName
-    );
-
-  if (!player) {
-    return;
-  }
-
-  const confirmed =
-    window.confirm(
-      `Are you sure you want to remove ${player.name} from your squad?`
-    );
-
-  if (!confirmed) {
-    return;
-  }
-
-  const updatedPlayers =
-    currentEntry.players.filter(
-      item =>
-        item.name !==
-        playerName
-    );
-
-  const updatedRatingTotal =
-    updatedPlayers.reduce(
-      (
-        total,
-        item
-      ) =>
-        total +
-        Number(
-          item.rating || 0
-        ),
-      0
-    );
-
-  try {
-    const entryReference =
-      doc(
-        db,
-        "dream_team_entries",
-        currentEntryId
-      );
-
-    await updateDoc(
-      entryReference,
-      {
-        players:
-          updatedPlayers,
-
-        ratingTotal:
-          updatedRatingTotal
-      }
-    );
-
-    currentEntry.players =
-      updatedPlayers;
-
-    currentEntry.ratingTotal =
-      updatedRatingTotal;
-
-    renderDreamTeam(
-      currentEntry
-    );
-
-  } catch (error) {
-    console.error(
-      "Dream Team player removal error:",
-      error
-    );
-
-    alert(
-      "The player could not be removed. Please try again."
-    );
-  }
-}
-
-
-/* =====================================================
    PLAYER LIST
 ===================================================== */
 
 function renderPlayers(players) {
+
   if (!viewDreamTeamPlayers) {
     return;
   }
+
 
   if (
     !Array.isArray(players) ||
     !players.length
   ) {
+
     viewDreamTeamPlayers.innerHTML = `
       <p class="leaderboard-empty-message">
         No players were saved with this Dream Team.
@@ -397,21 +337,26 @@ function renderPlayers(players) {
     return;
   }
 
+
   const orderedPlayers =
     orderPlayers(players);
 
-  const currentUser =
-    auth.currentUser;
 
-  const canEdit =
-    currentUser &&
-    currentEntry &&
-    currentEntry.uid ===
-      currentUser.uid;
+  /*
+    This page is deliberately VIEW ONLY.
+
+    Players must not be removed directly
+    from a previously submitted Dream Team.
+
+    To make changes, the user returns to
+    Team Selection where this team is used
+    as the starting squad.
+  */
 
   viewDreamTeamPlayers.innerHTML =
     orderedPlayers.map(
       player => {
+
         const positionClass =
           String(
             player.position ||
@@ -419,6 +364,7 @@ function renderPlayers(players) {
           )
             .trim()
             .toLowerCase();
+
 
         return `
           <article
@@ -459,52 +405,10 @@ function renderPlayers(players) {
 
             </div>
 
-            ${
-              canEdit
-                ? `
-                  <button
-                    type="button"
-                    class="
-                      remove-dream-player
-                    "
-                    data-player-name="${escapeHtml(
-                      player.name ||
-                      ""
-                    )}"
-                  >
-                    ✕ Remove
-                  </button>
-                `
-                : ""
-            }
-
           </article>
         `;
       }
     ).join("");
-
-  const removeButtons =
-    viewDreamTeamPlayers
-      .querySelectorAll(
-        ".remove-dream-player"
-      );
-
-  removeButtons.forEach(
-    button => {
-      button.addEventListener(
-        "click",
-        () => {
-          const playerName =
-            button.dataset
-              .playerName;
-
-          removePlayerFromSquad(
-            playerName
-          );
-        }
-      );
-    }
-  );
 }
 
 
@@ -515,6 +419,7 @@ function renderPlayers(players) {
 function createFormationPlayer(
   player
 ) {
+
   const position =
     String(
       player.position || ""
@@ -522,15 +427,18 @@ function createFormationPlayer(
       .trim()
       .toLowerCase();
 
+
   const weeklyPoints =
     Number(
       player.weeklyPoints || 0
     );
 
+
   const overallPoints =
     Number(
       player.overallPoints || 0
     );
+
 
   return `
     <div class="formation-player">
@@ -583,6 +491,7 @@ function createFormationPlayer(
 ===================================================== */
 
 function renderFormation(players) {
+
   if (
     !attackerFormationRow ||
     !midfielderFormationRow ||
@@ -592,10 +501,12 @@ function renderFormation(players) {
     return;
   }
 
+
   const safePlayers =
     Array.isArray(players)
       ? players
       : [];
+
 
   const goalkeepers =
     safePlayers.filter(
@@ -604,12 +515,14 @@ function renderFormation(players) {
         "Goalkeeper"
     );
 
+
   const defenders =
     safePlayers.filter(
       player =>
         player.position ===
         "Defender"
     );
+
 
   const midfielders =
     safePlayers.filter(
@@ -618,6 +531,7 @@ function renderFormation(players) {
         "Midfielder"
     );
 
+
   const attackers =
     safePlayers.filter(
       player =>
@@ -625,37 +539,37 @@ function renderFormation(players) {
         "Attacker"
     );
 
-  goalkeeperFormationRow
-    .innerHTML =
-      goalkeepers
-        .map(
-          createFormationPlayer
-        )
-        .join("");
 
-  defenderFormationRow
-    .innerHTML =
-      defenders
-        .map(
-          createFormationPlayer
-        )
-        .join("");
+  goalkeeperFormationRow.innerHTML =
+    goalkeepers
+      .map(
+        createFormationPlayer
+      )
+      .join("");
 
-  midfielderFormationRow
-    .innerHTML =
-      midfielders
-        .map(
-          createFormationPlayer
-        )
-        .join("");
 
-  attackerFormationRow
-    .innerHTML =
-      attackers
-        .map(
-          createFormationPlayer
-        )
-        .join("");
+  defenderFormationRow.innerHTML =
+    defenders
+      .map(
+        createFormationPlayer
+      )
+      .join("");
+
+
+  midfielderFormationRow.innerHTML =
+    midfielders
+      .map(
+        createFormationPlayer
+      )
+      .join("");
+
+
+  attackerFormationRow.innerHTML =
+    attackers
+      .map(
+        createFormationPlayer
+      )
+      .join("");
 }
 
 
@@ -664,53 +578,70 @@ function renderFormation(players) {
 ===================================================== */
 
 function renderDreamTeam(entry) {
+
   const username =
     entry.username ||
     "ScoreCast24 Player";
 
+
   if (dreamTeamViewTitle) {
+
     dreamTeamViewTitle.textContent =
       `${username}'s Dream Team`;
   }
 
+
   if (dreamTeamViewStatus) {
+
     dreamTeamViewStatus.textContent =
       "Submitted weekly Dream Team";
   }
 
+
   if (viewDreamUsername) {
+
     viewDreamUsername.textContent =
       username;
   }
 
+
   if (viewDreamFormation) {
+
     viewDreamFormation.textContent =
       entry.formation ||
       "Not recorded";
   }
 
+
   if (viewDreamRating) {
+
     viewDreamRating.textContent =
       Number(
         entry.ratingTotal || 0
       );
   }
 
+
   if (viewDreamPoints) {
+
     viewDreamPoints.textContent =
       Number(
         entry.totalPoints || 0
       );
   }
 
+
   if (dreamTeamSummary) {
+
     dreamTeamSummary.hidden =
       false;
   }
 
+
   renderFormation(
     entry.players
   );
+
 
   renderPlayers(
     entry.players
@@ -719,19 +650,53 @@ function renderDreamTeam(entry) {
 
 
 /* =====================================================
+   TEAM SELECTION LINK
+===================================================== */
+
+function updateTeamSelectionLink() {
+
+  if (
+    !backToTeamSelection ||
+    !currentEntryId
+  ) {
+    return;
+  }
+
+
+  /*
+    Pass the exact entry being viewed
+    into dream-team-game.js.
+
+    The editor can then load these
+    players as the starting squad
+    without modifying this old entry.
+  */
+
+  backToTeamSelection.href =
+    `dream-team-game.html?carry=${encodeURIComponent(
+      currentEntryId
+    )}`;
+}
+
+
+/* =====================================================
    LOAD DREAM TEAM
 ===================================================== */
 
 async function loadDreamTeam() {
+
   const parameters =
     new URLSearchParams(
       window.location.search
     );
 
+
   const entryId =
     parameters.get("id");
 
+
   if (!entryId) {
+
     showError(
       "No Dream Team entry was selected."
     );
@@ -739,7 +704,9 @@ async function loadDreamTeam() {
     return;
   }
 
+
   try {
+
     const entryReference =
       doc(
         db,
@@ -747,14 +714,17 @@ async function loadDreamTeam() {
         entryId
       );
 
+
     const entrySnapshot =
       await getDoc(
         entryReference
       );
 
+
     if (
       !entrySnapshot.exists()
     ) {
+
       showError(
         "This Dream Team entry could not be found."
       );
@@ -762,21 +732,37 @@ async function loadDreamTeam() {
       return;
     }
 
+
     const scoresByPlayer =
       await loadPlayerScores();
 
+
     const entryData = {
+
       id:
         entrySnapshot.id,
 
       ...entrySnapshot.data()
+
     };
+
 
     currentEntryId =
       entrySnapshot.id;
 
+
     currentEntry =
       entryData;
+
+
+    /*
+      Make the Back to Team Selection
+      button carry this exact squad
+      into the editor.
+    */
+
+    updateTeamSelectionLink();
+
 
     entryData.players =
       Array.isArray(
@@ -784,11 +770,13 @@ async function loadDreamTeam() {
       )
         ? entryData.players.map(
             player => {
+
               const key =
                 makePlayerKey(
                   player.club,
                   player.name
                 );
+
 
               const scores =
                 scoresByPlayer.get(
@@ -798,7 +786,9 @@ async function loadDreamTeam() {
                   overallScore: 0
                 };
 
+
               return {
+
                 ...player,
 
                 weeklyPoints:
@@ -806,23 +796,28 @@ async function loadDreamTeam() {
 
                 overallPoints:
                   scores.overallScore
+
               };
             }
           )
         : [];
 
+
     currentEntry.players =
       entryData.players;
+
 
     renderDreamTeam(
       entryData
     );
 
   } catch (error) {
+
     console.error(
       "Dream Team loading error:",
       error
     );
+
 
     showError(
       "The Dream Team could not be loaded. Please try again."
@@ -830,5 +825,9 @@ async function loadDreamTeam() {
   }
 }
 
+
+/* =====================================================
+   START
+===================================================== */
 
 loadDreamTeam();

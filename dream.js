@@ -52,36 +52,51 @@ let gameIsLocked =
   DREAM_CONFIG.manualLock;
 
 let playerFilesLoaded = false;
-let rolloverPromptOpen = false;
+
 
 /*
-  If an existing team was saved using the old
-  round-ID format, keep using that document when
-  the user edits and resubmits it.
+  Current Firestore entry being edited.
+
+  This is ONLY set when we are actually
+  editing the current week's submitted team.
+
+  If an older team is carried forward,
+  this stays null so submitting creates
+  the new week's document instead.
 */
 
 let currentEntryDocumentId = null;
 let currentEntryRoundId = null;
 
 
-/*
-  REPLACEMENT MODE
-
-  When the user arrives from View My Team using:
-
-  dream-team-game.html?replace=PLAYER_ID
-
-  the existing saved team is loaded normally,
-  then that player is removed from the editor only.
-
-  Firestore remains unchanged until the user
-  submits a complete replacement squad.
-*/
+/* =========================
+   URL PARAMETERS
+========================= */
 
 const pageParameters =
   new URLSearchParams(
     window.location.search
   );
+
+
+/*
+  Used by the View Team page:
+
+  dream-game.html?carry=ENTRY_ID
+
+  This loads that exact submitted squad
+  into Team Selection.
+*/
+
+const carryEntryId =
+  pageParameters.get("carry");
+
+
+/*
+  Optional individual player replacement:
+
+  dream-game.html?replace=PLAYER_ID
+*/
 
 const replacementPlayerId =
   pageParameters.get("replace");
@@ -90,15 +105,17 @@ let replacementModeStarted =
   false;
 
 
+/* =========================
+   GRANDFATHERED TEAM
+========================= */
+
 /*
-  GRANDFATHERED TEAM
+  A legitimately submitted squad can remain
+  valid if ratings later increase above the
+  normal MAX_RATING.
 
-  If a legitimately submitted team later rises above
-  MAX_RATING because player ratings are updated,
-  the exact saved squad remains valid.
-
-  Once the user changes the squad or formation,
-  the normal MAX_RATING rule applies again.
+  But once the user introduces a different
+  player, normal rating rules apply.
 */
 
 let grandfatheredPlayerIds =
@@ -116,43 +133,83 @@ let hasGrandfatheredTeam =
 ========================= */
 
 const formationSelect =
-  document.getElementById("formationSelect");
+  document.getElementById(
+    "formationSelect"
+  );
 
 const clubFilter =
-  document.getElementById("clubFilter");
+  document.getElementById(
+    "clubFilter"
+  );
 
 const positionFilter =
-  document.getElementById("positionFilter");
+  document.getElementById(
+    "positionFilter"
+  );
 
 const ratingFilter =
-  document.getElementById("ratingFilter");
+  document.getElementById(
+    "ratingFilter"
+  );
 
 const playerSearch =
-  document.getElementById("playerSearch");
+  document.getElementById(
+    "playerSearch"
+  );
 
 const playerList =
-  document.getElementById("playerList");
+  document.getElementById(
+    "playerList"
+  );
 
 const selectedCount =
-  document.getElementById("selectedCount");
+  document.getElementById(
+    "selectedCount"
+  );
 
 const ratingTotal =
-  document.getElementById("ratingTotal");
+  document.getElementById(
+    "ratingTotal"
+  );
 
 const formationStatus =
-  document.getElementById("formationStatus");
+  document.getElementById(
+    "formationStatus"
+  );
 
 const submitDreamTeamBtn =
-  document.getElementById("submitDreamTeamBtn");
+  document.getElementById(
+    "submitDreamTeamBtn"
+  );
 
 const dreamMessage =
-  document.getElementById("dreamMessage");
+  document.getElementById(
+    "dreamMessage"
+  );
 
 const dreamLoginStatus =
-  document.getElementById("dreamLoginStatus");
+  document.getElementById(
+    "dreamLoginStatus"
+  );
 
 const viewMyTeamBtn =
-  document.getElementById("viewMyTeamBtn");
+  document.getElementById(
+    "viewMyTeamBtn"
+  );
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
 
 /* =========================
@@ -163,6 +220,10 @@ function showMessage(
   message,
   type = ""
 ) {
+  if (!dreamMessage) {
+    return;
+  }
+
   dreamMessage.textContent =
     message;
 
@@ -177,104 +238,7 @@ function clearMessage() {
 
 
 /* =========================
-   VIEW MY TEAM BUTTON
-========================= */
-
-async function setupViewMyTeamButton(user) {
-  if (!viewMyTeamBtn) {
-    return;
-  }
-
-  if (!user) {
-    viewMyTeamBtn.href =
-      "index.html";
-
-    viewMyTeamBtn.textContent =
-      "Log In to View My Team";
-
-    return;
-  }
-
-  viewMyTeamBtn.textContent =
-    "Loading My Team...";
-
-  viewMyTeamBtn.removeAttribute(
-    "href"
-  );
-
-  try {
-    const snapshot =
-      await getDocs(
-        collection(
-          db,
-          "dream_team_entries"
-        )
-      );
-
-    const entries =
-      snapshot.docs.map(
-        documentSnapshot => ({
-          id:
-            documentSnapshot.id,
-
-          ...documentSnapshot.data()
-        })
-      );
-
-    const userEntry =
-      entries.find(entry => {
-
-        if (
-          entry.uid &&
-          entry.uid === user.uid
-        ) {
-          return true;
-        }
-
-        return String(
-          entry.id || ""
-        ).includes(
-          user.uid
-        );
-      });
-
-    if (!userEntry) {
-      viewMyTeamBtn.href =
-        "#";
-
-      viewMyTeamBtn.textContent =
-        "No Team Selected Yet";
-
-      return;
-    }
-
-    viewMyTeamBtn.href =
-      `dream-team-view.html?id=${
-        encodeURIComponent(
-          userEntry.id
-        )
-      }`;
-
-    viewMyTeamBtn.textContent =
-      "View My Team";
-
-  } catch (error) {
-    console.error(
-      "View My Team error:",
-      error
-    );
-
-    viewMyTeamBtn.href =
-      "#";
-
-    viewMyTeamBtn.textContent =
-      "View My Team";
-  }
-}
-
-
-/* =========================
-   MANUAL ROUND IDS
+   ROUND IDS
 ========================= */
 
 function getCurrentRoundIds() {
@@ -416,7 +380,9 @@ async function loadPlayerFiles() {
             ),
 
           rating:
-            Number(player.rating)
+            Number(
+              player.rating
+            )
         }));
 
     playerFilesLoaded = true;
@@ -430,12 +396,14 @@ async function loadPlayerFiles() {
       error
     );
 
-    playerList.innerHTML = `
-      <p>
-        The player database could not be loaded.
-        Check that all four player files are saved correctly.
-      </p>
-    `;
+    if (playerList) {
+      playerList.innerHTML = `
+        <p>
+          The player database could not be loaded.
+          Check that all four player files are saved correctly.
+        </p>
+      `;
+    }
   }
 }
 
@@ -448,7 +416,8 @@ function populateClubFilter() {
   const clubs = [
     ...new Set(
       allPlayers.map(
-        player => player.club
+        player =>
+          player.club
       )
     )
   ].sort(
@@ -461,12 +430,19 @@ function populateClubFilter() {
 
   clubs.forEach(club => {
     const option =
-      document.createElement("option");
+      document.createElement(
+        "option"
+      );
 
-    option.value = club;
-    option.textContent = club;
+    option.value =
+      club;
 
-    clubFilter.appendChild(option);
+    option.textContent =
+      club;
+
+    clubFilter.appendChild(
+      option
+    );
   });
 }
 
@@ -490,62 +466,72 @@ function getFilteredPlayers() {
       .trim()
       .toLowerCase();
 
-  return allPlayers.filter(player => {
-    const matchesClub =
-      selectedClub === "ALL" ||
-      player.club === selectedClub;
+  return allPlayers.filter(
+    player => {
+      const matchesClub =
+        selectedClub === "ALL" ||
+        player.club ===
+          selectedClub;
 
-    const matchesPosition =
-      selectedPosition === "ALL" ||
-      player.position ===
-        selectedPosition;
+      const matchesPosition =
+        selectedPosition === "ALL" ||
+        player.position ===
+          selectedPosition;
 
-    const matchesSearch =
-      !searchValue ||
-      player.name
-        .toLowerCase()
-        .includes(searchValue);
+      const matchesSearch =
+        !searchValue ||
+        player.name
+          .toLowerCase()
+          .includes(
+            searchValue
+          );
 
-    let matchesRating = true;
+      let matchesRating =
+        true;
 
-    if (
-      selectedRating === "60-69"
-    ) {
-      matchesRating =
-        player.rating >= 60 &&
-        player.rating <= 69;
+      if (
+        selectedRating ===
+        "60-69"
+      ) {
+        matchesRating =
+          player.rating >= 60 &&
+          player.rating <= 69;
+      }
+
+      if (
+        selectedRating ===
+        "70-79"
+      ) {
+        matchesRating =
+          player.rating >= 70 &&
+          player.rating <= 79;
+      }
+
+      if (
+        selectedRating ===
+        "80-89"
+      ) {
+        matchesRating =
+          player.rating >= 80 &&
+          player.rating <= 89;
+      }
+
+      if (
+        selectedRating ===
+        "90+"
+      ) {
+        matchesRating =
+          player.rating >= 90;
+      }
+
+      return (
+        matchesClub &&
+        matchesPosition &&
+        matchesRating &&
+        matchesSearch
+      );
     }
-
-    if (
-      selectedRating === "70-79"
-    ) {
-      matchesRating =
-        player.rating >= 70 &&
-        player.rating <= 79;
-    }
-
-    if (
-      selectedRating === "80-89"
-    ) {
-      matchesRating =
-        player.rating >= 80 &&
-        player.rating <= 89;
-    }
-
-    if (
-      selectedRating === "90+"
-    ) {
-      matchesRating =
-        player.rating >= 90;
-    }
-
-    return (
-      matchesClub &&
-      matchesPosition &&
-      matchesRating &&
-      matchesSearch
-    );
-  });
+  );
 }
 
 
@@ -554,6 +540,13 @@ function getFilteredPlayers() {
 ========================= */
 
 function renderPlayers() {
+  if (
+    !playerList ||
+    !playerFilesLoaded
+  ) {
+    return;
+  }
+
   const filteredPlayers =
     getFilteredPlayers();
 
@@ -581,32 +574,50 @@ function renderPlayers() {
 
         return `
           <article
-            class="player-card ${player.position.toLowerCase()}"
+            class="player-card ${escapeHtml(
+              player.position.toLowerCase()
+            )}"
           >
 
             <div class="player-card-details">
+
               <strong>
-                ${escapeHtml(player.name)}
+                ${escapeHtml(
+                  player.name
+                )}
               </strong>
 
               <span>
-                ${escapeHtml(player.club)}
+                ${escapeHtml(
+                  player.club
+                )}
               </span>
 
               <span>
-                ${escapeHtml(player.position)}
+                ${escapeHtml(
+                  player.position
+                )}
               </span>
+
             </div>
 
             <div class="player-card-rating">
-              ${player.rating}
+              ${Number(
+                player.rating
+              )}
             </div>
 
             <button
               type="button"
               class="add-player-button"
-              data-player-id="${escapeHtml(player.id)}"
-              ${disabled ? "disabled" : ""}
+              data-player-id="${escapeHtml(
+                player.id
+              )}"
+              ${
+                disabled
+                  ? "disabled"
+                  : ""
+              }
             >
               ${
                 gameIsLocked
@@ -627,27 +638,31 @@ function renderPlayers() {
       ".add-player-button"
     )
     .forEach(button => {
-
       button.addEventListener(
         "click",
         () => {
           const playerId =
-            button.dataset.playerId;
+            button.dataset
+              .playerId;
 
           const alreadySelected =
             selectedPlayers.some(
               player =>
-                player.id === playerId
+                player.id ===
+                playerId
             );
 
           if (alreadySelected) {
-            removePlayer(playerId);
+            removePlayer(
+              playerId
+            );
           } else {
-            addPlayer(playerId);
+            addPlayer(
+              playerId
+            );
           }
         }
       );
-
     });
 }
 
@@ -673,7 +688,8 @@ function addPlayer(
   const player =
     allPlayers.find(
       item =>
-        item.id === playerId
+        item.id ===
+        playerId
     );
 
   if (!player) {
@@ -718,7 +734,8 @@ function addPlayer(
   if (
     selectedPlayers.some(
       selected =>
-        selected.id === player.id
+        selected.id ===
+        player.id
     )
   ) {
     showMessage(
@@ -742,7 +759,9 @@ function addPlayer(
     ).length;
 
   const positionLimit =
-    formation[player.position];
+    formation[
+      player.position
+    ];
 
   if (
     positionCount >=
@@ -782,16 +801,6 @@ function addPlayer(
     calculateRatingTotal() +
     player.rating;
 
-  /*
-    Normally a player cannot be added if
-    they push the squad above MAX_RATING.
-
-    Exception:
-    an existing player's original submitted
-    squad can be reconstructed after later
-    rating increases.
-  */
-
   if (
     newRatingTotal >
       MAX_RATING &&
@@ -808,7 +817,9 @@ function addPlayer(
     return;
   }
 
-  selectedPlayers.push(player);
+  selectedPlayers.push(
+    player
+  );
 
   updateDreamTeamDisplay();
 }
@@ -833,10 +844,12 @@ function removePlayer(
   selectedPlayers =
     selectedPlayers.filter(
       player =>
-        player.id !== playerId
+        player.id !==
+        playerId
     );
 
   clearMessage();
+
   updateDreamTeamDisplay();
 }
 
@@ -882,9 +895,7 @@ function setGrandfatheredTeam(
 
 
 function selectedTeamMatchesGrandfathered() {
-  if (
-    !hasGrandfatheredTeam
-  ) {
+  if (!hasGrandfatheredTeam) {
     return false;
   }
 
@@ -930,22 +941,10 @@ function selectedTeamMatchesGrandfathered() {
 }
 
 
-/*
-  Allows the user to rebuild their ORIGINAL
-  grandfathered squad even if updated ratings
-  now place it above MAX_RATING.
-
-  As soon as a newly selected player was not
-  part of that saved squad, the normal budget
-  rule applies.
-*/
-
 function prospectiveSelectionIsGrandfathered(
   playerToAdd
 ) {
-  if (
-    !hasGrandfatheredTeam
-  ) {
+  if (!hasGrandfatheredTeam) {
     return false;
   }
 
@@ -980,12 +979,6 @@ function ratingLimitIsSatisfied() {
     return true;
   }
 
-  /*
-    Over-budget is allowed ONLY when
-    the entire squad is exactly the
-    previously submitted squad.
-  */
-
   return (
     selectedTeamMatchesGrandfathered()
   );
@@ -1003,7 +996,9 @@ function calculateRatingTotal() {
       player
     ) =>
       total +
-      Number(player.rating),
+      Number(
+        player.rating || 0
+      ),
     0
   );
 }
@@ -1051,7 +1046,13 @@ function formationIsComplete() {
   }
 
   const required =
-    FORMATIONS[formationName];
+    FORMATIONS[
+      formationName
+    ];
+
+  if (!required) {
+    return false;
+  }
 
   const actual =
     getPositionCounts();
@@ -1069,7 +1070,9 @@ function formationIsComplete() {
 
 function teamIsValid() {
   return (
-    Boolean(currentUser) &&
+    Boolean(
+      currentUser
+    ) &&
     !gameIsLocked &&
     selectedPlayers.length ===
       MAX_PLAYERS &&
@@ -1110,6 +1113,15 @@ function updateControlAvailability() {
 ========================= */
 
 function updateDreamTeamDisplay() {
+  if (
+    !selectedCount ||
+    !ratingTotal ||
+    !formationStatus ||
+    !submitDreamTeamBtn
+  ) {
+    return;
+  }
+
   const totalRating =
     calculateRatingTotal();
 
@@ -1168,6 +1180,17 @@ async function saveDreamTeamEntry({
     );
   }
 
+
+  /*
+    If editing the current week's actual
+    entry, use the existing document ID.
+
+    If a previous week's squad was merely
+    carried into the editor, this is null
+    and a fresh current-round document
+    will be created.
+  */
+
   const entryId =
     currentEntryDocumentId ||
     `${roundId}_${currentUser.uid}`;
@@ -1179,6 +1202,24 @@ async function saveDreamTeamEntry({
       entryId
     );
 
+
+  /*
+    Check whether this exact document
+    already exists.
+
+    This prevents totalPoints being reset
+    when editing an existing current entry.
+  */
+
+  const existingSnapshot =
+    await getDoc(
+      entryReference
+    );
+
+  const entryAlreadyExists =
+    existingSnapshot.exists();
+
+
   const entryData = {
     uid:
       currentUser.uid,
@@ -1187,7 +1228,8 @@ async function saveDreamTeamEntry({
       currentUsername,
 
     email:
-      currentUser.email || "",
+      currentUser.email ||
+      "",
 
     roundId,
 
@@ -1197,67 +1239,76 @@ async function saveDreamTeamEntry({
       calculateRatingTotal(),
 
     players:
-      players.map(player => ({
-        id:
-          player.id,
+      players.map(
+        player => ({
+          id:
+            player.id,
 
-        name:
-          player.name,
+          name:
+            player.name,
 
-        club:
-          player.club,
+          club:
+            player.club,
 
-        position:
-          player.position,
+          position:
+            player.position,
 
-        rating:
-          Number(player.rating),
+          rating:
+            Number(
+              player.rating
+            ),
 
-        points:
-          Number(player.points || 0)
-      })),
+          points:
+            Number(
+              player.points ||
+              0
+            )
+        })
+      ),
 
- status:
-  DREAM_CONFIG.manualLock
-    ? "locked"
-    : "submitted",
+    status:
+      DREAM_CONFIG.manualLock
+        ? "locked"
+        : "submitted",
 
-submittedAt:
-  serverTimestamp()
-};
-
-
-/*
-  Only initialise points for a brand-new entry.
-  Never reset an existing team's points when
-  the squad is edited.
-*/
-
-if (!currentEntryDocumentId) {
-  entryData.totalPoints = 0;
-}
+    submittedAt:
+      serverTimestamp()
+  };
 
 
-if (rolloverFromRound) {
-  entryData.rolloverFromRound =
-    rolloverFromRound;
-}
+  /*
+    Only initialise totalPoints when
+    creating a genuinely new week's entry.
+  */
 
-
-await setDoc(
-  entryReference,
-  entryData,
-  {
-    merge: true
+  if (!entryAlreadyExists) {
+    entryData.totalPoints =
+      0;
   }
-);
 
-currentEntryDocumentId =
-  entryId;
 
-currentEntryRoundId =
-  roundId;
+  if (rolloverFromRound) {
+    entryData.rolloverFromRound =
+      rolloverFromRound;
+  }
+
+
+  await setDoc(
+    entryReference,
+    entryData,
+    {
+      merge: true
+    }
+  );
+
+
+  currentEntryDocumentId =
+    entryId;
+
+  currentEntryRoundId =
+    roundId;
 }
+
 
 /* =========================
    FIRESTORE ENTRIES
@@ -1314,19 +1365,13 @@ async function getEntryForRoundIds(
 function loadEntryIntoEditor(
   savedEntry
 ) {
-
-  /*
-    Remember the exact legitimately
-    submitted squad BEFORE replacing
-    its old ratings with current ratings.
-  */
-
   setGrandfatheredTeam(
     savedEntry
   );
 
   formationSelect.value =
-    savedEntry.formation || "";
+    savedEntry.formation ||
+    "";
 
   const savedPlayers =
     Array.isArray(
@@ -1335,36 +1380,194 @@ function loadEntryIntoEditor(
       ? savedEntry.players
       : [];
 
-  /*
-    Load the current player database
-    versions so the user sees today's
-    ratings.
 
-    The grandfather information above
-    remembers which eleven players were
-    originally submitted.
+  /*
+    Match each submitted player with
+    today's player database.
+
+    This means current ratings/clubs
+    are shown where that player still
+    exists in the database.
+
+    If they are no longer in the current
+    database, retain the saved version so
+    they don't simply disappear and turn
+    an 11-player team into 10/11.
   */
 
   selectedPlayers =
     savedPlayers
-      .map(savedPlayer => {
+      .map(
+        savedPlayer => {
+          const currentPlayer =
+            allPlayers.find(
+              player =>
+                String(
+                  player.id
+                ) ===
+                String(
+                  savedPlayer.id
+                )
+            );
 
-        const currentPlayer =
-          allPlayers.find(
-            player =>
-              player.id ===
-              savedPlayer.id
-          );
+          if (currentPlayer) {
+            return currentPlayer;
+          }
 
-        return (
-          currentPlayer ||
-          savedPlayer
-        );
+          return {
+            ...savedPlayer,
 
-      })
+            position:
+              normalisePosition(
+                savedPlayer.position
+              ),
+
+            rating:
+              Number(
+                savedPlayer.rating ||
+                0
+              )
+          };
+        }
+      )
       .filter(Boolean);
 
   updateDreamTeamDisplay();
+}
+
+
+/* =========================
+   LOAD CARRIED ENTRY
+========================= */
+
+async function loadCarryEntry() {
+  if (
+    !carryEntryId ||
+    !currentUser
+  ) {
+    return false;
+  }
+
+  try {
+    const entryReference =
+      doc(
+        db,
+        "dream_team_entries",
+        carryEntryId
+      );
+
+    const entrySnapshot =
+      await getDoc(
+        entryReference
+      );
+
+    if (
+      !entrySnapshot.exists()
+    ) {
+      console.error(
+        "Carry entry does not exist:",
+        carryEntryId
+      );
+
+      return false;
+    }
+
+    const entryData =
+      entrySnapshot.data();
+
+
+    /*
+      SECURITY:
+
+      Only allow someone to carry/edit
+      their own Dream Team.
+    */
+
+    if (
+      entryData.uid &&
+      entryData.uid !==
+        currentUser.uid
+    ) {
+      console.error(
+        "Carry entry belongs to another user."
+      );
+
+      showMessage(
+        "That Dream Team does not belong to your account.",
+        "error"
+      );
+
+      return false;
+    }
+
+
+    const entryRoundId =
+      entryData.roundId ||
+      "";
+
+
+    /*
+      If this is already the CURRENT
+      week's entry, edit it directly.
+
+      If this is an OLD week's entry,
+      only copy it into the editor.
+
+      Old Firestore entry remains untouched.
+    */
+
+    if (
+      entryRoundId ===
+      DREAM_CONFIG.currentRoundId
+    ) {
+      currentEntryDocumentId =
+        entrySnapshot.id;
+
+      currentEntryRoundId =
+        entryRoundId;
+
+    } else {
+      currentEntryDocumentId =
+        null;
+
+      currentEntryRoundId =
+        null;
+    }
+
+
+    loadEntryIntoEditor(
+      entryData
+    );
+
+
+    if (
+      replacementPlayerId &&
+      !replacementModeStarted &&
+      !gameIsLocked
+    ) {
+      startReplacementMode();
+
+    } else {
+      showMessage(
+        entryRoundId ===
+          DREAM_CONFIG.currentRoundId
+          ? "Your current Dream Team has been loaded. Remove any players you want to change, choose replacements, then submit the updated team."
+          : "Your previous Dream Team has been loaded. Remove any players you want to change, choose replacements, then submit your new weekly team.",
+        "success"
+      );
+    }
+
+
+    return true;
+
+  } catch (error) {
+    console.error(
+      "Could not load carried Dream Team:",
+      error
+    );
+
+    return false;
+  }
 }
 
 
@@ -1383,8 +1586,12 @@ function startReplacementMode() {
   const playerToReplace =
     selectedPlayers.find(
       player =>
-        String(player.id) ===
-        String(replacementPlayerId)
+        String(
+          player.id
+        ) ===
+        String(
+          replacementPlayerId
+        )
     );
 
   if (!playerToReplace) {
@@ -1396,23 +1603,19 @@ function startReplacementMode() {
     return;
   }
 
-  replacementModeStarted = true;
+  replacementModeStarted =
+    true;
 
   selectedPlayers =
     selectedPlayers.filter(
       player =>
-        String(player.id) !==
-        String(replacementPlayerId)
+        String(
+          player.id
+        ) !==
+        String(
+          replacementPlayerId
+        )
     );
-
-  /*
-    IMPORTANT:
-
-    This only changes selectedPlayers in the browser.
-
-    The submitted Firestore team remains untouched
-    until a complete valid squad is submitted.
-  */
 
   updateDreamTeamDisplay();
 
@@ -1425,7 +1628,7 @@ function startReplacementMode() {
 
 
 /* =========================
-   LOAD EXISTING DREAM TEAM
+   LOAD CURRENT DREAM TEAM
 ========================= */
 
 async function loadExistingDreamTeam() {
@@ -1485,146 +1688,15 @@ async function loadExistingDreamTeam() {
 
 
 /* =========================
-   KEEP OR CHANGE NOTICE
+   LOAD PREVIOUS DREAM TEAM
 ========================= */
 
-function removeRolloverPrompt() {
-  const prompt =
-    document.getElementById(
-      "dreamTeamRolloverPrompt"
-    );
-
-  if (prompt) {
-    prompt.remove();
-  }
-
-  rolloverPromptOpen = false;
-}
-
-
-function showRolloverPrompt(
-  previousEntry
-) {
-  if (
-    rolloverPromptOpen ||
-    gameIsLocked
-  ) {
-    return;
-  }
-
-  rolloverPromptOpen = true;
-
-  const overlay =
-    document.createElement("div");
-
-  overlay.id =
-    "dreamTeamRolloverPrompt";
-
-  overlay.className =
-    "dream-rollover-overlay";
-
-  overlay.innerHTML = `
-    <section class="dream-rollover-box">
-
-      <h2>
-        ${escapeHtml(
-          DREAM_CONFIG.rolloverTitle
-        )}
-      </h2>
-
-      <p>
-        ${escapeHtml(
-          DREAM_CONFIG.rolloverQuestion
-        )}
-      </p>
-
-      <div class="dream-rollover-buttons">
-
-        <button
-          type="button"
-          id="changePreviousDreamTeam"
-        >
-          ${escapeHtml(
-            DREAM_CONFIG.changeTeamButton
-          )}
-        </button>
-
-        <button
-          type="button"
-          id="keepPreviousDreamTeam"
-        >
-          ${escapeHtml(
-            DREAM_CONFIG.keepTeamButton
-          )}
-        </button>
-
-      </div>
-
-    </section>
-  `;
-
-  document.body.appendChild(
-    overlay
-  );
-
-  const changeButton =
-    document.getElementById(
-      "changePreviousDreamTeam"
-    );
-
-  const keepButton =
-    document.getElementById(
-      "keepPreviousDreamTeam"
-    );
-
-  changeButton.addEventListener(
-    "click",
-    () => {
-      loadEntryIntoEditor(
-        previousEntry
-      );
-
-      removeRolloverPrompt();
-
-      showMessage(
-        DREAM_CONFIG.messages.previousLoaded,
-        "success"
-      );
-    }
-  );
-
-  keepButton.addEventListener(
-    "click",
-    async () => {
-      changeButton.disabled = true;
-      keepButton.disabled = true;
-
-      keepButton.textContent =
-        "Submitting...";
-
-      const success =
-        await submitPreviousTeam(
-          previousEntry
-        );
-
-      if (!success) {
-        changeButton.disabled = false;
-        keepButton.disabled = false;
-
-        keepButton.textContent =
-          DREAM_CONFIG.keepTeamButton;
-      }
-    }
-  );
-}
-
-
-async function checkForPreviousTeam() {
+async function loadPreviousDreamTeam() {
   if (
     !currentUser ||
     gameIsLocked
   ) {
-    return;
+    return false;
   }
 
   try {
@@ -1634,7 +1706,7 @@ async function checkForPreviousTeam() {
       );
 
     if (!previousResult) {
-      return;
+      return false;
     }
 
     const previousEntry = {
@@ -1645,81 +1717,47 @@ async function checkForPreviousTeam() {
         previousResult.roundId
     };
 
-    showRolloverPrompt(
+
+    /*
+      IMPORTANT:
+
+      This is only a working copy.
+
+      Do NOT point at the previous
+      Firestore document.
+    */
+
+    currentEntryDocumentId =
+      null;
+
+    currentEntryRoundId =
+      null;
+
+    loadEntryIntoEditor(
       previousEntry
     );
 
-  } catch (error) {
-    console.error(
-      "Could not check previous Dream Team:",
-      error
-    );
-  }
-}
 
+    if (
+      replacementPlayerId &&
+      !replacementModeStarted
+    ) {
+      startReplacementMode();
 
-/* =========================
-   SUBMIT PREVIOUS TEAM
-========================= */
-
-async function submitPreviousTeam(
-  previousEntry
-) {
-  clearMessage();
-
-  if (
-    !currentUser ||
-    gameIsLocked
-  ) {
-    showMessage(
-      "The team cannot currently be submitted.",
-      "error"
-    );
-
-    return false;
-  }
-
-  loadEntryIntoEditor(
-    previousEntry
-  );
-
-  if (!teamIsValid()) {
-    removeRolloverPrompt();
-
-    showMessage(
-      DREAM_CONFIG.messages.previousInvalid,
-      "error"
-    );
-
-    return false;
-  }
-
-  try {
-    await saveDreamTeamEntry({
-      players:
-        selectedPlayers,
-
-      formation:
-        formationSelect.value,
-
-      rolloverFromRound:
-        previousEntry.roundId ||
-        getPreviousRoundIds()[0]
-    });
-
-    completeSubmission();
+    } else {
+      showMessage(
+        "Your previous Dream Team has been loaded. " +
+        "Remove any players you want to change, choose their replacements, then submit your team.",
+        "success"
+      );
+    }
 
     return true;
 
   } catch (error) {
     console.error(
-      "Previous-team submission failed:",
+      "Could not load previous Dream Team:",
       error
-    );
-
-    showMessage(
-      DREAM_CONFIG.messages.submitError,
-      "error"
     );
 
     return false;
@@ -1733,6 +1771,7 @@ async function submitPreviousTeam(
 
 async function submitDreamTeam() {
   clearMessage();
+
   refreshLockStatus();
 
   if (gameIsLocked) {
@@ -1842,7 +1881,9 @@ async function findUsername(
         userReference
       );
 
-    if (userSnapshot.exists()) {
+    if (
+      userSnapshot.exists()
+    ) {
       const userData =
         userSnapshot.data();
 
@@ -1868,18 +1909,175 @@ async function findUsername(
 
 
 /* =========================
-   SECURITY
+   VIEW MY TEAM BUTTON
 ========================= */
 
-function escapeHtml(
-  value
+async function setupViewMyTeamButton(
+  user
 ) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  if (!viewMyTeamBtn) {
+    return;
+  }
+
+  if (!user) {
+    viewMyTeamBtn.href =
+      "index.html";
+
+    viewMyTeamBtn.textContent =
+      "Log In to View My Team";
+
+    return;
+  }
+
+  viewMyTeamBtn.textContent =
+    "Loading My Team...";
+
+  viewMyTeamBtn.removeAttribute(
+    "href"
+  );
+
+  try {
+
+    /*
+      First preference:
+      CURRENT week's team.
+    */
+
+    const currentResult =
+      await getEntryForRoundIds(
+        getCurrentRoundIds()
+      );
+
+    if (currentResult) {
+      viewMyTeamBtn.href =
+        `dream-team-view.html?id=${encodeURIComponent(
+          currentResult.id
+        )}`;
+
+      viewMyTeamBtn.textContent =
+        "View My Team";
+
+      return;
+    }
+
+
+    /*
+      Second preference:
+      PREVIOUS week's team.
+    */
+
+    const previousResult =
+      await getEntryForRoundIds(
+        getPreviousRoundIds()
+      );
+
+    if (previousResult) {
+      viewMyTeamBtn.href =
+        `dream-team-view.html?id=${encodeURIComponent(
+          previousResult.id
+        )}`;
+
+      viewMyTeamBtn.textContent =
+        "View My Team";
+
+      return;
+    }
+
+
+    /*
+      Fallback for older entries whose
+      document IDs may not follow the
+      normal round_uid format.
+    */
+
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "dream_team_entries"
+        )
+      );
+
+    const entries =
+      snapshot.docs
+        .map(
+          documentSnapshot => ({
+            id:
+              documentSnapshot.id,
+
+            ...documentSnapshot.data()
+          })
+        )
+        .filter(
+          entry =>
+            entry.uid ===
+              user.uid ||
+            String(
+              entry.id || ""
+            ).includes(
+              user.uid
+            )
+        );
+
+
+    if (!entries.length) {
+      viewMyTeamBtn.href =
+        "#";
+
+      viewMyTeamBtn.textContent =
+        "No Team Selected Yet";
+
+      return;
+    }
+
+
+    /*
+      Prefer the newest submitted entry
+      where timestamps are available.
+    */
+
+    entries.sort(
+      (a, b) => {
+        const aSeconds =
+          Number(
+            a.submittedAt?.seconds ||
+            0
+          );
+
+        const bSeconds =
+          Number(
+            b.submittedAt?.seconds ||
+            0
+          );
+
+        return (
+          bSeconds -
+          aSeconds
+        );
+      }
+    );
+
+
+    viewMyTeamBtn.href =
+      `dream-team-view.html?id=${encodeURIComponent(
+        entries[0].id
+      )}`;
+
+    viewMyTeamBtn.textContent =
+      "View My Team";
+
+  } catch (error) {
+    console.error(
+      "View My Team error:",
+      error
+    );
+
+    viewMyTeamBtn.href =
+      "#";
+
+    viewMyTeamBtn.textContent =
+      "View My Team";
+  }
 }
 
 
@@ -1900,7 +2098,8 @@ formationSelect.addEventListener(
     }
 
     if (
-      selectedPlayers.length > 0
+      selectedPlayers.length >
+      0
     ) {
       const confirmed =
         window.confirm(
@@ -1908,6 +2107,12 @@ formationSelect.addEventListener(
         );
 
       if (!confirmed) {
+        formationSelect.value =
+          grandfatheredFormation ||
+          formationSelect.value;
+
+        updateDreamTeamDisplay();
+
         return;
       }
 
@@ -1915,6 +2120,7 @@ formationSelect.addEventListener(
     }
 
     clearMessage();
+
     updateDreamTeamDisplay();
   }
 );
@@ -1945,6 +2151,7 @@ submitDreamTeamBtn.addEventListener(
   "click",
   event => {
     event.preventDefault();
+
     submitDreamTeam();
   }
 );
@@ -1957,16 +2164,16 @@ submitDreamTeamBtn.addEventListener(
 onAuthStateChanged(
   auth,
   async user => {
-    currentUser = user;
 
-    await setupViewMyTeamButton(
-      user
-    );
+    currentUser =
+      user;
 
     refreshLockStatus();
 
+
     if (!user) {
-      currentUsername = "";
+      currentUsername =
+        "";
 
       dreamLoginStatus.textContent =
         "You must log in before selecting and submitting a Dream Team.";
@@ -1976,136 +2183,117 @@ onAuthStateChanged(
         "error"
       );
 
+      await setupViewMyTeamButton(
+        null
+      );
+
       updateDreamTeamDisplay();
+
       return;
     }
 
+
     currentUsername =
-      await findUsername(user);
+      await findUsername(
+        user
+      );
 
     dreamLoginStatus.textContent =
       `Logged in as ${currentUsername}`;
 
+
+    /*
+      Player files MUST load before a
+      submitted squad is restored.
+    */
+
     await loadPlayerFiles();
 
-const currentEntryExists =
-  await loadExistingDreamTeam();
 
+    /*
+      Set up View My Team after currentUser
+      exists so round-specific lookup works.
+    */
 
-/*
-  If there is no team submitted for the
-  current round, automatically load the
-  previous round's squad into the editor.
-
-  This means Change Dream Team starts with
-  the user's existing 11 players rather
-  than an empty squad.
-*/
-
-if (
-  !currentEntryExists &&
-  !gameIsLocked
-) {
-
-  try {
-
-    const previousResult =
-      await getEntryForRoundIds(
-        getPreviousRoundIds()
-      );
-
-    if (previousResult) {
-
-      const previousEntry = {
-        ...previousResult.data,
-
-        roundId:
-          previousResult.data.roundId ||
-          previousResult.roundId
-      };
-
-
-      /*
-        IMPORTANT:
-        This is only loading the previous
-        squad into the editor.
-
-        It is NOT yet creating the new
-        week's Firestore entry.
-      */
-
-      currentEntryDocumentId =
-        null;
-
-      currentEntryRoundId =
-        null;
-
-
-      loadEntryIntoEditor(
-        previousEntry
-      );
-
-
-      /*
-        If Change Player was selected from
-        the View My Team page, remove that
-        player from the editor immediately.
-      */
-
-      if (
-        replacementPlayerId &&
-        !replacementModeStarted
-      ) {
-
-        startReplacementMode();
-
-      } else {
-
-        showMessage(
-          "Your previous Dream Team has been loaded. " +
-          "Remove any players you want to change, choose their replacements, then submit your team.",
-          "success"
-        );
-
-      }
-
-    } else {
-
-      /*
-        Genuine new player with no previous
-        Dream Team starts from an empty squad.
-      */
-
-      selectedPlayers = [];
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Could not load previous Dream Team:",
-      error
+    await setupViewMyTeamButton(
+      user
     );
 
-  }
 
-}
+    /*
+      PRIORITY 1:
+
+      User arrived from View My Team using
+      ?carry=ENTRY_ID.
+
+      Load that exact team.
+    */
+
+    if (carryEntryId) {
+      const carried =
+        await loadCarryEntry();
+
+      if (carried) {
+        updateDreamTeamDisplay();
+        return;
+      }
+    }
 
 
-if (
-  !currentEntryExists &&
-  gameIsLocked
-) {
+    /*
+      PRIORITY 2:
 
-  showMessage(
-    DREAM_CONFIG.messages.lockedShort,
-    "error"
-  );
+      User already has a current-round
+      submitted Dream Team.
 
-}
+      Load it directly for editing.
+    */
+
+    const currentEntryExists =
+      await loadExistingDreamTeam();
+
+    if (currentEntryExists) {
+      updateDreamTeamDisplay();
+      return;
+    }
 
 
-updateDreamTeamDisplay();
+    /*
+      PRIORITY 3:
+
+      No current-round entry exists.
+
+      Load last week's eleven automatically
+      as the starting squad.
+
+      Firestore remains untouched until the
+      user submits the new week's team.
+    */
+
+    if (!gameIsLocked) {
+      const previousLoaded =
+        await loadPreviousDreamTeam();
+
+      if (!previousLoaded) {
+        selectedPlayers = [];
+
+        showMessage(
+          "Choose your formation and select your Dream Team.",
+          ""
+        );
+      }
+    }
+
+
+    if (gameIsLocked) {
+      showMessage(
+        DREAM_CONFIG.messages.lockedShort,
+        "error"
+      );
+    }
+
+
+    updateDreamTeamDisplay();
   }
 );
 
