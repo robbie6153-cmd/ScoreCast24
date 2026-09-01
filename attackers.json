@@ -6,15 +6,14 @@
   {"id":"christos-tzolis","name":"Christos Tzolis","club":"Arsenal","position":"Attacker","rating":83},
   {"id":"gabriel-martinelli","name":"Gabriel Martinelli","club":"Arsenal","position":"Attacker","rating":86},
   {"id":"mikel-merino","name":"Mikel Merino","club":"Arsenal","position":"Attacker","rating":83},
-  {"id":"gabriel-jesus","name":"Gabriel Jesus","club":"Arsenal","position":"Attacker","rating":81},
   {"id":"reiss-nelson","name":"Reiss Nelson","club":"Arsenal","position":"Attacker","rating":77},
 
-  {"id":"ollie-watkins","name":"Ollie Watkins","club":"Aston Villa","position":"Attacker","rating":88},
   {"id":"tammy-abraham","name":"Tammy Abraham","club":"Aston Villa","position":"Attacker","rating":82},
   {"id":"alejandro-garnacho","name":"Alejandro Garnacho","club":"Aston Villa","position":"Attacker","rating":85},
   {"id":"brian-madjo","name":"Brian Madjo","club":"Aston Villa","position":"Attacker","rating":75},
   {"id":"leon-bailey","name":"Leon Bailey","club":"Aston Villa","position":"Attacker","rating":82},
   {"id":"alysson","name":"Alysson","club":"Aston Villa","position":"Attacker","rating":76},
+  {"id":"ibrahim-mbaye","name":"Ibrahim Mbaye","club":"Aston Villa","position":"Attacker","rating":80},
 
   {"id":"evanilson","name":"Evanilson","club":"Bournemouth","position":"Attacker","rating":84},
   {"id":"eli-junior-kroupi","name":"Eli Junior Kroupi","club":"Bournemouth","position":"Attacker","rating":79},
@@ -47,7 +46,6 @@
   {"id":"pedro-neto","name":"Pedro Neto","club":"Chelsea","position":"Attacker","rating":85},
   {"id":"geovany-quenda","name":"Geovany Quenda","club":"Chelsea","position":"Attacker","rating":83},
   {"id":"jamie-gittens","name":"Jamie Gittens","club":"Chelsea","position":"Attacker","rating":82},
-  {"id":"marc-guiu","name":"Marc Guiu","club":"Chelsea","position":"Attacker","rating":74},
   {"id":"mykhailo-mudryk","name":"Mykhailo Mudryk","club":"Chelsea","position":"Attacker","rating":78},
   {"id":"emmanuel-emegha","name":"Emmanuel Emegha","club":"Chelsea","position":"Attacker","rating":80},
 
@@ -68,7 +66,6 @@
   {"id":"jesurun-rak-sakyi","name":"Jesurun Rak-Sakyi","club":"Crystal Palace","position":"Attacker","rating":74},
   {"id":"evann-guessand","name":"Evann Guessand","club":"Crystal Palace","position":"Attacker","rating":81},
 
-  {"id":"beto","name":"Beto","club":"Everton","position":"Attacker","rating":81},
   {"id":"thierno-barry","name":"Thierno Barry","club":"Everton","position":"Attacker","rating":80},
   {"id":"iliman-ndiaye","name":"Iliman Ndiaye","club":"Everton","position":"Attacker","rating":85},
   {"id":"brennan-johnson","name":"Brennan Johnson","club":"Everton","position":"Attacker","rating":84},
@@ -87,6 +84,7 @@
   {"id":"david-akintola","name":"David Akintola","club":"Hull City","position":"Attacker","rating":76},
   {"id":"enis-destan","name":"Enis Destan","club":"Hull City","position":"Attacker","rating":76},
   {"id":"mohamed-ali-cho","name":"Mohamed-Ali Cho","club":"Hull City","position":"Attacker","rating":80},
+  {"id":"ilyas-ansah","name":"Ilyas Ansah","club":"Hull City","position":"Attacker","rating":75},
 
   {"id":"emersonn","name":"Emersonn","club":"Ipswich Town","position":"Attacker","rating":74},
   {"id":"sindre-walle-egeli","name":"Sindre Walle Egeli","club":"Ipswich Town","position":"Attacker","rating":75},
@@ -116,6 +114,7 @@
   {"id":"victor-munoz","name":"Víctor Muñoz","club":"Liverpool","position":"Attacker","rating":73},
   {"id":"rio-ngumoha","name":"Rio Ngumoha","club":"Liverpool","position":"Attacker","rating":76},
   {"id":"federico-chiesa","name":"Federico Chiesa","club":"Liverpool","position":"Attacker","rating":82},
+  {"id":"bradley-barcola","name":"Bradley Barcola","club":"Liverpool","position":"Attacker","rating":89},
 
   {"id":"erling-haaland","name":"Erling Haaland","club":"Manchester City","position":"Attacker","rating":94},
   {"id":"antoine-semenyo","name":"Antoine Semenyo","club":"Manchester City","position":"Attacker","rating":88},
@@ -142,7 +141,6 @@
   {"id":"liam-delap","name":"Liam Delap","club":"Nottingham Forest","position":"Attacker","rating":83},
   {"id":"dan-ndoye","name":"Dan Ndoye","club":"Nottingham Forest","position":"Attacker","rating":82},
   {"id":"callum-hudson-odoi","name":"Callum Hudson-Odoi","club":"Nottingham Forest","position":"Attacker","rating":81},
-  {"id":"omari-hutchinson","name":"Omari Hutchinson","club":"Nottingham Forest","position":"Attacker","rating":81},
   {"id":"arnaud-kalimuendo","name":"Arnaud Kalimuendo","club":"Nottingham Forest","position":"Attacker","rating":82},
   {"id":"dilane-bakwa","name":"Dilane Bakwa","club":"Nottingham Forest","position":"Attacker","rating":79},
 
@@ -150,7 +148,6 @@
   {"id":"wilson-isidor","name":"Wilson Isidor","club":"Sunderland","position":"Attacker","rating":79},
   {"id":"nilson-angulo","name":"Nilson Angulo","club":"Sunderland","position":"Attacker","rating":77},
   {"id":"romaine-mundle","name":"Romaine Mundle","club":"Sunderland","position":"Attacker","rating":77},
-  {"id":"luis-semedo","name":"Luís Semedo","club":"Sunderland","position":"Attacker","rating":75},
   {"id":"jocelin-ta-bi","name":"Jocelin Ta Bi","club":"Sunderland","position":"Attacker","rating":73},
 
   {"id":"dominic-solanke","name":"Dominic Solanke","club":"Tottenham Hotspur","position":"Attacker","rating":85},

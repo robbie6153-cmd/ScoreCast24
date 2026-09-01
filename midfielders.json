@@ -6,7 +6,6 @@
   {"id":"martin-odegaard","name":"Martin Odegaard","club":"Arsenal","position":"Midfielder","rating":89},
   {"id":"eberechi-eze","name":"Eberechi Eze","club":"Arsenal","position":"Midfielder","rating":88},
   {"id":"ethan-nwaneri","name":"Ethan Nwaneri","club":"Arsenal","position":"Midfielder","rating":80},
-  {"id":"fabio-vieira","name":"Fabio Vieira","club":"Arsenal","position":"Midfielder","rating":79},
   {"id":"max-dowman","name":"Max Dowman","club":"Arsenal","position":"Midfielder","rating":68},
 
   {"id":"joao-gomes","name":"Joao Gomes","club":"Aston Villa","position":"Midfielder","rating":82},
@@ -30,6 +29,7 @@
   {"id":"david-brooks","name":"David Brooks","club":"Bournemouth","position":"Midfielder","rating":79},
   {"id":"ryan-christie","name":"Ryan Christie","club":"Bournemouth","position":"Midfielder","rating":77},
   {"id":"justin-kluivert","name":"Justin Kluivert","club":"Bournemouth","position":"Midfielder","rating":85},
+  {"id":"matias-orozco","name":"Matías Orozco","club":"Brighton & Hove Albion","position":"Midfielder","rating":73},
 
   {"id":"mamadou-sangare","name":"Mamadou Sangare","club":"Brentford","position":"Midfielder","rating":77},
   {"id":"yehor-yarmoliuk","name":"Yehor Yarmoliuk","club":"Brentford","position":"Midfielder","rating":82},
@@ -41,6 +41,7 @@
   {"id":"fabio-carvalho","name":"Fabio Carvalho","club":"Brentford","position":"Midfielder","rating":72},
   {"id":"antoni-milambo","name":"Antoni Milambo","club":"Brentford","position":"Midfielder","rating":76},
   {"id":"yunes-emire-konak","name":"Yunes Emire Konak","club":"Brentford","position":"Midfielder","rating":72},
+  
 
   {"id":"pascal-gross","name":"Pascal Gross","club":"Brighton & Hove Albion","position":"Midfielder","rating":84},
   {"id":"yasin-ayari","name":"Yasin Ayari","club":"Brighton & Hove Albion","position":"Midfielder","rating":79},
@@ -76,6 +77,7 @@
   {"id":"matheus-franca","name":"Matheus Franca","club":"Crystal Palace","position":"Midfielder","rating":76},
   {"id":"cheick-doucoure","name":"Cheick Doucoure","club":"Crystal Palace","position":"Midfielder","rating":72},
   {"id":"david-ozoh","name":"David Ozoh","club":"Crystal Palace","position":"Midfielder","rating":72},
+  {"id":"honest-ahanor","name":"Honest Ahanor","club":"Crystal Palace","position":"Defender","rating":77},
 
   {"id":"james-garner","name":"James Garner","club":"Everton","position":"Midfielder","rating":82},
   {"id":"christian-norgaard","name":"Christian Norgaard","club":"Everton","position":"Midfielder","rating":76},
@@ -128,7 +130,6 @@
   {"id":"dominik-szoboszlai","name":"Dominik Szoboszlai","club":"Liverpool","position":"Midfielder","rating":91},
   {"id":"florian-wirtz","name":"Florian Wirtz","club":"Liverpool","position":"Midfielder","rating":91},
   {"id":"alexis-mac-allister","name":"Alexis Mac Allister","club":"Liverpool","position":"Midfielder","rating":88},
-  {"id":"harvey-elliott","name":"Harvey Elliott","club":"Liverpool","position":"Midfielder","rating":76},
   {"id":"wataru-endo","name":"Wataru Endo","club":"Liverpool","position":"Midfielder","rating":75},
   {"id":"stefan-bajcetic","name":"Stefan Bajcetic","club":"Liverpool","position":"Midfielder","rating":65},
   {"id":"trey-nyoni","name":"Trey Nyoni","club":"Liverpool","position":"Midfielder","rating":68},
@@ -141,6 +142,7 @@
   {"id":"jack-grealish","name":"Jack Grealish","club":"Manchester City","position":"Midfielder","rating":86},
   {"id":"claudio-echeverri","name":"Claudio Echeverri","club":"Manchester City","position":"Midfielder","rating":78},
   {"id":"ayyoub-bouaddi","name":"Ayyoub Bouaddi","club":"Manchester City","position":"Midfielder","rating":82},
+  {"id":"allan-elias","name":"Allan Elias","club":"Manchester City","position":"Midfielder","rating":78},
 
   {"id":"bruno-fernandes","name":"Bruno Fernandes","club":"Manchester United","position":"Midfielder","rating":90},
   {"id":"youri-tielemans","name":"Youri Tielemans","club":"Manchester United","position":"Midfielder","rating":85},
@@ -160,6 +162,7 @@
   {"id":"jacob-murphy","name":"Jacob Murphy","club":"Newcastle United","position":"Midfielder","rating":81},
   {"id":"joe-willock","name":"Joe Willock","club":"Newcastle United","position":"Midfielder","rating":78},
   {"id":"nico-gonzalez","name":"Nico Gonzalez","club":"Newcastle United","position":"Midfielder","rating":84},
+  {"id":"matias-fernandez-pardo","name":"Matias Fernandez-Pardo","club":"Newcastle United","position":"Attacker","rating":80},
 
   {"id":"ibrahim-sangare","name":"Ibrahim Sangare","club":"Nottingham Forest","position":"Midfielder","rating":80},
   {"id":"morgan-gibbs-white","name":"Morgan Gibbs-White","club":"Nottingham Forest","position":"Midfielder","rating":87},
