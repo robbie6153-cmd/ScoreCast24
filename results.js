@@ -267,8 +267,8 @@ export const resultsByRound = {
     },
 
     10: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 0,
+      awayScore: 1
     },
 
     11: {
