@@ -672,10 +672,10 @@ function updateTeamSelectionLink() {
     without modifying this old entry.
   */
 
-  backToTeamSelection.href =
-    `dream-team-game.html?carry=${encodeURIComponent(
-      currentEntryId
-    )}`;
+backToTeamSelection.href =
+  `dream-game.html?carry=${encodeURIComponent(
+    currentEntryId
+  )}`;
 }
 
 
