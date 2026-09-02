@@ -168,6 +168,18 @@ function escapeHtml(value) {
 function normaliseText(value) {
 
   return String(value || "")
+    .replace(/Ø/g, "O")
+    .replace(/ø/g, "o")
+    .replace(/Ł/g, "L")
+    .replace(/ł/g, "l")
+    .replace(/Ð/g, "D")
+    .replace(/ð/g, "d")
+    .replace(/Þ/g, "Th")
+    .replace(/þ/g, "th")
+    .replace(/Æ/g, "Ae")
+    .replace(/æ/g, "ae")
+    .replace(/Œ/g, "Oe")
+    .replace(/œ/g, "oe")
     .normalize("NFD")
     .replace(
       /[\u0300-\u036f]/g,
