@@ -320,6 +320,21 @@ async function loadPlayerScores() {
     }
 
 
+if (
+  normaliseText(
+    scoreDocument.playerName
+  ).includes(
+    "elanga"
+  )
+) {
+
+  console.log(
+    "ELANGA SCORE DOCUMENT:",
+    scoreDocument
+  );
+}
+
+
     const key =
       makePlayerKey(
         scoreDocument.club,
@@ -640,7 +655,24 @@ function addPlayerToSquad(
 
     return;
   }
+if (
+  normaliseText(
+    player.name
+  ).includes(
+    "elanga"
+  )
+) {
 
+  console.log(
+    "ELANGA DATABASE PLAYER:",
+    player
+  );
+
+  console.log(
+    "ELANGA DATABASE KEY:",
+    playerKey
+  );
+}
 
   const scores =
     playerScoresByKey.get(
