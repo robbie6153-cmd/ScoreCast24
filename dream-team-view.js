@@ -193,9 +193,51 @@ function makePlayerKey(
 }
 
 
+/*
+  First try to match a player by
+  club + name.
+
+  If the club has changed or the
+  club wording differs, fall back
+  to the player's name.
+*/
+
+function getPlayerScores(
+  player
+) {
+
+  const exactKey =
+    makePlayerKey(
+      player.club,
+      player.name
+    );
+
+
+  const nameKey =
+    `name|${normaliseText(
+      player.name
+    )}`;
+
+
+  return (
+    playerScoresByKey.get(
+      exactKey
+    ) ||
+    playerScoresByKey.get(
+      nameKey
+    ) ||
+    {
+      weekScore: 0,
+      overallScore: 0
+    }
+  );
+}
+
+
 /* =====================================================
    PLAYER SCORES
 ===================================================== */
+
 async function loadPlayerScores() {
 
   const snapshot =
@@ -233,8 +275,8 @@ async function loadPlayerScores() {
 
 
   /*
-    Find every genuine Dream Team
-    scoring round automatically.
+    Find all genuine Dream Team
+    weekly scoring rounds.
   */
 
   const roundIds =
@@ -256,11 +298,8 @@ async function loadPlayerScores() {
 
 
   /*
-    Sort:
-    week-01
-    week-02
-    week-03
-    etc.
+    Put the rounds into numerical
+    week order.
   */
 
   roundIds.sort(
@@ -291,17 +330,6 @@ async function loadPlayerScores() {
     ] || "";
 
 
-  console.log(
-    "Dream Team scoring rounds:",
-    roundIds
-  );
-
-  console.log(
-    "Latest Dream Team round:",
-    latestRoundId
-  );
-
-
   const scoresByPlayer =
     new Map();
 
@@ -320,48 +348,17 @@ async function loadPlayerScores() {
     }
 
 
-if (
-  normaliseText(
-    scoreDocument.playerName
-  ).includes(
-    "elanga"
-  )
-) {
-
-  console.log(
-    "ELANGA SCORE DOCUMENT:",
-    scoreDocument
-  );
-}
-
-
-    const key =
+    const exactKey =
       makePlayerKey(
         scoreDocument.club,
         scoreDocument.playerName
       );
 
 
-    if (
-      !scoresByPlayer.has(
-        key
-      )
-    ) {
-
-      scoresByPlayer.set(
-        key,
-        {
-          weekScore: 0,
-          overallScore: 0
-        }
-      );
-    }
-
-
-    const scores =
-      scoresByPlayer.get(
-        key
-      );
+    const nameKey =
+      `name|${normaliseText(
+        scoreDocument.playerName
+      )}`;
 
 
     const weekScore =
@@ -371,25 +368,86 @@ if (
 
 
     /*
-      Add every scored week
-      into the season total.
+      Store score using exact
+      club + player name.
     */
 
-    scores.overallScore +=
+    if (
+      !scoresByPlayer.has(
+        exactKey
+      )
+    ) {
+
+      scoresByPlayer.set(
+        exactKey,
+        {
+          weekScore: 0,
+          overallScore: 0
+        }
+      );
+    }
+
+
+    const exactScores =
+      scoresByPlayer.get(
+        exactKey
+      );
+
+
+    exactScores.overallScore +=
       weekScore;
 
-
-    /*
-      Only the newest round is
-      displayed as "Week".
-    */
 
     if (
       scoreDocument.roundId ===
       latestRoundId
     ) {
 
-      scores.weekScore =
+      exactScores.weekScore =
+        weekScore;
+    }
+
+
+    /*
+      Also store score using only
+      the player name.
+
+      This catches transfers and
+      club-name differences.
+    */
+
+    if (
+      !scoresByPlayer.has(
+        nameKey
+      )
+    ) {
+
+      scoresByPlayer.set(
+        nameKey,
+        {
+          weekScore: 0,
+          overallScore: 0
+        }
+      );
+    }
+
+
+    const nameScores =
+      scoresByPlayer.get(
+        nameKey
+      );
+
+
+    nameScores.overallScore +=
+      weekScore;
+
+
+    if (
+      scoreDocument.roundId ===
+      latestRoundId
+    ) {
+
+      nameScores.weekScore =
         weekScore;
     }
   }
@@ -397,6 +455,7 @@ if (
 
   return scoresByPlayer;
 }
+
 
 /* =====================================================
    LOAD PLAYER FILES
@@ -655,32 +714,12 @@ function addPlayerToSquad(
 
     return;
   }
-if (
-  normaliseText(
-    player.name
-  ).includes(
-    "elanga"
-  )
-) {
 
-  console.log(
-    "ELANGA DATABASE PLAYER:",
-    player
-  );
-
-  console.log(
-    "ELANGA DATABASE KEY:",
-    playerKey
-  );
-}
 
   const scores =
-    playerScoresByKey.get(
-      playerKey
-    ) || {
-      weekScore: 0,
-      overallScore: 0
-    };
+    getPlayerScores(
+      player
+    );
 
 
   currentEntry.players.push({
@@ -706,6 +745,7 @@ if (
 
   renderPlayerDatabase();
 }
+
 
 /* =====================================================
    DISPLAY DATABASE PLAYERS
@@ -784,20 +824,10 @@ function displayPositionPlayers(
     sortedPlayers
   ) {
 
-    const playerKey =
-      makePlayerKey(
-        player.club,
-        player.name
-      );
-
-
     const scores =
-      playerScoresByKey.get(
-        playerKey
-      ) || {
-        weekScore: 0,
-        overallScore: 0
-      };
+      getPlayerScores(
+        player
+      );
 
 
     const row =
@@ -893,6 +923,8 @@ function displayPositionPlayers(
     );
   }
 }
+
+
 /* =====================================================
    RENDER PLAYER DATABASE
 ===================================================== */
@@ -992,6 +1024,7 @@ function setupDatabaseFilterEvents() {
           if (
             databasePlayerSearch
           ) {
+
             databasePlayerSearch.value =
               "";
           }
@@ -1000,6 +1033,7 @@ function setupDatabaseFilterEvents() {
           if (
             databasePositionFilter
           ) {
+
             databasePositionFilter.value =
               "ALL";
           }
@@ -1008,6 +1042,7 @@ function setupDatabaseFilterEvents() {
           if (
             databaseClubFilter
           ) {
+
             databaseClubFilter.value =
               "ALL";
           }
@@ -1757,20 +1792,10 @@ async function loadDreamTeam() {
         ? entryData.players.map(
             player => {
 
-              const key =
-                makePlayerKey(
-                  player.club,
-                  player.name
-                );
-
-
               const scores =
-                playerScoresByKey.get(
-                  key
-                ) || {
-                  weekScore: 0,
-                  overallScore: 0
-                };
+                getPlayerScores(
+                  player
+                );
 
 
               return {
@@ -1795,11 +1820,6 @@ async function loadDreamTeam() {
       entryData
     );
 
-
-    /*
-      Re-render database now that
-      current squad is loaded.
-    */
 
     renderPlayerDatabase();
 
@@ -1833,10 +1853,15 @@ async function startDreamTeamPage() {
   setupDatabaseFilterEvents();
 
 
-  renderPlayerDatabase();
-
+  /*
+    Load the Dream Team and scores
+    before the final database render.
+  */
 
   await loadDreamTeam();
+
+
+  renderPlayerDatabase();
 }
 
 
