@@ -781,15 +781,20 @@ async function loadPlayerFiles() {
 /* =====================================================
    API MATCH AUDIT
 ===================================================== */
-
 function auditPlayerApiMatching() {
 
   let matched = 0;
 
-  let unmatched = 0;
-
   const unmatchedPlayers = [];
 
+  const databaseApiIds =
+    new Set();
+
+
+  /*
+    Check every player in our
+    JSON player database.
+  */
 
   for (
     const player of
@@ -806,9 +811,11 @@ function auditPlayerApiMatching() {
 
       matched += 1;
 
-    } else {
+      databaseApiIds.add(
+        String(apiPlayerId)
+      );
 
-      unmatched += 1;
+    } else {
 
       unmatchedPlayers.push({
         name:
@@ -820,6 +827,85 @@ function auditPlayerApiMatching() {
         position:
           player.databasePosition
       });
+    }
+  }
+
+
+  /*
+    Now work backwards.
+
+    Look at every API player who has
+    actually generated a score and
+    check that we successfully linked
+    that API player to our database.
+  */
+
+  const scoredApiPlayers =
+    new Map();
+
+
+  for (
+    const scoreDocument of
+    scoreDocuments
+  ) {
+
+    if (
+      scoreDocument.apiPlayerId ===
+        undefined ||
+      scoreDocument.apiPlayerId ===
+        null ||
+      scoreDocument.apiPlayerId ===
+        ""
+    ) {
+      continue;
+    }
+
+
+    const apiPlayerId =
+      String(
+        scoreDocument.apiPlayerId
+      );
+
+
+    if (
+      !scoredApiPlayers.has(
+        apiPlayerId
+      )
+    ) {
+
+      scoredApiPlayers.set(
+        apiPlayerId,
+        {
+          apiPlayerId,
+          name:
+            scoreDocument.playerName,
+          club:
+            scoreDocument.club
+        }
+      );
+    }
+  }
+
+
+  const scoredButUnmatched = [];
+
+
+  for (
+    const [
+      apiPlayerId,
+      player
+    ] of scoredApiPlayers
+  ) {
+
+    if (
+      !databaseApiIds.has(
+        apiPlayerId
+      )
+    ) {
+
+      scoredButUnmatched.push(
+        player
+      );
     }
   }
 
@@ -840,20 +926,39 @@ function auditPlayerApiMatching() {
 
   console.log(
     "Not yet matched:",
-    unmatched
+    unmatchedPlayers.length
+  );
+
+  console.log(
+    "API players with scores:",
+    scoredApiPlayers.size
+  );
+
+  console.log(
+    "SCORED BUT UNMATCHED:",
+    scoredButUnmatched.length
   );
 
 
   if (
-    unmatchedPlayers.length
+    scoredButUnmatched.length
   ) {
 
+    console.log(
+      "These need checking:"
+    );
+
     console.table(
-      unmatchedPlayers
+      scoredButUnmatched
     );
   }
-}
 
+
+  console.log(
+    "Players with no API match yet:",
+    unmatchedPlayers.length
+  );
+}
 
 /* =====================================================
    CLUB FILTER
