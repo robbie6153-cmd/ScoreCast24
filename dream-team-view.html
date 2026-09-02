@@ -14,7 +14,7 @@
 
   <meta
     name="description"
-    content="View a submitted ScoreCast24 weekly Dream Team."
+    content="View and edit a ScoreCast24 weekly Dream Team."
   >
 
   <link
@@ -29,13 +29,15 @@
   <main class="dream-team-view-page">
 
     <section class="dream-game-header">
-<a
-  id="backToTeamSelection"
-  href="dream-game.html"
-  class="back-home-link"
->
-  ← Back to Team Selection
-</a>
+
+      <a
+        id="backToTeamSelection"
+        href="dream-game.html"
+        class="back-home-link"
+      >
+        ← Back to Team Selection
+      </a>
+
       <a
         href="dream-leaderboard.html"
         class="back-home-link"
@@ -53,7 +55,7 @@
         Dream Team
       </h1>
 
-         <p id="dreamTeamViewStatus">
+      <p id="dreamTeamViewStatus">
         Loading Dream Team...
       </p>
 
@@ -122,7 +124,7 @@
 
       </div>
 
-       </section>
+    </section>
 
 
     <section class="dream-submit-section">
@@ -136,6 +138,114 @@
       </button>
 
     </section>
+
+
+    <section class="dream-player-picker">
+
+      <h2>
+        Find Players
+      </h2>
+
+      <p>
+        Select a player to add them to your squad.
+      </p>
+
+
+      <section class="player-database-filters">
+
+        <div class="player-database-filter">
+
+          <label for="databasePlayerSearch">
+            Search player
+          </label>
+
+          <input
+            type="search"
+            id="databasePlayerSearch"
+            placeholder="Search player..."
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <div class="player-database-filter">
+
+          <label for="databasePositionFilter">
+            Position
+          </label>
+
+          <select id="databasePositionFilter">
+
+            <option value="ALL">
+              All positions
+            </option>
+
+            <option value="Goalkeeper">
+              Goalkeepers
+            </option>
+
+            <option value="Defender">
+              Defenders
+            </option>
+
+            <option value="Midfielder">
+              Midfielders
+            </option>
+
+            <option value="Attacker">
+              Attackers
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="player-database-filter">
+
+          <label for="databaseClubFilter">
+            Club
+          </label>
+
+          <select id="databaseClubFilter">
+
+            <option value="ALL">
+              All clubs
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <button
+          type="button"
+          id="clearDatabaseFilters"
+          class="database-clear-filters"
+        >
+          Clear filters
+        </button>
+
+      </section>
+
+
+      <section
+        class="player-database-position-section"
+        data-position="Goalkeeper"
+      >
+
+        <h2
+          class="database-position goalkeeper-heading"
+        >
+          Goalkeepers
+        </h2>
+
+        <div id="goalkeepers">
+          Loading...
+        </div>
+
+      </section>
 
     <section class="dream-player-picker">
 
@@ -362,7 +472,7 @@
 
   <script
     type="module"
-    src="dream-team-view.js?v=5"
+    src="dream-team-view.js?v=6"
   ></script>
 
 </body>
