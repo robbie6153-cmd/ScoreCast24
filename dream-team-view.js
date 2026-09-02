@@ -196,17 +196,7 @@ function makePlayerKey(
 /* =====================================================
    PLAYER SCORES
 ===================================================== */
-
 async function loadPlayerScores() {
-
-  const CURRENT_ROUND_ID =
-    "2026-week-02";
-
-  const SEASON_ROUND_IDS = [
-    "2026-week-01",
-    "2026-week-02"
-  ];
-
 
   const snapshot =
     await getDocs(
@@ -217,84 +207,181 @@ async function loadPlayerScores() {
     );
 
 
-  const scoresByPlayer =
-    new Map();
+  const scoreDocuments = [];
 
 
   snapshot.forEach(
     documentSnapshot => {
 
-      const scoreDocument =
+      const data =
         documentSnapshot.data();
 
 
-      /*
-        Ignore old testing rounds.
-      */
-
       if (
-        !SEASON_ROUND_IDS.includes(
-          scoreDocument.roundId
-        )
+        !data.roundId ||
+        !data.playerName
       ) {
         return;
       }
 
 
-      const key =
-        makePlayerKey(
-          scoreDocument.club,
-          scoreDocument.playerName
-        );
-
-
-      if (
-        !scoresByPlayer.has(
-          key
-        )
-      ) {
-
-        scoresByPlayer.set(
-          key,
-          {
-            weekScore: 0,
-            overallScore: 0
-          }
-        );
-      }
-
-
-      const scores =
-        scoresByPlayer.get(
-          key
-        );
-
-
-      const weekScore =
-        Number(
-          scoreDocument.weekScore
-        ) || 0;
-
-
-      scores.overallScore +=
-        weekScore;
-
-
-      if (
-        scoreDocument.roundId ===
-        CURRENT_ROUND_ID
-      ) {
-
-        scores.weekScore =
-          weekScore;
-      }
+      scoreDocuments.push(
+        data
+      );
     }
   );
 
 
+  /*
+    Find every genuine Dream Team
+    scoring round automatically.
+  */
+
+  const roundIds =
+    [
+      ...new Set(
+        scoreDocuments
+          .map(
+            score =>
+              score.roundId
+          )
+          .filter(
+            roundId =>
+              /^2026-week-\d+$/.test(
+                roundId
+              )
+          )
+      )
+    ];
+
+
+  /*
+    Sort:
+    week-01
+    week-02
+    week-03
+    etc.
+  */
+
+  roundIds.sort(
+    (a, b) => {
+
+      const weekA =
+        Number(
+          a.split("-").pop()
+        ) || 0;
+
+      const weekB =
+        Number(
+          b.split("-").pop()
+        ) || 0;
+
+
+      return (
+        weekA -
+        weekB
+      );
+    }
+  );
+
+
+  const latestRoundId =
+    roundIds[
+      roundIds.length - 1
+    ] || "";
+
+
+  console.log(
+    "Dream Team scoring rounds:",
+    roundIds
+  );
+
+  console.log(
+    "Latest Dream Team round:",
+    latestRoundId
+  );
+
+
+  const scoresByPlayer =
+    new Map();
+
+
+  for (
+    const scoreDocument of
+    scoreDocuments
+  ) {
+
+    if (
+      !roundIds.includes(
+        scoreDocument.roundId
+      )
+    ) {
+      continue;
+    }
+
+
+    const key =
+      makePlayerKey(
+        scoreDocument.club,
+        scoreDocument.playerName
+      );
+
+
+    if (
+      !scoresByPlayer.has(
+        key
+      )
+    ) {
+
+      scoresByPlayer.set(
+        key,
+        {
+          weekScore: 0,
+          overallScore: 0
+        }
+      );
+    }
+
+
+    const scores =
+      scoresByPlayer.get(
+        key
+      );
+
+
+    const weekScore =
+      Number(
+        scoreDocument.weekScore
+      ) || 0;
+
+
+    /*
+      Add every scored week
+      into the season total.
+    */
+
+    scores.overallScore +=
+      weekScore;
+
+
+    /*
+      Only the newest round is
+      displayed as "Week".
+    */
+
+    if (
+      scoreDocument.roundId ===
+      latestRoundId
+    ) {
+
+      scores.weekScore =
+        weekScore;
+    }
+  }
+
+
   return scoresByPlayer;
 }
-
 
 /* =====================================================
    LOAD PLAYER FILES
