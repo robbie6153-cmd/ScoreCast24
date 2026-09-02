@@ -143,7 +143,23 @@ let heldPlayerKey = "";
 
 let allDatabasePlayers = [];
 
-let playerScoresByKey =
+let scoreDocuments = [];
+
+let latestRoundId = "";
+
+let playerScoresByApiId =
+  new Map();
+
+let apiIdByPlayerName =
+  new Map();
+
+let apiIdByClubAndName =
+  new Map();
+
+let fallbackScoresByName =
+  new Map();
+
+let fallbackScoresByClubAndName =
   new Map();
 
 
@@ -205,18 +221,43 @@ function makePlayerKey(
 }
 
 
-/*
-  First try to match a player by
-  club + name.
+function makeNameKey(
+  playerName
+) {
 
-  If the club has changed or the
-  club wording differs, fall back
-  to the player's name.
-*/
+  return normaliseText(
+    playerName
+  );
+}
 
-function getPlayerScores(
+
+/* =====================================================
+   FIND API PLAYER ID
+===================================================== */
+
+function getApiPlayerId(
   player
 ) {
+
+  /*
+    If we permanently add API IDs
+    to the JSON later, use them first.
+  */
+
+  if (
+    player.apiPlayerId !==
+      undefined &&
+    player.apiPlayerId !==
+      null &&
+    player.apiPlayerId !==
+      ""
+  ) {
+
+    return String(
+      player.apiPlayerId
+    );
+  }
+
 
   const exactKey =
     makePlayerKey(
@@ -225,29 +266,137 @@ function getPlayerScores(
     );
 
 
-  const nameKey =
-    `name|${normaliseText(
-      player.name
-    )}`;
-
-
-  return (
-    playerScoresByKey.get(
+  const exactApiId =
+    apiIdByClubAndName.get(
       exactKey
-    ) ||
-    playerScoresByKey.get(
+    );
+
+
+  if (exactApiId) {
+    return exactApiId;
+  }
+
+
+  const nameKey =
+    makeNameKey(
+      player.name
+    );
+
+
+  const nameApiIds =
+    apiIdByPlayerName.get(
       nameKey
-    ) ||
-    {
-      weekScore: 0,
-      overallScore: 0
-    }
-  );
+    );
+
+
+  /*
+    Only use name-only matching when
+    that name belongs to exactly one
+    API player.
+
+    This prevents accidentally joining
+    two different players with the
+    same name.
+  */
+
+  if (
+    nameApiIds &&
+    nameApiIds.size === 1
+  ) {
+
+    return [
+      ...nameApiIds
+    ][0];
+  }
+
+
+  return "";
 }
 
 
 /* =====================================================
-   PLAYER SCORES
+   GET PLAYER SCORES
+===================================================== */
+
+function getPlayerScores(
+  player
+) {
+
+  const apiPlayerId =
+    getApiPlayerId(
+      player
+    );
+
+
+  /*
+    API ID is the preferred match.
+  */
+
+  if (
+    apiPlayerId &&
+    playerScoresByApiId.has(
+      apiPlayerId
+    )
+  ) {
+
+    return playerScoresByApiId.get(
+      apiPlayerId
+    );
+  }
+
+
+  /*
+    Temporary fallback for players
+    that cannot yet be mapped to an
+    API ID.
+  */
+
+  const exactKey =
+    makePlayerKey(
+      player.club,
+      player.name
+    );
+
+
+  if (
+    fallbackScoresByClubAndName.has(
+      exactKey
+    )
+  ) {
+
+    return fallbackScoresByClubAndName.get(
+      exactKey
+    );
+  }
+
+
+  const nameKey =
+    makeNameKey(
+      player.name
+    );
+
+
+  if (
+    fallbackScoresByName.has(
+      nameKey
+    )
+  ) {
+
+    return fallbackScoresByName.get(
+      nameKey
+    );
+  }
+
+
+  return {
+    weekScore: 0,
+    overallScore: 0
+  };
+}
+
+
+/* =====================================================
+   LOAD PLAYER SCORES
 ===================================================== */
 
 async function loadPlayerScores() {
@@ -261,7 +410,7 @@ async function loadPlayerScores() {
     );
 
 
-  const scoreDocuments = [];
+  scoreDocuments = [];
 
 
   snapshot.forEach(
@@ -279,17 +428,15 @@ async function loadPlayerScores() {
       }
 
 
-      scoreDocuments.push(
-        data
-      );
+      scoreDocuments.push({
+        id:
+          documentSnapshot.id,
+
+        ...data
+      });
     }
   );
 
-
-  /*
-    Find all genuine Dream Team
-    weekly scoring rounds.
-  */
 
   const roundIds =
     [
@@ -309,11 +456,6 @@ async function loadPlayerScores() {
     ];
 
 
-  /*
-    Put the rounds into numerical
-    week order.
-  */
-
   roundIds.sort(
     (a, b) => {
 
@@ -328,21 +470,30 @@ async function loadPlayerScores() {
         ) || 0;
 
 
-      return (
-        weekA -
-        weekB
-      );
+      return weekA - weekB;
     }
   );
 
 
-  const latestRoundId =
+  latestRoundId =
     roundIds[
       roundIds.length - 1
     ] || "";
 
 
-  const scoresByPlayer =
+  playerScoresByApiId =
+    new Map();
+
+  apiIdByPlayerName =
+    new Map();
+
+  apiIdByClubAndName =
+    new Map();
+
+  fallbackScoresByName =
+    new Map();
+
+  fallbackScoresByClubAndName =
     new Map();
 
 
@@ -360,6 +511,25 @@ async function loadPlayerScores() {
     }
 
 
+    const weekScore =
+      Number(
+        scoreDocument.weekScore
+      ) || 0;
+
+
+    const apiPlayerId =
+      scoreDocument.apiPlayerId !==
+        undefined &&
+      scoreDocument.apiPlayerId !==
+        null &&
+      scoreDocument.apiPlayerId !==
+        ""
+        ? String(
+            scoreDocument.apiPlayerId
+          )
+        : "";
+
+
     const exactKey =
       makePlayerKey(
         scoreDocument.club,
@@ -368,29 +538,97 @@ async function loadPlayerScores() {
 
 
     const nameKey =
-      `name|${normaliseText(
+      makeNameKey(
         scoreDocument.playerName
-      )}`;
+      );
 
 
-    const weekScore =
-      Number(
-        scoreDocument.weekScore
-      ) || 0;
+    /* =========================
+       API ID LOOKUP MAP
+    ========================= */
+
+    if (apiPlayerId) {
+
+      apiIdByClubAndName.set(
+        exactKey,
+        apiPlayerId
+      );
 
 
-    /*
-      Store score using exact
-      club + player name.
-    */
+      if (
+        !apiIdByPlayerName.has(
+          nameKey
+        )
+      ) {
+
+        apiIdByPlayerName.set(
+          nameKey,
+          new Set()
+        );
+      }
+
+
+      apiIdByPlayerName
+        .get(
+          nameKey
+        )
+        .add(
+          apiPlayerId
+        );
+
+
+      /* =========================
+         SCORE BY API ID
+      ========================= */
+
+      if (
+        !playerScoresByApiId.has(
+          apiPlayerId
+        )
+      ) {
+
+        playerScoresByApiId.set(
+          apiPlayerId,
+          {
+            weekScore: 0,
+            overallScore: 0
+          }
+        );
+      }
+
+
+      const apiScores =
+        playerScoresByApiId.get(
+          apiPlayerId
+        );
+
+
+      apiScores.overallScore +=
+        weekScore;
+
+
+      if (
+        scoreDocument.roundId ===
+        latestRoundId
+      ) {
+
+        apiScores.weekScore =
+          weekScore;
+      }
+    }
+
+
+    /* =========================
+       FALLBACK EXACT SCORE
+    ========================= */
 
     if (
-      !scoresByPlayer.has(
+      !fallbackScoresByClubAndName.has(
         exactKey
       )
     ) {
 
-      scoresByPlayer.set(
+      fallbackScoresByClubAndName.set(
         exactKey,
         {
           weekScore: 0,
@@ -401,7 +639,7 @@ async function loadPlayerScores() {
 
 
     const exactScores =
-      scoresByPlayer.get(
+      fallbackScoresByClubAndName.get(
         exactKey
       );
 
@@ -420,21 +658,17 @@ async function loadPlayerScores() {
     }
 
 
-    /*
-      Also store score using only
-      the player name.
-
-      This catches transfers and
-      club-name differences.
-    */
+    /* =========================
+       FALLBACK NAME SCORE
+    ========================= */
 
     if (
-      !scoresByPlayer.has(
+      !fallbackScoresByName.has(
         nameKey
       )
     ) {
 
-      scoresByPlayer.set(
+      fallbackScoresByName.set(
         nameKey,
         {
           weekScore: 0,
@@ -445,7 +679,7 @@ async function loadPlayerScores() {
 
 
     const nameScores =
-      scoresByPlayer.get(
+      fallbackScoresByName.get(
         nameKey
       );
 
@@ -456,16 +690,13 @@ async function loadPlayerScores() {
 
     if (
       scoreDocument.roundId ===
-      latestRoundId
+        latestRoundId
     ) {
 
       nameScores.weekScore =
         weekScore;
     }
   }
-
-
-  return scoresByPlayer;
 }
 
 
@@ -544,6 +775,83 @@ async function loadPlayerFiles() {
 
   allDatabasePlayers =
     loadedPlayers;
+}
+
+
+/* =====================================================
+   API MATCH AUDIT
+===================================================== */
+
+function auditPlayerApiMatching() {
+
+  let matched = 0;
+
+  let unmatched = 0;
+
+  const unmatchedPlayers = [];
+
+
+  for (
+    const player of
+    allDatabasePlayers
+  ) {
+
+    const apiPlayerId =
+      getApiPlayerId(
+        player
+      );
+
+
+    if (apiPlayerId) {
+
+      matched += 1;
+
+    } else {
+
+      unmatched += 1;
+
+      unmatchedPlayers.push({
+        name:
+          player.name,
+
+        club:
+          player.club,
+
+        position:
+          player.databasePosition
+      });
+    }
+  }
+
+
+  console.log(
+    "DREAM TEAM API MATCH AUDIT"
+  );
+
+  console.log(
+    "Database players:",
+    allDatabasePlayers.length
+  );
+
+  console.log(
+    "Matched to API ID:",
+    matched
+  );
+
+  console.log(
+    "Not yet matched:",
+    unmatched
+  );
+
+
+  if (
+    unmatchedPlayers.length
+  ) {
+
+    console.table(
+      unmatchedPlayers
+    );
+  }
 }
 
 
@@ -734,8 +1042,19 @@ function addPlayerToSquad(
     );
 
 
+  const apiPlayerId =
+    getApiPlayerId(
+      player
+    );
+
+
   currentEntry.players.push({
     ...player,
+
+    apiPlayerId:
+      apiPlayerId ||
+      player.apiPlayerId ||
+      null,
 
     weeklyPoints:
       scores.weekScore,
@@ -1773,8 +2092,7 @@ async function loadDreamTeam() {
     }
 
 
-    playerScoresByKey =
-      await loadPlayerScores();
+    await loadPlayerScores();
 
 
     const entryData = {
@@ -1804,14 +2122,28 @@ async function loadDreamTeam() {
         ? entryData.players.map(
             player => {
 
+              const apiPlayerId =
+                getApiPlayerId(
+                  player
+                );
+
+
               const scores =
                 getPlayerScores(
-                  player
+                  {
+                    ...player,
+                    apiPlayerId
+                  }
                 );
 
 
               return {
                 ...player,
+
+                apiPlayerId:
+                  apiPlayerId ||
+                  player.apiPlayerId ||
+                  null,
 
                 weeklyPoints:
                   scores.weekScore,
@@ -1856,7 +2188,14 @@ async function loadDreamTeam() {
 
 async function startDreamTeamPage() {
 
+  /*
+    Load both sources before rendering
+    the player database.
+  */
+
   await loadPlayerFiles();
+
+  await loadPlayerScores();
 
 
   populateClubFilter();
@@ -1865,15 +2204,13 @@ async function startDreamTeamPage() {
   setupDatabaseFilterEvents();
 
 
-  /*
-    Load the Dream Team and scores
-    before the final database render.
-  */
-
-  await loadDreamTeam();
+  auditPlayerApiMatching();
 
 
   renderPlayerDatabase();
+
+
+  await loadDreamTeam();
 }
 
 
