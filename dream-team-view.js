@@ -10,6 +10,29 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+const PLAYER_FILES = [
+  {
+    file: "goalkeepers.json",
+    elementId: "goalkeepers",
+    position: "Goalkeeper"
+  },
+  {
+    file: "defenders.json",
+    elementId: "defenders",
+    position: "Defender"
+  },
+  {
+    file: "midfielders.json",
+    elementId: "midfielders",
+    position: "Midfielder"
+  },
+  {
+    file: "attackers.json",
+    elementId: "attackers",
+    position: "Attacker"
+  }
+];
+
 
 const dreamTeamViewTitle =
   document.getElementById(
@@ -75,13 +98,31 @@ const backToTeamSelection =
   document.getElementById(
     "backToTeamSelection"
   );
+const databasePlayerSearch =
+  document.getElementById(
+    "databasePlayerSearch"
+  );
 
+const databasePositionFilter =
+  document.getElementById(
+    "databasePositionFilter"
+  );
+
+const databaseClubFilter =
+  document.getElementById(
+    "databaseClubFilter"
+  );
+
+const clearDatabaseFilters =
+  document.getElementById(
+    "clearDatabaseFilters"
+  );
 
 let currentEntry = null;
 let currentEntryId = "";
 let holdTimer = null;
 let heldPlayerKey = "";
-
+let allDatabasePlayers = [];
 
 /* =====================================================
    HELPERS
@@ -225,7 +266,370 @@ async function loadPlayerScores() {
 
   return scoresByPlayer;
 }
+/* =====================================================
+   LOAD PLAYER FILES
+===================================================== */
 
+async function loadPlayerFiles() {
+
+  const loadedPlayers = [];
+
+
+  for (const playerFile of PLAYER_FILES) {
+
+    try {
+
+      const response =
+        await fetch(
+          `${playerFile.file}?v=${Date.now()}`
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          `Could not load ${playerFile.file}`
+        );
+      }
+
+
+      const players =
+        await response.json();
+
+
+      if (!Array.isArray(players)) {
+        continue;
+      }
+
+
+      for (const player of players) {
+
+        loadedPlayers.push({
+          ...player,
+
+          position:
+            player.position ||
+            playerFile.position,
+
+          databasePosition:
+            playerFile.position,
+
+          elementId:
+            playerFile.elementId
+        });
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Player file loading error:",
+        error
+      );
+    }
+  }
+
+
+  allDatabasePlayers =
+    loadedPlayers;
+}
+/* =====================================================
+   CLUB FILTER
+===================================================== */
+
+function populateClubFilter() {
+
+  if (!databaseClubFilter) {
+    return;
+  }
+
+
+  const clubs =
+    [
+      ...new Set(
+        allDatabasePlayers
+          .map(
+            player =>
+              player.club
+          )
+          .filter(Boolean)
+      )
+    ]
+      .sort(
+        (a, b) =>
+          a.localeCompare(b)
+      );
+
+
+  databaseClubFilter.innerHTML = `
+    <option value="ALL">
+      All clubs
+    </option>
+  `;
+
+
+  clubs.forEach(
+    club => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        club;
+
+      option.textContent =
+        club;
+
+
+      databaseClubFilter
+        .appendChild(
+          option
+        );
+    }
+  );
+}
+/* =====================================================
+   FILTER PLAYERS
+===================================================== */
+
+function getFilteredPlayers() {
+
+  const searchValue =
+    normaliseText(
+      databasePlayerSearch
+        ?.value ||
+      ""
+    );
+
+
+  const selectedPosition =
+    databasePositionFilter
+      ?.value ||
+    "ALL";
+
+
+  const selectedClub =
+    databaseClubFilter
+      ?.value ||
+    "ALL";
+
+
+  return allDatabasePlayers.filter(
+    player => {
+
+      const matchesSearch =
+        !searchValue ||
+        normaliseText(
+          player.name
+        ).includes(
+          searchValue
+        );
+
+
+      const matchesPosition =
+        selectedPosition ===
+          "ALL" ||
+        player.databasePosition ===
+          selectedPosition;
+
+
+      const matchesClub =
+        selectedClub ===
+          "ALL" ||
+        player.club ===
+          selectedClub;
+
+
+      return (
+        matchesSearch &&
+        matchesPosition &&
+        matchesClub
+      );
+    }
+  );
+}
+/* =====================================================
+   DISPLAY DATABASE PLAYERS
+===================================================== */
+
+function displayPositionPlayers(
+  elementId,
+  players
+) {
+
+  const container =
+    document.getElementById(
+      elementId
+    );
+
+
+  if (!container) {
+    return;
+  }
+
+
+  container.innerHTML = "";
+
+
+  if (!players.length) {
+
+    container.innerHTML = `
+      <p class="leaderboard-empty-message">
+        No matching players.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  const sortedPlayers =
+    [...players].sort(
+      (a, b) => {
+
+        const clubA =
+          String(
+            a.club || ""
+          ).toLowerCase();
+
+        const clubB =
+          String(
+            b.club || ""
+          ).toLowerCase();
+
+        const nameA =
+          String(
+            a.name || ""
+          ).toLowerCase();
+
+        const nameB =
+          String(
+            b.name || ""
+          ).toLowerCase();
+
+
+        return (
+          clubA.localeCompare(
+            clubB
+          ) ||
+          nameA.localeCompare(
+            nameB
+          )
+        );
+      }
+    );
+
+
+  for (const player of sortedPlayers) {
+
+    const row =
+      document.createElement(
+        "button"
+      );
+
+
+    row.type =
+      "button";
+
+    row.className =
+      "player-database-row";
+
+
+    row.textContent =
+      `${player.name} — ` +
+      `${player.club} — ` +
+      `Rating: ${player.rating}`;
+
+
+    container.appendChild(
+      row
+    );
+  }
+}
+/* =====================================================
+   RENDER PLAYER DATABASE
+===================================================== */
+
+function renderPlayerDatabase() {
+
+  const filteredPlayers =
+    getFilteredPlayers();
+
+
+  for (const playerFile of PLAYER_FILES) {
+
+    const positionPlayers =
+      filteredPlayers.filter(
+        player =>
+          player.databasePosition ===
+          playerFile.position
+      );
+
+
+    const section =
+      document.querySelector(
+        `.player-database-position-section[data-position="${playerFile.position}"]`
+      );
+
+
+    if (section) {
+      section.hidden =
+        positionPlayers.length === 0;
+    }
+
+
+    displayPositionPlayers(
+      playerFile.elementId,
+      positionPlayers
+    );
+  }
+}
+/* =====================================================
+   DATABASE FILTER EVENTS
+===================================================== */
+
+function setupDatabaseFilterEvents() {
+
+  if (databasePlayerSearch) {
+    databasePlayerSearch.addEventListener(
+      "input",
+      renderPlayerDatabase
+    );
+  }
+
+
+  if (databasePositionFilter) {
+    databasePositionFilter.addEventListener(
+      "change",
+      renderPlayerDatabase
+    );
+  }
+
+
+  if (databaseClubFilter) {
+    databaseClubFilter.addEventListener(
+      "change",
+      renderPlayerDatabase
+    );
+  }
+
+
+  if (clearDatabaseFilters) {
+    clearDatabaseFilters.addEventListener(
+      "click",
+      () => {
+
+        databasePlayerSearch.value = "";
+        databasePositionFilter.value = "ALL";
+        databaseClubFilter.value = "ALL";
+
+        renderPlayerDatabase();
+      }
+    );
+  }
+}
 
 /* =====================================================
    ERROR DISPLAY
@@ -995,4 +1399,18 @@ async function loadDreamTeam() {
    START
 ===================================================== */
 
-loadDreamTeam();
+async function startDreamTeamPage() {
+
+  await loadPlayerFiles();
+
+  populateClubFilter();
+
+  setupDatabaseFilterEvents();
+
+  renderPlayerDatabase();
+
+  await loadDreamTeam();
+}
+
+
+startDreamTeamPage();
