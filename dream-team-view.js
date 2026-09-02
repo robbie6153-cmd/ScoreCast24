@@ -588,7 +588,6 @@ function addPlayerToSquad(
   renderPlayerDatabase();
 }
 
-
 /* =====================================================
    DISPLAY DATABASE PLAYERS
 ===================================================== */
@@ -666,6 +665,22 @@ function displayPositionPlayers(
     sortedPlayers
   ) {
 
+    const playerKey =
+      makePlayerKey(
+        player.club,
+        player.name
+      );
+
+
+    const scores =
+      playerScoresByKey.get(
+        playerKey
+      ) || {
+        weekScore: 0,
+        overallScore: 0
+      };
+
+
     const row =
       document.createElement(
         "button"
@@ -679,10 +694,57 @@ function displayPositionPlayers(
       "player-database-row";
 
 
-    row.textContent =
-      `${player.name} — ` +
-      `${player.club} — ` +
-      `Rating: ${player.rating}`;
+    row.innerHTML = `
+
+      <div class="database-player-main">
+
+        <strong class="database-player-name">
+          ${escapeHtml(
+            player.name
+          )}
+        </strong>
+
+        <span class="database-player-club">
+          ${escapeHtml(
+            player.club
+          )}
+        </span>
+
+      </div>
+
+
+      <div class="database-player-stats">
+
+        <span class="database-player-rating">
+          Rating:
+          <strong>
+            ${Number(
+              player.rating || 0
+            )}
+          </strong>
+        </span>
+
+        <span>
+          Week:
+          <strong>
+            ${Number(
+              scores.weekScore || 0
+            )}
+          </strong>
+        </span>
+
+        <span>
+          Overall:
+          <strong>
+            ${Number(
+              scores.overallScore || 0
+            )}
+          </strong>
+        </span>
+
+      </div>
+
+    `;
 
 
     row.addEventListener(
@@ -712,8 +774,6 @@ function displayPositionPlayers(
     );
   }
 }
-
-
 /* =====================================================
    RENDER PLAYER DATABASE
 ===================================================== */

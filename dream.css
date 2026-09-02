@@ -1140,3 +1140,209 @@ body {
 .database-clear-filters:active {
   transform: scale(0.98);
 }
+/* =====================================================
+   DREAM TEAM PLAYER PICKER
+===================================================== */
+
+.dream-player-picker {
+  width: 100%;
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 14px;
+}
+
+.dream-player-picker > h2 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  text-align: center;
+}
+
+.dream-player-picker > p {
+  margin: 0 0 22px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+
+/* =====================================================
+   PLAYER FILTERS
+===================================================== */
+
+.player-database-filters {
+  width: 100%;
+  margin-bottom: 34px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.player-database-filter {
+  margin-bottom: 15px;
+}
+
+.player-database-filter label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.player-database-filter input,
+.player-database-filter select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid rgba(255, 210, 26, 0.75);
+  border-radius: 13px;
+  background: white;
+  color: #17213a;
+  font-size: 16px;
+}
+
+.database-clear-filters {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 13px;
+  background: #ffd21a;
+  color: #081b3c;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+
+/* =====================================================
+   POSITION HEADINGS
+===================================================== */
+
+.player-database-position-section {
+  margin-bottom: 30px;
+}
+
+.database-position {
+  margin: 0 0 12px;
+  font-size: 27px;
+}
+
+.goalkeeper-heading {
+  color: #19ad4b;
+}
+
+.defender-heading {
+  color: #44a9ff;
+}
+
+.midfielder-heading {
+  color: #ffd21a;
+}
+
+.attacker-heading {
+  color: #ff6363;
+}
+
+
+/* =====================================================
+   PLAYER DATABASE ROWS
+===================================================== */
+
+.player-database-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 13px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+
+  font-family: inherit;
+  text-align: left;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+}
+
+.player-database-row:active {
+  transform: scale(0.985);
+  background: rgba(255, 210, 26, 0.17);
+}
+
+.database-player-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.database-player-name {
+  display: block;
+  margin-bottom: 3px;
+
+  color: white;
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.database-player-club {
+  display: block;
+
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+}
+
+.database-player-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 10px;
+
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
+
+.database-player-stats strong {
+  color: white;
+}
+
+.database-player-rating {
+  color: #ffd21a;
+}
+
+.database-player-rating strong {
+  color: #ffd21a;
+}
+
+
+/* =====================================================
+   MOBILE PLAYER ROWS
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .dream-player-picker {
+    padding: 0 10px;
+  }
+
+  .player-database-row {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .database-player-name {
+    font-size: 16px;
+  }
+
+  .database-player-stats {
+    max-width: 135px;
+    font-size: 12px;
+  }
+
+}
