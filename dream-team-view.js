@@ -79,6 +79,8 @@ const backToTeamSelection =
 
 let currentEntry = null;
 let currentEntryId = "";
+let holdTimer = null;
+let heldPlayerKey = "";
 
 
 /* =====================================================
@@ -411,7 +413,69 @@ function renderPlayers(players) {
     ).join("");
 }
 
+/* =====================================================
+   REMOVE PLAYER
+===================================================== */
 
+function removePlayerFromSquad(
+  playerKey
+) {
+
+  if (
+    !currentEntry ||
+    !Array.isArray(
+      currentEntry.players
+    )
+  ) {
+    return;
+  }
+
+
+  const player =
+    currentEntry.players.find(
+      item =>
+        makePlayerKey(
+          item.club,
+          item.name
+        ) === playerKey
+    );
+
+
+  if (!player) {
+    return;
+  }
+
+
+  const shouldRemove =
+    window.confirm(
+      `Remove ${player.name} from squad?`
+    );
+
+
+  if (!shouldRemove) {
+    return;
+  }
+
+
+  currentEntry.players =
+    currentEntry.players.filter(
+      item =>
+        makePlayerKey(
+          item.club,
+          item.name
+        ) !== playerKey
+    );
+
+
+  renderFormation(
+    currentEntry.players
+  );
+
+
+  renderPlayers(
+    currentEntry.players
+  );
+}
 /* =====================================================
    FORMATION PLAYER
 ===================================================== */
@@ -440,8 +504,20 @@ function createFormationPlayer(
     );
 
 
+  const playerKey =
+    makePlayerKey(
+      player.club,
+      player.name
+    );
+
+
   return `
-    <div class="formation-player">
+    <div
+      class="formation-player"
+      data-player-key="${escapeHtml(
+        playerKey
+      )}"
+    >
 
       <div
         class="formation-player-name"
@@ -570,9 +646,98 @@ function renderFormation(players) {
         createFormationPlayer
       )
       .join("");
+
+
+  enablePlayerHoldRemoval();
 }
 
+/* =====================================================
+   HOLD PLAYER TO REMOVE
+===================================================== */
 
+function enablePlayerHoldRemoval() {
+
+  const formationPlayers =
+    document.querySelectorAll(
+      ".formation-player"
+    );
+
+
+  formationPlayers.forEach(
+    playerElement => {
+
+      const startHold = event => {
+
+        event.preventDefault();
+
+        heldPlayerKey =
+          playerElement.dataset
+            .playerKey || "";
+
+
+        clearTimeout(
+          holdTimer
+        );
+
+
+        holdTimer =
+          setTimeout(
+            () => {
+
+              if (
+                heldPlayerKey
+              ) {
+
+                removePlayerFromSquad(
+                  heldPlayerKey
+                );
+              }
+
+              heldPlayerKey = "";
+
+            },
+            800
+          );
+      };
+
+
+      const cancelHold = () => {
+
+        clearTimeout(
+          holdTimer
+        );
+
+        holdTimer = null;
+        heldPlayerKey = "";
+      };
+
+
+      playerElement.addEventListener(
+        "pointerdown",
+        startHold
+      );
+
+
+      playerElement.addEventListener(
+        "pointerup",
+        cancelHold
+      );
+
+
+      playerElement.addEventListener(
+        "pointerleave",
+        cancelHold
+      );
+
+
+      playerElement.addEventListener(
+        "pointercancel",
+        cancelHold
+      );
+
+    }
+  );
+}
 /* =====================================================
    RENDER DREAM TEAM
 ===================================================== */
