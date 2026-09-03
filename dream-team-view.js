@@ -75,6 +75,10 @@ const viewDreamFormation =
   document.getElementById(
     "formationChangeBtn"
   );
+  const formationChangeMenu =
+  document.getElementById(
+    "formationChangeMenu"
+  );
 
 const viewDreamRating =
   document.getElementById(
@@ -2607,90 +2611,90 @@ function canChangeToFormation(
         formation[position]
     );
 }
-function chooseFormation() {
 
-  if (!currentEntry) {
+function renderFormationMenu() {
+
+  if (
+    !formationChangeMenu
+  ) {
     return;
   }
 
+  formationChangeMenu.innerHTML =
+    "";
 
-  const formationNames =
-    Object.keys(
+  Object
+    .keys(
       FORMATIONS
-    );
-
-
-  const choice =
-    window.prompt(
-      "Choose formation:\n\n" +
-      formationNames
-        .map(
-          (formation, index) =>
-            `${index + 1}. ${formation}`
-        )
-        .join("\n")
-    );
-
-
-  if (!choice) {
-    return;
-  }
-
-
-  const selectedIndex =
-    Number(choice) - 1;
-
-
-  const newFormation =
-    formationNames[
-      selectedIndex
-    ];
-
-
-  if (!newFormation) {
-
-    window.alert(
-      "Please choose a valid formation."
-    );
-
-    return;
-  }
-
-
-  if (
-    newFormation ===
-    currentEntry.formation
-  ) {
-    return;
-  }
-
-
-  if (
-    !canChangeToFormation(
-      newFormation
     )
-  ) {
+    .forEach(
+      formationName => {
 
-    window.alert(
-      "You need to remove players from your squad before changing formation."
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.type =
+          "button";
+
+        button.className =
+          "formation-option";
+
+        button.textContent =
+          formationName;
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            if (
+              formationName ===
+              currentEntry?.formation
+            ) {
+              formationChangeMenu.hidden =
+                true;
+
+              return;
+            }
+
+            if (
+              !canChangeToFormation(
+                formationName
+              )
+            ) {
+              window.alert(
+                "You need to remove players from your squad before changing formation."
+              );
+
+              formationChangeMenu.hidden =
+                true;
+
+              return;
+            }
+
+            currentEntry.formation =
+              formationName;
+
+            if (
+              viewDreamFormation
+            ) {
+              viewDreamFormation.textContent =
+                formationName;
+            }
+
+            formationChangeMenu.hidden =
+              true;
+          }
+        );
+
+        formationChangeMenu.appendChild(
+          button
+        );
+      }
     );
-
-    return;
-  }
-
-
-  currentEntry.formation =
-    newFormation;
-
-
-  if (
-    viewDreamFormation
-  ) {
-
-    viewDreamFormation.textContent =
-      newFormation;
-  }
 }
+
 /* =====================================================
    START
 ===================================================== */
@@ -2721,6 +2725,7 @@ if (
       saveCurrentDreamTeam
     );
 }
+
 if (
   formationChangeBtn
 ) {
@@ -2728,7 +2733,17 @@ if (
   formationChangeBtn
     .addEventListener(
       "click",
-      chooseFormation
+      () => {
+
+        renderFormationMenu();
+
+       if (
+  formationChangeMenu
+) {
+  formationChangeMenu.hidden =
+    !formationChangeMenu.hidden;
+}
+      }
     );
 }
   auditPlayerApiMatching();
