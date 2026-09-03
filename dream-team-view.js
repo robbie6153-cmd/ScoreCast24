@@ -2,14 +2,18 @@ import {
   auth,
   db
 } from "./firebase.js?v=108";
+import {
+  DREAM_CONFIG
+} from "./dream-config.js?v=6";
 
 import {
   doc,
   getDoc,
   collection,
-  getDocs
+  getDocs,
+  setDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
-
 
 /* =====================================================
    PLAYER FILES
@@ -66,6 +70,10 @@ const viewDreamUsername =
 const viewDreamFormation =
   document.getElementById(
     "viewDreamFormation"
+  );
+  const formationChangeBtn =
+  document.getElementById(
+    "formationChangeBtn"
   );
 
 const viewDreamRating =
@@ -128,12 +136,25 @@ const clearDatabaseFilters =
     "clearDatabaseFilters"
   );
 
+  const submitDreamTeamBtn =
+  document.getElementById(
+    "submitDreamTeamBtn"
+  );
 
 /* =====================================================
    CURRENT STATE
 ===================================================== */
-const MAX_TEAM_RATING = 888;
-const MAX_PLAYERS = 11;
+const MAX_TEAM_RATING =
+  DREAM_CONFIG.maxRating;
+
+const MAX_PLAYERS =
+  DREAM_CONFIG.maxPlayers;
+
+const MAX_FROM_ONE_CLUB =
+  DREAM_CONFIG.maxFromOneClub;
+
+const FORMATIONS =
+  DREAM_CONFIG.formations;
 let currentEntry = null;
 
 let currentEntryId = "";
@@ -1114,7 +1135,17 @@ function addPlayerToSquad(
     currentEntry.players = [];
   }
 
+if (
+  currentEntry.players.length >=
+  MAX_PLAYERS
+) {
 
+  window.alert(
+    "Your squad already has 11 players. Remove a player before adding another."
+  );
+
+  return;
+}
   const playerKey =
     makePlayerKey(
       player.club,
@@ -1141,6 +1172,89 @@ function addPlayerToSquad(
     return;
   }
 
+  const clubCount =
+  currentEntry.players.filter(
+    selectedPlayer =>
+      selectedPlayer.club ===
+      player.club
+  ).length;
+
+
+if (
+  clubCount >=
+  MAX_FROM_ONE_CLUB
+) {
+
+  window.alert(
+    `You may only select ${MAX_FROM_ONE_CLUB} players from ${player.club}.`
+  );
+
+  return;
+}
+
+const formation =
+  FORMATIONS[
+    currentEntry.formation
+  ];
+
+
+if (formation) {
+
+  const positionCount =
+    currentEntry.players.filter(
+      selectedPlayer =>
+        selectedPlayer.position ===
+        player.position
+    ).length;
+
+
+  const positionLimit =
+    formation[
+      player.position
+    ];
+
+
+  if (
+    positionCount >=
+    positionLimit
+  ) {
+
+    window.alert(
+      `Your ${currentEntry.formation} formation only allows ${positionLimit} ${player.position.toLowerCase()} player${positionLimit === 1 ? "" : "s"}.`
+    );
+
+    return;
+  }
+}
+const currentRating =
+  currentEntry.players.reduce(
+    (total, selectedPlayer) =>
+      total +
+      Number(
+        selectedPlayer.rating || 0
+      ),
+    0
+  );
+
+
+const newRating =
+  currentRating +
+  Number(
+    player.rating || 0
+  );
+
+
+if (
+  newRating >
+  MAX_TEAM_RATING
+) {
+
+  window.alert(
+    `This player is not available as it takes you over the ${MAX_TEAM_RATING} rating limit.`
+  );
+
+  return;
+}
 
   const scores =
     getPlayerScores(
@@ -2319,8 +2433,264 @@ async function loadDreamTeam() {
     );
   }
 }
+async function saveCurrentDreamTeam() {
+
+  if (
+    !currentEntry ||
+    !currentEntryId
+  ) {
+    window.alert(
+      "Your Dream Team has not loaded yet."
+    );
+
+    return;
+  }
 
 
+  const players =
+    Array.isArray(
+      currentEntry.players
+    )
+      ? currentEntry.players
+      : [];
+
+
+  if (
+    players.length !==
+    MAX_PLAYERS
+  ) {
+
+    window.alert(
+      `You must select ${MAX_PLAYERS} players before submitting. You currently have ${players.length}.`
+    );
+
+    return;
+  }
+
+
+  const ratingTotal =
+    players.reduce(
+      (total, player) =>
+        total +
+        Number(
+          player.rating || 0
+        ),
+      0
+    );
+
+
+  if (
+    ratingTotal >
+    MAX_TEAM_RATING
+  ) {
+
+    window.alert(
+      `Your team rating is ${ratingTotal}/${MAX_TEAM_RATING}. Reduce the rating before submitting.`
+    );
+
+    return;
+  }
+
+
+  try {
+
+    submitDreamTeamBtn.disabled =
+      true;
+
+
+    await setDoc(
+      doc(
+        db,
+        "dream_team_entries",
+        currentEntryId
+      ),
+  {
+  players,
+
+  formation:
+    currentEntry.formation,
+
+  ratingTotal,
+
+  updatedAt:
+    serverTimestamp()
+},
+      {
+        merge: true
+      }
+    );
+
+
+    currentEntry.ratingTotal =
+      ratingTotal;
+
+
+    window.alert(
+      "Dream Team saved successfully."
+    );
+
+
+    updateSquadSummary();
+
+  } catch (error) {
+
+    console.error(
+      "Dream Team save error:",
+      error
+    );
+
+
+    window.alert(
+      "Your Dream Team could not be saved. Please try again."
+    );
+
+  } finally {
+
+    submitDreamTeamBtn.disabled =
+      false;
+  }
+}
+function canChangeToFormation(
+  formationName
+) {
+
+  if (
+    !currentEntry ||
+    !Array.isArray(
+      currentEntry.players
+    )
+  ) {
+    return false;
+  }
+
+
+  const formation =
+    FORMATIONS[
+      formationName
+    ];
+
+
+  if (!formation) {
+    return false;
+  }
+
+
+  const counts = {
+    Goalkeeper: 0,
+    Defender: 0,
+    Midfielder: 0,
+    Attacker: 0
+  };
+
+
+  currentEntry.players.forEach(
+    player => {
+
+      if (
+        counts[player.position] !==
+        undefined
+      ) {
+
+        counts[player.position] += 1;
+      }
+    }
+  );
+
+
+  return Object
+    .keys(
+      formation
+    )
+    .every(
+      position =>
+        counts[position] <=
+        formation[position]
+    );
+}
+function chooseFormation() {
+
+  if (!currentEntry) {
+    return;
+  }
+
+
+  const formationNames =
+    Object.keys(
+      FORMATIONS
+    );
+
+
+  const choice =
+    window.prompt(
+      "Choose formation:\n\n" +
+      formationNames
+        .map(
+          (formation, index) =>
+            `${index + 1}. ${formation}`
+        )
+        .join("\n")
+    );
+
+
+  if (!choice) {
+    return;
+  }
+
+
+  const selectedIndex =
+    Number(choice) - 1;
+
+
+  const newFormation =
+    formationNames[
+      selectedIndex
+    ];
+
+
+  if (!newFormation) {
+
+    window.alert(
+      "Please choose a valid formation."
+    );
+
+    return;
+  }
+
+
+  if (
+    newFormation ===
+    currentEntry.formation
+  ) {
+    return;
+  }
+
+
+  if (
+    !canChangeToFormation(
+      newFormation
+    )
+  ) {
+
+    window.alert(
+      "You need to remove players from your squad before changing formation."
+    );
+
+    return;
+  }
+
+
+  currentEntry.formation =
+    newFormation;
+
+
+  if (
+    viewDreamFormation
+  ) {
+
+    viewDreamFormation.textContent =
+      newFormation;
+  }
+}
 /* =====================================================
    START
 ===================================================== */
@@ -2341,8 +2711,26 @@ async function startDreamTeamPage() {
 
 
   setupDatabaseFilterEvents();
+if (
+  submitDreamTeamBtn
+) {
 
+  submitDreamTeamBtn
+    .addEventListener(
+      "click",
+      saveCurrentDreamTeam
+    );
+}
+if (
+  formationChangeBtn
+) {
 
+  formationChangeBtn
+    .addEventListener(
+      "click",
+      chooseFormation
+    );
+}
   auditPlayerApiMatching();
 
 
