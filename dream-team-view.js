@@ -132,7 +132,8 @@ const clearDatabaseFilters =
 /* =====================================================
    CURRENT STATE
 ===================================================== */
-
+const MAX_TEAM_RATING = 888;
+const MAX_PLAYERS = 11;
 let currentEntry = null;
 
 let currentEntryId = "";
@@ -1168,7 +1169,6 @@ function addPlayerToSquad(
       scores.overallScore
   });
 
-
   renderFormation(
     currentEntry.players
   );
@@ -1179,10 +1179,12 @@ function addPlayerToSquad(
   );
 
 
+  updateSquadSummary();
+
+
   renderPlayerDatabase();
+
 }
-
-
 /* =====================================================
    DISPLAY DATABASE PLAYERS
 ===================================================== */
@@ -1748,9 +1750,11 @@ function removePlayerFromSquad(
   );
 
 
+  updateSquadSummary();
+
+
   renderPlayerDatabase();
 }
-
 
 /* =====================================================
    FORMATION PLAYER
@@ -2029,7 +2033,45 @@ function enablePlayerHoldRemoval() {
   );
 }
 
+/* =====================================================
+   UPDATE SQUAD SUMMARY
+===================================================== */
 
+function updateSquadSummary() {
+
+  if (
+    !currentEntry ||
+    !Array.isArray(
+      currentEntry.players
+    )
+  ) {
+    return;
+  }
+
+
+  const currentRating =
+    currentEntry.players.reduce(
+      (total, player) =>
+        total +
+        Number(
+          player.rating || 0
+        ),
+      0
+    );
+
+
+  const playerCount =
+    currentEntry.players.length;
+
+
+  if (
+    viewDreamRating
+  ) {
+
+    viewDreamRating.textContent =
+      `${currentRating}/${MAX_TEAM_RATING} · ${playerCount}/${MAX_PLAYERS}`;
+  }
+}
 /* =====================================================
    RENDER DREAM TEAM
 ===================================================== */
@@ -2078,15 +2120,7 @@ function renderDreamTeam(entry) {
   }
 
 
-  if (
-    viewDreamRating
-  ) {
-
-    viewDreamRating.textContent =
-      Number(
-        entry.ratingTotal || 0
-      );
-  }
+  updateSquadSummary();
 
 
   if (
@@ -2320,3 +2354,4 @@ async function startDreamTeamPage() {
 
 
 startDreamTeamPage();
+
