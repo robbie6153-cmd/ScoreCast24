@@ -2510,7 +2510,6 @@ function applyTeamEditPermissions() {
 /* =====================================================
    LOAD DREAM TEAM
 ===================================================== */
-
 async function loadDreamTeam() {
 
   const parameters =
@@ -2519,23 +2518,121 @@ async function loadDreamTeam() {
     );
 
 
-  const entryId =
+  let entryId =
     parameters.get(
       "id"
     );
 
 
-  if (!entryId) {
-
-    showError(
-      "No Dream Team entry was selected."
-    );
-
-    return;
-  }
-
-
   try {
+
+    /*
+      Make sure Firebase has finished
+      checking who is logged in.
+    */
+    await auth.authStateReady();
+
+
+    /*
+      If no entry ID was supplied in
+      the URL, automatically find this
+      user's Dream Team.
+    */
+    if (!entryId) {
+
+      if (!auth.currentUser) {
+
+        showError(
+          "Please sign in to view your Dream Team."
+        );
+
+        return;
+      }
+
+
+      /*
+        First preference:
+        CURRENT week's team.
+      */
+      const currentEntryId =
+        `${DREAM_CONFIG.currentRoundId}_${auth.currentUser.uid}`;
+
+
+      const currentReference =
+        doc(
+          db,
+          "dream_team_entries",
+          currentEntryId
+        );
+
+
+      const currentSnapshot =
+        await getDoc(
+          currentReference
+        );
+
+
+      if (
+        currentSnapshot.exists()
+      ) {
+
+        entryId =
+          currentEntryId;
+
+      } else {
+
+        /*
+          Second preference:
+          PREVIOUS week's team.
+        */
+        const previousRoundId =
+          DREAM_CONFIG.previousRoundId;
+
+
+        if (previousRoundId) {
+
+          const previousEntryId =
+            `${previousRoundId}_${auth.currentUser.uid}`;
+
+
+          const previousReference =
+            doc(
+              db,
+              "dream_team_entries",
+              previousEntryId
+            );
+
+
+          const previousSnapshot =
+            await getDoc(
+              previousReference
+            );
+
+
+          if (
+            previousSnapshot.exists()
+          ) {
+
+            entryId =
+              previousEntryId;
+          }
+        }
+      }
+
+
+      /*
+        Brand-new player:
+        no current or previous team.
+      */
+      if (!entryId) {
+
+        window.location.href =
+          "dream-game.html";
+
+        return;
+      }
+    }
+
 
     const entryReference =
       doc(
@@ -2570,9 +2667,6 @@ async function loadDreamTeam() {
 
       ...entrySnapshot.data()
     };
-
-
-    await auth.authStateReady();
 
 
     isOwnTeam =
@@ -2665,7 +2759,6 @@ async function loadDreamTeam() {
     );
   }
 }
-
 
 /* =====================================================
    SAVE DREAM TEAM
