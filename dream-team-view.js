@@ -2241,15 +2241,48 @@ function renderDreamTeam(entry) {
   updateSquadSummary();
 
 
-  if (
-    viewDreamPoints
-  ) {
+if (
+  viewDreamPoints
+) {
 
-    viewDreamPoints.textContent =
-      Number(
-        entry.totalPoints || 0
-      );
-  }
+  const players =
+    Array.isArray(
+      entry.players
+    )
+      ? entry.players
+      : [];
+
+
+  const weeklyTotal =
+    players.reduce(
+      (total, player) =>
+        total +
+        Number(
+          player.weeklyPoints || 0
+        ),
+      0
+    );
+
+
+  const seasonTotal =
+    players.reduce(
+      (total, player) =>
+        total +
+        Number(
+          player.overallPoints || 0
+        ),
+      0
+    );
+
+
+  viewDreamPoints.innerHTML = `
+    This Week:
+    <strong>${weeklyTotal}</strong>
+    <br>
+    Season Total:
+    <strong>${seasonTotal}</strong>
+  `;
+}
 
 
   if (
