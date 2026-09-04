@@ -2,6 +2,7 @@ import {
   auth,
   db
 } from "./firebase.js?v=108";
+
 import {
   DREAM_CONFIG
 } from "./dream-config.js?v=6";
@@ -14,6 +15,7 @@ import {
   setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
 
 /* =====================================================
    PLAYER FILES
@@ -71,11 +73,13 @@ const viewDreamFormation =
   document.getElementById(
     "viewDreamFormation"
   );
-  const formationChangeBtn =
+
+const formationChangeBtn =
   document.getElementById(
     "formationChangeBtn"
   );
-  const formationChangeMenu =
+
+const formationChangeMenu =
   document.getElementById(
     "formationChangeMenu"
   );
@@ -140,14 +144,16 @@ const clearDatabaseFilters =
     "clearDatabaseFilters"
   );
 
-  const submitDreamTeamBtn =
+const submitDreamTeamBtn =
   document.getElementById(
     "submitDreamTeamBtn"
   );
 
+
 /* =====================================================
    CURRENT STATE
 ===================================================== */
+
 const MAX_TEAM_RATING =
   DREAM_CONFIG.maxRating;
 
@@ -159,9 +165,13 @@ const MAX_FROM_ONE_CLUB =
 
 const FORMATIONS =
   DREAM_CONFIG.formations;
+
+
 let currentEntry = null;
 
 let currentEntryId = "";
+
+let isOwnTeam = false;
 
 let holdTimer = null;
 
@@ -265,11 +275,6 @@ function getApiPlayerId(
   player
 ) {
 
-  /*
-    If we permanently add API IDs
-    to the JSON later, use them first.
-  */
-
   if (
     player.apiPlayerId !==
       undefined &&
@@ -315,16 +320,6 @@ function getApiPlayerId(
     );
 
 
-  /*
-    Only use name-only matching when
-    that name belongs to exactly one
-    API player.
-
-    This prevents accidentally joining
-    two different players with the
-    same name.
-  */
-
   if (
     nameApiIds &&
     nameApiIds.size === 1
@@ -354,10 +349,6 @@ function getPlayerScores(
     );
 
 
-  /*
-    API ID is the preferred match.
-  */
-
   if (
     apiPlayerId &&
     playerScoresByApiId.has(
@@ -370,12 +361,6 @@ function getPlayerScores(
     );
   }
 
-
-  /*
-    Temporary fallback for players
-    that cannot yet be mapped to an
-    API ID.
-  */
 
   const exactKey =
     makePlayerKey(
@@ -569,10 +554,6 @@ async function loadPlayerScores() {
       );
 
 
-    /* =========================
-       API ID LOOKUP MAP
-    ========================= */
-
     if (apiPlayerId) {
 
       apiIdByClubAndName.set(
@@ -602,10 +583,6 @@ async function loadPlayerScores() {
           apiPlayerId
         );
 
-
-      /* =========================
-         SCORE BY API ID
-      ========================= */
 
       if (
         !playerScoresByApiId.has(
@@ -644,10 +621,6 @@ async function loadPlayerScores() {
     }
 
 
-    /* =========================
-       FALLBACK EXACT SCORE
-    ========================= */
-
     if (
       !fallbackScoresByClubAndName.has(
         exactKey
@@ -684,10 +657,6 @@ async function loadPlayerScores() {
     }
 
 
-    /* =========================
-       FALLBACK NAME SCORE
-    ========================= */
-
     if (
       !fallbackScoresByName.has(
         nameKey
@@ -716,7 +685,7 @@ async function loadPlayerScores() {
 
     if (
       scoreDocument.roundId ===
-        latestRoundId
+      latestRoundId
     ) {
 
       nameScores.weekScore =
@@ -807,6 +776,7 @@ async function loadPlayerFiles() {
 /* =====================================================
    API MATCH AUDIT
 ===================================================== */
+
 function auditPlayerApiMatching() {
 
   let matched = 0;
@@ -816,11 +786,6 @@ function auditPlayerApiMatching() {
   const databaseApiIds =
     new Set();
 
-
-  /*
-    Check every player in our
-    JSON player database.
-  */
 
   for (
     const player of
@@ -856,15 +821,6 @@ function auditPlayerApiMatching() {
     }
   }
 
-
-  /*
-    Now work backwards.
-
-    Look at every API player who has
-    actually generated a score and
-    check that we successfully linked
-    that API player to our database.
-  */
 
   const scoredApiPlayers =
     new Map();
@@ -903,8 +859,10 @@ function auditPlayerApiMatching() {
         apiPlayerId,
         {
           apiPlayerId,
+
           name:
             scoreDocument.playerName,
+
           club:
             scoreDocument.club
         }
@@ -985,6 +943,7 @@ function auditPlayerApiMatching() {
     unmatchedPlayers.length
   );
 }
+
 
 /* =====================================================
    CLUB FILTER
@@ -1120,6 +1079,16 @@ function addPlayerToSquad(
   player
 ) {
 
+  if (!isOwnTeam) {
+
+    window.alert(
+      "You can only edit your own Dream Team."
+    );
+
+    return;
+  }
+
+
   if (!currentEntry) {
 
     window.alert(
@@ -1139,17 +1108,20 @@ function addPlayerToSquad(
     currentEntry.players = [];
   }
 
-if (
-  currentEntry.players.length >=
-  MAX_PLAYERS
-) {
 
-  window.alert(
-    "Your squad already has 11 players. Remove a player before adding another."
-  );
+  if (
+    currentEntry.players.length >=
+    MAX_PLAYERS
+  ) {
 
-  return;
-}
+    window.alert(
+      "Your squad already has 11 players. Remove a player before adding another."
+    );
+
+    return;
+  }
+
+
   const playerKey =
     makePlayerKey(
       player.club,
@@ -1176,89 +1148,94 @@ if (
     return;
   }
 
+
   const clubCount =
-  currentEntry.players.filter(
-    selectedPlayer =>
-      selectedPlayer.club ===
-      player.club
-  ).length;
-
-
-if (
-  clubCount >=
-  MAX_FROM_ONE_CLUB
-) {
-
-  window.alert(
-    `You may only select ${MAX_FROM_ONE_CLUB} players from ${player.club}.`
-  );
-
-  return;
-}
-
-const formation =
-  FORMATIONS[
-    currentEntry.formation
-  ];
-
-
-if (formation) {
-
-  const positionCount =
     currentEntry.players.filter(
       selectedPlayer =>
-        selectedPlayer.position ===
-        player.position
+        selectedPlayer.club ===
+        player.club
     ).length;
 
 
-  const positionLimit =
-    formation[
-      player.position
-    ];
-
-
   if (
-    positionCount >=
-    positionLimit
+    clubCount >=
+    MAX_FROM_ONE_CLUB
   ) {
 
     window.alert(
-      `Your ${currentEntry.formation} formation only allows ${positionLimit} ${player.position.toLowerCase()} player${positionLimit === 1 ? "" : "s"}.`
+      `You may only select ${MAX_FROM_ONE_CLUB} players from ${player.club}.`
     );
 
     return;
   }
-}
-const currentRating =
-  currentEntry.players.reduce(
-    (total, selectedPlayer) =>
-      total +
-      Number(
-        selectedPlayer.rating || 0
-      ),
-    0
-  );
 
 
-const newRating =
-  currentRating +
-  Number(
-    player.rating || 0
-  );
+  const formation =
+    FORMATIONS[
+      currentEntry.formation
+    ];
 
 
-if (
-  newRating >
-  MAX_TEAM_RATING
-) {
+  if (formation) {
 
-  window.alert(
-    `This player is not available as it takes you over the ${MAX_TEAM_RATING} rating limit.`
-  );
+    const positionCount =
+      currentEntry.players.filter(
+        selectedPlayer =>
+          selectedPlayer.position ===
+          player.position
+      ).length;
 
-  return;
-}
+
+    const positionLimit =
+      formation[
+        player.position
+      ];
+
+
+    if (
+      positionCount >=
+      positionLimit
+    ) {
+
+      window.alert(
+        `Your ${currentEntry.formation} formation only allows ${positionLimit} ${player.position.toLowerCase()} player${positionLimit === 1 ? "" : "s"}.`
+      );
+
+      return;
+    }
+  }
+
+
+  const currentRating =
+    currentEntry.players.reduce(
+      (total, selectedPlayer) =>
+        total +
+        Number(
+          selectedPlayer.rating || 0
+        ),
+      0
+    );
+
+
+  const newRating =
+    currentRating +
+    Number(
+      player.rating || 0
+    );
+
+
+  if (
+    newRating >
+    MAX_TEAM_RATING
+  ) {
+
+    window.alert(
+      `This player is not available as it takes you over the ${MAX_TEAM_RATING} rating limit.`
+    );
+
+    return;
+  }
+
 
   const scores =
     getPlayerScores(
@@ -1287,6 +1264,7 @@ if (
       scores.overallScore
   });
 
+
   renderFormation(
     currentEntry.players
   );
@@ -1301,8 +1279,9 @@ if (
 
 
   renderPlayerDatabase();
-
 }
+
+
 /* =====================================================
    DISPLAY DATABASE PLAYERS
 ===================================================== */
@@ -1455,6 +1434,11 @@ function displayPositionPlayers(
     row.addEventListener(
       "click",
       () => {
+
+        if (!isOwnTeam) {
+          return;
+        }
+
 
         const shouldAdd =
           window.confirm(
@@ -1812,6 +1796,16 @@ function removePlayerFromSquad(
   playerKey
 ) {
 
+  if (!isOwnTeam) {
+
+    window.alert(
+      "You can only edit your own Dream Team."
+    );
+
+    return;
+  }
+
+
   if (
     !currentEntry ||
     !Array.isArray(
@@ -1873,6 +1867,7 @@ function removePlayerFromSquad(
 
   renderPlayerDatabase();
 }
+
 
 /* =====================================================
    FORMATION PLAYER
@@ -2056,6 +2051,11 @@ function renderFormation(players) {
 
 function enablePlayerHoldRemoval() {
 
+  if (!isOwnTeam) {
+    return;
+  }
+
+
   const formationPlayers =
     document.querySelectorAll(
       ".formation-player"
@@ -2151,6 +2151,7 @@ function enablePlayerHoldRemoval() {
   );
 }
 
+
 /* =====================================================
    UPDATE SQUAD SUMMARY
 ===================================================== */
@@ -2190,6 +2191,8 @@ function updateSquadSummary() {
       `${currentRating}/${MAX_TEAM_RATING} · ${playerCount}/${MAX_PLAYERS}`;
   }
 }
+
+
 /* =====================================================
    RENDER DREAM TEAM
 ===================================================== */
@@ -2241,48 +2244,33 @@ function renderDreamTeam(entry) {
   updateSquadSummary();
 
 
-if (
-  viewDreamPoints
-) {
+  if (
+    viewDreamPoints
+  ) {
 
-  const players =
-    Array.isArray(
-      entry.players
-    )
-      ? entry.players
-      : [];
+    const weeklyTotal =
+      Number(
+        entry.totalPoints || 0
+      );
 
 
-  const weeklyTotal =
-    players.reduce(
-      (total, player) =>
-        total +
-        Number(
-          player.weeklyPoints || 0
-        ),
-      0
-    );
+    const seasonTotal =
+      Number(
+        entry.seasonTotal ??
+        entry.seasonPoints ??
+        entry.totalSeasonPoints ??
+        weeklyTotal
+      );
 
 
-  const seasonTotal =
-    players.reduce(
-      (total, player) =>
-        total +
-        Number(
-          player.overallPoints || 0
-        ),
-      0
-    );
-
-
-  viewDreamPoints.innerHTML = `
-    This Week:
-    <strong>${weeklyTotal}</strong>
-    <br>
-    Season Total:
-    <strong>${seasonTotal}</strong>
-  `;
-}
+    viewDreamPoints.innerHTML = `
+      This Week:
+      <strong>${weeklyTotal}</strong>
+      <br>
+      Season Total:
+      <strong>${seasonTotal}</strong>
+    `;
+  }
 
 
   if (
@@ -2319,10 +2307,72 @@ function updateTeamSelectionLink() {
   }
 
 
+  backToTeamSelection.hidden =
+    !isOwnTeam;
+
+
   backToTeamSelection.href =
     `dream-game.html?carry=${encodeURIComponent(
       currentEntryId
     )}`;
+}
+
+
+/* =====================================================
+   TEAM EDIT PERMISSIONS
+===================================================== */
+
+function applyTeamEditPermissions() {
+
+  const playerPicker =
+    document.querySelector(
+      ".dream-player-picker"
+    );
+
+
+  if (
+    submitDreamTeamBtn
+  ) {
+
+    submitDreamTeamBtn.hidden =
+      !isOwnTeam;
+  }
+
+
+  if (
+    formationChangeBtn
+  ) {
+
+    formationChangeBtn.hidden =
+      !isOwnTeam;
+  }
+
+
+  if (
+    formationChangeMenu
+  ) {
+
+    formationChangeMenu.hidden =
+      true;
+  }
+
+
+  if (
+    playerPicker
+  ) {
+
+    playerPicker.hidden =
+      !isOwnTeam;
+  }
+
+
+  if (
+    backToTeamSelection
+  ) {
+
+    backToTeamSelection.hidden =
+      !isOwnTeam;
+  }
 }
 
 
@@ -2382,9 +2432,6 @@ async function loadDreamTeam() {
     }
 
 
-    await loadPlayerScores();
-
-
     const entryData = {
 
       id:
@@ -2394,12 +2441,26 @@ async function loadDreamTeam() {
     };
 
 
+    await auth.authStateReady();
+
+
+    isOwnTeam =
+      Boolean(
+        auth.currentUser &&
+        entryData.uid ===
+          auth.currentUser.uid
+      );
+
+
     currentEntryId =
       entrySnapshot.id;
 
 
     currentEntry =
       entryData;
+
+
+    applyTeamEditPermissions();
 
 
     updateTeamSelectionLink();
@@ -2455,7 +2516,10 @@ async function loadDreamTeam() {
     );
 
 
-    renderPlayerDatabase();
+    if (isOwnTeam) {
+
+      renderPlayerDatabase();
+    }
 
   } catch (error) {
 
@@ -2470,12 +2534,29 @@ async function loadDreamTeam() {
     );
   }
 }
+
+
+/* =====================================================
+   SAVE DREAM TEAM
+===================================================== */
+
 async function saveCurrentDreamTeam() {
+
+  if (!isOwnTeam) {
+
+    window.alert(
+      "You can only save your own Dream Team."
+    );
+
+    return;
+  }
+
 
   if (
     !currentEntry ||
     !currentEntryId
   ) {
+
     window.alert(
       "Your Dream Team has not loaded yet."
     );
@@ -2531,8 +2612,13 @@ async function saveCurrentDreamTeam() {
 
   try {
 
-    submitDreamTeamBtn.disabled =
-      true;
+    if (
+      submitDreamTeamBtn
+    ) {
+
+      submitDreamTeamBtn.disabled =
+        true;
+    }
 
 
     await setDoc(
@@ -2541,17 +2627,17 @@ async function saveCurrentDreamTeam() {
         "dream_team_entries",
         currentEntryId
       ),
-  {
-  players,
+      {
+        players,
 
-  formation:
-    currentEntry.formation,
+        formation:
+          currentEntry.formation,
 
-  ratingTotal,
+        ratingTotal,
 
-  updatedAt:
-    serverTimestamp()
-},
+        updatedAt:
+          serverTimestamp()
+      },
       {
         merge: true
       }
@@ -2583,13 +2669,29 @@ async function saveCurrentDreamTeam() {
 
   } finally {
 
-    submitDreamTeamBtn.disabled =
-      false;
+    if (
+      submitDreamTeamBtn
+    ) {
+
+      submitDreamTeamBtn.disabled =
+        false;
+    }
   }
 }
+
+
+/* =====================================================
+   CHECK FORMATION CHANGE
+===================================================== */
+
 function canChangeToFormation(
   formationName
 ) {
+
+  if (!isOwnTeam) {
+    return false;
+  }
+
 
   if (
     !currentEntry ||
@@ -2645,16 +2747,24 @@ function canChangeToFormation(
     );
 }
 
+
+/* =====================================================
+   FORMATION MENU
+===================================================== */
+
 function renderFormationMenu() {
 
   if (
+    !isOwnTeam ||
     !formationChangeMenu
   ) {
     return;
   }
 
+
   formationChangeMenu.innerHTML =
     "";
+
 
   Object
     .keys(
@@ -2668,6 +2778,7 @@ function renderFormationMenu() {
             "button"
           );
 
+
         button.type =
           "button";
 
@@ -2677,6 +2788,7 @@ function renderFormationMenu() {
         button.textContent =
           formationName;
 
+
         button.addEventListener(
           "click",
           () => {
@@ -2685,20 +2797,24 @@ function renderFormationMenu() {
               formationName ===
               currentEntry?.formation
             ) {
+
               formationChangeMenu.hidden =
                 true;
 
               return;
             }
+
 
             if (
               !canChangeToFormation(
                 formationName
               )
             ) {
+
               window.alert(
                 "You need to remove players from your squad before changing formation."
               );
+
 
               formationChangeMenu.hidden =
                 true;
@@ -2706,20 +2822,25 @@ function renderFormationMenu() {
               return;
             }
 
+
             currentEntry.formation =
               formationName;
+
 
             if (
               viewDreamFormation
             ) {
+
               viewDreamFormation.textContent =
                 formationName;
             }
+
 
             formationChangeMenu.hidden =
               true;
           }
         );
+
 
         formationChangeMenu.appendChild(
           button
@@ -2728,18 +2849,15 @@ function renderFormationMenu() {
     );
 }
 
+
 /* =====================================================
    START
 ===================================================== */
 
 async function startDreamTeamPage() {
 
-  /*
-    Load both sources before rendering
-    the player database.
-  */
-
   await loadPlayerFiles();
+
 
   await loadPlayerScores();
 
@@ -2748,41 +2866,50 @@ async function startDreamTeamPage() {
 
 
   setupDatabaseFilterEvents();
-if (
-  submitDreamTeamBtn
-) {
 
-  submitDreamTeamBtn
-    .addEventListener(
-      "click",
-      saveCurrentDreamTeam
-    );
-}
 
-if (
-  formationChangeBtn
-) {
+  if (
+    submitDreamTeamBtn
+  ) {
 
-  formationChangeBtn
-    .addEventListener(
-      "click",
-      () => {
+    submitDreamTeamBtn
+      .addEventListener(
+        "click",
+        saveCurrentDreamTeam
+      );
+  }
 
-        renderFormationMenu();
 
-       if (
-  formationChangeMenu
-) {
-  formationChangeMenu.hidden =
-    !formationChangeMenu.hidden;
-}
-      }
-    );
-}
+  if (
+    formationChangeBtn
+  ) {
+
+    formationChangeBtn
+      .addEventListener(
+        "click",
+        () => {
+
+          if (!isOwnTeam) {
+            return;
+          }
+
+
+          renderFormationMenu();
+
+
+          if (
+            formationChangeMenu
+          ) {
+
+            formationChangeMenu.hidden =
+              !formationChangeMenu.hidden;
+          }
+        }
+      );
+  }
+
+
   auditPlayerApiMatching();
-
-
-  renderPlayerDatabase();
 
 
   await loadDreamTeam();
@@ -2790,4 +2917,3 @@ if (
 
 
 startDreamTeamPage();
-
