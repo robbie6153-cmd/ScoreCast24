@@ -34,7 +34,7 @@ const currentRound =
   Week Four is open for entries.
 */
 const homePreviewRound =
-  "English League Week Three";
+  "English League Week Four";
 
 
 const submittedStorageKey =
