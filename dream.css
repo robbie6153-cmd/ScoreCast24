@@ -1389,3 +1389,25 @@ body {
   position: relative;
   display: inline-block;
 }
+.dream-top-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 12px 6px;
+  flex-wrap: wrap;
+}
+
+.dream-top-nav a {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #ffd21a;
+  color: #081f4d;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.dream-top-nav a:hover {
+  transform: translateY(-1px);
+}
