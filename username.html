@@ -49,7 +49,7 @@
   </div>
 
   <script type="module">
-    import { auth, db } from "./firebase.js?v=99";
+    import { auth, db } from "./firebase.js?v=108";
 
  import {
   onAuthStateChanged,
@@ -329,14 +329,22 @@ batch.set(
 
 await batch.commit();
 
-        localStorage.setItem("scorecast24Username", username);
-localStorage.setItem("scorecast24CleanUsername", cleanName);
+localStorage.setItem(
+  "scorecast24Username",
+  username
+);
 
-        usernameMessage.textContent = "Username saved. Redirecting...";
+localStorage.setItem(
+  "scorecast24CleanUsername",
+  cleanName
+);
 
-        setTimeout(() => {
-        window.location.href = "index.html?v=99";
-        }, 1200);
+usernameMessage.textContent =
+  "Account complete. Taking you to ScoreCast24...";
+
+window.location.replace(
+  "index.html"
+);
 
       } catch (error) {
         console.error("Username save failed:", error);
