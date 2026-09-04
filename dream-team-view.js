@@ -2341,10 +2341,19 @@ function renderDreamTeam(entry) {
   viewDreamPoints
 ) {
 
-  const weeklyTotal =
-    Number(
-      entry.totalPoints || 0
-    );
+const weeklyTotal =
+  Array.isArray(
+    entry.players
+  )
+    ? entry.players.reduce(
+        (total, player) =>
+          total +
+          Number(
+            player.weeklyPoints || 0
+          ),
+        0
+      )
+    : 0;
 
 
   viewDreamPoints.innerHTML = `
