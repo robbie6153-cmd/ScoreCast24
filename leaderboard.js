@@ -87,10 +87,10 @@ const englishLeagueRounds = [
 */
 
 const currentRound =
-  "English League Week Three";
+  "English League Week Four";
 
 const currentLeaderboardRound =
-  "English League Week Three";
+  "English League Week Four";
 
 let selectedRound =
   currentLeaderboardRound;
