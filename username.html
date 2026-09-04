@@ -57,12 +57,17 @@
   setPersistence
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-    import {
-      doc,
-      getDoc,
-      setDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+  setDoc,
+  writeBatch,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
     const usernameInput = document.getElementById("usernameInput");
     const saveUsernameBtn = document.getElementById("saveUsernameBtn");
@@ -94,7 +99,162 @@
         return;
       }
 
-      usernameMessage.textContent = "Email verified. Choose your username.";
+  const userRef = doc(
+  db,
+  "users",
+  currentUser.uid
+);
+
+const userSnap =
+  await getDoc(userRef);
+
+
+/*
+  Existing users should never be
+  allowed to create another username.
+*/
+
+if (userSnap.exists()) {
+
+  const existingUsername =
+    userSnap.data().username || "";
+
+  const existingCleanUsername =
+    userSnap.data().cleanUsername || "";
+
+  if (existingUsername) {
+
+    localStorage.setItem(
+      "scorecast24Username",
+      existingUsername
+    );
+
+    if (existingCleanUsername) {
+      localStorage.setItem(
+        "scorecast24CleanUsername",
+        existingCleanUsername
+      );
+    }
+
+    usernameMessage.textContent =
+      `You already have the username ${existingUsername}. Redirecting...`;
+
+    saveUsernameBtn.disabled = true;
+
+    setTimeout(() => {
+      window.location.href =
+        "index.html";
+    }, 1200);
+
+    return;
+  }
+}
+/*
+  Recovery check:
+
+  If users/{uid} is missing, check whether
+  this UID already owns a username in the
+  usernames collection.
+*/
+
+const existingUsernameQuery =
+  query(
+    collection(
+      db,
+      "usernames"
+    ),
+    where(
+      "uid",
+      "==",
+      currentUser.uid
+    )
+  );
+
+const existingUsernameSnap =
+  await getDocs(
+    existingUsernameQuery
+  );
+
+
+if (!existingUsernameSnap.empty) {
+
+  const existingUsernameDoc =
+    existingUsernameSnap.docs[0];
+
+  const existingUsernameData =
+    existingUsernameDoc.data();
+
+  const recoveredUsername =
+    existingUsernameData.username || "";
+
+  const recoveredCleanUsername =
+    existingUsernameDoc.id;
+
+
+  if (recoveredUsername) {
+
+    /*
+      Rebuild the missing users/{uid}
+      document from the existing
+      usernames record.
+    */
+
+    await setDoc(
+      userRef,
+      {
+        uid:
+          currentUser.uid,
+
+        email:
+          currentUser.email,
+
+        username:
+          recoveredUsername,
+
+        cleanUsername:
+          recoveredCleanUsername,
+
+        recoveredAt:
+          serverTimestamp()
+      },
+      {
+        merge: true
+      }
+    );
+
+
+    localStorage.setItem(
+      "scorecast24Username",
+      recoveredUsername
+    );
+
+    localStorage.setItem(
+      "scorecast24CleanUsername",
+      recoveredCleanUsername
+    );
+
+
+    usernameMessage.textContent =
+      `Your username ${recoveredUsername} has been restored. Redirecting...`;
+
+    saveUsernameBtn.disabled =
+      true;
+
+
+    setTimeout(() => {
+
+      window.location.href =
+        "index.html";
+
+    }, 1200);
+
+
+    return;
+  }
+}
+
+usernameMessage.textContent =
+  "Email verified. Choose your username.";
     });
 
     saveUsernameBtn.addEventListener("click", async () => {
@@ -126,19 +286,48 @@
           return;
         }
 
-        await setDoc(doc(db, "users", currentUser.uid), {
-          uid: currentUser.uid,
-          email: currentUser.email,
-          username: username,
-          cleanUsername: cleanName,
-          createdAt: serverTimestamp()
-        });
+    const batch =
+  writeBatch(db);
 
-        await setDoc(usernameRef, {
-          uid: currentUser.uid,
-          username: username,
-          createdAt: serverTimestamp()
-        });
+batch.set(
+  doc(
+    db,
+    "users",
+    currentUser.uid
+  ),
+  {
+    uid:
+      currentUser.uid,
+
+    email:
+      currentUser.email,
+
+    username:
+      username,
+
+    cleanUsername:
+      cleanName,
+
+    createdAt:
+      serverTimestamp()
+  }
+);
+
+batch.set(
+  usernameRef,
+  {
+    uid:
+      currentUser.uid,
+
+    username:
+      username,
+
+    createdAt:
+      serverTimestamp()
+  }
+);
+
+await batch.commit();
 
         localStorage.setItem("scorecast24Username", username);
 localStorage.setItem("scorecast24CleanUsername", cleanName);
