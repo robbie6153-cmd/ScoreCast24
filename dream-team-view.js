@@ -2192,7 +2192,100 @@ function updateSquadSummary() {
   }
 }
 
+async function getOfficialSeasonTotal(
+  entry
+) {
 
+  if (!entry) {
+    return 0;
+  }
+
+
+  const snapshot =
+    await getDocs(
+      collection(
+        db,
+        "dream_team_entries"
+      )
+    );
+
+
+  const entries =
+    snapshot.docs
+      .map(
+        documentSnapshot => ({
+          id:
+            documentSnapshot.id,
+
+          ...documentSnapshot.data()
+        })
+      )
+      .filter(
+        item =>
+          item.status ===
+            "submitted" &&
+          (
+            (
+              entry.uid &&
+              item.uid ===
+                entry.uid
+            ) ||
+            (
+              !entry.uid &&
+              entry.email &&
+              item.email ===
+                entry.email
+            ) ||
+            (
+              !entry.uid &&
+              !entry.email &&
+              entry.username &&
+              item.username ===
+                entry.username
+            )
+          )
+      );
+
+
+  const uniqueRounds =
+    new Map();
+
+
+  entries.forEach(
+    item => {
+
+      const roundKey =
+        item.roundId ||
+        item.gameweekId ||
+        item.id;
+
+
+      if (
+        !uniqueRounds.has(
+          roundKey
+        )
+      ) {
+
+        uniqueRounds.set(
+          roundKey,
+          item
+        );
+      }
+    }
+  );
+
+
+  return [
+    ...uniqueRounds.values()
+  ].reduce(
+    (total, item) =>
+      total +
+      Number(
+        item.totalPoints || 0
+      ),
+    0
+  );
+}
 /* =====================================================
    RENDER DREAM TEAM
 ===================================================== */
@@ -2245,32 +2338,58 @@ function renderDreamTeam(entry) {
 
 
   if (
-    viewDreamPoints
-  ) {
+  viewDreamPoints
+) {
 
-    const weeklyTotal =
-      Number(
-        entry.totalPoints || 0
-      );
-
-
-    const seasonTotal =
-      Number(
-        entry.seasonTotal ??
-        entry.seasonPoints ??
-        entry.totalSeasonPoints ??
-        weeklyTotal
-      );
+  const weeklyTotal =
+    Number(
+      entry.totalPoints || 0
+    );
 
 
-    viewDreamPoints.innerHTML = `
-      This Week:
-      <strong>${weeklyTotal}</strong>
-      <br>
-      Season Total:
-      <strong>${seasonTotal}</strong>
-    `;
-  }
+  viewDreamPoints.innerHTML = `
+    Last Week:
+    <strong>${weeklyTotal}</strong>
+    <br>
+    Season Total:
+    <strong>Loading...</strong>
+  `;
+
+
+  getOfficialSeasonTotal(
+    entry
+  )
+    .then(
+      seasonTotal => {
+
+        viewDreamPoints.innerHTML = `
+          Last Week:
+          <strong>${weeklyTotal}</strong>
+          <br>
+          Season Total:
+          <strong>${seasonTotal}</strong>
+        `;
+      }
+    )
+    .catch(
+      error => {
+
+        console.error(
+          "Season total loading error:",
+          error
+        );
+
+
+        viewDreamPoints.innerHTML = `
+          Last Week:
+          <strong>${weeklyTotal}</strong>
+          <br>
+          Season Total:
+          <strong>—</strong>
+        `;
+      }
+    );
+}
 
 
   if (
@@ -2339,13 +2458,16 @@ function applyTeamEditPermissions() {
   }
 
 
-  if (
-    formationChangeBtn
-  ) {
+ if (
+  formationChangeBtn
+) {
 
-    formationChangeBtn.hidden =
-      !isOwnTeam;
-  }
+  formationChangeBtn.hidden =
+    false;
+
+  formationChangeBtn.disabled =
+    !isOwnTeam;
+}
 
 
   if (
