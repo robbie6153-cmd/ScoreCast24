@@ -16,7 +16,9 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 /* =====================================================
    PLAYER FILES
 ===================================================== */
@@ -3140,4 +3142,15 @@ async function startDreamTeamPage() {
 }
 
 
-startDreamTeamPage();
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+    showError(
+      "Please sign in to view your Dream Team."
+    );
+    return;
+  }
+
+  await startDreamTeamPage();
+
+});
