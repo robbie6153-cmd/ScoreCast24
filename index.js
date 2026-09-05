@@ -55,7 +55,7 @@ const roundClosed = false;
   No Week Four fixtures have started,
   so nothing is void.
 */
-const voidFixtureIds = new Set(["1", "2"]);
+const voidFixtureIds = new Set(["1", "2", "11", "12", "13"]);
 
 function predictionsAreClosed() {
   return roundClosed;
