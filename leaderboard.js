@@ -414,13 +414,22 @@ function calculateRoundStats(
   let hasAnyResult = false;
 
 
-  predictions.forEach(
-    (prediction) => {
+ predictions.forEach(
+  (prediction) => {
 
-      const result =
-        roundResults[
-          prediction.fixtureId
-        ];
+    /*
+      Void fixtures must never score.
+    */
+    if (
+      prediction.void === true
+    ) {
+      return;
+    }
+
+    const result =
+      roundResults[
+        prediction.fixtureId
+      ];
 
 
       if (!result) {
