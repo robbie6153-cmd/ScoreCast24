@@ -345,8 +345,8 @@ export const resultsByRound = {
     },
 
     2: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 2
     },
 
     3: {
@@ -390,18 +390,18 @@ export const resultsByRound = {
     },
 
     11: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 1,
+      awayScore: 1
     },
 
     12: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 1
     },
 
     13: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 4,
+      awayScore: 0
     },
 
     14: {
