@@ -32,16 +32,13 @@ const viewMyDreamTeamBtn =
 
 
 /*
-  Manual Dream Team gameweek.
-
-  All entries currently in Firestore belong
-  to Week One.
+  Current Dream Team gameweek.
 */
 
 const CURRENT_WEEK_NUMBER = 2;
 
 const CURRENT_ROUND_ID =
-  "2026-week-02";
+  "2026-week-03";
 
 
 function escapeHtml(value) {
@@ -479,12 +476,14 @@ async function loadSeasonLeaderboard() {
       entry =>
         entry.status ===
           "submitted" &&
-        (
-          entry.roundId ===
-            "2026-week-01" ||
-          entry.roundId ===
-            "2026-week-02"
-        )
+     (
+  entry.roundId ===
+    "2026-week-01" ||
+  entry.roundId ===
+    "2026-week-02" ||
+  entry.roundId ===
+    "2026-week-03"
+)
     );
 
     const entries =
