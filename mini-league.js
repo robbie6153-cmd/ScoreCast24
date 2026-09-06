@@ -23,7 +23,7 @@ import {
 
 import {
   resultsByRound
-} from "./results.js?v=1";
+} from "./results.js?v=2";
 
 /* =========================
    FIREBASE FUNCTIONS
@@ -92,211 +92,12 @@ const miniSeasonLeaderboardTab =
 ========================= */
 
 const currentRound =
-  "English League Week Two";
+  "English League Week 4";
 
 const currentWeekHeading =
-  "Week Two Leaderboard";
+  "Week 4 Leaderboard";
 
 
-/* =========================
-   RESULTS BY ROUND
-========================= */
-
-const resultsByRound = {
-
-  /* =========================
-     WEEK ONE
-  ========================= */
-
-  "English League Week One": {
-
-    1: {
-      homeScore: 2,
-      awayScore: 2
-    },
-
-    2: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    3: {
-      homeScore: 0,
-      awayScore: 2
-    },
-
-    4: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    5: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    6: {
-      homeScore: 1,
-      awayScore: 2
-    },
-
-    7: {
-      homeScore: 1,
-      awayScore: 3
-    },
-
-    8: {
-      homeScore: 1,
-      awayScore: 2
-    },
-
-    9: {
-      homeScore: 0,
-      awayScore: 0
-    },
-
-    10: {
-      homeScore: 2,
-      awayScore: 1
-    },
-
-    11: {
-      homeScore: 3,
-      awayScore: 0
-    },
-
-    12: {
-      homeScore: 2,
-      awayScore: 2
-    },
-
-    13: {
-      homeScore: 1,
-      awayScore: 1
-    }
-
-  },
-
-
-  /* =========================
-     WEEK TWO
-  ========================= */
-
-  "English League Week Two": {
-
-    1: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    2: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    3: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    4: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    5: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    6: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    7: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    8: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    9: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    10: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    11: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    12: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    13: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    14: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    15: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    16: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    17: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    18: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    19: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    20: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    21: {
-      homeScore: null,
-      awayScore: null
-    },
-
-    22: {
-      homeScore: null,
-      awayScore: null
-    }
-
-  }
-
-};
 
 
 /* =========================
@@ -824,7 +625,39 @@ function displayMiniLeaderboard(
 
 }
 
+/* =========================
+   ROUND MAPPING
+========================= */
 
+function getLogicalRound(
+  storedRound
+) {
+
+  const roundMap = {
+
+    "English League Week One":
+      "English League Week 0",
+
+    "English League Week Two":
+      "English League Week 1",
+
+    "English League Week Three":
+      "English League Week 2",
+
+    "English League Week Four":
+      "English League Week 3",
+
+    "English League Week 4":
+      "English League Week 4"
+
+  };
+
+
+  return (
+    roundMap[storedRound] ||
+    storedRound
+  );
+}
 /* =========================
    BUILD MEMBER PREDICTIONS
 ========================= */
@@ -844,17 +677,24 @@ function buildPredictionMap(
         predictionDocument.data();
 
 
+      const logicalRound =
+        getLogicalRound(
+          predictionData.round
+        );
+
+
       /*
-        Ignore any rounds that are not
-        part of this English League
-        season.
+        Ignore anything that is not
+        part of the English League
+        results file.
       */
 
       if (
         !resultsByRound[
-          predictionData.round
+          logicalRound
         ]
       ) {
+
         return;
       }
 
@@ -892,6 +732,9 @@ function buildPredictionMap(
             predictionDocument.id,
 
           round:
+            logicalRound,
+
+          storedRound:
             predictionData.round,
 
           predictions:
@@ -908,86 +751,7 @@ function buildPredictionMap(
 
 
   return predictionsByUsername;
-
 }
-
-
-/* =========================
-   BUILD WEEK LEADERBOARD
-========================= */
-
-function buildMiniWeekLeaderboard(
-  membersSnapshot,
-  predictionsByUsername
-) {
-
-  miniWeekLeaderboardRows = [];
-
-
-  membersSnapshot.forEach(
-    memberDocument => {
-
-      const memberData =
-        memberDocument.data();
-
-
-      const username =
-        memberData.username ||
-        "ScoreCast24 Player";
-
-
-      const cleanUsername =
-        normaliseUsername(
-          username
-        );
-
-
-      const playerPredictions =
-        predictionsByUsername.get(
-          cleanUsername
-        ) || [];
-
-
-      const currentEntry =
-        playerPredictions.find(
-          entry =>
-            entry.round ===
-            currentRound
-        );
-
-
-      miniWeekLeaderboardRows.push({
-
-        username,
-
-        predictionId:
-          currentEntry?.id ||
-          null,
-
-        predictionRound:
-          currentEntry?.round ||
-          null,
-
-        points:
-          currentEntry
-            ? calculatePoints(
-                currentEntry.predictions,
-                currentRound
-              )
-            : null
-
-      });
-
-    }
-  );
-
-
-  sortMiniLeaderboard(
-    miniWeekLeaderboardRows
-  );
-
-}
-
 
 /* =========================
    BUILD SEASON LEADERBOARD
@@ -1069,8 +833,9 @@ function buildMiniSeasonLeaderboard(
             predictionId =
               entry.id;
 
-            predictionRound =
-              entry.round;
+         predictionRound =
+  entry.storedRound ||
+  entry.round;
 
           } else if (
             !predictionId
@@ -1079,8 +844,9 @@ function buildMiniSeasonLeaderboard(
             predictionId =
               entry.id;
 
-            predictionRound =
-              entry.round;
+      predictionRound =
+  entry.storedRound ||
+  entry.round;
 
           }
 
