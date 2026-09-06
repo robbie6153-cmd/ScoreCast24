@@ -459,13 +459,13 @@ export const resultsByRound = {
     },
 
     21: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 0,
+      awayScore: 0
     },
 
     22: {
-      homeScore: null,
-      awayScore: null
+      homeScore: 2,
+      awayScore: 2
     }
 
   },
