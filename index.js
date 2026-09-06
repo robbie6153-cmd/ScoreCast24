@@ -14,27 +14,36 @@ import {
 
 import {
   resultsByRound
-} from "./results.js?v=1";
+} from "./results.js?v=2";
 
 
 /* =====================================================
    ROUNDS
+
+   NEW NUMBERING FROM NOW ON:
+
+   Original Week One   = Week 0 Championship
+   Original Week Two   = Week 1
+   Original Week Three = Week 2
+   Original Week Four  = Week 3
+
+   New round           = Week 4
 ===================================================== */
 
+
 /*
-  NEW entries are now for Week Four.
+  New predictions are for Week Four.
 */
 const currentRound =
-  "English League Week Four";
+  "English League Week 4";
 
 
 /*
-  The homepage leaderboard/results
-  continue showing Week Three while
-  Week Four is open for entries.
+  Homepage continues displaying the
+  currently-playing/completed Week Three.
 */
 const homePreviewRound =
-  "English League Week Four";
+  "English League Week 3";
 
 
 const submittedStorageKey =
@@ -45,6 +54,7 @@ const submittedStorageKey =
    ENTRY / FIXTURE LOCKS
 ===================================================== */
 
+
 /*
   Week Four is OPEN.
 */
@@ -52,10 +62,11 @@ const roundClosed = false;
 
 
 /*
-  No Week Four fixtures have started,
-  so nothing is void.
+  No Week Four fixtures are currently void.
 */
-const voidFixtureIds = new Set(["1", "2", "11", "12", "13"]);
+const voidFixtureIds =
+  new Set([]);
+
 
 function predictionsAreClosed() {
   return roundClosed;
@@ -63,6 +74,7 @@ function predictionsAreClosed() {
 
 
 function fixtureIsVoid(fixtureId) {
+
   return voidFixtureIds.has(
     String(fixtureId)
   );
@@ -71,6 +83,7 @@ function fixtureIsVoid(fixtureId) {
 
 /* =====================================================
    WEEK FOUR FIXTURES
+   11–14 SEPTEMBER 2026
 ===================================================== */
 
 const englishLeagueFixtures = [
@@ -81,224 +94,224 @@ const englishLeagueFixtures = [
 
   {
     id: "1",
-    date: "Fri 4 Sep 2026, 20:00",
+    date: "Sat 12 Sep 2026, 15:00",
     group: "Premier League",
-    home: "Ipswich Town",
-    away: "Liverpool",
+    home: "AFC Bournemouth",
+    away: "Brentford",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "2",
-    date: "Sat 5 Sep 2026, 12:30",
+    date: "Sat 12 Sep 2026, 15:00",
     group: "Premier League",
-    home: "Newcastle United",
-    away: "AFC Bournemouth",
+    home: "Aston Villa",
+    away: "Nottingham Forest",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "3",
-    date: "Sat 5 Sep 2026, 15:00",
+    date: "Sat 12 Sep 2026, 15:00",
     group: "Premier League",
-    home: "Brentford",
-    away: "Sunderland",
+    home: "Chelsea",
+    away: "Hull City",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "4",
-    date: "Sat 5 Sep 2026, 15:00",
+    date: "Sat 12 Sep 2026, 15:00",
     group: "Premier League",
-    home: "Brighton & Hove Albion",
-    away: "Leeds United",
+    home: "Crystal Palace",
+    away: "Ipswich Town",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "5",
-    date: "Sat 5 Sep 2026, 15:00",
+    date: "Sat 12 Sep 2026, 15:00",
     group: "Premier League",
-    home: "Fulham",
-    away: "Crystal Palace",
+    home: "Liverpool",
+    away: "Fulham",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "6",
-    date: "Sat 5 Sep 2026, 15:00",
+    date: "Sat 12 Sep 2026, 17:30",
     group: "Premier League",
-    home: "Manchester City",
-    away: "Coventry City",
+    home: "Tottenham Hotspur",
+    away: "Everton",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "7",
-    date: "Sat 5 Sep 2026, 15:00",
+    date: "Sat 12 Sep 2026, 20:00",
     group: "Premier League",
-    home: "Nottingham Forest",
-    away: "Tottenham Hotspur",
+    home: "Sunderland",
+    away: "Arsenal",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "8",
-    date: "Sat 5 Sep 2026, 17:30",
+    date: "Sun 13 Sep 2026, 14:00",
     group: "Premier League",
-    home: "Hull City",
-    away: "Aston Villa",
+    home: "Coventry City",
+    away: "Brighton & Hove Albion",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "9",
-    date: "Sun 6 Sep 2026, 14:00",
+    date: "Sun 13 Sep 2026, 16:30",
     group: "Premier League",
-    home: "Everton",
-    away: "Manchester United",
+    home: "Manchester United",
+    away: "Manchester City",
     homeScore: null,
     awayScore: null
   },
 
   {
     id: "10",
-    date: "Sun 6 Sep 2026, 16:30",
+    date: "Mon 14 Sep 2026, 20:00",
     group: "Premier League",
-    home: "Arsenal",
-    away: "Chelsea",
+    home: "Leeds United",
+    away: "Newcastle United",
     homeScore: null,
     awayScore: null
   },
 
 
   /* =================================================
-     EFL CHAMPIONSHIP
+     CHAMPIONSHIP
   ================================================= */
 
   {
     id: "11",
-    date: "Sat 5 Sep 2026, 12:30",
-    group: "Championship",
-    home: "Lincoln City",
-    away: "Southampton",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "12",
-    date: "Sat 5 Sep 2026, 12:30",
-    group: "Championship",
-    home: "Preston North End",
-    away: "Blackburn Rovers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "13",
-    date: "Sat 5 Sep 2026, 12:30",
-    group: "Championship",
-    home: "Stoke City",
-    away: "Charlton Athletic",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "14",
-    date: "Sat 5 Sep 2026, 15:00",
-    group: "Championship",
-    home: "Burnley",
-    away: "Bristol City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "15",
-    date: "Sat 5 Sep 2026, 15:00",
-    group: "Championship",
-    home: "Millwall",
-    away: "Bolton Wanderers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "16",
-    date: "Sat 5 Sep 2026, 15:00",
-    group: "Championship",
-    home: "Portsmouth",
-    away: "Cardiff City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "17",
-    date: "Sat 5 Sep 2026, 15:00",
-    group: "Championship",
-    home: "Queens Park Rangers",
-    away: "Middlesbrough",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "18",
-    date: "Sat 5 Sep 2026, 15:00",
-    group: "Championship",
-    home: "Sheffield United",
-    away: "Norwich City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "19",
-    date: "Sat 5 Sep 2026, 15:00",
-    group: "Championship",
-    home: "West Bromwich Albion",
-    away: "Watford",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "20",
-    date: "Sat 5 Sep 2026, 15:00",
+    date: "Fri 11 Sep 2026, 20:00",
     group: "Championship",
     home: "West Ham United",
-    away: "Derby County",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "21",
-    date: "Sat 5 Sep 2026, 20:00",
-    group: "Championship",
-    home: "Swansea City",
     away: "Wrexham",
     homeScore: null,
     awayScore: null
   },
 
   {
-    id: "22",
-    date: "Sun 6 Sep 2026, 12:00",
+    id: "12",
+    date: "Sat 12 Sep 2026, 12:30",
     group: "Championship",
-    home: "Birmingham City",
+    home: "Bolton Wanderers",
+    away: "Cardiff City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "13",
+    date: "Sat 12 Sep 2026, 12:30",
+    group: "Championship",
+    home: "Derby County",
+    away: "Birmingham City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "14",
+    date: "Sat 12 Sep 2026, 12:30",
+    group: "Championship",
+    home: "West Bromwich Albion",
+    away: "Queens Park Rangers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "15",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Blackburn Rovers",
+    away: "Millwall",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "16",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Charlton Athletic",
+    away: "Portsmouth",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "17",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Middlesbrough",
+    away: "Norwich City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "18",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Preston North End",
+    away: "Lincoln City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "19",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Southampton",
+    away: "Bristol City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "20",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Swansea City",
+    away: "Burnley",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "21",
+    date: "Sat 12 Sep 2026, 15:00",
+    group: "Championship",
+    home: "Watford",
+    away: "Stoke City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "22",
+    date: "Sun 13 Sep 2026, 12:00",
+    group: "Championship",
+    home: "Sheffield United",
     away: "Wolverhampton Wanderers",
     homeScore: null,
     awayScore: null
@@ -313,13 +326,158 @@ const fixtures =
 
 /* =====================================================
    WEEK THREE FIXTURE REFERENCES
+   4–6 SEPTEMBER 2026
 
-   These are retained so the homepage can continue
-   displaying and scoring Week Three while Week Four
-   is open for new predictions.
+   This is the round currently displayed
+   on the homepage.
 ===================================================== */
 
 const weekThreeFixtures = [
+
+  {
+    id: "1",
+    home: "Ipswich Town",
+    away: "Liverpool"
+  },
+
+  {
+    id: "2",
+    home: "Newcastle United",
+    away: "AFC Bournemouth"
+  },
+
+  {
+    id: "3",
+    home: "Brentford",
+    away: "Sunderland"
+  },
+
+  {
+    id: "4",
+    home: "Brighton & Hove Albion",
+    away: "Leeds United"
+  },
+
+  {
+    id: "5",
+    home: "Fulham",
+    away: "Crystal Palace"
+  },
+
+  {
+    id: "6",
+    home: "Manchester City",
+    away: "Coventry City"
+  },
+
+  {
+    id: "7",
+    home: "Nottingham Forest",
+    away: "Tottenham Hotspur"
+  },
+
+  {
+    id: "8",
+    home: "Hull City",
+    away: "Aston Villa"
+  },
+
+  {
+    id: "9",
+    home: "Everton",
+    away: "Manchester United"
+  },
+
+  {
+    id: "10",
+    home: "Arsenal",
+    away: "Chelsea"
+  },
+
+  {
+    id: "11",
+    home: "Lincoln City",
+    away: "Southampton"
+  },
+
+  {
+    id: "12",
+    home: "Preston North End",
+    away: "Blackburn Rovers"
+  },
+
+  {
+    id: "13",
+    home: "Stoke City",
+    away: "Charlton Athletic"
+  },
+
+  {
+    id: "14",
+    home: "Burnley",
+    away: "Bristol City"
+  },
+
+  {
+    id: "15",
+    home: "Millwall",
+    away: "Bolton Wanderers"
+  },
+
+  {
+    id: "16",
+    home: "Portsmouth",
+    away: "Cardiff City"
+  },
+
+  {
+    id: "17",
+    home: "Queens Park Rangers",
+    away: "Middlesbrough"
+  },
+
+  {
+    id: "18",
+    home: "Sheffield United",
+    away: "Norwich City"
+  },
+
+  {
+    id: "19",
+    home: "West Bromwich Albion",
+    away: "Watford"
+  },
+
+  {
+    id: "20",
+    home: "West Ham United",
+    away: "Derby County"
+  },
+
+  {
+    id: "21",
+    home: "Swansea City",
+    away: "Wrexham"
+  },
+
+  {
+    id: "22",
+    home: "Birmingham City",
+    away: "Wolverhampton Wanderers"
+  }
+
+];
+
+
+/* =====================================================
+   WEEK TWO FIXTURE REFERENCES
+   29–31 AUGUST 2026
+
+   Previously called Week Three.
+   Kept for historical results.
+===================================================== */
+
+const weekTwoFixtures = [
 
   {
     id: "1",
@@ -457,12 +615,14 @@ const weekThreeFixtures = [
 
 
 /* =====================================================
-   WEEK TWO FIXTURE REFERENCES
+   WEEK ONE FIXTURE REFERENCES
+   21–24 AUGUST 2026
 
-   Retained as historical fixture references.
+   Previously called Week Two.
+   Kept for historical results.
 ===================================================== */
 
-const weekTwoFixtures = [
+const weekOneFixtures = [
 
   {
     id: "1",
@@ -807,10 +967,9 @@ function renderFixtures() {
 }
 
 
-
-/* =========================
+/* =====================================================
    ENTRY CHECK
-========================= */
+===================================================== */
 
 async function hasAlreadySubmitted(
   savedUsername
@@ -1080,10 +1239,6 @@ if (submitPredictionsBtn) {
           "Submitting...";
 
 
-        /*
-          Final duplicate protection.
-        */
-
         const predictionRef =
           doc(
             db,
@@ -1125,11 +1280,6 @@ if (submitPredictionsBtn) {
           "Week Four predictions submitted!"
         );
 
-
-        /*
-          Keep showing the current
-          Week Three leaderboard.
-        */
 
         window.location.href =
           "leaderboard.html";
@@ -1185,14 +1335,6 @@ function getResultType(
   return "draw";
 }
 
-
-/*
-  This accepts a round explicitly.
-
-  That means the homepage can score
-  Week Three while the prediction form
-  is already accepting Week Four.
-*/
 
 function calculatePoints(
   prediction,
@@ -1468,8 +1610,7 @@ if (dreamTeamBtn) {
 /* =====================================================
    HOME LEADERBOARD PREVIEW
 
-   IMPORTANT:
-   This deliberately displays WEEK THREE.
+   Displays WEEK THREE.
 ===================================================== */
 
 async function renderHomeLeaderboardPreview() {
@@ -1504,11 +1645,6 @@ async function renderHomeLeaderboardPreview() {
         const data =
           docSnap.data();
 
-
-        /*
-          Ignore Week Four entries here.
-          Homepage standings remain Week Three.
-        */
 
         if (
           data.round !==
@@ -1690,8 +1826,7 @@ async function renderHomeLeaderboardPreview() {
 /* =====================================================
    HOME FIXTURES PREVIEW
 
-   IMPORTANT:
-   This deliberately displays WEEK THREE results.
+   Displays WEEK THREE results.
 ===================================================== */
 
 function renderHomeFixturesPreview() {
@@ -1873,11 +2008,6 @@ if (
 function updatePredictionsCountdown() {
 
 
-  /*
-    Keeping your existing HTML ID.
-    No HTML change is required.
-  */
-
   const countdownBox =
     document.getElementById(
       "weekOneCountdown"
@@ -1928,7 +2058,7 @@ function updatePredictionsCountdown() {
     <br>
     Predict all Premier League and
     Championship matches for
-    4–6 September.
+    11–14 September.
   `;
 
 
@@ -2017,7 +2147,7 @@ showHome();
 
 
 /*
-  Homepage remains Week Three.
+  Homepage displays Week Three.
 */
 renderHomeLeaderboardPreview();
 
@@ -2031,8 +2161,8 @@ updatePredictionsCountdown();
 
 
 /*
-  Refresh the CURRENT Week Three
-  top-three preview every minute.
+  Refresh Week Three top-three
+  preview every minute.
 */
 setInterval(
   renderHomeLeaderboardPreview,

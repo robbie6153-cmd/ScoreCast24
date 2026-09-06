@@ -1,4 +1,6 @@
-console.log("leaderboard.js loaded English League v7");
+console.log(
+  "leaderboard.js loaded English League v8"
+);
 
 import { db } from "./firebase.js?v=107";
 
@@ -9,7 +11,7 @@ import {
 
 import {
   resultsByRound
-} from "./results.js?v=1";
+} from "./results.js?v=2";
 
 
 /* =====================================================
@@ -46,59 +48,104 @@ const weekSelector =
 
 
 /* =====================================================
-   ENGLISH LEAGUE ROUNDS
+   SCORECAST24 ROUND NUMBERING
 
-   Add each new week here when it opens.
+   OLD STORED ROUND       NEW DISPLAY
 
-   The LAST round marked as current is what
-   initially appears on the Current Leaderboard.
+   Week One               Week 0 - Championship
+   Week Two               Week 1
+   Week Three             Week 2
+   Week Four              Week 3
+
+   New entries:
+   English League Week 4  Week 4
 ===================================================== */
 
 const englishLeagueRounds = [
 
   {
-    id: "English League Week One",
-    label: "Week One"
+    id: "English League Week 0",
+    label: "Week 0 - Championship",
+
+    storedRound:
+      "English League Week One",
+
+    resultsRound:
+      "English League Week One"
   },
 
   {
-    id: "English League Week Two",
-    label: "Week Two"
+    id: "English League Week 1",
+    label: "Week 1",
+
+    storedRound:
+      "English League Week Two",
+
+    resultsRound:
+      "English League Week Two"
   },
 
   {
-    id: "English League Week Three",
-    label: "Week Three"
+    id: "English League Week 2",
+    label: "Week 2",
+
+    storedRound:
+      "English League Week Three",
+
+    resultsRound:
+      "English League Week Three"
   },
 
   {
-    id: "English League Week Four",
-    label: "Week Four"
+    id: "English League Week 3",
+    label: "Week 3",
+
+    storedRound:
+      "English League Week Four",
+
+    resultsRound:
+      "English League Week Four"
+  },
+
+  {
+    id: "English League Week 4",
+    label: "Week 4",
+
+    storedRound:
+      "English League Week 4",
+
+    resultsRound:
+      "English League Week 4"
   }
 
 ];
 
 
 /*
-  This is the OPEN week.
-
-  Week Three is open even though
-  Week Two has not completely finished.
+  Week 4 is OPEN for predictions.
 */
-
 const currentRound =
-  "English League Week Four";
+  "English League Week 4";
 
+
+/*
+  Week 3 remains the leaderboard
+  initially displayed.
+*/
 const currentLeaderboardRound =
-  "English League Week Four";
+  "English League Week 3";
+
 
 let selectedRound =
   currentLeaderboardRound;
+
+
 /* =====================================================
    LIVE RESULTS FROM FIRESTORE
 ===================================================== */
 
 let liveResultsByRound = {};
+
 
 /* =====================================================
    LEADERBOARD DATA
@@ -134,20 +181,24 @@ const myUsername =
 
 function timeoutPromise(ms) {
 
-  return new Promise((_, reject) => {
+  return new Promise(
+    (_, reject) => {
 
-    setTimeout(() => {
+      setTimeout(
+        () => {
 
-      reject(
-        new Error(
-          "Leaderboard load timed out"
-        )
+          reject(
+            new Error(
+              "Leaderboard load timed out"
+            )
+          );
+
+        },
+        ms
       );
 
-    }, ms);
-
-  });
-
+    }
+  );
 }
 
 
@@ -155,14 +206,15 @@ function timeoutPromise(ms) {
    CLEAN USERNAME
 ===================================================== */
 
-function normaliseUsername(username) {
+function normaliseUsername(
+  username
+) {
 
   return (
     username || ""
   )
     .trim()
     .toLowerCase();
-
 }
 
 
@@ -170,7 +222,9 @@ function normaliseUsername(username) {
    FIRESTORE TIMESTAMP
 ===================================================== */
 
-function timestampToMillis(timestamp) {
+function timestampToMillis(
+  timestamp
+) {
 
   if (!timestamp) {
     return null;
@@ -183,7 +237,6 @@ function timestampToMillis(timestamp) {
   ) {
 
     return timestamp.toMillis();
-
   }
 
 
@@ -192,7 +245,6 @@ function timestampToMillis(timestamp) {
   ) {
 
     return timestamp.getTime();
-
   }
 
 
@@ -202,15 +254,163 @@ function timestampToMillis(timestamp) {
   ) {
 
     return (
-      timestamp.seconds * 1000
+      timestamp.seconds *
+      1000
     );
-
   }
 
 
   return null;
-
 }
+
+
+/* =====================================================
+   ROUND HELPERS
+===================================================== */
+
+function getRoundConfig(
+  roundId
+) {
+
+  return (
+    englishLeagueRounds.find(
+      (round) =>
+        round.id === roundId
+    ) || null
+  );
+}
+
+
+function getRoundLabel(
+  roundId
+) {
+
+  const round =
+    getRoundConfig(
+      roundId
+    );
+
+
+  return round
+    ? round.label
+    : roundId;
+}
+
+
+/*
+  Converts an OLD Firestore round name
+  into the NEW ScoreCast24 numbering.
+*/
+
+function getLogicalRoundFromStoredRound(
+  storedRound
+) {
+
+  const round =
+    englishLeagueRounds.find(
+      (item) =>
+        item.storedRound ===
+        storedRound
+    );
+
+
+  return round
+    ? round.id
+    : null;
+}
+
+
+/*
+  Accept both the old stored round IDs
+  and the new canonical IDs.
+*/
+
+function isEnglishLeagueRound(
+  roundId
+) {
+
+  return englishLeagueRounds.some(
+    (round) =>
+      round.id === roundId ||
+      round.storedRound === roundId
+  );
+}
+
+
+/* =====================================================
+   RESULT ROUND LOOKUP
+===================================================== */
+
+function getResultsForLogicalRound(
+  logicalRound
+) {
+
+  const config =
+    getRoundConfig(
+      logicalRound
+    );
+
+
+  if (!config) {
+    return {};
+  }
+
+
+  /*
+    Static results.js results.
+
+    Historical weeks still use their
+    old stored names.
+  */
+
+  const staticResults = {
+
+    ...(
+      resultsByRound[
+        config.resultsRound
+      ] || {}
+    ),
+
+    ...(
+      resultsByRound[
+        logicalRound
+      ] || {}
+    )
+
+  };
+
+
+  /*
+    Firestore live results.
+
+    Again accept both old and new names.
+  */
+
+  const liveResults = {
+
+    ...(
+      liveResultsByRound[
+        config.resultsRound
+      ] || {}
+    ),
+
+    ...(
+      liveResultsByRound[
+        logicalRound
+      ] || {}
+    )
+
+  };
+
+
+  return {
+
+    ...staticResults,
+    ...liveResults
+
+  };
+}
+
 
 /* =====================================================
    LOAD LIVE RESULTS FROM FIRESTORE
@@ -219,6 +419,7 @@ function timestampToMillis(timestamp) {
 async function loadLiveResults() {
 
   liveResultsByRound = {};
+
 
   const resultsSnap =
     await getDocs(
@@ -239,6 +440,7 @@ async function loadLiveResults() {
       const round =
         data.round;
 
+
       const fixtureId =
         String(
           data.fixtureId || ""
@@ -249,66 +451,41 @@ async function loadLiveResults() {
         !round ||
         !fixtureId
       ) {
+
         return;
       }
 
 
       if (
-        !liveResultsByRound[round]
+        !liveResultsByRound[
+          round
+        ]
       ) {
 
-        liveResultsByRound[round] = {};
-
+        liveResultsByRound[
+          round
+        ] = {};
       }
 
 
-      liveResultsByRound[round][fixtureId] = {
+      liveResultsByRound[
+        round
+      ][
+        fixtureId
+      ] = {
 
         homeScore:
-          data.homeScore ?? null,
+          data.homeScore ??
+          null,
 
         awayScore:
-          data.awayScore ?? null
+          data.awayScore ??
+          null
 
       };
 
     }
   );
-
-}
-/* =====================================================
-   ROUND LABEL
-===================================================== */
-
-function getRoundLabel(roundId) {
-
-  const round =
-    englishLeagueRounds.find(
-      (item) =>
-        item.id === roundId
-    );
-
-
-  return round
-    ? round.label
-    : roundId;
-
-}
-
-
-/* =====================================================
-   IS ENGLISH LEAGUE ROUND
-===================================================== */
-
-function isEnglishLeagueRound(
-  roundId
-) {
-
-  return englishLeagueRounds.some(
-    (round) =>
-      round.id === roundId
-  );
-
 }
 
 
@@ -323,14 +500,12 @@ function buildWeekSelector() {
   }
 
 
-  weekSelector.innerHTML = "";
+  weekSelector.innerHTML =
+    "";
 
 
   /*
     Newest week first.
-
-    So Week Three appears above
-    Week Two and Week One.
   */
 
   [...englishLeagueRounds]
@@ -347,6 +522,7 @@ function buildWeekSelector() {
         option.value =
           round.id;
 
+
         option.textContent =
           round.label;
 
@@ -358,7 +534,6 @@ function buildWeekSelector() {
 
           option.selected =
             true;
-
         }
 
 
@@ -368,7 +543,6 @@ function buildWeekSelector() {
 
       }
     );
-
 }
 
 
@@ -378,58 +552,43 @@ function buildWeekSelector() {
 
 function calculateRoundStats(
   predictions = [],
-  round
+  logicalRound
 ) {
 
- const roundResults = {
-  ...(resultsByRound[round] || {}),
-  ...(liveResultsByRound[round] || {})
-};
-
-
-  /*
-    This is perfectly valid.
-
-    An OPEN round may already have
-    predictions but no results yet.
-
-    In that case the leaderboard shows
-    the entrant with a pending score.
-  */
-
-  if (!roundResults) {
-
-    return {
-      points: null,
-      exactScores: 0
-    };
-
-  }
+  const roundResults =
+    getResultsForLogicalRound(
+      logicalRound
+    );
 
 
   let totalPoints = 0;
 
   let exactScores = 0;
 
-  let hasAnyResult = false;
+  let hasAnyResult =
+    false;
 
 
- predictions.forEach(
-  (prediction) => {
+  predictions.forEach(
+    (prediction) => {
 
-    /*
-      Void fixtures must never score.
-    */
-    if (
-      prediction.void === true
-    ) {
-      return;
-    }
 
-    const result =
-      roundResults[
-        prediction.fixtureId
-      ];
+      /*
+        Void fixtures never score.
+      */
+
+      if (
+        prediction.void === true
+      ) {
+
+        return;
+      }
+
+
+      const result =
+        roundResults[
+          prediction.fixtureId
+        ];
 
 
       if (!result) {
@@ -446,7 +605,8 @@ function calculateRoundStats(
       }
 
 
-      hasAnyResult = true;
+      hasAnyResult =
+        true;
 
 
       const predictedHome =
@@ -454,15 +614,18 @@ function calculateRoundStats(
           prediction.predictedHome
         );
 
+
       const predictedAway =
         Number(
           prediction.predictedAway
         );
 
+
       const actualHome =
         Number(
           result.homeScore
         );
+
 
       const actualAway =
         Number(
@@ -475,8 +638,10 @@ function calculateRoundStats(
       ========================= */
 
       if (
-        predictedHome === actualHome &&
-        predictedAway === actualAway
+        predictedHome ===
+          actualHome &&
+        predictedAway ===
+          actualAway
       ) {
 
         totalPoints += 5;
@@ -484,7 +649,6 @@ function calculateRoundStats(
         exactScores += 1;
 
         return;
-
       }
 
 
@@ -502,7 +666,6 @@ function calculateRoundStats(
         totalPoints += 3;
 
         return;
-
       }
 
 
@@ -520,7 +683,6 @@ function calculateRoundStats(
         totalPoints += 1;
 
         return;
-
       }
 
 
@@ -536,7 +698,6 @@ function calculateRoundStats(
       ) {
 
         totalPoints += 2;
-
       }
 
     }
@@ -553,7 +714,6 @@ function calculateRoundStats(
     exactScores
 
   };
-
 }
 
 
@@ -561,56 +721,155 @@ function calculateRoundStats(
    SORT LEADERBOARD
 ===================================================== */
 
-function sortLeaderboard(rows) {
+function sortLeaderboard(
+  rows
+) {
 
-  rows.sort((a, b) => {
-
-    /*
-      Scored players above
-      pending players.
-    */
-
-    if (
-      a.points == null &&
-      b.points != null
-    ) {
-
-      return 1;
-
-    }
+  rows.sort(
+    (a, b) => {
 
 
-    if (
-      a.points != null &&
-      b.points == null
-    ) {
+      /*
+        Scored players above
+        pending players.
+      */
 
-      return -1;
+      if (
+        a.points == null &&
+        b.points != null
+      ) {
 
-    }
+        return 1;
+      }
 
 
-    /*
-      If the entire round is pending,
-      rank entrants by earliest
-      submission time.
+      if (
+        a.points != null &&
+        b.points == null
+      ) {
 
-      This also means you can see the
-      submission order before matches
-      have started.
-    */
+        return -1;
+      }
 
-    if (
-      a.points == null &&
-      b.points == null
-    ) {
+
+      /*
+        Pending round:
+        earliest submission first.
+      */
+
+      if (
+        a.points == null &&
+        b.points == null
+      ) {
+
+        const aTime =
+          a.submittedAtMillis;
+
+
+        const bTime =
+          b.submittedAtMillis;
+
+
+        if (
+          aTime != null &&
+          bTime != null &&
+          aTime !== bTime
+        ) {
+
+          return (
+            aTime - bTime
+          );
+        }
+
+
+        if (
+          aTime != null &&
+          bTime == null
+        ) {
+
+          return -1;
+        }
+
+
+        if (
+          aTime == null &&
+          bTime != null
+        ) {
+
+          return 1;
+        }
+
+
+        return (
+          a.username.localeCompare(
+            b.username
+          )
+        );
+      }
+
+
+      const aPoints =
+        a.points ?? 0;
+
+
+      const bPoints =
+        b.points ?? 0;
+
+
+      /* =========================
+         TIEBREAK 1
+         POINTS
+      ========================= */
+
+      if (
+        bPoints !==
+        aPoints
+      ) {
+
+        return (
+          bPoints -
+          aPoints
+        );
+      }
+
+
+      const aExactScores =
+        a.exactScores ?? 0;
+
+
+      const bExactScores =
+        b.exactScores ?? 0;
+
+
+      /* =========================
+         TIEBREAK 2
+         EXACT SCORES
+      ========================= */
+
+      if (
+        bExactScores !==
+        aExactScores
+      ) {
+
+        return (
+          bExactScores -
+          aExactScores
+        );
+      }
+
 
       const aTime =
         a.submittedAtMillis;
 
+
       const bTime =
         b.submittedAtMillis;
 
+
+      /* =========================
+         TIEBREAK 3
+         EARLIEST SUBMISSION
+      ========================= */
 
       if (
         aTime != null &&
@@ -618,8 +877,10 @@ function sortLeaderboard(rows) {
         aTime !== bTime
       ) {
 
-        return aTime - bTime;
-
+        return (
+          aTime -
+          bTime
+        );
       }
 
 
@@ -629,7 +890,6 @@ function sortLeaderboard(rows) {
       ) {
 
         return -1;
-
       }
 
 
@@ -639,112 +899,17 @@ function sortLeaderboard(rows) {
       ) {
 
         return 1;
-
       }
 
 
-      return a.username.localeCompare(
-        b.username
-      );
-
-    }
-
-
-    const aPoints =
-      a.points ?? 0;
-
-    const bPoints =
-      b.points ?? 0;
-
-
-    /* =========================
-       TIEBREAK 1
-       POINTS
-    ========================= */
-
-    if (
-      bPoints !== aPoints
-    ) {
-
-      return bPoints - aPoints;
-
-    }
-
-
-    const aExactScores =
-      a.exactScores ?? 0;
-
-    const bExactScores =
-      b.exactScores ?? 0;
-
-
-    /* =========================
-       TIEBREAK 2
-       EXACT SCORES
-    ========================= */
-
-    if (
-      bExactScores !==
-      aExactScores
-    ) {
-
       return (
-        bExactScores -
-        aExactScores
+        a.username.localeCompare(
+          b.username
+        )
       );
 
     }
-
-
-    const aTime =
-      a.submittedAtMillis;
-
-    const bTime =
-      b.submittedAtMillis;
-
-
-    /* =========================
-       TIEBREAK 3
-       EARLIEST SUBMISSION
-    ========================= */
-
-    if (
-      aTime != null &&
-      bTime != null &&
-      aTime !== bTime
-    ) {
-
-      return aTime - bTime;
-
-    }
-
-
-    if (
-      aTime != null &&
-      bTime == null
-    ) {
-
-      return -1;
-
-    }
-
-
-    if (
-      aTime == null &&
-      bTime != null
-    ) {
-
-      return 1;
-
-    }
-
-
-    return a.username.localeCompare(
-      b.username
-    );
-
-  });
-
+  );
 }
 
 
@@ -752,34 +917,42 @@ function sortLeaderboard(rows) {
    ACTIVE TAB
 ===================================================== */
 
-function setActiveTab(activeTab) {
+function setActiveTab(
+  activeTab
+) {
 
-  if (weekLeaderboardTab) {
+  if (
+    weekLeaderboardTab
+  ) {
 
-    weekLeaderboardTab.classList.remove(
-      "active"
-    );
-
+    weekLeaderboardTab
+      .classList
+      .remove(
+        "active"
+      );
   }
 
 
-  if (seasonLeaderboardTab) {
+  if (
+    seasonLeaderboardTab
+  ) {
 
-    seasonLeaderboardTab.classList.remove(
-      "active"
-    );
-
+    seasonLeaderboardTab
+      .classList
+      .remove(
+        "active"
+      );
   }
 
 
   if (activeTab) {
 
-    activeTab.classList.add(
-      "active"
-    );
-
+    activeTab
+      .classList
+      .add(
+        "active"
+      );
   }
-
 }
 
 
@@ -789,25 +962,27 @@ function setActiveTab(activeTab) {
 
 function showWeekSelector() {
 
-  if (weekSelectorContainer) {
+  if (
+    weekSelectorContainer
+  ) {
 
-    weekSelectorContainer.style.display =
-      "";
-
+    weekSelectorContainer
+      .style
+      .display = "";
   }
-
 }
 
 
 function hideWeekSelector() {
 
-  if (weekSelectorContainer) {
+  if (
+    weekSelectorContainer
+  ) {
 
-    weekSelectorContainer.style.display =
-      "none";
-
+    weekSelectorContainer
+      .style
+      .display = "none";
   }
-
 }
 
 
@@ -820,15 +995,22 @@ function displayLeaderboard(
   heading
 ) {
 
-  if (!leaderboardContainer) {
+  if (
+    !leaderboardContainer
+  ) {
+
     return;
   }
 
 
-  if (rows.length === 0) {
+  if (
+    rows.length === 0
+  ) {
 
     leaderboardContainer.innerHTML = `
-      <h2>${heading}</h2>
+      <h2>
+        ${heading}
+      </h2>
 
       <p>
         No predictions submitted yet.
@@ -836,12 +1018,13 @@ function displayLeaderboard(
     `;
 
     return;
-
   }
 
 
   leaderboardContainer.innerHTML = `
-    <h2>${heading} 🏆</h2>
+    <h2>
+      ${heading} 🏆
+    </h2>
   `;
 
 
@@ -905,21 +1088,20 @@ function displayLeaderboard(
       `;
 
 
-      /*
-        Open the actual prediction
-        document for the selected week.
-      */
-
-      if (row.viewId) {
+      if (
+        row.viewId
+      ) {
 
         div.addEventListener(
           "click",
           () => {
 
+
             localStorage.setItem(
               "viewPredictionId",
               row.viewId
             );
+
 
             localStorage.setItem(
               "viewPredictionUsername",
@@ -927,13 +1109,14 @@ function displayLeaderboard(
             );
 
 
-            if (row.viewRound) {
+            if (
+              row.viewRound
+            ) {
 
               localStorage.setItem(
                 "viewPredictionRound",
                 row.viewRound
               );
-
             }
 
 
@@ -942,17 +1125,16 @@ function displayLeaderboard(
 
           }
         );
-
       }
 
 
-      leaderboardContainer.appendChild(
-        div
-      );
+      leaderboardContainer
+        .appendChild(
+          div
+        );
 
     }
   );
-
 }
 
 
@@ -961,28 +1143,30 @@ function displayLeaderboard(
 ===================================================== */
 
 function buildWeekLeaderboard(
-  round
+  logicalRound
 ) {
 
-  weekLeaderboardRows = [];
+  weekLeaderboardRows =
+    [];
 
 
   predictionDocuments.forEach(
     (entry) => {
 
+
       if (
-        entry.round !== round
+        entry.logicalRound !==
+        logicalRound
       ) {
 
         return;
-
       }
 
 
       const stats =
         calculateRoundStats(
           entry.predictions || [],
-          round
+          logicalRound
         );
 
 
@@ -993,6 +1177,12 @@ function buildWeekLeaderboard(
 
         viewId:
           entry.id,
+
+        /*
+          Keep the REAL stored round here
+          because View Predictions may
+          still use it.
+        */
 
         viewRound:
           entry.round,
@@ -1019,7 +1209,6 @@ function buildWeekLeaderboard(
   sortLeaderboard(
     weekLeaderboardRows
   );
-
 }
 
 
@@ -1044,7 +1233,6 @@ function displaySelectedWeek() {
     weekLeaderboardRows,
     `${label} Leaderboard`
   );
-
 }
 
 
@@ -1052,29 +1240,31 @@ function displaySelectedWeek() {
    CURRENT LEADERBOARD TAB
 ===================================================== */
 
-if (weekLeaderboardTab) {
+if (
+  weekLeaderboardTab
+) {
 
-  weekLeaderboardTab.addEventListener(
-    "click",
-    () => {
+  weekLeaderboardTab
+    .addEventListener(
+      "click",
+      () => {
 
-      activeLeaderboard =
-        "week";
-
-
-      setActiveTab(
-        weekLeaderboardTab
-      );
+        activeLeaderboard =
+          "week";
 
 
-      showWeekSelector();
+        setActiveTab(
+          weekLeaderboardTab
+        );
 
 
-      displaySelectedWeek();
+        showWeekSelector();
 
-    }
-  );
 
+        displaySelectedWeek();
+
+      }
+    );
 }
 
 
@@ -1082,30 +1272,32 @@ if (weekLeaderboardTab) {
    WEEK DROPDOWN
 ===================================================== */
 
-if (weekSelector) {
+if (
+  weekSelector
+) {
 
-  weekSelector.addEventListener(
-    "change",
-    () => {
+  weekSelector
+    .addEventListener(
+      "change",
+      () => {
 
-      selectedRound =
-        weekSelector.value;
-
-
-      activeLeaderboard =
-        "week";
-
-
-      setActiveTab(
-        weekLeaderboardTab
-      );
+        selectedRound =
+          weekSelector.value;
 
 
-      displaySelectedWeek();
+        activeLeaderboard =
+          "week";
 
-    }
-  );
 
+        setActiveTab(
+          weekLeaderboardTab
+        );
+
+
+        displaySelectedWeek();
+
+      }
+    );
 }
 
 
@@ -1113,32 +1305,34 @@ if (weekSelector) {
    SEASON TAB
 ===================================================== */
 
-if (seasonLeaderboardTab) {
+if (
+  seasonLeaderboardTab
+) {
 
-  seasonLeaderboardTab.addEventListener(
-    "click",
-    () => {
+  seasonLeaderboardTab
+    .addEventListener(
+      "click",
+      () => {
 
-      activeLeaderboard =
-        "season";
-
-
-      setActiveTab(
-        seasonLeaderboardTab
-      );
+        activeLeaderboard =
+          "season";
 
 
-      hideWeekSelector();
+        setActiveTab(
+          seasonLeaderboardTab
+        );
 
 
-      displayLeaderboard(
-        seasonLeaderboardRows,
-        "Season Leaderboard"
-      );
+        hideWeekSelector();
 
-    }
-  );
 
+        displayLeaderboard(
+          seasonLeaderboardRows,
+          "Season Leaderboard"
+        );
+
+      }
+    );
 }
 
 
@@ -1155,18 +1349,12 @@ function buildSeasonLeaderboard() {
   predictionDocuments.forEach(
     (entry) => {
 
-      /*
-        Only English League rounds.
-      */
 
       if (
-        !isEnglishLeagueRound(
-          entry.round
-        )
+        !entry.logicalRound
       ) {
 
         return;
-
       }
 
 
@@ -1181,7 +1369,10 @@ function buildSeasonLeaderboard() {
         );
 
 
-      if (!usernameKey) {
+      if (
+        !usernameKey
+      ) {
+
         return;
       }
 
@@ -1198,22 +1389,29 @@ function buildSeasonLeaderboard() {
 
             username,
 
-            totalPoints: 0,
+            totalPoints:
+              0,
 
-            totalExactScores: 0,
+            totalExactScores:
+              0,
 
-            hasAnyResult: false,
+            hasAnyResult:
+              false,
 
             earliestSubmission:
               null,
 
-            viewId: null,
+            viewId:
+              null,
 
-            viewRound: null
+            viewRound:
+              null,
+
+            viewLogicalRound:
+              null
 
           }
         );
-
       }
 
 
@@ -1226,32 +1424,25 @@ function buildSeasonLeaderboard() {
       const stats =
         calculateRoundStats(
           entry.predictions || [],
-          entry.round
+          entry.logicalRound
         );
 
 
-      /*
-        Only completed/resulted matches
-        add points.
-
-        Week Three entries can therefore
-        exist without changing the season
-        score yet.
-      */
-
       if (
-        stats.points !== null
+        stats.points !==
+        null
       ) {
 
         player.totalPoints +=
           stats.points;
 
+
         player.totalExactScores +=
           stats.exactScores;
 
+
         player.hasAnyResult =
           true;
-
       }
 
 
@@ -1268,37 +1459,35 @@ function buildSeasonLeaderboard() {
 
           player.earliestSubmission =
             entry.submittedAtMillis;
-
         }
-
       }
 
 
       /*
-        Prefer the OPEN/CURRENT
-        round for View Predictions.
+        Prefer the newest logical round
+        for View Predictions.
       */
 
       if (
-        entry.round === currentRound
+        !player.viewLogicalRound ||
+        getRoundNumber(
+          entry.logicalRound
+        ) >
+        getRoundNumber(
+          player.viewLogicalRound
+        )
       ) {
 
         player.viewId =
           entry.id;
 
-        player.viewRound =
-          entry.round;
-
-      } else if (
-        !player.viewId
-      ) {
-
-        player.viewId =
-          entry.id;
 
         player.viewRound =
           entry.round;
 
+
+        player.viewLogicalRound =
+          entry.logicalRound;
       }
 
     }
@@ -1317,8 +1506,10 @@ function buildSeasonLeaderboard() {
 
           points:
             player.hasAnyResult
-              ? player.totalPoints
-              : null,
+              ?
+                player.totalPoints
+              :
+                null,
 
           exactScores:
             player.totalExactScores,
@@ -1339,7 +1530,30 @@ function buildSeasonLeaderboard() {
   sortLeaderboard(
     seasonLeaderboardRows
   );
+}
 
+
+/* =====================================================
+   ROUND NUMBER
+===================================================== */
+
+function getRoundNumber(
+  roundId
+) {
+
+  const match =
+    String(
+      roundId || ""
+    ).match(
+      /Week\s+(\d+)/i
+    );
+
+
+  return match
+    ? Number(
+        match[1]
+      )
+    : -1;
 }
 
 
@@ -1349,14 +1563,15 @@ function buildSeasonLeaderboard() {
 
 async function initialiseLeaderboard() {
 
-  if (!leaderboardContainer) {
+  if (
+    !leaderboardContainer
+  ) {
 
     console.error(
       "leaderboardContainer not found"
     );
 
     return;
-
   }
 
 
@@ -1383,7 +1598,8 @@ async function initialiseLeaderboard() {
       ]);
 
 
-    predictionDocuments = [];
+    predictionDocuments =
+      [];
 
 
     predictionsSnap.forEach(
@@ -1393,17 +1609,6 @@ async function initialiseLeaderboard() {
           docSnap.data();
 
 
-        /*
-          IMPORTANT CHANGE:
-
-          Do NOT require resultsByRound
-          to exist.
-
-          An open future/current week
-          needs to appear even before
-          any results exist.
-        */
-
         if (
           !isEnglishLeagueRound(
             data.round
@@ -1411,7 +1616,31 @@ async function initialiseLeaderboard() {
         ) {
 
           return;
+        }
 
+
+        const logicalRound =
+          getLogicalRoundFromStoredRound(
+            data.round
+          ) ||
+          (
+            englishLeagueRounds.some(
+              (round) =>
+                round.id ===
+                data.round
+            )
+              ?
+                data.round
+              :
+                null
+          );
+
+
+        if (
+          !logicalRound
+        ) {
+
+          return;
         }
 
 
@@ -1424,15 +1653,28 @@ async function initialiseLeaderboard() {
             data.username ||
             "Unknown",
 
+          /*
+            Original Firestore value.
+          */
+
           round:
             data.round,
+
+
+          /*
+            New ScoreCast24 week number.
+          */
+
+          logicalRound,
 
           predictions:
             Array.isArray(
               data.predictions
             )
-              ? data.predictions
-              : [],
+              ?
+                data.predictions
+              :
+                [],
 
           submittedAtMillis:
             timestampToMillis(
@@ -1444,11 +1686,14 @@ async function initialiseLeaderboard() {
       }
     );
 
-/* =========================
-   LOAD LIVE RESULTS
-========================= */
 
-await loadLiveResults();
+    /* =========================
+       LOAD LIVE RESULTS
+    ========================= */
+
+    await loadLiveResults();
+
+
     /* =========================
        BUILD DROPDOWN
     ========================= */
@@ -1457,7 +1702,7 @@ await loadLiveResults();
 
 
     /* =========================
-       BUILD CURRENT WEEK
+       BUILD WEEK
     ========================= */
 
     buildWeekLeaderboard(
@@ -1473,7 +1718,7 @@ await loadLiveResults();
 
 
     /* =========================
-       OPEN ON CURRENT WEEK
+       OPEN ON WEEK THREE
     ========================= */
 
     activeLeaderboard =
@@ -1508,9 +1753,7 @@ await loadLiveResults();
         ${error.message}
       </p>
     `;
-
   }
-
 }
 
 
