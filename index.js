@@ -1646,13 +1646,13 @@ async function renderHomeLeaderboardPreview() {
           docSnap.data();
 
 
-        if (
-          data.round !==
-          homePreviewRound
-        ) {
+      if (
+  data.round !==
+  homePreviewStoredRound
+) {
 
-          return;
-        }
+  return;
+}
 
 
         let totalPoints = 0;
