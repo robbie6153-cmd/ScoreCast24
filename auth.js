@@ -16,9 +16,16 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-setPersistence(auth, browserLocalPersistence).catch((error) => {
-  console.error("Persistence error:", error);
-});
+const persistenceReady =
+  setPersistence(
+    auth,
+    browserLocalPersistence
+  ).catch((error) => {
+    console.error(
+      "Persistence error:",
+      error
+    );
+  });
 
 let currentUser = null;
 
@@ -73,18 +80,26 @@ document.getElementById("createAccountBtn").addEventListener("click", async () =
     return;
   }
 
-  try {
-    authMessage.textContent = "Creating account...";
+try {
+  authMessage.textContent =
+    "Creating account...";
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  await persistenceReady;
+
+  const userCredential =
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
     await sendEmailVerification(userCredential.user, {
       url: "https://scorecast24.com/username.html",
       handleCodeInApp: false
     });
 
-    authMessage.textContent =
-      "Account created. Verification email sent. After verifying, log in and choose your username.";
+authMessage.textContent =
+  "Account created. Verification email sent. Check your inbox and spam/junk folder, then tap the verification link to complete your account.";
   } catch (error) {
     authMessage.textContent = cleanAuthError(error.code);
   }
