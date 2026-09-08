@@ -1621,10 +1621,8 @@ async function renderHomeLeaderboardPreview() {
     return;
   }
 
-
   homeLeaderboardPreview.innerHTML =
     "Loading standings...";
-
 
   try {
 
@@ -1636,32 +1634,27 @@ async function renderHomeLeaderboardPreview() {
         )
       );
 
-
     const rows = [];
-
 
     predictionsSnap.forEach(
       (docSnap) => {
 
-
         const data =
           docSnap.data();
 
-
-      if (
-  data.round !==
-  homePreviewStoredRound
-) {
-
-  return;
-}
-
+        if (
+          data.round !==
+          homePreviewStoredRound
+        ) {
+          return;
+        }
 
         let totalPoints = 0;
 
+        let exactScores = 0;
+
         let hasScoredFixture =
           false;
-
 
         if (
           Array.isArray(
@@ -1669,10 +1662,8 @@ async function renderHomeLeaderboardPreview() {
           )
         ) {
 
-
           data.predictions.forEach(
             (prediction) => {
-
 
               const fixture =
                 weekThreeFixtures.find(
@@ -1681,11 +1672,9 @@ async function renderHomeLeaderboardPreview() {
                     prediction.fixtureId
                 );
 
-
               if (!fixture) {
                 return;
               }
-
 
               const points =
                 calculatePoints(
@@ -1694,7 +1683,6 @@ async function renderHomeLeaderboardPreview() {
                   homePreviewRound
                 );
 
-
               if (
                 points !== null
               ) {
@@ -1702,14 +1690,18 @@ async function renderHomeLeaderboardPreview() {
                 totalPoints +=
                   points;
 
-
                 hasScoredFixture =
                   true;
+
+                if (
+                  points === 5
+                ) {
+                  exactScores += 1;
+                }
               }
             }
           );
         }
-
 
         rows.push({
 
@@ -1717,10 +1709,20 @@ async function renderHomeLeaderboardPreview() {
             data.username ||
             "?????",
 
-
           points:
             totalPoints,
 
+          exactScores,
+
+          submittedAtMillis:
+            data.submittedAt?.toMillis
+              ? data.submittedAt.toMillis()
+              : (
+                  typeof data.submittedAt?.seconds ===
+                    "number"
+                    ? data.submittedAt.seconds * 1000
+                    : null
+                ),
 
           status:
             hasScoredFixture
@@ -1729,7 +1731,6 @@ async function renderHomeLeaderboardPreview() {
         });
       }
     );
-
 
     if (
       rows.length === 0
@@ -1749,37 +1750,81 @@ async function renderHomeLeaderboardPreview() {
         </div>
       `;
 
-
       return;
     }
 
-
     rows.sort(
-      (a, b) =>
-        b.points -
-        a.points
-    );
+      (a, b) => {
 
+        if (
+          b.points !==
+          a.points
+        ) {
+          return (
+            b.points -
+            a.points
+          );
+        }
+
+        if (
+          b.exactScores !==
+          a.exactScores
+        ) {
+          return (
+            b.exactScores -
+            a.exactScores
+          );
+        }
+
+        if (
+          a.submittedAtMillis != null &&
+          b.submittedAtMillis != null &&
+          a.submittedAtMillis !==
+            b.submittedAtMillis
+        ) {
+          return (
+            a.submittedAtMillis -
+            b.submittedAtMillis
+          );
+        }
+
+        if (
+          a.submittedAtMillis != null &&
+          b.submittedAtMillis == null
+        ) {
+          return -1;
+        }
+
+        if (
+          a.submittedAtMillis == null &&
+          b.submittedAtMillis != null
+        ) {
+          return 1;
+        }
+
+        return (
+          a.username.localeCompare(
+            b.username
+          )
+        );
+      }
+    );
 
     homeLeaderboardPreview.innerHTML =
       "";
-
 
     rows
       .slice(0, 3)
       .forEach(
         (row, index) => {
 
-
           const div =
             document.createElement(
               "div"
             );
 
-
           div.className =
             "preview-row";
-
 
           div.innerHTML = `
             <span>
@@ -1791,7 +1836,6 @@ async function renderHomeLeaderboardPreview() {
             </span>
           `;
 
-
           homeLeaderboardPreview
             .appendChild(
               div
@@ -1799,14 +1843,12 @@ async function renderHomeLeaderboardPreview() {
         }
       );
 
-
   } catch (error) {
 
     console.error(
       "Home leaderboard preview failed:",
       error
     );
-
 
     homeLeaderboardPreview.innerHTML = `
       <div class="preview-row">
@@ -1823,7 +1865,6 @@ async function renderHomeLeaderboardPreview() {
     `;
   }
 }
-
 
 /* =====================================================
    HOME FIXTURES PREVIEW
