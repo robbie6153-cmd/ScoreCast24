@@ -129,11 +129,11 @@ const currentRound =
 
 
 /*
-  Week 3 remains the leaderboard
+  Week 4 remains the leaderboard
   initially displayed.
 */
 const currentLeaderboardRound =
-  "English League Week 3";
+  "English League Week 4";
 
 
 let selectedRound =
