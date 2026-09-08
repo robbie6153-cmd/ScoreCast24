@@ -43,9 +43,9 @@ const currentRound =
   currently-playing/completed Week Three.
 */
 const homePreviewRound =
-  "English League Week 3";
+  "English League Week 4";
   const homePreviewStoredRound =
-  "English League Week Four";
+  "English League Week 4";
 
 
 const submittedStorageKey =
@@ -1665,12 +1665,12 @@ async function renderHomeLeaderboardPreview() {
           data.predictions.forEach(
             (prediction) => {
 
-              const fixture =
-                weekThreeFixtures.find(
-                  (item) =>
-                    item.id ===
-                    prediction.fixtureId
-                );
+        const fixture =
+  englishLeagueFixtures.find(
+    (item) =>
+      item.id ===
+      prediction.fixtureId
+  );
 
               if (!fixture) {
                 return;
@@ -1889,8 +1889,8 @@ function renderHomeFixturesPreview() {
     ] || {};
 
 
-  const latestResults =
-    weekThreeFixtures
+const latestResults =
+  englishLeagueFixtures
       .map((fixture) => {
 
 
@@ -1930,6 +1930,16 @@ function renderHomeFixturesPreview() {
 
     homeFixturesPreview.innerHTML = `
       <div class="preview-row">
+      div.style.cursor =
+  "pointer";
+
+div.addEventListener(
+  "click",
+  () => {
+    window.location.href =
+      "leaderboard.html";
+  }
+);
 
         <span>
           No results yet
