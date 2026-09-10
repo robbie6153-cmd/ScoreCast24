@@ -468,6 +468,22 @@ async function loadLiveResults() {
       }
 
 
+      const finishedStatuses =
+        new Set([
+          "FT",
+          "AET",
+          "PEN"
+        ]);
+
+
+      const isFinished =
+        finishedStatuses.has(
+          String(
+            data.status || ""
+          )
+        );
+
+
       liveResultsByRound[
         round
       ][
@@ -475,12 +491,17 @@ async function loadLiveResults() {
       ] = {
 
         homeScore:
-          data.homeScore ??
-          null,
+          isFinished
+            ? data.homeScore ?? null
+            : null,
 
         awayScore:
-          data.awayScore ??
-          null
+          isFinished
+            ? data.awayScore ?? null
+            : null,
+
+        status:
+          data.status || ""
 
       };
 
@@ -984,7 +1005,7 @@ function hideWeekSelector() {
       .display = "none";
   }
 }
-
+    
 
 /* =====================================================
    DISPLAY LEADERBOARD

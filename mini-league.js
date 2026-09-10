@@ -107,7 +107,7 @@ const currentWeekHeading =
 let miniWeekLeaderboardRows = [];
 
 let miniSeasonLeaderboardRows = [];
-
+let liveResultsByRound = {};
 
 const pageParameters =
   new URLSearchParams(
@@ -182,7 +182,132 @@ function normaliseUsername(username) {
 
 }
 
+/* =========================
+   LOAD LIVE RESULTS
+========================= */
 
+async function loadLiveResults() {
+
+  liveResultsByRound = {};
+
+
+  const resultsSnapshot =
+    await getDocs(
+      collection(
+        db,
+        "scorecast24_results"
+      )
+    );
+
+
+  resultsSnapshot.forEach(
+    documentSnapshot => {
+
+      const data =
+        documentSnapshot.data();
+
+
+      const round =
+        data.round;
+
+
+      const fixtureId =
+        String(
+          data.fixtureId || ""
+        );
+
+
+      if (
+        !round ||
+        !fixtureId
+      ) {
+        return;
+      }
+
+
+      const finishedStatuses =
+        new Set([
+          "FT",
+          "AET",
+          "PEN"
+        ]);
+
+
+      if (
+        !finishedStatuses.has(
+          String(
+            data.status || ""
+          )
+        )
+      ) {
+        return;
+      }
+
+
+      if (
+        !liveResultsByRound[
+          round
+        ]
+      ) {
+
+        liveResultsByRound[
+          round
+        ] = {};
+      }
+
+
+      liveResultsByRound[
+        round
+      ][
+        fixtureId
+      ] = {
+
+        homeScore:
+          data.homeScore ??
+          null,
+
+        awayScore:
+          data.awayScore ??
+          null,
+
+        status:
+          data.status || ""
+
+      };
+
+    }
+  );
+}
+
+
+/* =========================
+   GET RESULTS FOR ROUND
+========================= */
+
+function getResultsForRound(
+  round
+) {
+
+  const staticResults =
+    resultsByRound[
+      round
+    ] || {};
+
+
+  const liveResults =
+    liveResultsByRound[
+      round
+    ] || {};
+
+
+  return {
+
+    ...staticResults,
+
+    ...liveResults
+
+  };
+}
 /* =========================
    CALCULATE ROUND POINTS
 ========================= */
@@ -192,12 +317,10 @@ function calculatePoints(
   round
 ) {
 
-  const roundResults =
-    resultsByRound[round];
-
-  if (!roundResults) {
-    return null;
-  }
+const roundResults =
+  getResultsForRound(
+    round
+  );
 
 
   let total = 0;
@@ -934,19 +1057,22 @@ async function loadLeagueMembers() {
     the season standings.
   */
 
-  const predictionsSnapshot =
-    await getDocs(
-      collection(
-        db,
-        "scorecast24_predictions"
-      )
-    );
+const predictionsSnapshot =
+  await getDocs(
+    collection(
+      db,
+      "scorecast24_predictions"
+    )
+  );
 
 
-  const predictionsByUsername =
-    buildPredictionMap(
-      predictionsSnapshot
-    );
+await loadLiveResults();
+
+
+const predictionsByUsername =
+  buildPredictionMap(
+    predictionsSnapshot
+  );
 
 
   buildMiniWeekLeaderboard(
