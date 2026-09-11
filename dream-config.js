@@ -13,9 +13,15 @@ export const DREAM_CONFIG = {
 
   manualLock: false,
 
-currentRoundId: "2026-week-03",
+  /*
+    Manual gameweek controls
+  */
 
-previousRoundId: "2026-week-02",
+  manualLock: false,
+
+  currentRoundId: "2026-week-04",
+
+  previousRoundId: "2026-week-03",
 
   /*
     Player database files
