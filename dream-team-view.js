@@ -2852,12 +2852,10 @@ async function loadDreamTeam() {
       new Set();
 
 
-    if (
-      entryData.roundId ===
-        DREAM_CONFIG.currentRoundId &&
-      DREAM_CONFIG.previousRoundId &&
-      entryData.uid
-    ) {
+if (
+  DREAM_CONFIG.previousRoundId &&
+  entryData.uid
+) {
 
       const previousEntryId =
         `${DREAM_CONFIG.previousRoundId}_${entryData.uid}`;
@@ -2958,9 +2956,7 @@ async function loadDreamTeam() {
                 );
 
 
-              const isCurrentRound =
-                entryData.roundId ===
-                DREAM_CONFIG.currentRoundId;
+           const isCurrentRound = true;
 
 
               const wasInPreviousRound =
