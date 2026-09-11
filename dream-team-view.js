@@ -19,6 +19,8 @@ import {
 import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+
 /* =====================================================
    PLAYER FILES
 ===================================================== */
@@ -185,6 +187,11 @@ let scoreDocuments = [];
 
 let latestRoundId = "";
 
+let previousEntry = null;
+
+let previousRoundPlayerKeys =
+  new Set();
+
 let playerScoresByApiId =
   new Map();
 
@@ -269,6 +276,29 @@ function makeNameKey(
 }
 
 
+function makeRosterPlayerKey(
+  player
+) {
+
+  if (
+    player?.apiPlayerId !== undefined &&
+    player?.apiPlayerId !== null &&
+    player?.apiPlayerId !== ""
+  ) {
+
+    return `api:${String(
+      player.apiPlayerId
+    )}`;
+  }
+
+
+  return `player:${makePlayerKey(
+    player?.club,
+    player?.name
+  )}`;
+}
+
+
 /* =====================================================
    FIND API PLAYER ID
 ===================================================== */
@@ -278,12 +308,9 @@ function getApiPlayerId(
 ) {
 
   if (
-    player.apiPlayerId !==
-      undefined &&
-    player.apiPlayerId !==
-      null &&
-    player.apiPlayerId !==
-      ""
+    player.apiPlayerId !== undefined &&
+    player.apiPlayerId !== null &&
+    player.apiPlayerId !== ""
   ) {
 
     return String(
@@ -405,6 +432,103 @@ function getPlayerScores(
     weekScore: 0,
     overallScore: 0
   };
+}
+
+
+/* =====================================================
+   GET PLAYER SCORE FOR A SPECIFIC ROUND
+===================================================== */
+
+function getPlayerScoreForRound(
+  player,
+  roundId
+) {
+
+  if (!roundId) {
+    return 0;
+  }
+
+
+  const apiPlayerId =
+    getApiPlayerId(
+      player
+    );
+
+
+  if (apiPlayerId) {
+
+    const apiMatch =
+      scoreDocuments.find(
+        score =>
+          score.roundId === roundId &&
+          String(
+            score.apiPlayerId ?? ""
+          ) === String(apiPlayerId)
+      );
+
+
+    if (apiMatch) {
+
+      return Number(
+        apiMatch.weekScore || 0
+      );
+    }
+  }
+
+
+  const exactKey =
+    makePlayerKey(
+      player.club,
+      player.name
+    );
+
+
+  const exactMatch =
+    scoreDocuments.find(
+      score =>
+        score.roundId === roundId &&
+        makePlayerKey(
+          score.club,
+          score.playerName
+        ) === exactKey
+    );
+
+
+  if (exactMatch) {
+
+    return Number(
+      exactMatch.weekScore || 0
+    );
+  }
+
+
+  const nameKey =
+    makeNameKey(
+      player.name
+    );
+
+
+  const nameMatches =
+    scoreDocuments.filter(
+      score =>
+        score.roundId === roundId &&
+        makeNameKey(
+          score.playerName
+        ) === nameKey
+    );
+
+
+  if (
+    nameMatches.length === 1
+  ) {
+
+    return Number(
+      nameMatches[0].weekScore || 0
+    );
+  }
+
+
+  return 0;
 }
 
 
@@ -531,12 +655,9 @@ async function loadPlayerScores() {
 
 
     const apiPlayerId =
-      scoreDocument.apiPlayerId !==
-        undefined &&
-      scoreDocument.apiPlayerId !==
-        null &&
-      scoreDocument.apiPlayerId !==
-        ""
+      scoreDocument.apiPlayerId !== undefined &&
+      scoreDocument.apiPlayerId !== null &&
+      scoreDocument.apiPlayerId !== ""
         ? String(
             scoreDocument.apiPlayerId
           )
@@ -651,7 +772,7 @@ async function loadPlayerScores() {
 
     if (
       scoreDocument.roundId ===
-      latestRoundId
+        latestRoundId
     ) {
 
       exactScores.weekScore =
@@ -687,7 +808,7 @@ async function loadPlayerScores() {
 
     if (
       scoreDocument.roundId ===
-      latestRoundId
+        latestRoundId
     ) {
 
       nameScores.weekScore =
@@ -834,12 +955,9 @@ function auditPlayerApiMatching() {
   ) {
 
     if (
-      scoreDocument.apiPlayerId ===
-        undefined ||
-      scoreDocument.apiPlayerId ===
-        null ||
-      scoreDocument.apiPlayerId ===
-        ""
+      scoreDocument.apiPlayerId === undefined ||
+      scoreDocument.apiPlayerId === null ||
+      scoreDocument.apiPlayerId === ""
     ) {
       continue;
     }
@@ -1251,19 +1369,57 @@ function addPlayerToSquad(
     );
 
 
-  currentEntry.players.push({
+  const playerWithApiId = {
     ...player,
 
     apiPlayerId:
       apiPlayerId ||
       player.apiPlayerId ||
-      null,
+      null
+  };
+
+
+  const wasInPreviousRound =
+    previousRoundPlayerKeys.has(
+      makeRosterPlayerKey(
+        playerWithApiId
+      )
+    );
+
+
+  const isCurrentRound =
+    currentEntry.roundId ===
+    DREAM_CONFIG.currentRoundId;
+
+
+  const isNew =
+    isCurrentRound &&
+    Boolean(previousEntry) &&
+    !wasInPreviousRound;
+
+
+  currentEntry.players.push({
+    ...playerWithApiId,
 
     weeklyPoints:
-      scores.weekScore,
+      isCurrentRound
+        ? (
+            isNew
+              ? null
+              : getPlayerScoreForRound(
+                  playerWithApiId,
+                  DREAM_CONFIG.previousRoundId
+                )
+          )
+        : getPlayerScoreForRound(
+            playerWithApiId,
+            currentEntry.roundId
+          ),
 
     overallPoints:
-      scores.overallScore
+      scores.overallScore,
+
+    isNew
   });
 
 
@@ -1762,6 +1918,16 @@ function renderPlayers(players) {
                   player.name ||
                   "Unknown player"
                 )}
+
+                ${
+                  player.isNew
+                    ? `
+                      <span class="new-player-marker">
+                        ↑ (NEW)
+                      </span>
+                    `
+                    : ""
+                }
               </strong>
 
               <span>
@@ -1888,9 +2054,11 @@ function createFormationPlayer(
 
 
   const weeklyPoints =
-    Number(
-      player.weeklyPoints || 0
-    );
+    player.isNew
+      ? "-"
+      : Number(
+          player.weeklyPoints || 0
+        );
 
 
   const overallPoints =
@@ -1921,6 +2089,16 @@ function createFormationPlayer(
           player.name ||
           "Unknown player"
         )}
+
+        ${
+          player.isNew
+            ? `
+              <span class="new-player-marker">
+                ↑ (NEW)
+              </span>
+            `
+            : ""
+        }
       </div>
 
       <div
@@ -2194,6 +2372,7 @@ function updateSquadSummary() {
   }
 }
 
+
 async function getOfficialSeasonTotal(
   entry
 ) {
@@ -2288,6 +2467,8 @@ async function getOfficialSeasonTotal(
     0
   );
 }
+
+
 /* =====================================================
    RENDER DREAM TEAM
 ===================================================== */
@@ -2340,67 +2521,64 @@ function renderDreamTeam(entry) {
 
 
   if (
-  viewDreamPoints
-) {
+    viewDreamPoints
+  ) {
 
-const weeklyTotal =
-  Array.isArray(
-    entry.players
-  )
-    ? entry.players.reduce(
-        (total, player) =>
-          total +
-          Number(
-            player.weeklyPoints || 0
-          ),
-        0
-      )
-    : 0;
+    const weeklyTotal =
+      entry.roundId ===
+        DREAM_CONFIG.currentRoundId &&
+      previousEntry
+        ? Number(
+            previousEntry.totalPoints || 0
+          )
+        : Number(
+            entry.totalPoints || 0
+          );
 
 
-  viewDreamPoints.innerHTML = `
-    Last Week:
-    <strong>${weeklyTotal}</strong>
-    <br>
-    Season Total:
-    <strong>Loading...</strong>
-  `;
+    viewDreamPoints.innerHTML = `
+      Last Week:
+      <strong>${weeklyTotal}</strong>
+      <br>
+      Season Total:
+      <strong>Loading...</strong>
+    `;
 
 
-  getOfficialSeasonTotal(
-    entry
-  )
-    .then(
-      seasonTotal => {
-
-        viewDreamPoints.innerHTML = `
-          Last Week:
-          <strong>${weeklyTotal}</strong>
-          <br>
-          Season Total:
-          <strong>${seasonTotal}</strong>
-        `;
-      }
+    getOfficialSeasonTotal(
+      entry
     )
-    .catch(
-      error => {
+      .then(
+        seasonTotal => {
 
-        console.error(
-          "Season total loading error:",
-          error
-        );
+          viewDreamPoints.innerHTML = `
+            Last Week:
+            <strong>${weeklyTotal}</strong>
+            <br>
+            Season Total:
+            <strong>${seasonTotal}</strong>
+          `;
+        }
+      )
+      .catch(
+        error => {
+
+          console.error(
+            "Season total loading error:",
+            error
+          );
 
 
-        viewDreamPoints.innerHTML = `
-          Last Week:
-          <strong>${weeklyTotal}</strong>
-          <br>
-          Season Total:
-          <strong>—</strong>
-        `;
-      }
-    );
-}
+          viewDreamPoints.innerHTML = `
+            Last Week:
+            <strong>${weeklyTotal}</strong>
+            <br>
+            Season Total:
+            <strong>—</strong>
+          `;
+        }
+      );
+  }
 
 
   if (
@@ -2469,16 +2647,16 @@ function applyTeamEditPermissions() {
   }
 
 
- if (
-  formationChangeBtn
-) {
+  if (
+    formationChangeBtn
+  ) {
 
-  formationChangeBtn.hidden =
-    false;
+    formationChangeBtn.hidden =
+      false;
 
-  formationChangeBtn.disabled =
-    !isOwnTeam;
-}
+    formationChangeBtn.disabled =
+      !isOwnTeam;
+  }
 
 
   if (
@@ -2512,6 +2690,7 @@ function applyTeamEditPermissions() {
 /* =====================================================
    LOAD DREAM TEAM
 ===================================================== */
+
 async function loadDreamTeam() {
 
   const parameters =
@@ -2528,18 +2707,9 @@ async function loadDreamTeam() {
 
   try {
 
-    /*
-      Make sure Firebase has finished
-      checking who is logged in.
-    */
     await auth.authStateReady();
 
 
-    /*
-      If no entry ID was supplied in
-      the URL, automatically find this
-      user's Dream Team.
-    */
     if (!entryId) {
 
       if (!auth.currentUser) {
@@ -2552,10 +2722,6 @@ async function loadDreamTeam() {
       }
 
 
-      /*
-        First preference:
-        CURRENT week's team.
-      */
       const currentEntryId =
         `${DREAM_CONFIG.currentRoundId}_${auth.currentUser.uid}`;
 
@@ -2583,10 +2749,6 @@ async function loadDreamTeam() {
 
       } else {
 
-        /*
-          Second preference:
-          PREVIOUS week's team.
-        */
         const previousRoundId =
           DREAM_CONFIG.previousRoundId;
 
@@ -2622,10 +2784,6 @@ async function loadDreamTeam() {
       }
 
 
-      /*
-        Brand-new player:
-        no current or previous team.
-      */
       if (!entryId) {
 
         window.location.href =
@@ -2687,6 +2845,84 @@ async function loadDreamTeam() {
       entryData;
 
 
+    previousEntry =
+      null;
+
+    previousRoundPlayerKeys =
+      new Set();
+
+
+    if (
+      entryData.roundId ===
+        DREAM_CONFIG.currentRoundId &&
+      DREAM_CONFIG.previousRoundId &&
+      entryData.uid
+    ) {
+
+      const previousEntryId =
+        `${DREAM_CONFIG.previousRoundId}_${entryData.uid}`;
+
+
+      const previousReference =
+        doc(
+          db,
+          "dream_team_entries",
+          previousEntryId
+        );
+
+
+      const previousSnapshot =
+        await getDoc(
+          previousReference
+        );
+
+
+      if (
+        previousSnapshot.exists()
+      ) {
+
+        previousEntry = {
+          id:
+            previousSnapshot.id,
+
+          ...previousSnapshot.data()
+        };
+
+
+        const previousPlayers =
+          Array.isArray(
+            previousEntry.players
+          )
+            ? previousEntry.players
+            : [];
+
+
+        previousRoundPlayerKeys =
+          new Set(
+            previousPlayers.map(
+              player => {
+
+                const apiPlayerId =
+                  getApiPlayerId(
+                    player
+                  );
+
+
+                return makeRosterPlayerKey({
+                  ...player,
+
+                  apiPlayerId:
+                    apiPlayerId ||
+                    player.apiPlayerId ||
+                    null
+                });
+              }
+            )
+          );
+      }
+    }
+
+
     applyTeamEditPermissions();
 
 
@@ -2706,28 +2942,80 @@ async function loadDreamTeam() {
                 );
 
 
-              const scores =
-                getPlayerScores(
-                  {
-                    ...player,
-                    apiPlayerId
-                  }
-                );
-
-
-              return {
+              const playerWithApiId = {
                 ...player,
 
                 apiPlayerId:
                   apiPlayerId ||
                   player.apiPlayerId ||
-                  null,
+                  null
+              };
+
+
+              const scores =
+                getPlayerScores(
+                  playerWithApiId
+                );
+
+
+              const isCurrentRound =
+                entryData.roundId ===
+                DREAM_CONFIG.currentRoundId;
+
+
+              const wasInPreviousRound =
+                previousRoundPlayerKeys.has(
+                  makeRosterPlayerKey(
+                    playerWithApiId
+                  )
+                );
+
+
+              const isNew =
+                isCurrentRound &&
+                Boolean(previousEntry) &&
+                !wasInPreviousRound;
+
+
+              let weeklyPoints = 0;
+
+
+              if (isCurrentRound) {
+
+                if (
+                  previousEntry &&
+                  wasInPreviousRound
+                ) {
+
+                  weeklyPoints =
+                    getPlayerScoreForRound(
+                      playerWithApiId,
+                      DREAM_CONFIG.previousRoundId
+                    );
+                }
+
+              } else {
+
+                weeklyPoints =
+                  getPlayerScoreForRound(
+                    playerWithApiId,
+                    entryData.roundId
+                  );
+              }
+
+
+              return {
+                ...playerWithApiId,
 
                 weeklyPoints:
-                  scores.weekScore,
+                  isNew
+                    ? null
+                    : weeklyPoints,
 
                 overallPoints:
-                  scores.overallScore
+                  scores.overallScore,
+
+                isNew
               };
             }
           )
@@ -2761,6 +3049,7 @@ async function loadDreamTeam() {
     );
   }
 }
+
 
 /* =====================================================
    SAVE DREAM TEAM
@@ -2847,6 +3136,23 @@ async function saveCurrentDreamTeam() {
     }
 
 
+    const playersToSave =
+      players.map(
+        player => {
+
+          const {
+            weeklyPoints,
+            overallPoints,
+            isNew,
+            ...savedPlayer
+          } = player;
+
+
+          return savedPlayer;
+        }
+      );
+
+
     await setDoc(
       doc(
         db,
@@ -2854,7 +3160,8 @@ async function saveCurrentDreamTeam() {
         currentEntryId
       ),
       {
-        players,
+        players:
+          playersToSave,
 
         formation:
           currentEntry.formation,
@@ -3142,15 +3449,20 @@ async function startDreamTeamPage() {
 }
 
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(
+  auth,
+  async user => {
 
-  if (!user) {
-    showError(
-      "Please sign in to view your Dream Team."
-    );
-    return;
+    if (!user) {
+
+      showError(
+        "Please sign in to view your Dream Team."
+      );
+
+      return;
+    }
+
+
+    await startDreamTeamPage();
   }
-
-  await startDreamTeamPage();
-
-});
+);
