@@ -2690,7 +2690,6 @@ function applyTeamEditPermissions() {
 /* =====================================================
    LOAD DREAM TEAM
 ===================================================== */
-
 async function loadDreamTeam() {
 
   const parameters =
@@ -2699,7 +2698,7 @@ async function loadDreamTeam() {
     );
 
 
-  let entryId =
+  const requestedEntryId =
     parameters.get(
       "id"
     );
@@ -2710,155 +2709,337 @@ async function loadDreamTeam() {
     await auth.authStateReady();
 
 
-    if (!entryId) {
-
-      if (!auth.currentUser) {
-
-        showError(
-          "Please sign in to view your Dream Team."
-        );
-
-        return;
-      }
-
-
-      const currentEntryId =
-        `${DREAM_CONFIG.currentRoundId}_${auth.currentUser.uid}`;
-
-
-      const currentReference =
-        doc(
-          db,
-          "dream_team_entries",
-          currentEntryId
-        );
-
-
-      const currentSnapshot =
-        await getDoc(
-          currentReference
-        );
-
-
-      if (
-        currentSnapshot.exists()
-      ) {
-
-        entryId =
-          currentEntryId;
-
-      } else {
-
-        const previousRoundId =
-          DREAM_CONFIG.previousRoundId;
-
-
-        if (previousRoundId) {
-
-          const previousEntryId =
-            `${previousRoundId}_${auth.currentUser.uid}`;
-
-
-          const previousReference =
-            doc(
-              db,
-              "dream_team_entries",
-              previousEntryId
-            );
-
-
-          const previousSnapshot =
-            await getDoc(
-              previousReference
-            );
-
-
-          if (
-            previousSnapshot.exists()
-          ) {
-
-            entryId =
-              previousEntryId;
-          }
-        }
-      }
-
-
-      if (!entryId) {
-
-        window.location.href =
-          "dream-game.html";
-
-        return;
-      }
-    }
-
-
-    const entryReference =
-      doc(
-        db,
-        "dream_team_entries",
-        entryId
-      );
-
-
-    const entrySnapshot =
-      await getDoc(
-        entryReference
-      );
-
-
-    if (
-      !entrySnapshot.exists()
-    ) {
+    if (!auth.currentUser) {
 
       showError(
-        "This Dream Team entry could not be found."
+        "Please sign in to view your Dream Team."
       );
 
       return;
     }
 
 
-    const entryData = {
+    /*
+      ==================================================
+      A SPECIFIC ENTRY WAS REQUESTED
 
-      id:
-        entrySnapshot.id,
+      Example:
+      Clicking somebody from the leaderboard.
 
-      ...entrySnapshot.data()
-    };
+      Historical entries are displayed exactly as they
+      were stored and are NOT treated as editable.
+      ==================================================
+    */
+
+    if (requestedEntryId) {
+
+      const requestedReference =
+        doc(
+          db,
+          "dream_team_entries",
+          requestedEntryId
+        );
 
 
-    isOwnTeam =
-      Boolean(
-        auth.currentUser &&
-        entryData.uid ===
-          auth.currentUser.uid
+      const requestedSnapshot =
+        await getDoc(
+          requestedReference
+        );
+
+
+      if (
+        !requestedSnapshot.exists()
+      ) {
+
+        showError(
+          "This Dream Team entry could not be found."
+        );
+
+        return;
+      }
+
+
+      const entryData = {
+        id:
+          requestedSnapshot.id,
+
+        ...requestedSnapshot.data()
+      };
+
+
+      currentEntryId =
+        requestedSnapshot.id;
+
+
+      currentEntry =
+        entryData;
+
+
+      /*
+        Only the CURRENT round may be edited.
+
+        This prevents an old Week 3 document
+        being accidentally changed.
+      */
+
+      isOwnTeam =
+        Boolean(
+          entryData.uid ===
+            auth.currentUser.uid &&
+          entryData.roundId ===
+            DREAM_CONFIG.currentRoundId
+        );
+
+
+      previousEntry =
+        null;
+
+      previousRoundPlayerKeys =
+        new Set();
+
+
+      /*
+        If this is a current-round entry,
+        load last week's frozen entry so
+        NEW players can be identified.
+      */
+
+      if (
+        entryData.roundId ===
+          DREAM_CONFIG.currentRoundId &&
+        DREAM_CONFIG.previousRoundId &&
+        entryData.uid
+      ) {
+
+        const previousEntryId =
+          `${DREAM_CONFIG.previousRoundId}_${entryData.uid}`;
+
+
+        const previousSnapshot =
+          await getDoc(
+            doc(
+              db,
+              "dream_team_entries",
+              previousEntryId
+            )
+          );
+
+
+        if (
+          previousSnapshot.exists()
+        ) {
+
+          previousEntry = {
+            id:
+              previousSnapshot.id,
+
+            ...previousSnapshot.data()
+          };
+
+
+          const previousPlayers =
+            Array.isArray(
+              previousEntry.players
+            )
+              ? previousEntry.players
+              : [];
+
+
+          previousRoundPlayerKeys =
+            new Set(
+              previousPlayers.map(
+                player => {
+
+                  const apiPlayerId =
+                    getApiPlayerId(
+                      player
+                    );
+
+
+                  return makeRosterPlayerKey({
+                    ...player,
+
+                    apiPlayerId:
+                      apiPlayerId ||
+                      player.apiPlayerId ||
+                      null
+                  });
+                }
+              )
+            );
+        }
+      }
+
+
+      entryData.players =
+        Array.isArray(
+          entryData.players
+        )
+          ? entryData.players.map(
+              player => {
+
+                const apiPlayerId =
+                  getApiPlayerId(
+                    player
+                  );
+
+
+                const playerWithApiId = {
+                  ...player,
+
+                  apiPlayerId:
+                    apiPlayerId ||
+                    player.apiPlayerId ||
+                    null
+                };
+
+
+                const scores =
+                  getPlayerScores(
+                    playerWithApiId
+                  );
+
+
+                const isCurrentRound =
+                  entryData.roundId ===
+                  DREAM_CONFIG.currentRoundId;
+
+
+                const wasInPreviousRound =
+                  previousRoundPlayerKeys.has(
+                    makeRosterPlayerKey(
+                      playerWithApiId
+                    )
+                  );
+
+
+                const isNew =
+                  isCurrentRound &&
+                  Boolean(previousEntry) &&
+                  !wasInPreviousRound;
+
+
+                let weeklyPoints = 0;
+
+
+                if (isCurrentRound) {
+
+                  if (
+                    previousEntry &&
+                    wasInPreviousRound
+                  ) {
+
+                    weeklyPoints =
+                      getPlayerScoreForRound(
+                        playerWithApiId,
+                        DREAM_CONFIG.previousRoundId
+                      );
+                  }
+
+                } else {
+
+                  /*
+                    Historical entry:
+                    show that player's score
+                    from that actual round.
+                  */
+
+                  weeklyPoints =
+                    getPlayerScoreForRound(
+                      playerWithApiId,
+                      entryData.roundId
+                    );
+                }
+
+
+                return {
+                  ...playerWithApiId,
+
+                  weeklyPoints:
+                    isNew
+                      ? null
+                      : weeklyPoints,
+
+                  overallPoints:
+                    scores.overallScore,
+
+                  isNew
+                };
+              }
+            )
+          : [];
+
+
+      currentEntry =
+        entryData;
+
+
+      applyTeamEditPermissions();
+
+      updateTeamSelectionLink();
+
+      renderDreamTeam(
+        entryData
       );
 
 
-    currentEntryId =
-      entrySnapshot.id;
+      if (isOwnTeam) {
+
+        renderPlayerDatabase();
+      }
 
 
-    currentEntry =
-      entryData;
+      return;
+    }
 
 
-    previousEntry =
-      null;
+    /*
+      ==================================================
+      VIEW MY DREAM TEAM
 
-    previousRoundPlayerKeys =
-      new Set();
+      No ?id= was supplied.
+
+      We want the CURRENT round.
+      ==================================================
+    */
 
 
-if (
-  DREAM_CONFIG.previousRoundId &&
-  entryData.uid
-) {
+    const uid =
+      auth.currentUser.uid;
+
+
+    const currentEntryIdWanted =
+      `${DREAM_CONFIG.currentRoundId}_${uid}`;
+
+
+    const currentReference =
+      doc(
+        db,
+        "dream_team_entries",
+        currentEntryIdWanted
+      );
+
+
+    const currentSnapshot =
+      await getDoc(
+        currentReference
+      );
+
+
+    /*
+      Always load the previous round as the
+      frozen comparison baseline.
+    */
+
+    let previousSnapshot = null;
+
+
+    if (
+      DREAM_CONFIG.previousRoundId
+    ) {
 
       const previousEntryId =
-        `${DREAM_CONFIG.previousRoundId}_${entryData.uid}`;
+        `${DREAM_CONFIG.previousRoundId}_${uid}`;
 
 
       const previousReference =
@@ -2869,63 +3050,161 @@ if (
         );
 
 
-      const previousSnapshot =
+      previousSnapshot =
         await getDoc(
           previousReference
         );
-
-
-      if (
-        previousSnapshot.exists()
-      ) {
-
-        previousEntry = {
-          id:
-            previousSnapshot.id,
-
-          ...previousSnapshot.data()
-        };
-
-
-        const previousPlayers =
-          Array.isArray(
-            previousEntry.players
-          )
-            ? previousEntry.players
-            : [];
-
-
-        previousRoundPlayerKeys =
-          new Set(
-            previousPlayers.map(
-              player => {
-
-                const apiPlayerId =
-                  getApiPlayerId(
-                    player
-                  );
-
-
-                return makeRosterPlayerKey({
-                  ...player,
-
-                  apiPlayerId:
-                    apiPlayerId ||
-                    player.apiPlayerId ||
-                    null
-                });
-              }
-            )
-          );
-      }
     }
 
 
-    applyTeamEditPermissions();
+    previousEntry =
+      previousSnapshot?.exists()
+        ? {
+            id:
+              previousSnapshot.id,
+
+            ...previousSnapshot.data()
+          }
+        : null;
 
 
-    updateTeamSelectionLink();
+    previousRoundPlayerKeys =
+      new Set();
 
+
+    if (
+      previousEntry &&
+      Array.isArray(
+        previousEntry.players
+      )
+    ) {
+
+      previousRoundPlayerKeys =
+        new Set(
+          previousEntry.players.map(
+            player => {
+
+              const apiPlayerId =
+                getApiPlayerId(
+                  player
+                );
+
+
+              return makeRosterPlayerKey({
+                ...player,
+
+                apiPlayerId:
+                  apiPlayerId ||
+                  player.apiPlayerId ||
+                  null
+              });
+            }
+          )
+        );
+    }
+
+
+    let entryData;
+
+
+    /*
+      ==================================================
+      CURRENT WEEK DOCUMENT ALREADY EXISTS
+
+      Load it normally.
+      ==================================================
+    */
+
+    if (
+      currentSnapshot.exists()
+    ) {
+
+      entryData = {
+        id:
+          currentSnapshot.id,
+
+        ...currentSnapshot.data()
+      };
+
+    } else {
+
+      /*
+        ==================================================
+        NO CURRENT WEEK DOCUMENT YET
+
+        Carry forward last week's squad IN MEMORY.
+
+        IMPORTANT:
+        We DO NOT edit or overwrite Week 3.
+
+        currentEntryId is already the Week 4 ID,
+        so the first save creates Week 4.
+        ==================================================
+      */
+
+      if (!previousEntry) {
+
+        window.location.href =
+          "dream-game.html";
+
+        return;
+      }
+
+
+      entryData = {
+        ...previousEntry,
+
+        id:
+          currentEntryIdWanted,
+
+        roundId:
+          DREAM_CONFIG.currentRoundId,
+
+        rolloverFromRound:
+          DREAM_CONFIG.previousRoundId,
+
+        players:
+          Array.isArray(
+            previousEntry.players
+          )
+            ? previousEntry.players.map(
+                player => ({
+                  ...player
+                })
+              )
+            : [],
+
+        /*
+          Current week has not been scored.
+        */
+
+        totalPoints: 0,
+
+        scoredFixtures: 0
+      };
+    }
+
+
+    /*
+      This is now ALWAYS the current week's
+      working document ID.
+
+      Even when Week 4 hasn't been written
+      to Firestore yet.
+    */
+
+    currentEntryId =
+      currentEntryIdWanted;
+
+
+    isOwnTeam =
+      true;
+
+
+    /*
+      Add display-only scoring information
+      and NEW status.
+    */
 
     entryData.players =
       Array.isArray(
@@ -2956,57 +3235,36 @@ if (
                 );
 
 
-           const isCurrentRound = true;
+              const playerKey =
+                makeRosterPlayerKey(
+                  playerWithApiId
+                );
 
 
               const wasInPreviousRound =
                 previousRoundPlayerKeys.has(
-                  makeRosterPlayerKey(
-                    playerWithApiId
-                  )
+                  playerKey
                 );
 
 
               const isNew =
-                isCurrentRound &&
                 Boolean(previousEntry) &&
                 !wasInPreviousRound;
 
 
-              let weeklyPoints = 0;
-
-
-              if (isCurrentRound) {
-
-                if (
-                  previousEntry &&
-                  wasInPreviousRound
-                ) {
-
-                  weeklyPoints =
-                    getPlayerScoreForRound(
+              const weeklyPoints =
+                isNew
+                  ? null
+                  : getPlayerScoreForRound(
                       playerWithApiId,
                       DREAM_CONFIG.previousRoundId
                     );
-                }
-
-              } else {
-
-                weeklyPoints =
-                  getPlayerScoreForRound(
-                    playerWithApiId,
-                    entryData.roundId
-                  );
-              }
 
 
               return {
                 ...playerWithApiId,
 
-                weeklyPoints:
-                  isNew
-                    ? null
-                    : weeklyPoints,
+                weeklyPoints,
 
                 overallPoints:
                   scores.overallScore,
@@ -3018,19 +3276,21 @@ if (
         : [];
 
 
-    currentEntry.players =
-      entryData.players;
+    currentEntry =
+      entryData;
 
+
+    applyTeamEditPermissions();
+
+    updateTeamSelectionLink();
 
     renderDreamTeam(
       entryData
     );
 
 
-    if (isOwnTeam) {
+    renderPlayerDatabase();
 
-      renderPlayerDatabase();
-    }
 
   } catch (error) {
 
@@ -3132,6 +3392,11 @@ async function saveCurrentDreamTeam() {
     }
 
 
+    /*
+      Strip display-only values before
+      saving the real squad.
+    */
+
     const playersToSave =
       players.map(
         player => {
@@ -3149,6 +3414,19 @@ async function saveCurrentDreamTeam() {
       );
 
 
+    /*
+      IMPORTANT:
+
+      currentEntryId is now always:
+
+      2026-week-04_UID
+
+      when editing the current gameweek.
+
+      Therefore Week 3 can never be
+      accidentally overwritten here.
+    */
+
     await setDoc(
       doc(
         db,
@@ -3156,6 +3434,26 @@ async function saveCurrentDreamTeam() {
         currentEntryId
       ),
       {
+        uid:
+          auth.currentUser.uid,
+
+        username:
+          currentEntry.username ||
+          previousEntry?.username ||
+          "",
+
+        email:
+          currentEntry.email ||
+          previousEntry?.email ||
+          auth.currentUser.email ||
+          "",
+
+        roundId:
+          DREAM_CONFIG.currentRoundId,
+
+        rolloverFromRound:
+          DREAM_CONFIG.previousRoundId,
+
         players:
           playersToSave,
 
@@ -3163,6 +3461,23 @@ async function saveCurrentDreamTeam() {
           currentEntry.formation,
 
         ratingTotal,
+
+        status:
+          "submitted",
+
+        /*
+          New/current gameweek starts at zero.
+          The scoring function will replace this
+          once matches are scored.
+        */
+
+        totalPoints:
+          Number(
+            currentEntry.roundId ===
+              DREAM_CONFIG.currentRoundId
+              ? currentEntry.totalPoints || 0
+              : 0
+          ),
 
         updatedAt:
           serverTimestamp()
@@ -3173,8 +3488,25 @@ async function saveCurrentDreamTeam() {
     );
 
 
+    /*
+      From now on this in-memory team
+      is definitely Week 4.
+    */
+
+    currentEntry.id =
+      currentEntryId;
+
+    currentEntry.roundId =
+      DREAM_CONFIG.currentRoundId;
+
+    currentEntry.rolloverFromRound =
+      DREAM_CONFIG.previousRoundId;
+
     currentEntry.ratingTotal =
       ratingTotal;
+
+    currentEntry.status =
+      "submitted";
 
 
     window.alert(
