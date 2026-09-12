@@ -18,35 +18,17 @@ import {
 
 
 /* =====================================================
-   ROUNDS
-
-   NEW NUMBERING FROM NOW ON:
-
-   Original Week One   = Week 0 Championship
-   Original Week Two   = Week 1
-   Original Week Three = Week 2
-   Original Week Four  = Week 3
-
-   New round           = Week 4
+   ROUND
 ===================================================== */
 
-
-/*
-  New predictions are for Week Four.
-*/
 const currentRound =
   "English League Week 4";
 
-
-/*
-  Homepage continues displaying the
-  currently-playing/completed Week Three.
-*/
 const homePreviewRound =
   "English League Week 4";
-  const homePreviewStoredRound =
-  "English League Week 4";
 
+const homePreviewStoredRound =
+  "English League Week 4";
 
 const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
@@ -56,16 +38,8 @@ const submittedStorageKey =
    ENTRY / FIXTURE LOCKS
 ===================================================== */
 
-
-/*
-  Week Four is OPEN.
-*/
 const roundClosed = false;
 
-
-/*
-  No Week Four fixtures are currently void.
-*/
 const voidFixtureIds =
   new Set([]);
 
@@ -76,7 +50,6 @@ function predictionsAreClosed() {
 
 
 function fixtureIsVoid(fixtureId) {
-
   return voidFixtureIds.has(
     String(fixtureId)
   );
@@ -84,15 +57,11 @@ function fixtureIsVoid(fixtureId) {
 
 
 /* =====================================================
-   WEEK FOUR FIXTURES
+   WEEK 4 FIXTURES
    11–14 SEPTEMBER 2026
 ===================================================== */
 
 const englishLeagueFixtures = [
-
-  /* =================================================
-     PREMIER LEAGUE
-  ================================================= */
 
   {
     id: "1",
@@ -193,11 +162,6 @@ const englishLeagueFixtures = [
     homeScore: null,
     awayScore: null
   },
-
-
-  /* =================================================
-     CHAMPIONSHIP
-  ================================================= */
 
   {
     id: "11",
@@ -327,467 +291,48 @@ const fixtures =
 
 
 /* =====================================================
-   WEEK THREE FIXTURE REFERENCES
-   4–6 SEPTEMBER 2026
-
-   This is the round currently displayed
-   on the homepage.
-===================================================== */
-
-const weekThreeFixtures = [
-
-  {
-    id: "1",
-    home: "Ipswich Town",
-    away: "Liverpool"
-  },
-
-  {
-    id: "2",
-    home: "Newcastle United",
-    away: "AFC Bournemouth"
-  },
-
-  {
-    id: "3",
-    home: "Brentford",
-    away: "Sunderland"
-  },
-
-  {
-    id: "4",
-    home: "Brighton & Hove Albion",
-    away: "Leeds United"
-  },
-
-  {
-    id: "5",
-    home: "Fulham",
-    away: "Crystal Palace"
-  },
-
-  {
-    id: "6",
-    home: "Manchester City",
-    away: "Coventry City"
-  },
-
-  {
-    id: "7",
-    home: "Nottingham Forest",
-    away: "Tottenham Hotspur"
-  },
-
-  {
-    id: "8",
-    home: "Hull City",
-    away: "Aston Villa"
-  },
-
-  {
-    id: "9",
-    home: "Everton",
-    away: "Manchester United"
-  },
-
-  {
-    id: "10",
-    home: "Arsenal",
-    away: "Chelsea"
-  },
-
-  {
-    id: "11",
-    home: "Lincoln City",
-    away: "Southampton"
-  },
-
-  {
-    id: "12",
-    home: "Preston North End",
-    away: "Blackburn Rovers"
-  },
-
-  {
-    id: "13",
-    home: "Stoke City",
-    away: "Charlton Athletic"
-  },
-
-  {
-    id: "14",
-    home: "Burnley",
-    away: "Bristol City"
-  },
-
-  {
-    id: "15",
-    home: "Millwall",
-    away: "Bolton Wanderers"
-  },
-
-  {
-    id: "16",
-    home: "Portsmouth",
-    away: "Cardiff City"
-  },
-
-  {
-    id: "17",
-    home: "Queens Park Rangers",
-    away: "Middlesbrough"
-  },
-
-  {
-    id: "18",
-    home: "Sheffield United",
-    away: "Norwich City"
-  },
-
-  {
-    id: "19",
-    home: "West Bromwich Albion",
-    away: "Watford"
-  },
-
-  {
-    id: "20",
-    home: "West Ham United",
-    away: "Derby County"
-  },
-
-  {
-    id: "21",
-    home: "Swansea City",
-    away: "Wrexham"
-  },
-
-  {
-    id: "22",
-    home: "Birmingham City",
-    away: "Wolverhampton Wanderers"
-  }
-
-];
-
-
-/* =====================================================
-   WEEK TWO FIXTURE REFERENCES
-   29–31 AUGUST 2026
-
-   Previously called Week Three.
-   Kept for historical results.
-===================================================== */
-
-const weekTwoFixtures = [
-
-  {
-    id: "1",
-    home: "Crystal Palace",
-    away: "Manchester City"
-  },
-
-  {
-    id: "2",
-    home: "Liverpool",
-    away: "Nottingham Forest"
-  },
-
-  {
-    id: "3",
-    home: "AFC Bournemouth",
-    away: "Everton"
-  },
-
-  {
-    id: "4",
-    home: "Coventry City",
-    away: "Hull City"
-  },
-
-  {
-    id: "5",
-    home: "Tottenham Hotspur",
-    away: "Newcastle United"
-  },
-
-  {
-    id: "6",
-    home: "Chelsea",
-    away: "Brighton & Hove Albion"
-  },
-
-  {
-    id: "7",
-    home: "Leeds United",
-    away: "Brentford"
-  },
-
-  {
-    id: "8",
-    home: "Sunderland",
-    away: "Fulham"
-  },
-
-  {
-    id: "9",
-    home: "Manchester United",
-    away: "Ipswich Town"
-  },
-
-  {
-    id: "10",
-    home: "Aston Villa",
-    away: "Arsenal"
-  },
-
-  {
-    id: "11",
-    home: "Wrexham",
-    away: "Birmingham City"
-  },
-
-  {
-    id: "12",
-    home: "Derby County",
-    away: "Swansea City"
-  },
-
-  {
-    id: "13",
-    home: "Middlesbrough",
-    away: "West Bromwich Albion"
-  },
-
-  {
-    id: "14",
-    home: "Wolverhampton Wanderers",
-    away: "Stoke City"
-  },
-
-  {
-    id: "15",
-    home: "Blackburn Rovers",
-    away: "Queens Park Rangers"
-  },
-
-  {
-    id: "16",
-    home: "Bolton Wanderers",
-    away: "Lincoln City"
-  },
-
-  {
-    id: "17",
-    home: "Bristol City",
-    away: "Portsmouth"
-  },
-
-  {
-    id: "18",
-    home: "Cardiff City",
-    away: "Sheffield United"
-  },
-
-  {
-    id: "19",
-    home: "Charlton Athletic",
-    away: "Preston North End"
-  },
-
-  {
-    id: "20",
-    home: "Norwich City",
-    away: "Burnley"
-  },
-
-  {
-    id: "21",
-    home: "Southampton",
-    away: "Millwall"
-  },
-
-  {
-    id: "22",
-    home: "Watford",
-    away: "West Ham United"
-  }
-
-];
-
-
-/* =====================================================
-   WEEK ONE FIXTURE REFERENCES
-   21–24 AUGUST 2026
-
-   Previously called Week Two.
-   Kept for historical results.
-===================================================== */
-
-const weekOneFixtures = [
-
-  {
-    id: "1",
-    home: "Arsenal",
-    away: "Coventry City"
-  },
-
-  {
-    id: "2",
-    home: "Hull City",
-    away: "Manchester United"
-  },
-
-  {
-    id: "3",
-    home: "Everton",
-    away: "Crystal Palace"
-  },
-
-  {
-    id: "4",
-    home: "Ipswich Town",
-    away: "Sunderland"
-  },
-
-  {
-    id: "5",
-    home: "Nottingham Forest",
-    away: "Leeds United"
-  },
-
-  {
-    id: "6",
-    home: "Brentford",
-    away: "Tottenham Hotspur"
-  },
-
-  {
-    id: "7",
-    home: "Brighton & Hove Albion",
-    away: "Aston Villa"
-  },
-
-  {
-    id: "8",
-    home: "Manchester City",
-    away: "AFC Bournemouth"
-  },
-
-  {
-    id: "9",
-    home: "Newcastle United",
-    away: "Liverpool"
-  },
-
-  {
-    id: "10",
-    home: "Fulham",
-    away: "Chelsea"
-  },
-
-  {
-    id: "11",
-    home: "Birmingham City",
-    away: "Bristol City"
-  },
-
-  {
-    id: "12",
-    home: "Lincoln City",
-    away: "Portsmouth"
-  },
-
-  {
-    id: "13",
-    home: "Millwall",
-    away: "Norwich City"
-  },
-
-  {
-    id: "14",
-    home: "Blackburn Rovers",
-    away: "Middlesbrough"
-  },
-
-  {
-    id: "15",
-    home: "Derby County",
-    away: "Cardiff City"
-  },
-
-  {
-    id: "16",
-    home: "Preston North End",
-    away: "Wolverhampton Wanderers"
-  },
-
-  {
-    id: "17",
-    home: "Queens Park Rangers",
-    away: "Bolton Wanderers"
-  },
-
-  {
-    id: "18",
-    home: "Southampton",
-    away: "Stoke City"
-  },
-
-  {
-    id: "19",
-    home: "Swansea City",
-    away: "Sheffield United"
-  },
-
-  {
-    id: "20",
-    home: "West Ham United",
-    away: "Charlton Athletic"
-  },
-
-  {
-    id: "21",
-    home: "Wrexham",
-    away: "Watford"
-  },
-
-  {
-    id: "22",
-    home: "West Bromwich Albion",
-    away: "Burnley"
-  }
-
-];
-
-
-/* =====================================================
    PAGE ELEMENTS
 ===================================================== */
 
 const homePage =
-  document.getElementById("homePage");
+  document.getElementById(
+    "homePage"
+  );
 
 const predictionsPage =
-  document.getElementById("predictionsPage");
+  document.getElementById(
+    "predictionsPage"
+  );
 
 const startGameBtn =
-  document.getElementById("startGameBtn");
+  document.getElementById(
+    "startGameBtn"
+  );
 
 const premierLeagueBtn =
-  document.getElementById("premierLeagueBtn");
+  document.getElementById(
+    "premierLeagueBtn"
+  );
 
 const dreamTeamBtn =
-  document.getElementById("dreamTeamBtn");
+  document.getElementById(
+    "dreamTeamBtn"
+  );
 
 const backHomeBtn =
-  document.getElementById("backHomeBtn");
+  document.getElementById(
+    "backHomeBtn"
+  );
 
 const fixturesContainer =
-  document.getElementById("fixturesContainer");
+  document.getElementById(
+    "fixturesContainer"
+  );
 
 const submitPredictionsBtn =
-  document.getElementById("submitPredictionsBtn");
+  document.getElementById(
+    "submitPredictionsBtn"
+  );
 
 const homeLeaderboardPreview =
   document.getElementById(
@@ -819,17 +364,19 @@ function cleanUsername(name) {
 }
 
 
-function getPredictionDocId(username) {
+function getPredictionDocId(
+  username
+) {
 
   const cleanRound =
     currentRound
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-
   const cleanUser =
-    cleanUsername(username);
-
+    cleanUsername(
+      username
+    );
 
   return `${cleanUser}-${cleanRound}`;
 }
@@ -841,25 +388,43 @@ function getPredictionDocId(username) {
 
 function showHome() {
 
-  if (homePage) {
-    homePage.classList.remove("hidden");
+  if (
+    homePage
+  ) {
+
+    homePage.classList.remove(
+      "hidden"
+    );
   }
 
 
-  if (predictionsPage) {
-    predictionsPage.classList.add("hidden");
+  if (
+    predictionsPage
+  ) {
+
+    predictionsPage.classList.add(
+      "hidden"
+    );
   }
 }
 
 
 function showPredictions() {
 
-  if (homePage) {
-    homePage.classList.add("hidden");
+  if (
+    homePage
+  ) {
+
+    homePage.classList.add(
+      "hidden"
+    );
   }
 
 
-  if (predictionsPage) {
+  if (
+    predictionsPage
+  ) {
+
     predictionsPage.classList.remove(
       "hidden"
     );
@@ -867,105 +432,134 @@ function showPredictions() {
 }
 
 
+if (
+  backHomeBtn
+) {
+
+  backHomeBtn.addEventListener(
+    "click",
+    showHome
+  );
+}
+
+
 /* =====================================================
-   RENDER WEEK FOUR FIXTURES
+   RENDER FIXTURES
 ===================================================== */
 
 function renderFixtures() {
 
-  if (!fixturesContainer) return;
+  if (
+    !fixturesContainer
+  ) {
+    return;
+  }
 
 
-  fixturesContainer.innerHTML = "";
+  fixturesContainer.innerHTML =
+    "";
 
 
-  fixtures.forEach((fixture) => {
+  fixtures.forEach(
+    (fixture) => {
 
-    const card =
-      document.createElement("div");
-
-
-    const isVoid =
-      fixtureIsVoid(fixture.id);
-
-
-    card.className =
-      isVoid
-        ? "fixture-card fixture-void"
-        : "fixture-card";
+      const card =
+        document.createElement(
+          "div"
+        );
 
 
-    card.innerHTML = `
-      <div class="fixture-teams">
+      const isVoid =
+        fixtureIsVoid(
+          fixture.id
+        );
 
-        <div class="team-name">
-          ${fixture.home}
+
+      card.className =
+        isVoid
+          ? "fixture-card fixture-void"
+          : "fixture-card";
+
+
+      card.innerHTML = `
+        <div class="fixture-teams">
+
+          <div class="team-name">
+            ${fixture.home}
+          </div>
+
+          ${
+            isVoid
+              ? `
+                <div class="void-score">
+                  ✕
+                </div>
+              `
+              : `
+                <input
+                  class="score-input"
+                  type="number"
+                  min="0"
+                  id="home-${fixture.id}"
+                  placeholder="0"
+                >
+              `
+          }
+
+          <div class="vs">
+            v
+          </div>
+
+          ${
+            isVoid
+              ? `
+                <div class="void-score">
+                  ✕
+                </div>
+              `
+              : `
+                <input
+                  class="score-input"
+                  type="number"
+                  min="0"
+                  id="away-${fixture.id}"
+                  placeholder="0"
+                >
+              `
+          }
+
+          <div class="team-name">
+            ${fixture.away}
+          </div>
+
         </div>
 
-        ${
-          isVoid
-            ? `
-              <div class="void-score">
-                ✕
-              </div>
-            `
-            : `
-              <input
-                class="score-input"
-                type="number"
-                min="0"
-                id="home-${fixture.id}"
-                placeholder="0"
-              >
-            `
-        }
+        <div class="fixture-date">
 
-        <div class="vs">v</div>
+          ${fixture.date}
+          ·
+          ${fixture.group}
 
-        ${
-          isVoid
-            ? `
-              <div class="void-score">
-                ✕
-              </div>
-            `
-            : `
-              <input
-                class="score-input"
-                type="number"
-                min="0"
-                id="away-${fixture.id}"
-                placeholder="0"
-              >
-            `
-        }
+          ${
+            isVoid
+              ? `
+                ·
+                <strong class="void-label">
+                  VOID FOR LATE ENTRIES
+                </strong>
+              `
+              : ""
+          }
 
-        <div class="team-name">
-          ${fixture.away}
         </div>
-
-      </div>
-
-      <div class="fixture-date">
-
-        ${fixture.date} · ${fixture.group}
-
-        ${
-          isVoid
-            ? `
-              · <strong class="void-label">
-                VOID FOR LATE ENTRIES
-              </strong>
-            `
-            : ""
-        }
-
-      </div>
-    `;
+      `;
 
 
-    fixturesContainer.appendChild(card);
-  });
+      fixturesContainer.appendChild(
+        card
+      );
+    }
+  );
 }
 
 
@@ -981,6 +575,7 @@ async function hasAlreadySubmitted(
     !savedUsername ||
     savedUsername.trim().length < 2
   ) {
+
     return false;
   }
 
@@ -989,39 +584,48 @@ async function hasAlreadySubmitted(
     doc(
       db,
       "scorecast24_predictions",
-      getPredictionDocId(savedUsername)
+      getPredictionDocId(
+        savedUsername
+      )
     );
 
 
   const predictionSnap =
-    await getDoc(predictionRef);
+    await getDoc(
+      predictionRef
+    );
 
 
   return predictionSnap.exists();
 }
 
 
-function entryCheckTimeout(ms = 12000) {
+function entryCheckTimeout(
+  ms = 12000
+) {
 
   return new Promise(
     (_, reject) => {
 
-      setTimeout(() => {
+      setTimeout(
+        () => {
 
-        reject(
-          new Error(
-            "Entry check timed out"
-          )
-        );
+          reject(
+            new Error(
+              "Entry check timed out"
+            )
+          );
 
-      }, ms);
+        },
+        ms
+      );
     }
   );
 }
 
 
 /* =====================================================
-   READ WEEK FOUR PREDICTIONS
+   READ PREDICTIONS FROM PAGE
 ===================================================== */
 
 function getPredictionsFromPage() {
@@ -1029,11 +633,14 @@ function getPredictionsFromPage() {
   const predictions = [];
 
 
-  for (const fixture of fixtures) {
-
+  for (
+    const fixture of fixtures
+  ) {
 
     if (
-      fixtureIsVoid(fixture.id)
+      fixtureIsVoid(
+        fixture.id
+      )
     ) {
 
       predictions.push({
@@ -1055,6 +662,7 @@ function getPredictionsFromPage() {
 
         void:
           true
+
       });
 
 
@@ -1087,17 +695,9 @@ function getPredictionsFromPage() {
     }
 
 
-    const homePrediction =
-      homeInput.value;
-
-
-    const awayPrediction =
-      awayInput.value;
-
-
     if (
-      homePrediction === "" ||
-      awayPrediction === ""
+      homeInput.value === "" ||
+      awayInput.value === ""
     ) {
 
       alert(
@@ -1120,13 +720,18 @@ function getPredictionsFromPage() {
         fixture.away,
 
       predictedHome:
-        Number(homePrediction),
+        Number(
+          homeInput.value
+        ),
 
       predictedAway:
-        Number(awayPrediction),
+        Number(
+          awayInput.value
+        ),
 
       void:
         false
+
     });
   }
 
@@ -1136,15 +741,16 @@ function getPredictionsFromPage() {
 
 
 /* =====================================================
-   SUBMIT WEEK FOUR PREDICTIONS
+   SUBMIT PREDICTIONS
 ===================================================== */
 
-if (submitPredictionsBtn) {
+if (
+  submitPredictionsBtn
+) {
 
   submitPredictionsBtn.addEventListener(
     "click",
     async () => {
-
 
       if (
         predictionsAreClosed()
@@ -1173,10 +779,8 @@ if (submitPredictionsBtn) {
           "Please create your ScoreCast24 username first."
         );
 
-
         window.location.href =
           "username.html";
-
 
         return;
       }
@@ -1184,7 +788,6 @@ if (submitPredictionsBtn) {
 
       submitPredictionsBtn.disabled =
         true;
-
 
       submitPredictionsBtn.textContent =
         "Checking entry...";
@@ -1198,7 +801,9 @@ if (submitPredictionsBtn) {
           );
 
 
-        if (alreadySubmitted) {
+        if (
+          alreadySubmitted
+        ) {
 
           localStorage.setItem(
             submittedStorageKey,
@@ -1214,7 +819,6 @@ if (submitPredictionsBtn) {
           window.location.href =
             "leaderboard.html";
 
-
           return;
         }
 
@@ -1223,15 +827,15 @@ if (submitPredictionsBtn) {
           getPredictionsFromPage();
 
 
-        if (!predictions) {
+        if (
+          !predictions
+        ) {
 
           submitPredictionsBtn.disabled =
             false;
 
-
           submitPredictionsBtn.textContent =
             "Submit Predictions";
-
 
           return;
         }
@@ -1245,7 +849,9 @@ if (submitPredictionsBtn) {
           doc(
             db,
             "scorecast24_predictions",
-            getPredictionDocId(username)
+            getPredictionDocId(
+              username
+            )
           );
 
 
@@ -1268,6 +874,7 @@ if (submitPredictionsBtn) {
 
             points:
               null
+
           }
         );
 
@@ -1306,12 +913,123 @@ if (submitPredictionsBtn) {
         submitPredictionsBtn.disabled =
           false;
 
-
         submitPredictionsBtn.textContent =
           "Submit Predictions";
       }
     }
   );
+}
+
+
+/* =====================================================
+   LIVE RESULTS FROM FIRESTORE
+===================================================== */
+
+let homeLiveResults = {};
+
+
+async function loadHomeLiveResults() {
+
+  homeLiveResults = {};
+
+
+  const resultsQuery =
+    query(
+      collection(
+        db,
+        "scorecast24_results"
+      ),
+      where(
+        "round",
+        "==",
+        homePreviewRound
+      )
+    );
+
+
+  const resultsSnap =
+    await getDocs(
+      resultsQuery
+    );
+
+
+  const finishedStatuses =
+    new Set([
+      "FT",
+      "AET",
+      "PEN"
+    ]);
+
+
+  resultsSnap.forEach(
+    (docSnap) => {
+
+      const data =
+        docSnap.data();
+
+
+      const fixtureId =
+        String(
+          data.fixtureId || ""
+        );
+
+
+      if (
+        !fixtureId
+      ) {
+
+        return;
+      }
+
+
+      const isFinished =
+        finishedStatuses.has(
+          String(
+            data.status || ""
+          )
+        );
+
+
+      homeLiveResults[
+        fixtureId
+      ] = {
+
+        homeScore:
+          isFinished
+            ? data.homeScore ?? null
+            : null,
+
+        awayScore:
+          isFinished
+            ? data.awayScore ?? null
+            : null,
+
+        status:
+          data.status || ""
+
+      };
+    }
+  );
+}
+
+
+/* =====================================================
+   MERGED RESULTS
+===================================================== */
+
+function getHomeRoundResults() {
+
+  return {
+
+    ...(
+      resultsByRound[
+        homePreviewRound
+      ] || {}
+    ),
+
+    ...homeLiveResults
+
+  };
 }
 
 
@@ -1324,12 +1042,18 @@ function getResultType(
   away
 ) {
 
-  if (home > away) {
+  if (
+    home > away
+  ) {
+
     return "home";
   }
 
 
-  if (away > home) {
+  if (
+    away > home
+  ) {
+
     return "away";
   }
 
@@ -1353,20 +1077,26 @@ function calculatePoints(
 
 
   const roundResults =
-    resultsByRound[
-      scoringRound
-    ] || {};
+    scoringRound ===
+    homePreviewRound
+      ? getHomeRoundResults()
+      : (
+          resultsByRound[
+            scoringRound
+          ] || {}
+        );
 
 
   const result =
     roundResults[
-      fixture.id
+      String(
+        fixture.id
+      )
     ];
 
 
   const actualHome =
     result?.homeScore;
-
 
   const actualAway =
     result?.awayScore;
@@ -1393,9 +1123,21 @@ function calculatePoints(
     );
 
 
+  const realHome =
+    Number(
+      actualHome
+    );
+
+
+  const realAway =
+    Number(
+      actualAway
+    );
+
+
   if (
-    predictedHome === actualHome &&
-    predictedAway === actualAway
+    predictedHome === realHome &&
+    predictedAway === realAway
   ) {
 
     return 5;
@@ -1411,8 +1153,8 @@ function calculatePoints(
 
   const actualResult =
     getResultType(
-      actualHome,
-      actualAway
+      realHome,
+      realAway
     );
 
 
@@ -1448,17 +1190,21 @@ function calculatePoints(
 
 
 /* =====================================================
-   MAIN SCORE PREDICTION BUTTON
+   SCORE PREDICTION BUTTON
 ===================================================== */
 
-if (startGameBtn) {
+if (
+  startGameBtn
+) {
 
   startGameBtn.addEventListener(
     "click",
     async () => {
 
+      if (
+        !requireLogin()
+      ) {
 
-      if (!requireLogin()) {
         return;
       }
 
@@ -1489,14 +1235,12 @@ if (startGameBtn) {
         window.location.href =
           "username.html";
 
-
         return;
       }
 
 
       startGameBtn.disabled =
         true;
-
 
       startGameBtn.textContent =
         "Checking your entry...";
@@ -1534,7 +1278,6 @@ if (startGameBtn) {
           window.location.href =
             "leaderboard.html";
 
-
           return;
         }
 
@@ -1562,7 +1305,6 @@ if (startGameBtn) {
         startGameBtn.disabled =
           false;
 
-
         startGameBtn.textContent =
           "Submit Your Score Predictions Now!";
       }
@@ -1575,14 +1317,18 @@ if (startGameBtn) {
    OTHER GAME BUTTONS
 ===================================================== */
 
-if (premierLeagueBtn) {
+if (
+  premierLeagueBtn
+) {
 
   premierLeagueBtn.addEventListener(
     "click",
     () => {
 
+      if (
+        !requireLogin()
+      ) {
 
-      if (!requireLogin()) {
         return;
       }
 
@@ -1594,14 +1340,18 @@ if (premierLeagueBtn) {
 }
 
 
-if (dreamTeamBtn) {
+if (
+  dreamTeamBtn
+) {
 
   dreamTeamBtn.addEventListener(
     "click",
     () => {
 
+      if (
+        !requireLogin()
+      ) {
 
-      if (!requireLogin()) {
         return;
       }
     }
@@ -1611,18 +1361,21 @@ if (dreamTeamBtn) {
 
 /* =====================================================
    HOME LEADERBOARD PREVIEW
-
-   Displays WEEK THREE.
 ===================================================== */
 
 async function renderHomeLeaderboardPreview() {
 
-  if (!homeLeaderboardPreview) {
+  if (
+    !homeLeaderboardPreview
+  ) {
+
     return;
   }
 
+
   homeLeaderboardPreview.innerHTML =
     "Loading standings...";
+
 
   try {
 
@@ -1634,7 +1387,9 @@ async function renderHomeLeaderboardPreview() {
         )
       );
 
+
     const rows = [];
+
 
     predictionsSnap.forEach(
       (docSnap) => {
@@ -1642,34 +1397,94 @@ async function renderHomeLeaderboardPreview() {
         const data =
           docSnap.data();
 
+
         if (
           data.round !==
           homePreviewStoredRound
         ) {
+
           return;
         }
-        const totalPoints =
-          typeof data.points === "number"
-            ? data.points
-            : 0;
 
-        const exactScores =
-          typeof data.exactScores === "number"
-            ? data.exactScores
-            : 0;
 
-        const hasScoredFixture =
-          typeof data.points === "number";
+        let totalPoints = 0;
+
+        let exactScores = 0;
+
+        let hasScoredFixture =
+          false;
+
+
+        if (
+          Array.isArray(
+            data.predictions
+          )
+        ) {
+
+          data.predictions.forEach(
+            (prediction) => {
+
+              const fixture =
+                englishLeagueFixtures.find(
+                  (item) =>
+                    String(
+                      item.id
+                    ) ===
+                    String(
+                      prediction.fixtureId
+                    )
+                );
+
+
+              if (
+                !fixture
+              ) {
+
+                return;
+              }
+
+
+              const points =
+                calculatePoints(
+                  prediction,
+                  fixture,
+                  homePreviewRound
+                );
+
+
+              if (
+                points !== null
+              ) {
+
+                totalPoints +=
+                  points;
+
+                hasScoredFixture =
+                  true;
+
+
+                if (
+                  points === 5
+                ) {
+
+                  exactScores += 1;
+                }
+              }
+            }
+          );
+        }
+
 
         rows.push({
-          
 
           username:
             data.username ||
             "?????",
 
           points:
-            totalPoints,
+            hasScoredFixture
+              ? totalPoints
+              : null,
 
           exactScores,
 
@@ -1679,7 +1494,8 @@ async function renderHomeLeaderboardPreview() {
               : (
                   typeof data.submittedAt?.seconds ===
                     "number"
-                    ? data.submittedAt.seconds * 1000
+                    ? data.submittedAt.seconds *
+                      1000
                     : null
                 ),
 
@@ -1687,10 +1503,11 @@ async function renderHomeLeaderboardPreview() {
             hasScoredFixture
               ? `${totalPoints} pts`
               : "Pending"
-           });
 
+        });
       }
     );
+
 
     if (
       rows.length === 0
@@ -1700,7 +1517,7 @@ async function renderHomeLeaderboardPreview() {
         <div class="preview-row">
 
           <span>
-            No Week Three entries
+            No Week 4 entries
           </span>
 
           <span class="preview-points">
@@ -1713,28 +1530,96 @@ async function renderHomeLeaderboardPreview() {
       return;
     }
 
+
     rows.sort(
       (a, b) => {
+
+        if (
+          a.points == null &&
+          b.points != null
+        ) {
+
+          return 1;
+        }
+
+
+        if (
+          a.points != null &&
+          b.points == null
+        ) {
+
+          return -1;
+        }
+
+
+        if (
+          a.points == null &&
+          b.points == null
+        ) {
+
+          if (
+            a.submittedAtMillis != null &&
+            b.submittedAtMillis != null &&
+            a.submittedAtMillis !==
+              b.submittedAtMillis
+          ) {
+
+            return (
+              a.submittedAtMillis -
+              b.submittedAtMillis
+            );
+          }
+
+
+          if (
+            a.submittedAtMillis != null &&
+            b.submittedAtMillis == null
+          ) {
+
+            return -1;
+          }
+
+
+          if (
+            a.submittedAtMillis == null &&
+            b.submittedAtMillis != null
+          ) {
+
+            return 1;
+          }
+
+
+          return (
+            a.username.localeCompare(
+              b.username
+            )
+          );
+        }
+
 
         if (
           b.points !==
           a.points
         ) {
+
           return (
             b.points -
             a.points
           );
         }
 
+
         if (
           b.exactScores !==
           a.exactScores
         ) {
+
           return (
             b.exactScores -
             a.exactScores
           );
         }
+
 
         if (
           a.submittedAtMillis != null &&
@@ -1742,25 +1627,31 @@ async function renderHomeLeaderboardPreview() {
           a.submittedAtMillis !==
             b.submittedAtMillis
         ) {
+
           return (
             a.submittedAtMillis -
             b.submittedAtMillis
           );
         }
 
+
         if (
           a.submittedAtMillis != null &&
           b.submittedAtMillis == null
         ) {
+
           return -1;
         }
+
 
         if (
           a.submittedAtMillis == null &&
           b.submittedAtMillis != null
         ) {
+
           return 1;
         }
+
 
         return (
           a.username.localeCompare(
@@ -1770,11 +1661,16 @@ async function renderHomeLeaderboardPreview() {
       }
     );
 
+
     homeLeaderboardPreview.innerHTML =
       "";
 
+
     rows
-      .slice(0, 3)
+      .slice(
+        0,
+        3
+      )
       .forEach(
         (row, index) => {
 
@@ -1783,18 +1679,36 @@ async function renderHomeLeaderboardPreview() {
               "div"
             );
 
+
           div.className =
             "preview-row";
 
+
+          div.style.cursor =
+            "pointer";
+
+
           div.innerHTML = `
             <span>
-              ${index + 1}. ${row.username}
+              ${index + 1}.
+              ${row.username}
             </span>
 
             <span class="preview-points">
               ${row.status}
             </span>
           `;
+
+
+          div.addEventListener(
+            "click",
+            () => {
+
+              window.location.href =
+                "leaderboard.html";
+            }
+          );
+
 
           homeLeaderboardPreview
             .appendChild(
@@ -1803,12 +1717,14 @@ async function renderHomeLeaderboardPreview() {
         }
       );
 
+
   } catch (error) {
 
     console.error(
       "Home leaderboard preview failed:",
       error
     );
+
 
     homeLeaderboardPreview.innerHTML = `
       <div class="preview-row">
@@ -1826,15 +1742,17 @@ async function renderHomeLeaderboardPreview() {
   }
 }
 
+
 /* =====================================================
    HOME FIXTURES PREVIEW
-
-   Displays WEEK THREE results.
 ===================================================== */
 
 function renderHomeFixturesPreview() {
 
-  if (!homeFixturesPreview) {
+  if (
+    !homeFixturesPreview
+  ) {
+
     return;
   }
 
@@ -1844,44 +1762,55 @@ function renderHomeFixturesPreview() {
 
 
   const roundResults =
-    resultsByRound[
-      homePreviewRound
-    ] || {};
+    getHomeRoundResults();
 
 
-const latestResults =
-  englishLeagueFixtures
-      .map((fixture) => {
+  const latestResults =
+    englishLeagueFixtures
+
+      .map(
+        (fixture) => {
+
+          const result =
+            roundResults[
+              fixture.id
+            ];
 
 
-        const result =
-          roundResults[
-            fixture.id
-          ];
+          return {
 
+            ...fixture,
 
-        return {
+            homeScore:
+              result?.homeScore,
 
-          ...fixture,
+            awayScore:
+              result?.awayScore
 
-          homeScore:
-            result?.homeScore,
+          };
+        }
+      )
 
-          awayScore:
-            result?.awayScore
-        };
-      })
       .filter(
         (fixture) =>
           fixture.homeScore != null &&
           fixture.awayScore != null
       )
+
       .sort(
         (a, b) =>
-          Number(b.id) -
-          Number(a.id)
+          Number(
+            b.id
+          ) -
+          Number(
+            a.id
+          )
       )
-      .slice(0, 3);
+
+      .slice(
+        0,
+        3
+      );
 
 
   if (
@@ -1890,16 +1819,6 @@ const latestResults =
 
     homeFixturesPreview.innerHTML = `
       <div class="preview-row">
-      div.style.cursor =
-  "pointer";
-
-div.addEventListener(
-  "click",
-  () => {
-    window.location.href =
-      "leaderboard.html";
-  }
-);
 
         <span>
           No results yet
@@ -1912,14 +1831,12 @@ div.addEventListener(
       </div>
     `;
 
-
     return;
   }
 
 
   latestResults.forEach(
     (fixture, index) => {
-
 
       const div =
         document.createElement(
@@ -1929,6 +1846,10 @@ div.addEventListener(
 
       div.className =
         "preview-row";
+
+
+      div.style.cursor =
+        "pointer";
 
 
       div.innerHTML = `
@@ -1946,6 +1867,16 @@ div.addEventListener(
           ${index === 0 ? "Latest" : "›"}
         </span>
       `;
+
+
+      div.addEventListener(
+        "click",
+        () => {
+
+          window.location.href =
+            "leaderboard.html";
+        }
+      );
 
 
       homeFixturesPreview.appendChild(
@@ -1977,11 +1908,9 @@ if (
   dropdownMenu
 ) {
 
-
   menuToggle.addEventListener(
     "click",
     () => {
-
 
       dropdownMenu.classList.toggle(
         "hidden"
@@ -1994,7 +1923,6 @@ if (
     "click",
     (event) => {
 
-
       if (
         !menuToggle.contains(
           event.target
@@ -2003,7 +1931,6 @@ if (
           event.target
         )
       ) {
-
 
         dropdownMenu.classList.add(
           "hidden"
@@ -2020,20 +1947,23 @@ if (
 
 function updatePredictionsCountdown() {
 
-
   const countdownBox =
     document.getElementById(
       "weekOneCountdown"
     );
 
 
-  if (!countdownBox) {
+  if (
+    !countdownBox
+  ) {
+
     return;
   }
 
 
-  if (roundClosed) {
-
+  if (
+    roundClosed
+  ) {
 
     countdownBox.innerHTML = `
       <strong>
@@ -2042,18 +1972,21 @@ function updatePredictionsCountdown() {
     `;
 
 
-    if (startGameBtn) {
+    if (
+      startGameBtn
+    ) {
 
       startGameBtn.disabled =
         true;
-
 
       startGameBtn.textContent =
         "Predictions Closed";
     }
 
 
-    if (submitPredictionsBtn) {
+    if (
+      submitPredictionsBtn
+    ) {
 
       submitPredictionsBtn.disabled =
         true;
@@ -2068,18 +2001,21 @@ function updatePredictionsCountdown() {
     <strong>
       Week Four predictions are now open
     </strong>
+
     <br>
+
     Predict all Premier League and
     Championship matches for
     11–14 September.
   `;
 
 
-  if (startGameBtn) {
+  if (
+    startGameBtn
+  ) {
 
     startGameBtn.disabled =
       false;
-
 
     startGameBtn.textContent =
       "Submit Your Score Predictions Now!";
@@ -2098,7 +2034,6 @@ window.addEventListener(
   "beforeinstallprompt",
   (event) => {
 
-
     event.preventDefault();
 
 
@@ -2112,7 +2047,10 @@ window.addEventListener(
       );
 
 
-    if (!installBtn) {
+    if (
+      !installBtn
+    ) {
+
       return;
     }
 
@@ -2125,8 +2063,10 @@ window.addEventListener(
       "click",
       async () => {
 
+        if (
+          !deferredPrompt
+        ) {
 
-        if (!deferredPrompt) {
           return;
         }
 
@@ -2153,31 +2093,66 @@ window.addEventListener(
 
 
 /* =====================================================
+   HOME LIVE REFRESH
+===================================================== */
+
+async function refreshHomeLiveData() {
+
+  try {
+
+    await loadHomeLiveResults();
+
+
+    await renderHomeLeaderboardPreview();
+
+
+    renderHomeFixturesPreview();
+
+
+  } catch (error) {
+
+    console.error(
+      "Home live update failed:",
+      error
+    );
+
+
+    if (
+      homeLeaderboardPreview
+    ) {
+
+      homeLeaderboardPreview.innerHTML = `
+        <div class="preview-row">
+
+          <span>
+            Could not load
+          </span>
+
+          <span class="preview-points">
+            —
+          </span>
+
+        </div>
+      `;
+    }
+  }
+}
+
+
+/* =====================================================
    START
 ===================================================== */
 
 showHome();
 
 
-/*
-  Homepage displays Week Three.
-*/
-renderHomeLeaderboardPreview();
-
-renderHomeFixturesPreview();
-
-
-/*
-  Prediction entry is Week Four.
-*/
 updatePredictionsCountdown();
 
 
-/*
-  Refresh Week Three top-three
-  preview every minute.
-*/
+refreshHomeLiveData();
+
+
 setInterval(
-  renderHomeLeaderboardPreview,
+  refreshHomeLiveData,
   60000
 );
