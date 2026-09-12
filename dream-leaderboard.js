@@ -35,10 +35,10 @@ const viewMyDreamTeamBtn =
   Current Dream Team gameweek.
 */
 
-const CURRENT_WEEK_NUMBER = 2;
+const CURRENT_WEEK_NUMBER = 4;
 
 const CURRENT_ROUND_ID =
-  "2026-week-03";
+  "2026-week-04";
 
 
 function escapeHtml(value) {
@@ -192,11 +192,11 @@ function removeCurrentRoundDuplicates(
       Prefer the new manual Week One entry
       if both an old and new document exist.
     */
-    const entryIsManualWeekOne =
+    const entryIsCurrentRound =
       entry.roundId ===
       CURRENT_ROUND_ID;
 
-    const existingIsManualWeekOne =
+    const existingIsCurrentRound =
       existing.roundId ===
       CURRENT_ROUND_ID;
 
@@ -477,12 +477,15 @@ async function loadSeasonLeaderboard() {
         entry.status ===
           "submitted" &&
      (
+
   entry.roundId ===
     "2026-week-01" ||
   entry.roundId ===
     "2026-week-02" ||
   entry.roundId ===
-    "2026-week-03"
+    "2026-week-03" ||
+  entry.roundId ===
+    "2026-week-04"
 )
     );
 
