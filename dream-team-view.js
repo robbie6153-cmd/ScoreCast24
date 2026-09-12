@@ -1401,20 +1401,16 @@ function addPlayerToSquad(
   currentEntry.players.push({
     ...playerWithApiId,
 
-    weeklyPoints:
-      isCurrentRound
-        ? (
-            isNew
-              ? null
-              : getPlayerScoreForRound(
-                  playerWithApiId,
-                  DREAM_CONFIG.previousRoundId
-                )
-          )
-        : getPlayerScoreForRound(
-            playerWithApiId,
-            currentEntry.roundId
-          ),
+weeklyPoints:
+  isCurrentRound
+    ? getPlayerScoreForRound(
+        playerWithApiId,
+        DREAM_CONFIG.currentRoundId
+      )
+    : getPlayerScoreForRound(
+        playerWithApiId,
+        currentEntry.roundId
+      ),
 
     overallPoints:
       scores.overallScore,
@@ -2053,12 +2049,10 @@ function createFormationPlayer(
       .toLowerCase();
 
 
-  const weeklyPoints =
-    player.isNew
-      ? "-"
-      : Number(
-          player.weeklyPoints || 0
-        );
+const weeklyPoints =
+  Number(
+    player.weeklyPoints || 0
+  );
 
 
   const overallPoints =
@@ -2524,20 +2518,14 @@ function renderDreamTeam(entry) {
     viewDreamPoints
   ) {
 
-    const weeklyTotal =
-      entry.roundId ===
-        DREAM_CONFIG.currentRoundId &&
-      previousEntry
-        ? Number(
-            previousEntry.totalPoints || 0
-          )
-        : Number(
-            entry.totalPoints || 0
-          );
+const weeklyTotal =
+  Number(
+    entry.totalPoints || 0
+  );
 
 
     viewDreamPoints.innerHTML = `
-      Last Week:
+      This Week:
       <strong>${weeklyTotal}</strong>
       <br>
       Season Total:
@@ -2552,7 +2540,7 @@ function renderDreamTeam(entry) {
         seasonTotal => {
 
           viewDreamPoints.innerHTML = `
-            Last Week:
+            This Week:
             <strong>${weeklyTotal}</strong>
             <br>
             Season Total:
@@ -2570,7 +2558,7 @@ function renderDreamTeam(entry) {
 
 
           viewDreamPoints.innerHTML = `
-            Last Week:
+            This Week:
             <strong>${weeklyTotal}</strong>
             <br>
             Season Total:
@@ -2922,21 +2910,16 @@ async function loadDreamTeam() {
                 let weeklyPoints = 0;
 
 
-                if (isCurrentRound) {
+          if (isCurrentRound) {
 
-                  if (
-                    previousEntry &&
-                    wasInPreviousRound
-                  ) {
+  weeklyPoints =
+    getPlayerScoreForRound(
+      playerWithApiId,
+      DREAM_CONFIG.currentRoundId
+    );
 
-                    weeklyPoints =
-                      getPlayerScoreForRound(
-                        playerWithApiId,
-                        DREAM_CONFIG.previousRoundId
-                      );
-                  }
+} else {
 
-                } else {
 
                   /*
                     Historical entry:
@@ -3251,14 +3234,11 @@ async function loadDreamTeam() {
                 Boolean(previousEntry) &&
                 !wasInPreviousRound;
 
-
-              const weeklyPoints =
-                isNew
-                  ? null
-                  : getPlayerScoreForRound(
-                      playerWithApiId,
-                      DREAM_CONFIG.previousRoundId
-                    );
+const weeklyPoints =
+  getPlayerScoreForRound(
+    playerWithApiId,
+    DREAM_CONFIG.currentRoundId
+  );
 
 
               return {
