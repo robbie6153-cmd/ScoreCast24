@@ -1648,62 +1648,21 @@ async function renderHomeLeaderboardPreview() {
         ) {
           return;
         }
+        const totalPoints =
+          typeof data.points === "number"
+            ? data.points
+            : 0;
 
-        let totalPoints = 0;
+        const exactScores =
+          typeof data.exactScores === "number"
+            ? data.exactScores
+            : 0;
 
-        let exactScores = 0;
-
-        let hasScoredFixture =
-          false;
-
-        if (
-          Array.isArray(
-            data.predictions
-          )
-        ) {
-
-          data.predictions.forEach(
-            (prediction) => {
-
-        const fixture =
-  englishLeagueFixtures.find(
-    (item) =>
-      item.id ===
-      prediction.fixtureId
-  );
-
-              if (!fixture) {
-                return;
-              }
-
-              const points =
-                calculatePoints(
-                  prediction,
-                  fixture,
-                  homePreviewRound
-                );
-
-              if (
-                points !== null
-              ) {
-
-                totalPoints +=
-                  points;
-
-                hasScoredFixture =
-                  true;
-
-                if (
-                  points === 5
-                ) {
-                  exactScores += 1;
-                }
-              }
-            }
-          );
-        }
+        const hasScoredFixture =
+          typeof data.points === "number";
 
         rows.push({
+          
 
           username:
             data.username ||
@@ -1728,7 +1687,8 @@ async function renderHomeLeaderboardPreview() {
             hasScoredFixture
               ? `${totalPoints} pts`
               : "Pending"
-        });
+           });
+
       }
     );
 
