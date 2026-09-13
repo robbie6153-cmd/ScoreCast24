@@ -1,5 +1,5 @@
 console.log(
-  "leaderboard.js loaded English League v8"
+  "leaderboard.js loaded English League v9"
 );
 
 import { db } from "./firebase.js?v=107";
@@ -107,25 +107,36 @@ const englishLeagueRounds = [
       "English League Week Four"
   },
 
-  {
-    id: "English League Week 4",
-    label: "Week 4",
+{
+  id: "English League Week 4",
+  label: "Week 4",
 
-    storedRound:
-      "English League Week 4",
+  storedRound:
+    "English League Week 4",
 
-    resultsRound:
-      "English League Week 4"
-  }
+  resultsRound:
+    "English League Week 4"
+},
+
+{
+  id: "English League Week 5",
+  label: "Week 5",
+
+  storedRound:
+    "English League Week 5",
+
+  resultsRound:
+    "English League Week 5"
+}
 
 ];
 
 
 /*
-  Week 4 is OPEN for predictions.
+  Week 5 is OPEN for predictions.
 */
 const currentRound =
-  "English League Week 4";
+  "English League Week 5";
 
 
 /*
@@ -1739,7 +1750,7 @@ async function initialiseLeaderboard() {
 
 
     /* =========================
-       OPEN ON WEEK THREE
+       OPEN ON WEEK 4
     ========================= */
 
     activeLeaderboard =
