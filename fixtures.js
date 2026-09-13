@@ -191,7 +191,6 @@ function getPlayerStatistics(
 /*
   Only display players who actually appeared.
 */
-
 function playerAppeared(
   playerRecord
 ) {
@@ -209,19 +208,8 @@ function playerAppeared(
       stats?.games?.minutes || 0
     );
 
-  const rating =
-    stats?.games?.rating;
-
-  return (
-    minutes > 0 ||
-    (
-      rating !== null &&
-      rating !== undefined &&
-      rating !== ""
-    )
-  );
+  return minutes > 0;
 }
-
 
 /* =====================================================
    STARTER OR SUBSTITUTE
@@ -363,7 +351,6 @@ function getPlayerEvents(
 /* =====================================================
    PLAYER DISPLAY DATA
 ===================================================== */
-
 function preparePlayer(
   playerRecord
 ) {
@@ -379,6 +366,29 @@ function preparePlayer(
     Number(
       suppliedRating
     );
+
+  const apiPosition =
+    String(
+      stats?.games?.position || ""
+    )
+      .trim()
+      .toUpperCase();
+
+  const positionMap = {
+    G: "Goalkeeper",
+    GK: "Goalkeeper",
+
+    D: "Defender",
+    DEF: "Defender",
+
+    M: "Midfielder",
+    MID: "Midfielder",
+
+    F: "Attacker",
+    FW: "Attacker",
+    ST: "Attacker",
+    ATT: "Attacker"
+  };
 
   return {
     id:
@@ -399,6 +409,11 @@ function preparePlayer(
       )
         ? numericSuppliedRating
         : null,
+
+    position:
+      positionMap[
+        apiPosition
+      ] || "",
 
     substitute:
       playerWasSubstitute(
@@ -482,12 +497,47 @@ function findManOfTheMatch(
 function renderPlayer(
   player
 ) {
-  const eventsText =
-    player.events.length
-      ? ` (${player.events
-          .map(escapeHtml)
-          .join(", ")})`
-      : "";
+  const eventHtml =
+    player.events
+      .map(event => {
+
+        if (
+          event === "Goal" ||
+          event.endsWith(" Goals")
+        ) {
+          return `⚽️ <strong>${escapeHtml(event)}</strong>`;
+        }
+
+        if (
+          event === "Assist" ||
+          event.endsWith(" Assists")
+        ) {
+          return `⤴️ <strong>${escapeHtml(event)}</strong>`;
+        }
+
+        if (
+          event === "Penalty Saved" ||
+          event.endsWith(" Penalties Saved")
+        ) {
+          return `🧤 <strong>${escapeHtml(event)}</strong>`;
+        }
+
+        if (
+          event === "Booked" ||
+          event.endsWith(" Bookings")
+        ) {
+          return `🟨 <strong>${escapeHtml(event)}</strong>`;
+        }
+
+        if (
+          event === "Sent Off"
+        ) {
+          return `🟥 <strong>${escapeHtml(event)}</strong>`;
+        }
+
+        return `<strong>${escapeHtml(event)}</strong>`;
+      })
+      .join(" ");
 
   const ratingText =
     player.rating === null
@@ -501,7 +551,10 @@ function renderPlayer(
       )}
       ${escapeHtml(
         ratingText
-      )}${eventsText}
+      )}
+      ${eventHtml
+        ? ` ${eventHtml}`
+        : ""}
     </span>
   `;
 }
@@ -557,16 +610,51 @@ function renderTeamPlayers(
   }
 
 
-  const starters =
-    appearedPlayers.filter(
+const positionOrder = {
+  Goalkeeper: 0,
+  Defender: 1,
+  Midfielder: 2,
+  Attacker: 3
+};
+
+const starters =
+  appearedPlayers
+    .filter(
       player =>
         !player.substitute
+    )
+    .sort(
+      (a, b) =>
+        (
+          positionOrder[
+            a.position
+          ] ?? 99
+        ) -
+        (
+          positionOrder[
+            b.position
+          ] ?? 99
+        )
     );
 
-  const substitutes =
-    appearedPlayers.filter(
+const substitutes =
+  appearedPlayers
+    .filter(
       player =>
         player.substitute
+    )
+    .sort(
+      (a, b) =>
+        (
+          positionOrder[
+            a.position
+          ] ?? 99
+        ) -
+        (
+          positionOrder[
+            b.position
+          ] ?? 99
+        )
     );
 
 
