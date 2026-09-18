@@ -574,13 +574,13 @@ async function loadLiveResults() {
       const round =
         String(
           data.round || ""
-        );
+        ).trim();
 
 
       const fixtureId =
         String(
           data.fixtureId || ""
-        );
+        ).trim();
 
 
       if (
@@ -590,6 +590,27 @@ async function loadLiveResults() {
 
         return;
       }
+
+
+      /*
+        Normalise the API status.
+
+        This prevents things such as
+        "ft", "FT " etc. being missed.
+      */
+
+      const status =
+        String(
+          data.status || ""
+        )
+          .trim()
+          .toUpperCase();
+
+
+      const isFinished =
+        finishedStatuses.has(
+          status
+        );
 
 
       if (
@@ -604,18 +625,6 @@ async function loadLiveResults() {
       }
 
 
-      const status =
-        String(
-          data.status || ""
-        );
-
-
-      const isFinished =
-        finishedStatuses.has(
-          status
-        );
-
-
       liveResultsByRound[
         round
       ][
@@ -624,21 +633,51 @@ async function loadLiveResults() {
 
         homeScore:
           isFinished
-            ?
-              data.homeScore ?? null
-            :
-              null,
+            ? data.homeScore ?? null
+            : null,
 
         awayScore:
           isFinished
-            ?
-              data.awayScore ?? null
-            :
-              null,
+            ? data.awayScore ?? null
+            : null,
 
         status
 
       };
+
+
+      /*
+        TEMPORARY DEBUGGING
+
+        This will show exactly what
+        Week 5 is receiving.
+      */
+
+      if (
+        round ===
+        "English League Week 5"
+      ) {
+
+        console.log(
+          "WEEK 5 RESULT FOUND:",
+          {
+            documentId:
+              docSnap.id,
+
+            fixtureId,
+
+            status,
+
+            isFinished,
+
+            homeScore:
+              data.homeScore,
+
+            awayScore:
+              data.awayScore
+          }
+        );
+      }
 
     }
   );
@@ -649,7 +688,6 @@ async function loadLiveResults() {
     liveResultsByRound
   );
 }
-
 
 /* =====================================================
    BUILD WEEK SELECTOR
