@@ -45,13 +45,32 @@ const submittedStorageKey =
 
 const roundClosed = false;
 
-const voidFixtureIds =
-  new Set([]);
 
+/*
+  Fixtures already kicked off.
+  These are hidden/void for anyone entering late.
+
+  1  = Brentford v Chelsea
+  11 = Bristol City v Watford
+*/
+
+const voidFixtureIds =
+  new Set([
+    "1",
+    "11"
+  ]);
+
+
+/*
+  Final deadline for all remaining
+  Week Five predictions.
+
+  Saturday 19 September 2026 - 12:30pm
+*/
 
 const predictionDeadline =
   new Date(
-    "2026-09-18T20:00:00+01:00"
+    "2026-09-19T12:30:00+01:00"
   );
 
 
@@ -69,11 +88,11 @@ function predictionsAreClosed() {
 
 
 function fixtureIsVoid(fixtureId) {
+
   return voidFixtureIds.has(
     String(fixtureId)
   );
 }
-
 /* =====================================================
    WEEK 4 FIXTURES
    USED ONLY FOR HOMEPAGE RESULTS PREVIEW
