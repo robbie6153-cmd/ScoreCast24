@@ -1,5 +1,5 @@
 console.log(
-  "leaderboard.js loaded English League v9"
+  "leaderboard.js loaded English League v10"
 );
 
 import { db } from "./firebase.js?v=107";
@@ -57,8 +57,8 @@ const weekSelector =
    Week Three             Week 2
    Week Four              Week 3
 
-   New entries:
    English League Week 4  Week 4
+   English League Week 5  Week 5
 ===================================================== */
 
 const englishLeagueRounds = [
@@ -107,44 +107,46 @@ const englishLeagueRounds = [
       "English League Week Four"
   },
 
-{
-  id: "English League Week 4",
-  label: "Week 4",
+  {
+    id: "English League Week 4",
+    label: "Week 4",
 
-  storedRound:
-    "English League Week 4",
+    storedRound:
+      "English League Week 4",
 
-  resultsRound:
-    "English League Week 4"
-},
+    resultsRound:
+      "English League Week 4"
+  },
 
-{
-  id: "English League Week 5",
-  label: "Week 5",
+  {
+    id: "English League Week 5",
+    label: "Week 5",
 
-  storedRound:
-    "English League Week 5",
+    storedRound:
+      "English League Week 5",
 
-  resultsRound:
-    "English League Week 5"
-}
+    resultsRound:
+      "English League Week 5"
+  }
 
 ];
 
 
-/*
-  Week 5 is OPEN for predictions.
-*/
+/* =====================================================
+   CURRENT ROUND
+===================================================== */
+
 const currentRound =
   "English League Week 5";
 
 
 /*
-  Week 4 remains the leaderboard
-  initially displayed.
+  Week 5 is now the leaderboard
+  displayed when the page opens.
 */
+
 const currentLeaderboardRound =
-  "English League Week 4";
+  "English League Week 5";
 
 
 let selectedRound =
@@ -190,7 +192,9 @@ const myUsername =
    TIMEOUT
 ===================================================== */
 
-function timeoutPromise(ms) {
+function timeoutPromise(
+  ms
+) {
 
   return new Promise(
     (_, reject) => {
@@ -309,8 +313,8 @@ function getRoundLabel(
 
 
 /*
-  Converts an OLD Firestore round name
-  into the NEW ScoreCast24 numbering.
+  Converts OLD Firestore round names
+  into the current logical week number.
 */
 
 function getLogicalRoundFromStoredRound(
@@ -332,8 +336,8 @@ function getLogicalRoundFromStoredRound(
 
 
 /*
-  Accept both the old stored round IDs
-  and the new canonical IDs.
+  Accept both old stored round names
+  and new canonical names.
 */
 
 function isEnglishLeagueRound(
@@ -369,9 +373,6 @@ function getResultsForLogicalRound(
 
   /*
     Static results.js results.
-
-    Historical weeks still use their
-    old stored names.
   */
 
   const staticResults = {
@@ -392,9 +393,10 @@ function getResultsForLogicalRound(
 
 
   /*
-    Firestore live results.
+    Live Firestore results.
 
-    Again accept both old and new names.
+    Firestore results override
+    static results where available.
   */
 
   const liveResults = {
@@ -424,6 +426,119 @@ function getResultsForLogicalRound(
 
 
 /* =====================================================
+   LOAD PREDICTION ENTRIES
+===================================================== */
+
+async function loadPredictionDocuments() {
+
+  const predictionsSnap =
+    await Promise.race([
+
+      getDocs(
+        collection(
+          db,
+          "scorecast24_predictions"
+        )
+      ),
+
+      timeoutPromise(
+        12000
+      )
+
+    ]);
+
+
+  predictionDocuments =
+    [];
+
+
+  predictionsSnap.forEach(
+    (docSnap) => {
+
+      const data =
+        docSnap.data();
+
+
+      if (
+        !isEnglishLeagueRound(
+          data.round
+        )
+      ) {
+
+        return;
+      }
+
+
+      const logicalRound =
+        getLogicalRoundFromStoredRound(
+          data.round
+        ) ||
+        (
+          englishLeagueRounds.some(
+            (round) =>
+              round.id ===
+              data.round
+          )
+            ?
+              data.round
+            :
+              null
+        );
+
+
+      if (
+        !logicalRound
+      ) {
+
+        return;
+      }
+
+
+      predictionDocuments.push({
+
+        id:
+          docSnap.id,
+
+        username:
+          data.username ||
+          "Unknown",
+
+        /*
+          Actual round value stored
+          in Firestore.
+        */
+
+        round:
+          data.round,
+
+        /*
+          Current logical/display round.
+        */
+
+        logicalRound,
+
+        predictions:
+          Array.isArray(
+            data.predictions
+          )
+            ?
+              data.predictions
+            :
+              [],
+
+        submittedAtMillis:
+          timestampToMillis(
+            data.submittedAt
+          )
+
+      });
+
+    }
+  );
+}
+
+
+/* =====================================================
    LOAD LIVE RESULTS FROM FIRESTORE
 ===================================================== */
 
@@ -441,6 +556,14 @@ async function loadLiveResults() {
     );
 
 
+  const finishedStatuses =
+    new Set([
+      "FT",
+      "AET",
+      "PEN"
+    ]);
+
+
   resultsSnap.forEach(
     (docSnap) => {
 
@@ -449,7 +572,9 @@ async function loadLiveResults() {
 
 
       const round =
-        data.round;
+        String(
+          data.round || ""
+        );
 
 
       const fixtureId =
@@ -479,19 +604,15 @@ async function loadLiveResults() {
       }
 
 
-      const finishedStatuses =
-        new Set([
-          "FT",
-          "AET",
-          "PEN"
-        ]);
+      const status =
+        String(
+          data.status || ""
+        );
 
 
       const isFinished =
         finishedStatuses.has(
-          String(
-            data.status || ""
-          )
+          status
         );
 
 
@@ -503,20 +624,29 @@ async function loadLiveResults() {
 
         homeScore:
           isFinished
-            ? data.homeScore ?? null
-            : null,
+            ?
+              data.homeScore ?? null
+            :
+              null,
 
         awayScore:
           isFinished
-            ? data.awayScore ?? null
-            : null,
+            ?
+              data.awayScore ?? null
+            :
+              null,
 
-        status:
-          data.status || ""
+        status
 
       };
 
     }
+  );
+
+
+  console.log(
+    "Live ScoreCast results loaded:",
+    liveResultsByRound
   );
 }
 
@@ -617,9 +747,15 @@ function calculateRoundStats(
       }
 
 
+      const fixtureId =
+        String(
+          prediction.fixtureId || ""
+        );
+
+
       const result =
         roundResults[
-          prediction.fixtureId
+          fixtureId
         ];
 
 
@@ -740,8 +876,10 @@ function calculateRoundStats(
 
     points:
       hasAnyResult
-        ? totalPoints
-        : null,
+        ?
+          totalPoints
+        :
+          null,
 
     exactScores
 
@@ -785,7 +923,7 @@ function sortLeaderboard(
 
 
       /*
-        Pending round:
+        No result yet:
         earliest submission first.
       */
 
@@ -1016,7 +1154,7 @@ function hideWeekSelector() {
       .display = "none";
   }
 }
-    
+
 
 /* =====================================================
    DISPLAY LEADERBOARD
@@ -1077,8 +1215,10 @@ function displayLeaderboard(
 
       div.className =
         isMe
-          ? "leaderboard-row my-row"
-          : "leaderboard-row";
+          ?
+            "leaderboard-row my-row"
+          :
+            "leaderboard-row";
 
 
       div.innerHTML = `
@@ -1094,14 +1234,16 @@ function displayLeaderboard(
 
           ${
             row.viewId
-              ? `
-                <div
-                  class="view-predictions-text"
-                >
-                  View predictions
-                </div>
-              `
-              : ""
+              ?
+                `
+                  <div
+                    class="view-predictions-text"
+                  >
+                    View predictions
+                  </div>
+                `
+              :
+                ""
           }
 
         </div>
@@ -1127,7 +1269,6 @@ function displayLeaderboard(
         div.addEventListener(
           "click",
           () => {
-
 
             localStorage.setItem(
               "viewPredictionId",
@@ -1185,7 +1326,6 @@ function buildWeekLeaderboard(
   predictionDocuments.forEach(
     (entry) => {
 
-
       if (
         entry.logicalRound !==
         logicalRound
@@ -1211,9 +1351,8 @@ function buildWeekLeaderboard(
           entry.id,
 
         /*
-          Keep the REAL stored round here
-          because View Predictions may
-          still use it.
+          Keep the actual stored round
+          for View Predictions.
         */
 
         viewRound:
@@ -1381,7 +1520,6 @@ function buildSeasonLeaderboard() {
   predictionDocuments.forEach(
     (entry) => {
 
-
       if (
         !entry.logicalRound
       ) {
@@ -1496,8 +1634,8 @@ function buildSeasonLeaderboard() {
 
 
       /*
-        Prefer the newest logical round
-        for View Predictions.
+        Prefer newest round for
+        View Predictions.
       */
 
       if (
@@ -1582,15 +1720,61 @@ function getRoundNumber(
 
 
   return match
-    ? Number(
+    ?
+      Number(
         match[1]
       )
-    : -1;
+    :
+      -1;
 }
 
 
 /* =====================================================
-   LOAD FIRESTORE
+   DISPLAY CURRENT VIEW
+===================================================== */
+
+function refreshDisplayedLeaderboard() {
+
+  buildSeasonLeaderboard();
+
+
+  if (
+    activeLeaderboard ===
+    "season"
+  ) {
+
+    hideWeekSelector();
+
+
+    setActiveTab(
+      seasonLeaderboardTab
+    );
+
+
+    displayLeaderboard(
+      seasonLeaderboardRows,
+      "Season Leaderboard"
+    );
+
+
+    return;
+  }
+
+
+  showWeekSelector();
+
+
+  setActiveTab(
+    weekLeaderboardTab
+  );
+
+
+  displaySelectedWeek();
+}
+
+
+/* =====================================================
+   INITIAL LOAD
 ===================================================== */
 
 async function initialiseLeaderboard() {
@@ -1613,145 +1797,25 @@ async function initialiseLeaderboard() {
 
   try {
 
-    const predictionsSnap =
-      await Promise.race([
+    await loadPredictionDocuments();
 
-        getDocs(
-          collection(
-            db,
-            "scorecast24_predictions"
-          )
-        ),
-
-        timeoutPromise(
-          12000
-        )
-
-      ]);
-
-
-    predictionDocuments =
-      [];
-
-
-    predictionsSnap.forEach(
-      (docSnap) => {
-
-        const data =
-          docSnap.data();
-
-
-        if (
-          !isEnglishLeagueRound(
-            data.round
-          )
-        ) {
-
-          return;
-        }
-
-
-        const logicalRound =
-          getLogicalRoundFromStoredRound(
-            data.round
-          ) ||
-          (
-            englishLeagueRounds.some(
-              (round) =>
-                round.id ===
-                data.round
-            )
-              ?
-                data.round
-              :
-                null
-          );
-
-
-        if (
-          !logicalRound
-        ) {
-
-          return;
-        }
-
-
-        predictionDocuments.push({
-
-          id:
-            docSnap.id,
-
-          username:
-            data.username ||
-            "Unknown",
-
-          /*
-            Original Firestore value.
-          */
-
-          round:
-            data.round,
-
-
-          /*
-            New ScoreCast24 week number.
-          */
-
-          logicalRound,
-
-          predictions:
-            Array.isArray(
-              data.predictions
-            )
-              ?
-                data.predictions
-              :
-                [],
-
-          submittedAtMillis:
-            timestampToMillis(
-              data.submittedAt
-            )
-
-        });
-
-      }
-    );
-
-
-    /* =========================
-       LOAD LIVE RESULTS
-    ========================= */
 
     await loadLiveResults();
 
 
-    /* =========================
-       BUILD DROPDOWN
-    ========================= */
+    /*
+      Week 5 appears first.
+    */
+
+    selectedRound =
+      currentLeaderboardRound;
+
 
     buildWeekSelector();
 
 
-    /* =========================
-       BUILD WEEK
-    ========================= */
-
-    buildWeekLeaderboard(
-      selectedRound
-    );
-
-
-    /* =========================
-       BUILD SEASON
-    ========================= */
-
     buildSeasonLeaderboard();
 
-
-    /* =========================
-       OPEN ON WEEK 4
-    ========================= */
 
     activeLeaderboard =
       "week";
@@ -1766,6 +1830,18 @@ async function initialiseLeaderboard() {
 
 
     displaySelectedWeek();
+
+
+    console.log(
+      "Leaderboard initialised.",
+      {
+        selectedRound,
+        entries:
+          predictionDocuments.length,
+        liveResults:
+          liveResultsByRound
+      }
+    );
 
 
   } catch (error) {
@@ -1790,7 +1866,63 @@ async function initialiseLeaderboard() {
 
 
 /* =====================================================
+   LIVE REFRESH
+
+   Refresh results AND prediction entries
+   once every 60 seconds.
+
+   This means:
+   - new Week 5 entries appear
+   - finished fixtures update scores
+   - season totals update
+===================================================== */
+
+async function refreshLeaderboardData() {
+
+  try {
+
+    await loadPredictionDocuments();
+
+
+    await loadLiveResults();
+
+
+    /*
+      Rebuild selector in case rounds
+      change later, but preserve whatever
+      week the user currently selected.
+    */
+
+    buildWeekSelector();
+
+
+    refreshDisplayedLeaderboard();
+
+
+    console.log(
+      "ScoreCast leaderboard refreshed:",
+      new Date().toLocaleTimeString()
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Live leaderboard refresh failed:",
+      error
+    );
+  }
+}
+
+
+/* =====================================================
    START
 ===================================================== */
 
 initialiseLeaderboard();
+
+
+setInterval(
+  refreshLeaderboardData,
+  60000
+);
