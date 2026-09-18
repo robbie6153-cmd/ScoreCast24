@@ -333,7 +333,8 @@ const englishLeagueFixtures = [
 ];
 const fixtures =
   englishLeagueFixtures;
-
+const homePreviewFixtures =
+  englishLeagueFixtures;
 
 /* =====================================================
    PAGE ELEMENTS
@@ -998,6 +999,12 @@ async function loadHomeLiveResults() {
     );
 
 
+  console.log(
+    "Week 5 result documents found:",
+    resultsSnap.size
+  );
+
+
   const finishedStatuses =
     new Set([
       "FT",
@@ -1016,23 +1023,47 @@ async function loadHomeLiveResults() {
       const fixtureId =
         String(
           data.fixtureId || ""
-        );
+        ).trim();
 
 
-      if (
-        !fixtureId
-      ) {
-
+      if (!fixtureId) {
         return;
       }
 
 
+      const status =
+        String(
+          data.status || ""
+        )
+          .trim()
+          .toUpperCase();
+
+
       const isFinished =
         finishedStatuses.has(
-          String(
-            data.status || ""
-          )
+          status
         );
+
+
+      console.log(
+        "HOME LIVE RESULT:",
+        {
+          document:
+            docSnap.id,
+
+          fixtureId,
+
+          status,
+
+          isFinished,
+
+          homeScore:
+            data.homeScore,
+
+          awayScore:
+            data.awayScore
+        }
+      );
 
 
       homeLiveResults[
@@ -1049,14 +1080,19 @@ async function loadHomeLiveResults() {
             ? data.awayScore ?? null
             : null,
 
-        status:
-          data.status || ""
+        status
 
       };
+
     }
   );
-}
 
+
+  console.log(
+    "Week 5 home live results:",
+    homeLiveResults
+  );
+}
 
 /* =====================================================
    MERGED RESULTS
