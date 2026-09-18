@@ -30,10 +30,10 @@ const currentRound =
   are open.
 */
 const homePreviewRound =
-  "English League Week 4";
+  "English League Week 5";
 
 const homePreviewStoredRound =
-  "English League Week 4";
+  "English League Week 5";
 
 const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
@@ -93,146 +93,7 @@ function fixtureIsVoid(fixtureId) {
     String(fixtureId)
   );
 }
-/* =====================================================
-   WEEK 4 FIXTURES
-   USED ONLY FOR HOMEPAGE RESULTS PREVIEW
-===================================================== */
 
-const homePreviewFixtures = [
-
-  {
-    id: "1",
-    home: "AFC Bournemouth",
-    away: "Brentford"
-  },
-
-  {
-    id: "2",
-    home: "Aston Villa",
-    away: "Nottingham Forest"
-  },
-
-  {
-    id: "3",
-    home: "Chelsea",
-    away: "Hull City"
-  },
-
-  {
-    id: "4",
-    home: "Crystal Palace",
-    away: "Ipswich Town"
-  },
-
-  {
-    id: "5",
-    home: "Liverpool",
-    away: "Fulham"
-  },
-
-  {
-    id: "6",
-    home: "Tottenham Hotspur",
-    away: "Everton"
-  },
-
-  {
-    id: "7",
-    home: "Sunderland",
-    away: "Arsenal"
-  },
-
-  {
-    id: "8",
-    home: "Coventry City",
-    away: "Brighton & Hove Albion"
-  },
-
-  {
-    id: "9",
-    home: "Manchester United",
-    away: "Manchester City"
-  },
-
-  {
-    id: "10",
-    home: "Leeds United",
-    away: "Newcastle United"
-  },
-
-  {
-    id: "11",
-    home: "West Ham United",
-    away: "Wrexham"
-  },
-
-  {
-    id: "12",
-    home: "Bolton Wanderers",
-    away: "Cardiff City"
-  },
-
-  {
-    id: "13",
-    home: "Derby County",
-    away: "Birmingham City"
-  },
-
-  {
-    id: "14",
-    home: "West Bromwich Albion",
-    away: "Queens Park Rangers"
-  },
-
-  {
-    id: "15",
-    home: "Blackburn Rovers",
-    away: "Millwall"
-  },
-
-  {
-    id: "16",
-    home: "Charlton Athletic",
-    away: "Portsmouth"
-  },
-
-  {
-    id: "17",
-    home: "Middlesbrough",
-    away: "Norwich City"
-  },
-
-  {
-    id: "18",
-    home: "Preston North End",
-    away: "Lincoln City"
-  },
-
-  {
-    id: "19",
-    home: "Southampton",
-    away: "Bristol City"
-  },
-
-  {
-    id: "20",
-    home: "Swansea City",
-    away: "Burnley"
-  },
-
-  {
-    id: "21",
-    home: "Watford",
-    away: "Stoke City"
-  },
-
-  {
-    id: "22",
-    home: "Sheffield United",
-    away: "Wolverhampton Wanderers"
-  }
-
-];
 /* =====================================================
    WEEK 5 FIXTURES
    18–20 SEPTEMBER 2026
