@@ -1330,7 +1330,15 @@ function displayLeaderboard(
               );
             }
 
+if (
+  row.viewLogicalRound
+) {
 
+  localStorage.setItem(
+    "viewPredictionLogicalRound",
+    row.viewLogicalRound
+  );
+}
             window.location.href =
               "view-predictions.html";
 
@@ -1380,25 +1388,30 @@ function buildWeekLeaderboard(
         );
 
 
-      weekLeaderboardRows.push({
+     weekLeaderboardRows.push({
 
-        id:
-          entry.id,
+  id:
+    entry.id,
 
-        viewId:
-          entry.id,
+  viewId:
+    entry.id,
 
-        /*
-          Keep the actual stored round
-          for View Predictions.
-        */
+  /*
+    Actual Firestore round name.
+  */
+  viewRound:
+    entry.round,
 
-        viewRound:
-          entry.round,
+  /*
+    Current logical/display round.
+    Used to find the correct results.
+  */
+  viewLogicalRound:
+    entry.logicalRound,
 
-        username:
-          entry.username ||
-          "Unknown",
+  username:
+    entry.username ||
+    "Unknown",
 
         points:
           stats.points,
@@ -1677,26 +1690,27 @@ function buildSeasonLeaderboard() {
       */
 
       if (
-        !player.viewLogicalRound ||
-        getRoundNumber(
-          entry.logicalRound
-        ) >
-        getRoundNumber(
-          player.viewLogicalRound
-        )
-      ) {
+  !player.viewLogicalRound ||
+  getRoundNumber(
+    entry.logicalRound
+  ) >
+  getRoundNumber(
+    player.viewLogicalRound
+  )
+) {
 
-        player.viewId =
-          entry.id;
-
-
-        player.viewRound =
-          entry.round;
+  player.viewId =
+    entry.id;
 
 
-        player.viewLogicalRound =
-          entry.logicalRound;
-      }
+  player.viewRound =
+    entry.round;
+
+
+  player.viewLogicalRound =
+    entry.logicalRound;
+
+}
 
     }
   );
