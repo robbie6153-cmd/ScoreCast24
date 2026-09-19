@@ -119,14 +119,25 @@ const englishLeagueRounds = [
   },
 
   {
-    id: "English League Week 5",
-    label: "Week 5",
+  id: "English League Week 5",
+  label: "Week 5",
+
+  storedRound:
+    "English League Week 5",
+
+  resultsRound:
+    "English League Week 5"
+  },
+
+  {
+    id: "English League Week 6",
+    label: "Week 6",
 
     storedRound:
-      "English League Week 5",
+      "English League Week 6",
 
     resultsRound:
-      "English League Week 5"
+      "English League Week 6"
   }
 
 ];
@@ -137,7 +148,7 @@ const englishLeagueRounds = [
 ===================================================== */
 
 const currentRound =
-  "English League Week 5";
+  "English League Week 6";
 
 
 /*
