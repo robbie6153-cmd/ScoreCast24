@@ -5,7 +5,7 @@ import {
 
 import {
   DREAM_CONFIG
-} from "./dream-config.js?v=6";
+} from "./dream-config.js?v=7";
 
 import {
   doc,
