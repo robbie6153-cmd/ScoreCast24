@@ -253,14 +253,70 @@ function normaliseText(value) {
     .toLowerCase();
 }
 
+function normaliseClubName(value) {
 
+  const club =
+    normaliseText(value);
+
+
+  const aliases = {
+
+    ipswich:
+      "ipswichtown",
+
+    ipswichtown:
+      "ipswichtown",
+
+    newcastle:
+      "newcastleunited",
+
+    newcastleunited:
+      "newcastleunited",
+
+    wolves:
+      "wolverhamptonwanderers",
+
+    wolverhampton:
+      "wolverhamptonwanderers",
+
+    wolverhamptonwanderers:
+      "wolverhamptonwanderers",
+
+    spurs:
+      "tottenhamhotspur",
+
+    tottenham:
+      "tottenhamhotspur",
+
+    tottenhamhotspur:
+      "tottenhamhotspur",
+
+    manutd:
+      "manchesterunited",
+
+    manchesterunited:
+      "manchesterunited",
+
+    mancity:
+      "manchestercity",
+
+    manchestercity:
+      "manchestercity"
+  };
+
+
+  return (
+    aliases[club] ||
+    club
+  );
+}
 function makePlayerKey(
   club,
   playerName
 ) {
 
   return (
-    `${normaliseText(club)}|` +
+    `${normaliseClubName(club)}|` +
     `${normaliseText(playerName)}`
   );
 }
@@ -2935,19 +2991,16 @@ async function loadDreamTeam() {
                 }
 
 
-                return {
-                  ...playerWithApiId,
+             return {
+  ...playerWithApiId,
 
-                  weeklyPoints:
-                    isNew
-                      ? null
-                      : weeklyPoints,
+  weeklyPoints,
 
-                  overallPoints:
-                    scores.overallScore,
+  overallPoints:
+    scores.overallScore,
 
-                  isNew
-                };
+  isNew
+};
               }
             )
           : [];
