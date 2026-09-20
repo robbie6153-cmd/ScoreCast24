@@ -7,11 +7,6 @@ export const DREAM_CONFIG = {
   maxRating: 888,
   maxFromOneClub: 2,
 
-    /*
-    Manual gameweek controls
-  */
-
-  manualLock: false,
 
   /*
     Manual gameweek controls
@@ -19,9 +14,8 @@ export const DREAM_CONFIG = {
 
   manualLock: false,
 
-  currentRoundId: "2026-week-04",
-
-  previousRoundId: "2026-week-03",
+currentRoundId: "2026-week-05",
+previousRoundId: "2026-week-04",
 
   /*
     Player database files
