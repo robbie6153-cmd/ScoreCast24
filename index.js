@@ -14,7 +14,7 @@ import {
 
 import {
   resultsByRound
-} from "./results.js?v=2";
+} from "./results.js?v=3";
 
 
 /* =====================================================
@@ -30,11 +30,22 @@ const currentRound =
   showing completed/in-progress Week 5.
 */
 
+
+/*
+  Automatically switch the homepage
+  from Week 5 to Week 6 when
+  predictions close.
+*/
+
 const homePreviewRound =
-  "English League Week 5";
+  new Date() >=
+  new Date("2026-10-10T12:30:00+01:00")
+    ? "English League Week 6"
+    : "English League Week 5";
 
 const homePreviewStoredRound =
-  "English League Week 5";
+  homePreviewRound;
+
 
 const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
@@ -85,12 +96,32 @@ function predictionsAreClosed() {
 }
 
 
+
 function fixtureIsVoid(fixtureId) {
 
-  return voidFixtureIds.has(
-    String(fixtureId)
-  );
+  const id = String(fixtureId);
+
+  // Manually voided fixtures
+  if (voidFixtureIds.has(id)) {
+    return true;
+  }
+
+  // Week 6, fixture 11:
+  // West Ham United v QPR
+  // Friday 9 October, 8pm
+
+  if (
+    currentRound === "English League Week 6" &&
+    id === "11" &&
+    new Date() >=
+      new Date("2026-10-09T20:00:00+01:00")
+  ) {
+    return true;
+  }
+
+  return false;
 }
+
 
 /* =====================================================
    WEEK 6 FIXTURES
@@ -344,7 +375,7 @@ const fixtures =
    predictions are open.
 ===================================================== */
 
-const homePreviewFixtures = [
+const week5HomePreviewFixtures = [
 
   {
     id: "1",
@@ -480,6 +511,10 @@ const homePreviewFixtures = [
 
 ];
 
+const homePreviewFixtures =
+  homePreviewRound === currentRound
+    ? englishLeagueFixtures
+    : week5HomePreviewFixtures;
 
 /* =====================================================
    PAGE ELEMENTS
@@ -1243,20 +1278,38 @@ async function loadHomeLiveResults() {
    MERGED RESULTS
 ===================================================== */
 
+
 function getHomeRoundResults() {
 
-  return {
+  const manualResults =
+    resultsByRound[homePreviewRound] || {};
 
-    ...(
-      resultsByRound[
-        homePreviewRound
-      ] || {}
-    ),
-
+  const mergedResults = {
     ...homeLiveResults
-
   };
+
+  Object.entries(manualResults).forEach(
+    ([fixtureId, result]) => {
+
+      if (
+        result?.homeScore != null &&
+        result?.awayScore != null
+      ) {
+
+        mergedResults[fixtureId] = result;
+
+      } else if (!(fixtureId in mergedResults)) {
+
+        mergedResults[fixtureId] = result;
+
+      }
+
+    }
+  );
+
+  return mergedResults;
 }
+
 
 
 /* =====================================================

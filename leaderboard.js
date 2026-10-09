@@ -11,7 +11,7 @@ import {
 
 import {
   resultsByRound
-} from "./results.js?v=2";
+} from "./results.js?v=3";
 
 
 /* =====================================================
@@ -156,8 +156,13 @@ const currentRound =
   displayed when the page opens.
 */
 
+
 const currentLeaderboardRound =
-  "English League Week 5";
+  new Date() >=
+  new Date("2026-10-10T12:30:00+01:00")
+    ? "English League Week 6"
+    : "English League Week 5";
+
 
 
 let selectedRound =
@@ -367,73 +372,54 @@ function isEnglishLeagueRound(
    RESULT ROUND LOOKUP
 ===================================================== */
 
-function getResultsForLogicalRound(
-  logicalRound
-) {
+function getResultsForLogicalRound(logicalRound) {
 
-  const config =
-    getRoundConfig(
-      logicalRound
-    );
-
+  const config = getRoundConfig(logicalRound);
 
   if (!config) {
     return {};
   }
 
-
-  /*
-    Static results.js results.
-  */
-
+  // Manually entered results from results.js
   const staticResults = {
-
-    ...(
-      resultsByRound[
-        config.resultsRound
-      ] || {}
-    ),
-
-    ...(
-      resultsByRound[
-        logicalRound
-      ] || {}
-    )
-
+    ...(resultsByRound[config.resultsRound] || {}),
+    ...(resultsByRound[logicalRound] || {})
   };
 
-
-  /*
-    Live Firestore results.
-
-    Firestore results override
-    static results where available.
-  */
-
+  // Existing Firestore results
   const liveResults = {
-
-    ...(
-      liveResultsByRound[
-        config.resultsRound
-      ] || {}
-    ),
-
-    ...(
-      liveResultsByRound[
-        logicalRound
-      ] || {}
-    )
-
+    ...(liveResultsByRound[config.resultsRound] || {}),
+    ...(liveResultsByRound[logicalRound] || {})
   };
 
-
-  return {
-
-    ...staticResults,
+  // Preserve historical Firestore results
+  const mergedResults = {
     ...liveResults
-
   };
+
+  // Completed manual scores take priority
+  Object.entries(staticResults).forEach(
+    ([fixtureId, result]) => {
+
+      if (
+        result?.homeScore != null &&
+        result?.awayScore != null
+      ) {
+
+        mergedResults[fixtureId] = result;
+
+      } else if (!(fixtureId in mergedResults)) {
+
+        mergedResults[fixtureId] = result;
+
+      }
+
+    }
+  );
+
+  return mergedResults;
 }
+
 
 
 /* =====================================================

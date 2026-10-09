@@ -23,7 +23,7 @@ import {
 
 import {
   resultsByRound
-} from "./results.js?v=2";
+} from "./results.js?v=3";
 
 /* =========================
    FIREBASE FUNCTIONS
@@ -91,11 +91,17 @@ const miniSeasonLeaderboardTab =
    CURRENT ROUND
 ========================= */
 
+
 const currentRound =
-  "English League Week 4";
+  new Date() >=
+  new Date("2026-10-10T12:30:00+01:00")
+    ? "English League Week 6"
+    : "English League Week 5";
 
 const currentWeekHeading =
-  "Week 4 Leaderboard";
+  currentRound === "English League Week 6"
+    ? "Week 6 Leaderboard"
+    : "Week 5 Leaderboard";
 
 
 
@@ -284,30 +290,43 @@ async function loadLiveResults() {
    GET RESULTS FOR ROUND
 ========================= */
 
-function getResultsForRound(
-  round
-) {
+
+function getResultsForRound(round) {
 
   const staticResults =
-    resultsByRound[
-      round
-    ] || {};
-
+    resultsByRound[round] || {};
 
   const liveResults =
-    liveResultsByRound[
-      round
-    ] || {};
+    liveResultsByRound[round] || {};
 
-
-  return {
-
-    ...staticResults,
-
+  // Preserve existing Firestore results
+  const mergedResults = {
     ...liveResults
-
   };
+
+  // Completed manual scores take priority
+  Object.entries(staticResults).forEach(
+    ([fixtureId, result]) => {
+
+      if (
+        result?.homeScore != null &&
+        result?.awayScore != null
+      ) {
+
+        mergedResults[fixtureId] = result;
+
+      } else if (!(fixtureId in mergedResults)) {
+
+        mergedResults[fixtureId] = result;
+
+      }
+
+    }
+  );
+
+  return mergedResults;
 }
+
 /* =========================
    CALCULATE ROUND POINTS
 ========================= */
@@ -330,6 +349,11 @@ const roundResults =
 
   predictions.forEach(
     prediction => {
+
+    // Void fixtures must not earn points.
+    if (prediction.void === true) {
+      return;
+    }
 
       const result =
         roundResults[
@@ -812,14 +836,14 @@ function buildPredictionMap(
         results file.
       */
 
-      if (
-        !resultsByRound[
-          logicalRound
-        ]
-      ) {
+  
+if (
+  !resultsByRound[logicalRound] &&
+  logicalRound !== "English League Week 5"
+) {
+  return;
+}
 
-        return;
-      }
 
 
       const cleanUsername =
@@ -874,6 +898,75 @@ function buildPredictionMap(
 
 
   return predictionsByUsername;
+}
+
+
+/* =========================
+   BUILD WEEK LEADERBOARD
+========================= */
+
+function buildMiniWeekLeaderboard(
+  membersSnapshot,
+  predictionsByUsername
+) {
+
+  miniWeekLeaderboardRows = [];
+
+  membersSnapshot.forEach(
+    memberDocument => {
+
+      const memberData =
+        memberDocument.data();
+
+      const username =
+        memberData.username ||
+        "ScoreCast24 Player";
+
+      const cleanUsername =
+        normaliseUsername(username);
+
+      const playerPredictions =
+        predictionsByUsername.get(
+          cleanUsername
+        ) || [];
+
+      const currentEntry =
+        playerPredictions.find(
+          entry =>
+            entry.round === currentRound
+        );
+
+      const points =
+        currentEntry
+          ? calculatePoints(
+              currentEntry.predictions,
+              currentRound
+            )
+          : null;
+
+      miniWeekLeaderboardRows.push({
+
+        username,
+
+        predictionId:
+          currentEntry?.id || null,
+
+        predictionRound:
+          currentEntry?.storedRound ||
+          currentEntry?.round ||
+          null,
+
+        points
+
+      });
+
+    }
+  );
+
+  sortMiniLeaderboard(
+    miniWeekLeaderboardRows
+  );
+
 }
 
 /* =========================
