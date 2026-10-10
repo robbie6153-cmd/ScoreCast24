@@ -55,7 +55,7 @@ const submittedStorageKey =
    ENTRY / FIXTURE LOCKS
 ===================================================== */
 
-const roundClosed = false;
+const roundClosed = true;
 
 
 /*
