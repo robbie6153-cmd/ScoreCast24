@@ -22,7 +22,7 @@ import {
 ===================================================== */
 
 const currentRound =
-  "English League Week 6";
+  "English League Week 7";
 
 /*
   Week 6 predictions are open,
@@ -38,10 +38,7 @@ const currentRound =
 */
 
 const homePreviewRound =
-  new Date() >=
-  new Date("2026-10-10T12:30:00+01:00")
-    ? "English League Week 6"
-    : "English League Week 5";
+  "English League Week 6";
 
 const homePreviewStoredRound =
   homePreviewRound;
@@ -51,37 +48,22 @@ const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
 
 
+
 /* =====================================================
-   ENTRY / FIXTURE LOCKS
+   ENTRY / FIXTURE LOCKS — WEEK 7
 ===================================================== */
 
+// Keep locked until setup is complete
 const roundClosed = true;
-
-
-/*
-  Fixtures already kicked off.
-  These are hidden/void for anyone entering late.
-
-  1  = Brentford v Chelsea
-  11 = Bristol City v Watford
-*/
 
 const voidFixtureIds =
   new Set([]);
 
-
-/*
-  Final deadline for all remaining
-  Week Six predictions.
-
-  Saturday 10 October 2026 - 12:30pm
-*/
-
+// Saturday 17 October 2026, 12:30pm UK time
 const predictionDeadline =
   new Date(
-    "2026-10-10T12:30:00+01:00"
+    "2026-10-17T12:30:00+01:00"
   );
-
 
 function predictionsAreClosed() {
 
@@ -89,32 +71,26 @@ function predictionsAreClosed() {
     return true;
   }
 
-  return (
-    new Date() >=
-    predictionDeadline
-  );
+  return new Date() >= predictionDeadline;
 }
-
-
 
 function fixtureIsVoid(fixtureId) {
 
   const id = String(fixtureId);
 
-  // Manually voided fixtures
   if (voidFixtureIds.has(id)) {
     return true;
   }
 
-  // Week 6, fixture 11:
-  // West Ham United v QPR
-  // Friday 9 October, 8pm
+  // Week 7, fixture 11:
+  // Burnley v Wolverhampton Wanderers
+  // Friday 16 October, 8pm
 
   if (
-    currentRound === "English League Week 6" &&
+    currentRound === "English League Week 7" &&
     id === "11" &&
     new Date() >=
-      new Date("2026-10-09T20:00:00+01:00")
+      new Date("2026-10-16T20:00:00+01:00")
   ) {
     return true;
   }
@@ -128,7 +104,7 @@ function fixtureIsVoid(fixtureId) {
    9–12 OCTOBER 2026
 ===================================================== */
 
-const englishLeagueFixtures = [
+const week6Fixtures = [
 
   /*
     PREMIER LEAGUE
@@ -363,8 +339,246 @@ const englishLeagueFixtures = [
 
 
 const fixtures =
-  englishLeagueFixtures;
+  week7Fixtures;
 
+
+/* =====================================================
+   WEEK 7 FIXTURES
+   16–19 OCTOBER 2026
+===================================================== */
+
+const week7Fixtures = [
+
+  /*
+    PREMIER LEAGUE
+  */
+
+  {
+    id: "1",
+    date: "Sat 17 Oct 2026, 12:30",
+    group: "Premier League",
+    home: "Everton",
+    away: "Chelsea",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "2",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Premier League",
+    home: "Brentford",
+    away: "Liverpool",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "3",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Premier League",
+    home: "Fulham",
+    away: "Hull City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "4",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Premier League",
+    home: "Manchester City",
+    away: "Ipswich Town",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "5",
+    date: "Sat 17 Oct 2026, 17:30",
+    group: "Premier League",
+    home: "Newcastle United",
+    away: "Aston Villa",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "6",
+    date: "Sun 18 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "AFC Bournemouth",
+    away: "Sunderland",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "7",
+    date: "Sun 18 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "Brighton & Hove Albion",
+    away: "Crystal Palace",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "8",
+    date: "Sun 18 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "Leeds United",
+    away: "Manchester United",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "9",
+    date: "Sun 18 Oct 2026, 16:30",
+    group: "Premier League",
+    home: "Nottingham Forest",
+    away: "Arsenal",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "10",
+    date: "Mon 19 Oct 2026, 20:00",
+    group: "Premier League",
+    home: "Tottenham Hotspur",
+    away: "Coventry City",
+    homeScore: null,
+    awayScore: null
+  },
+
+
+  /*
+    CHAMPIONSHIP
+  */
+
+  {
+    id: "11",
+    date: "Fri 16 Oct 2026, 20:00",
+    group: "Championship",
+    home: "Burnley",
+    away: "Wolverhampton Wanderers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "12",
+    date: "Sat 17 Oct 2026, 12:30",
+    group: "Championship",
+    home: "Middlesbrough",
+    away: "Cardiff City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "13",
+    date: "Sat 17 Oct 2026, 12:30",
+    group: "Championship",
+    home: "Millwall",
+    away: "Lincoln City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "14",
+    date: "Sat 17 Oct 2026, 12:30",
+    group: "Championship",
+    home: "Watford",
+    away: "Charlton Athletic",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "15",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Birmingham City",
+    away: "Queens Park Rangers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "16",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Bristol City",
+    away: "Sheffield United",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "17",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Derby County",
+    away: "Stoke City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "18",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Norwich City",
+    away: "Portsmouth",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "19",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Southampton",
+    away: "Bolton Wanderers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "20",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Swansea City",
+    away: "West Ham United",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "21",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "West Bromwich Albion",
+    away: "Blackburn Rovers",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "22",
+    date: "Sat 17 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Wrexham",
+    away: "Preston North End",
+    homeScore: null,
+    awayScore: null
+  }
+
+];
 
 /* =====================================================
    HOME PREVIEW FIXTURES
@@ -512,9 +726,7 @@ const week5HomePreviewFixtures = [
 ];
 
 const homePreviewFixtures =
-  homePreviewRound === currentRound
-    ? englishLeagueFixtures
-    : week5HomePreviewFixtures;
+  week6Fixtures;
 
 /* =====================================================
    PAGE ELEMENTS
@@ -1038,7 +1250,7 @@ if (
 
 
           alert(
-            "You have already submitted predictions for Week Six."
+            "You have already submitted predictions for Week Seven."
           );
 
 
@@ -1112,7 +1324,7 @@ if (
 
 
         alert(
-          "Week Six predictions submitted!"
+          "Week Seven predictions submitted!"
         );
 
 
@@ -1550,7 +1762,7 @@ if (
 
 
           alert(
-            "You have already submitted your Week Six predictions."
+            "You have already submitted your Week Seven predictions."
           );
 
 
@@ -1784,7 +1996,7 @@ async function renderHomeLeaderboardPreview() {
         <div class="preview-row">
 
           <span>
-            No Week 5 entries
+            No Week 6 entries
           </span>
 
           <span class="preview-points">
@@ -2212,6 +2424,7 @@ if (
    PREDICTIONS STATUS
 ===================================================== */
 
+
 function updatePredictionsCountdown() {
 
   const countdownBox =
@@ -2219,78 +2432,64 @@ function updatePredictionsCountdown() {
       "weekOneCountdown"
     );
 
-
   if (!countdownBox) {
     return;
   }
 
-
-  if (
-    predictionsAreClosed()
-  ) {
+  if (predictionsAreClosed()) {
 
     countdownBox.innerHTML = `
       <strong>
-        Week Six predictions are now closed.
+        Week Seven predictions are now closed.
       </strong>
     `;
 
-
     if (startGameBtn) {
-
-      startGameBtn.disabled =
-        true;
-
+      startGameBtn.disabled = true;
       startGameBtn.textContent =
         "Predictions Closed";
     }
 
-
     if (submitPredictionsBtn) {
-
-      submitPredictionsBtn.disabled =
-        true;
+      submitPredictionsBtn.disabled = true;
     }
-
 
     return;
   }
 
-
   countdownBox.innerHTML = `
     <strong>
-      Week Six predictions are now open
+      Week Seven predictions are now open!
     </strong>
 
-    <br>
+    <br><br>
 
     Predict all Premier League and
     Championship matches for
-    9–12 October.
+    16–19 October 2026.
 
     <br><br>
 
     <strong>
       Final entries close Saturday
-      10 October at 12:30pm.
+      17 October at 12:30pm.
     </strong>
+
+    <br><br>
+
+    Friday's Championship fixture
+    will be void for entries submitted
+    after kick-off.
   `;
 
-
   if (startGameBtn) {
-
-    startGameBtn.disabled =
-      false;
-
+    startGameBtn.disabled = false;
     startGameBtn.textContent =
       "Submit Your Score Predictions Now!";
   }
 
-
   if (submitPredictionsBtn) {
-
-    submitPredictionsBtn.disabled =
-      false;
+    submitPredictionsBtn.disabled = false;
   }
 }
 
