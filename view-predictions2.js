@@ -83,14 +83,31 @@ const englishLeagueRounds = [
     resultsRound: "English League Week 4"
   },
 
+  
   {
     id: "English League Week 5",
     label: "Week 5",
     storedRound: "English League Week 5",
     resultsRound: "English League Week 5"
+  },
+
+  {
+    id: "English League Week 6",
+    label: "Week 6",
+    storedRound: "English League Week 6",
+    resultsRound: "English League Week 6"
+  },
+
+  {
+    id: "English League Week 7",
+    label: "Week 7",
+    storedRound: "English League Week 7",
+    resultsRound: "English League Week 7"
   }
 
 ];
+
+
 
 
 /* =====================================================
