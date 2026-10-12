@@ -54,7 +54,7 @@ const submittedStorageKey =
 ===================================================== */
 
 // Keep locked until setup is complete
-const roundClosed = true;
+const roundClosed = false;
 
 const voidFixtureIds =
   new Set([]);
