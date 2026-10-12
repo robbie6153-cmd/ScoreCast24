@@ -338,9 +338,6 @@ const week6Fixtures = [
 ];
 
 
-const fixtures =
-  week7Fixtures;
-
 
 /* =====================================================
    WEEK 7 FIXTURES
@@ -579,6 +576,9 @@ const week7Fixtures = [
   }
 
 ];
+
+const fixtures =
+  week7Fixtures;
 
 /* =====================================================
    HOME PREVIEW FIXTURES
