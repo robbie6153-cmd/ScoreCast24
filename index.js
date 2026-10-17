@@ -38,7 +38,7 @@ const currentRound =
 */
 
 const homePreviewRound =
-  "English League Week 6";
+  "English League Week 7";
 
 const homePreviewStoredRound =
   homePreviewRound;
@@ -54,7 +54,7 @@ const submittedStorageKey =
 ===================================================== */
 
 // Keep locked until setup is complete
-const roundClosed = false;
+const roundClosed = true;
 
 const voidFixtureIds =
   new Set([]);
