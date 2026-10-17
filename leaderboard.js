@@ -171,7 +171,7 @@ const currentRound =
 
 
 const currentLeaderboardRound =
-  "English League Week 6";
+  "English League Week 7";
 
 
 
