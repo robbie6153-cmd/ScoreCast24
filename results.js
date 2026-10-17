@@ -619,5 +619,37 @@ export const resultsByRound = {
   20: { homeScore: 3, awayScore: 0 },
   21: { homeScore: 0, awayScore: 4 },
   22: { homeScore: 1, awayScore: 0 }
+},
+
+
+/* ==============================
+   ENGLISH LEAGUE WEEK 7
+   16–19 OCTOBER 2026
+============================== */
+
+"English League Week 7": {
+  1:  { homeScore: null, awayScore: null },
+  2:  { homeScore: null, awayScore: null },
+  3:  { homeScore: null, awayScore: null },
+  4:  { homeScore: null, awayScore: null },
+  5:  { homeScore: null, awayScore: null },
+  6:  { homeScore: null, awayScore: null },
+  7:  { homeScore: null, awayScore: null },
+  8:  { homeScore: null, awayScore: null },
+  9:  { homeScore: null, awayScore: null },
+  10: { homeScore: null, awayScore: null },
+  11: { homeScore: 1, awayScore: 2 },
+  12: { homeScore: null, awayScore: null },
+  13: { homeScore: null, awayScore: null },
+  14: { homeScore: null, awayScore: null },
+  15: { homeScore: null, awayScore: null },
+  16: { homeScore: null, awayScore: null },
+  17: { homeScore: null, awayScore: null },
+  18: { homeScore: null, awayScore: null },
+  19: { homeScore: null, awayScore: null },
+  20: { homeScore: null, awayScore: null },
+  21: { homeScore: null, awayScore: null },
+  22: { homeScore: null, awayScore: null }
 }
+
 };
