@@ -35,8 +35,8 @@ const viewMyDreamTeamBtn =
   Current Dream Team gameweek.
 */
 
-const CURRENT_WEEK_NUMBER = 5;
-const CURRENT_ROUND_ID = "2026-week-05";
+const CURRENT_WEEK_NUMBER = 7;
+const CURRENT_ROUND_ID = "2026-week-07";
 
 
 function escapeHtml(value) {
@@ -482,11 +482,15 @@ async function loadSeasonLeaderboard() {
     "2026-week-02" ||
   entry.roundId ===
     "2026-week-03" ||
- entry.roundId ===
+entry.roundId ===
   "2026-week-04" ||
 entry.roundId ===
-  "2026-week-05"
-)
+  "2026-week-05" ||
+entry.roundId ===
+  "2026-week-06" ||
+entry.roundId ===
+  "2026-week-07"
+     )
     );
 
     const entries =
@@ -699,5 +703,9 @@ onAuthStateChanged(
   }
 );
 
+
+if (dreamWeekSelector) {
+  dreamWeekSelector.value = CURRENT_ROUND_ID;
+}
 
 showWeeklyTab();
