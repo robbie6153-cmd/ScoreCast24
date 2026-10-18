@@ -142,15 +142,26 @@ const englishLeagueRounds = [
   },
 
   {
-    id: "English League Week 7",
-    label: "Week 7",
+  id: "English League Week 7",
+  label: "Week 7",
 
-    storedRound:
-      "English League Week 7",
+  storedRound:
+    "English League Week 7",
 
-    resultsRound:
-      "English League Week 7"
-  }
+  resultsRound:
+    "English League Week 7"
+},
+
+{
+  id: "English League Week 8",
+  label: "Week 8",
+
+  storedRound:
+    "English League Week 8",
+
+  resultsRound:
+    "English League Week 8"
+}
 
 ];
 
@@ -161,7 +172,7 @@ const englishLeagueRounds = [
 ===================================================== */
 
 const currentRound =
-  "English League Week 7";
+  "English League Week 8";
 
 
 /*
@@ -761,6 +772,22 @@ function calculateRoundStats(
   predictions = [],
   logicalRound
 ) {
+
+  /*
+    Future rounds remain pending
+    until they become the active
+    leaderboard round.
+  */
+
+  if (
+    getRoundNumber(logicalRound) >
+    getRoundNumber(currentLeaderboardRound)
+  ) {
+    return {
+      points: null,
+      exactScores: 0
+    };
+  }
 
   const roundResults =
     getResultsForLogicalRound(
@@ -1376,16 +1403,22 @@ function buildWeekLeaderboard(
     [];
 
 
-  predictionDocuments.forEach(
-    (entry) => {
+predictionDocuments.forEach(
+  (entry) => {
 
-      if (
-        entry.logicalRound !==
-        logicalRound
-      ) {
+    if (
+      !entry.logicalRound
+    ) {
+      return;
+    }
 
-        return;
-      }
+
+    if (
+      getRoundNumber(entry.logicalRound) >
+      getRoundNumber(currentLeaderboardRound)
+    ) {
+      return;
+    }
 
 
       const stats =

@@ -22,7 +22,7 @@ import {
 ===================================================== */
 
 const currentRound =
-  "English League Week 7";
+  "English League Week 8";
 
 /*
   Week 6 predictions are open,
@@ -54,16 +54,41 @@ const submittedStorageKey =
 ===================================================== */
 
 // Keep locked until setup is complete
-const roundClosed = true;
+const roundClosed = false;
 
 const voidFixtureIds =
   new Set([]);
 
-// Saturday 17 October 2026, 12:30pm UK time
+// Week 8 deadline:
+// Saturday 24 October 2026, 12:30pm
 const predictionDeadline =
-  new Date(
-    "2026-10-17T12:30:00+01:00"
-  );
+  new Date("2026-10-24T12:30:00+01:00");
+
+
+function fixtureIsVoid(fixtureId) {
+
+  const id = String(fixtureId);
+
+  if (voidFixtureIds.has(id)) {
+    return true;
+  }
+
+  // Week 8 Friday fixtures:
+  // 1 = Premier League
+  // 11 = Championship
+  // Both void after Friday 8pm
+
+  if (
+    currentRound === "English League Week 8" &&
+    (id === "1" || id === "11") &&
+    new Date() >=
+      new Date("2026-10-23T20:00:00+01:00")
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 function predictionsAreClosed() {
 
@@ -74,29 +99,6 @@ function predictionsAreClosed() {
   return new Date() >= predictionDeadline;
 }
 
-function fixtureIsVoid(fixtureId) {
-
-  const id = String(fixtureId);
-
-  if (voidFixtureIds.has(id)) {
-    return true;
-  }
-
-  // Week 7, fixture 11:
-  // Burnley v Wolverhampton Wanderers
-  // Friday 16 October, 8pm
-
-  if (
-    currentRound === "English League Week 7" &&
-    id === "11" &&
-    new Date() >=
-      new Date("2026-10-16T20:00:00+01:00")
-  ) {
-    return true;
-  }
-
-  return false;
-}
 
 
 /* =====================================================
@@ -576,18 +578,247 @@ const week7Fixtures = [
   }
 
 ];
-
-const fixtures =
-  week7Fixtures;
-
 /* =====================================================
-   HOME PREVIEW FIXTURES
-
-   Keep these as WEEK 5 because the homepage
-   is still showing the current Week 5
-   leaderboard and results while Week 6
-   predictions are open.
+   WEEK 8 FIXTURES
+   23–25 OCTOBER 2026
 ===================================================== */
+
+const week8Fixtures = [
+
+  /*
+    PREMIER LEAGUE
+  */
+
+  {
+    id: "1",
+    date: "Fri 23 Oct 2026, 20:00",
+    group: "Premier League",
+    home: "Ipswich Town",
+    away: "Nottingham Forest",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "2",
+    date: "Sat 24 Oct 2026, 12:30",
+    group: "Premier League",
+    home: "Aston Villa",
+    away: "Manchester City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "3",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Premier League",
+    home: "Arsenal",
+    away: "Everton",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "4",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Premier League",
+    home: "Coventry City",
+    away: "Fulham",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "5",
+    date: "Sat 24 Oct 2026, 17:30",
+    group: "Premier League",
+    home: "Chelsea",
+    away: "Tottenham Hotspur",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "6",
+    date: "Sun 25 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "Crystal Palace",
+    away: "Newcastle United",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "7",
+    date: "Sun 25 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "Hull City",
+    away: "Brentford",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "8",
+    date: "Sun 25 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "Liverpool",
+    away: "Brighton & Hove Albion",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "9",
+    date: "Sun 25 Oct 2026, 14:00",
+    group: "Premier League",
+    home: "Manchester United",
+    away: "AFC Bournemouth",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "10",
+    date: "Sun 25 Oct 2026, 16:30",
+    group: "Premier League",
+    home: "Sunderland",
+    away: "Leeds United",
+    homeScore: null,
+    awayScore: null
+  },
+
+
+  /*
+    CHAMPIONSHIP
+  */
+
+  {
+    id: "11",
+    date: "Fri 23 Oct 2026, 20:00",
+    group: "Championship",
+    home: "Bolton Wanderers",
+    away: "Middlesbrough",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "12",
+    date: "Sat 24 Oct 2026, 12:30",
+    group: "Championship",
+    home: "Charlton Athletic",
+    away: "Norwich City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "13",
+    date: "Sat 24 Oct 2026, 12:30",
+    group: "Championship",
+    home: "Portsmouth",
+    away: "Millwall",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "14",
+    date: "Sat 24 Oct 2026, 12:30",
+    group: "Championship",
+    home: "Sheffield United",
+    away: "Derby County",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "15",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Blackburn Rovers",
+    away: "Wrexham",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "16",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Cardiff City",
+    away: "Birmingham City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "17",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Lincoln City",
+    away: "Burnley",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "18",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Preston North End",
+    away: "West Bromwich Albion",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "19",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Queens Park Rangers",
+    away: "Swansea City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "20",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Stoke City",
+    away: "Bristol City",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "21",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "West Ham United",
+    away: "Southampton",
+    homeScore: null,
+    awayScore: null
+  },
+
+  {
+    id: "22",
+    date: "Sat 24 Oct 2026, 15:00",
+    group: "Championship",
+    home: "Wolverhampton Wanderers",
+    away: "Watford",
+    homeScore: null,
+    awayScore: null
+  }
+
+];
+const fixtures =
+  week8Fixtures;
+
+
 
 const week5HomePreviewFixtures = [
 
@@ -726,7 +957,8 @@ const week5HomePreviewFixtures = [
 ];
 
 const homePreviewFixtures =
-  week6Fixtures;
+  week7Fixtures;
+
 
 /* =====================================================
    PAGE ELEMENTS
@@ -1250,7 +1482,7 @@ if (
 
 
           alert(
-            "You have already submitted predictions for Week Seven."
+            "You have already submitted predictions for This Week ."
           );
 
 
@@ -1324,7 +1556,7 @@ if (
 
 
         alert(
-          "Week Seven predictions submitted!"
+          "Current Week predictions submitted!"
         );
 
 
@@ -1762,7 +1994,7 @@ if (
 
 
           alert(
-            "You have already submitted your Week Seven predictions."
+            "You have already submitted your this week's predictions."
           );
 
 
@@ -2424,7 +2656,6 @@ if (
    PREDICTIONS STATUS
 ===================================================== */
 
-
 function updatePredictionsCountdown() {
 
   const countdownBox =
@@ -2440,7 +2671,7 @@ function updatePredictionsCountdown() {
 
     countdownBox.innerHTML = `
       <strong>
-        Week Seven predictions are now closed.
+        Week Eight predictions are now closed.
       </strong>
     `;
 
@@ -2459,27 +2690,28 @@ function updatePredictionsCountdown() {
 
   countdownBox.innerHTML = `
     <strong>
-      Week Seven predictions are now open!
+      Week Eight predictions are now open!
     </strong>
 
     <br><br>
 
     Predict all Premier League and
     Championship matches for
-    16–19 October 2026.
+    23–25 October 2026.
 
     <br><br>
 
     <strong>
       Final entries close Saturday
-      17 October at 12:30pm.
+      24 October at 12:30pm.
     </strong>
 
     <br><br>
 
-    Friday's Championship fixture
-    will be void for entries submitted
-    after kick-off.
+    Friday's Premier League and
+    Championship fixtures will be
+    void for entries submitted
+    after 8pm Friday.
   `;
 
   if (startGameBtn) {
