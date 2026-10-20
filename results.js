@@ -637,7 +637,7 @@ export const resultsByRound = {
   7:  { homeScore: 5, awayScore: 0 },
   8:  { homeScore: 1, awayScore: 1 },
   9:  { homeScore: 0, awayScore: 1 },
-  10: { homeScore: null, awayScore: null },
+  10: { homeScore: 3, awayScore: 1 },
   11: { homeScore: 1, awayScore: 2 },
   12: { homeScore: 2, awayScore: 2 },
   13: { homeScore: 2, awayScore: 2 },
