@@ -659,7 +659,7 @@ export const resultsByRound = {
 
 "English League Week 8": {
   1:  { homeScore: 1, awayScore: 1 },
-  2:  { homeScore: null, awayScore: null },
+  2:  { homeScore: 2, awayScore: 1 },
   3:  { homeScore: null, awayScore: null },
   4:  { homeScore: null, awayScore: null },
   5:  { homeScore: null, awayScore: null },
@@ -681,6 +681,5 @@ export const resultsByRound = {
   21: { homeScore: null, awayScore: null },
   22: { homeScore: null, awayScore: null }
 }
-
 
 };
