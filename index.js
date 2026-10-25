@@ -1,3 +1,4 @@
+
 import { db } from "./firebase.js?v=107";
 import { requireLogin } from "./auth.js?v=110";
 
@@ -18,51 +19,48 @@ import {
 
 
 /* =====================================================
-   ROUND
+   ROUND SETTINGS
 ===================================================== */
 
+// New predictions are for Week 9.
+// Homepage leaderboard continues to show Week 8.
+
 const currentRound =
-  "English League Week 8";
-
-/*
-  Week 6 predictions are open,
-  but keep the homepage leaderboard/results
-  showing completed/in-progress Week 5.
-*/
-
-
-/*
-  Automatically switch the homepage
-  from Week 5 to Week 6 when
-  predictions close.
-*/
+  "English League Week 9";
 
 const homePreviewRound =
-  "English League Week 7";
+  "English League Week 8";
 
 const homePreviewStoredRound =
   homePreviewRound;
-
 
 const submittedStorageKey =
   `scorecast24Submitted-${currentRound}`;
 
 
-
 /* =====================================================
-   ENTRY / FIXTURE LOCKS — WEEK 7
+   ENTRY LOCKS — WEEK 9
 ===================================================== */
 
-// Keep locked until setup is complete
+// Set true to close all entries manually.
+
 const roundClosed = false;
 
-const voidFixtureIds =
-  new Set([]);
+const voidFixtureIds = new Set([]);
 
-// Week 8 deadline:
-// Saturday 24 October 2026, 12:30pm
+// Saturday 31 October 2026 at 12:30pm GMT.
+// UK clocks have changed back from BST.
+
 const predictionDeadline =
-  new Date("2026-10-24T12:30:00+01:00");
+  new Date("2026-10-31T12:30:00+00:00");
+
+// Sheffield United v Wrexham.
+// Friday 30 October at 8pm GMT.
+
+const fridayVoidDeadline =
+  new Date("2026-10-30T20:00:00+00:00");
+
+const fridayVoidFixtureId = "11";
 
 
 function fixtureIsVoid(fixtureId) {
@@ -73,22 +71,21 @@ function fixtureIsVoid(fixtureId) {
     return true;
   }
 
-  // Week 8 Friday fixtures:
-  // 1 = Premier League
-  // 11 = Championship
-  // Both void after Friday 8pm
+  // The Sheffield United match is void
+  // only for entries submitted from
+  // Friday at 8pm onwards.
 
   if (
-    currentRound === "English League Week 8" &&
-    (id === "1" || id === "11") &&
-    new Date() >=
-      new Date("2026-10-23T20:00:00+01:00")
+    currentRound === "English League Week 9" &&
+    id === fridayVoidFixtureId &&
+    new Date() >= fridayVoidDeadline
   ) {
     return true;
   }
 
   return false;
 }
+
 
 function predictionsAreClosed() {
 
@@ -100,6 +97,38 @@ function predictionsAreClosed() {
 }
 
 
+/* =====================================================
+   FIXTURE HELPER
+===================================================== */
+
+// All fixtures have null scores until
+// match results are imported.
+//
+// IDs 1-10 = Premier League.
+// IDs 11-22 = Championship.
+
+const PL = "Premier League";
+const CH = "Championship";
+
+function makeFixture(
+  id,
+  date,
+  group,
+  home,
+  away
+) {
+
+  return {
+    id: String(id),
+    date,
+    group,
+    home,
+    away,
+    homeScore: null,
+    awayScore: null
+  };
+}
+
 
 /* =====================================================
    WEEK 6 FIXTURES
@@ -108,237 +137,35 @@ function predictionsAreClosed() {
 
 const week6Fixtures = [
 
-  /*
-    PREMIER LEAGUE
-  */
+  // PREMIER LEAGUE
 
-  {
-    id: "1",
-    date: "Sat 10 Oct 2026, 12:30",
-    group: "Premier League",
-    home: "Arsenal",
-    away: "Leeds United",
-    homeScore: null,
-    awayScore: null
-  },
+  makeFixture(1, "Sat 10 Oct 2026, 12:30", PL, "Arsenal", "Leeds United"),
+  makeFixture(2, "Sat 10 Oct 2026, 15:00", PL, "Aston Villa", "Brentford"),
+  makeFixture(3, "Sat 10 Oct 2026, 15:00", PL, "Chelsea", "AFC Bournemouth"),
+  makeFixture(4, "Sat 10 Oct 2026, 15:00", PL, "Ipswich Town", "Fulham"),
+  makeFixture(5, "Sat 10 Oct 2026, 15:00", PL, "Sunderland", "Brighton & Hove Albion"),
+  makeFixture(6, "Sat 10 Oct 2026, 17:30", PL, "Manchester United", "Tottenham Hotspur"),
+  makeFixture(7, "Sun 11 Oct 2026, 14:00", PL, "Crystal Palace", "Nottingham Forest"),
+  makeFixture(8, "Sun 11 Oct 2026, 14:00", PL, "Hull City", "Everton"),
+  makeFixture(9, "Sun 11 Oct 2026, 16:30", PL, "Liverpool", "Manchester City"),
+  makeFixture(10, "Mon 12 Oct 2026, 20:00", PL, "Coventry City", "Newcastle United"),
 
-  {
-    id: "2",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Aston Villa",
-    away: "Brentford",
-    homeScore: null,
-    awayScore: null
-  },
+  // CHAMPIONSHIP
 
-  {
-    id: "3",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Chelsea",
-    away: "AFC Bournemouth",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "4",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Ipswich Town",
-    away: "Fulham",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "5",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Sunderland",
-    away: "Brighton & Hove Albion",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "6",
-    date: "Sat 10 Oct 2026, 17:30",
-    group: "Premier League",
-    home: "Manchester United",
-    away: "Tottenham Hotspur",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "7",
-    date: "Sun 11 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Crystal Palace",
-    away: "Nottingham Forest",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "8",
-    date: "Sun 11 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Hull City",
-    away: "Everton",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "9",
-    date: "Sun 11 Oct 2026, 16:30",
-    group: "Premier League",
-    home: "Liverpool",
-    away: "Manchester City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "10",
-    date: "Mon 12 Oct 2026, 20:00",
-    group: "Premier League",
-    home: "Coventry City",
-    away: "Newcastle United",
-    homeScore: null,
-    awayScore: null
-  },
-
-
-  /*
-    CHAMPIONSHIP
-  */
-
-  {
-    id: "11",
-    date: "Fri 9 Oct 2026, 20:00",
-    group: "Championship",
-    home: "West Ham United",
-    away: "Queens Park Rangers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "12",
-    date: "Sat 10 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Charlton Athletic",
-    away: "Bristol City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "13",
-    date: "Sat 10 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Swansea City",
-    away: "Norwich City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "14",
-    date: "Sat 10 Oct 2026, 12:30",
-    group: "Championship",
-    home: "West Bromwich Albion",
-    away: "Birmingham City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "15",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Blackburn Rovers",
-    away: "Cardiff City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "16",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Bolton Wanderers",
-    away: "Stoke City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "17",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Derby County",
-    away: "Wrexham",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "18",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Middlesbrough",
-    away: "Wolverhampton Wanderers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "19",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Preston North End",
-    away: "Millwall",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "20",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Sheffield United",
-    away: "Lincoln City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "21",
-    date: "Sat 10 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Watford",
-    away: "Burnley",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "22",
-    date: "Sun 11 Oct 2026, 12:00",
-    group: "Championship",
-    home: "Southampton",
-    away: "Portsmouth",
-    homeScore: null,
-    awayScore: null
-  }
+  makeFixture(11, "Fri 9 Oct 2026, 20:00", CH, "West Ham United", "Queens Park Rangers"),
+  makeFixture(12, "Sat 10 Oct 2026, 12:30", CH, "Charlton Athletic", "Bristol City"),
+  makeFixture(13, "Sat 10 Oct 2026, 12:30", CH, "Swansea City", "Norwich City"),
+  makeFixture(14, "Sat 10 Oct 2026, 12:30", CH, "West Bromwich Albion", "Birmingham City"),
+  makeFixture(15, "Sat 10 Oct 2026, 15:00", CH, "Blackburn Rovers", "Cardiff City"),
+  makeFixture(16, "Sat 10 Oct 2026, 15:00", CH, "Bolton Wanderers", "Stoke City"),
+  makeFixture(17, "Sat 10 Oct 2026, 15:00", CH, "Derby County", "Wrexham"),
+  makeFixture(18, "Sat 10 Oct 2026, 15:00", CH, "Middlesbrough", "Wolverhampton Wanderers"),
+  makeFixture(19, "Sat 10 Oct 2026, 15:00", CH, "Preston North End", "Millwall"),
+  makeFixture(20, "Sat 10 Oct 2026, 15:00", CH, "Sheffield United", "Lincoln City"),
+  makeFixture(21, "Sat 10 Oct 2026, 15:00", CH, "Watford", "Burnley"),
+  makeFixture(22, "Sun 11 Oct 2026, 12:00", CH, "Southampton", "Portsmouth")
 
 ];
-
 
 
 /* =====================================================
@@ -348,236 +175,37 @@ const week6Fixtures = [
 
 const week7Fixtures = [
 
-  /*
-    PREMIER LEAGUE
-  */
+  // PREMIER LEAGUE
 
-  {
-    id: "1",
-    date: "Sat 17 Oct 2026, 12:30",
-    group: "Premier League",
-    home: "Everton",
-    away: "Chelsea",
-    homeScore: null,
-    awayScore: null
-  },
+  makeFixture(1, "Sat 17 Oct 2026, 12:30", PL, "Everton", "Chelsea"),
+  makeFixture(2, "Sat 17 Oct 2026, 15:00", PL, "Brentford", "Liverpool"),
+  makeFixture(3, "Sat 17 Oct 2026, 15:00", PL, "Fulham", "Hull City"),
+  makeFixture(4, "Sat 17 Oct 2026, 15:00", PL, "Manchester City", "Ipswich Town"),
+  makeFixture(5, "Sat 17 Oct 2026, 17:30", PL, "Newcastle United", "Aston Villa"),
+  makeFixture(6, "Sun 18 Oct 2026, 14:00", PL, "AFC Bournemouth", "Sunderland"),
+  makeFixture(7, "Sun 18 Oct 2026, 14:00", PL, "Brighton & Hove Albion", "Crystal Palace"),
+  makeFixture(8, "Sun 18 Oct 2026, 14:00", PL, "Leeds United", "Manchester United"),
+  makeFixture(9, "Sun 18 Oct 2026, 16:30", PL, "Nottingham Forest", "Arsenal"),
+  makeFixture(10, "Mon 19 Oct 2026, 20:00", PL, "Tottenham Hotspur", "Coventry City"),
 
-  {
-    id: "2",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Brentford",
-    away: "Liverpool",
-    homeScore: null,
-    awayScore: null
-  },
+  // CHAMPIONSHIP
 
-  {
-    id: "3",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Fulham",
-    away: "Hull City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "4",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Manchester City",
-    away: "Ipswich Town",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "5",
-    date: "Sat 17 Oct 2026, 17:30",
-    group: "Premier League",
-    home: "Newcastle United",
-    away: "Aston Villa",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "6",
-    date: "Sun 18 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "AFC Bournemouth",
-    away: "Sunderland",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "7",
-    date: "Sun 18 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Brighton & Hove Albion",
-    away: "Crystal Palace",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "8",
-    date: "Sun 18 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Leeds United",
-    away: "Manchester United",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "9",
-    date: "Sun 18 Oct 2026, 16:30",
-    group: "Premier League",
-    home: "Nottingham Forest",
-    away: "Arsenal",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "10",
-    date: "Mon 19 Oct 2026, 20:00",
-    group: "Premier League",
-    home: "Tottenham Hotspur",
-    away: "Coventry City",
-    homeScore: null,
-    awayScore: null
-  },
-
-
-  /*
-    CHAMPIONSHIP
-  */
-
-  {
-    id: "11",
-    date: "Fri 16 Oct 2026, 20:00",
-    group: "Championship",
-    home: "Burnley",
-    away: "Wolverhampton Wanderers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "12",
-    date: "Sat 17 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Middlesbrough",
-    away: "Cardiff City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "13",
-    date: "Sat 17 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Millwall",
-    away: "Lincoln City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "14",
-    date: "Sat 17 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Watford",
-    away: "Charlton Athletic",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "15",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Birmingham City",
-    away: "Queens Park Rangers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "16",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Bristol City",
-    away: "Sheffield United",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "17",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Derby County",
-    away: "Stoke City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "18",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Norwich City",
-    away: "Portsmouth",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "19",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Southampton",
-    away: "Bolton Wanderers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "20",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Swansea City",
-    away: "West Ham United",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "21",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "West Bromwich Albion",
-    away: "Blackburn Rovers",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "22",
-    date: "Sat 17 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Wrexham",
-    away: "Preston North End",
-    homeScore: null,
-    awayScore: null
-  }
+  makeFixture(11, "Fri 16 Oct 2026, 20:00", CH, "Burnley", "Wolverhampton Wanderers"),
+  makeFixture(12, "Sat 17 Oct 2026, 12:30", CH, "Middlesbrough", "Cardiff City"),
+  makeFixture(13, "Sat 17 Oct 2026, 12:30", CH, "Millwall", "Lincoln City"),
+  makeFixture(14, "Sat 17 Oct 2026, 12:30", CH, "Watford", "Charlton Athletic"),
+  makeFixture(15, "Sat 17 Oct 2026, 15:00", CH, "Birmingham City", "Queens Park Rangers"),
+  makeFixture(16, "Sat 17 Oct 2026, 15:00", CH, "Bristol City", "Sheffield United"),
+  makeFixture(17, "Sat 17 Oct 2026, 15:00", CH, "Derby County", "Stoke City"),
+  makeFixture(18, "Sat 17 Oct 2026, 15:00", CH, "Norwich City", "Portsmouth"),
+  makeFixture(19, "Sat 17 Oct 2026, 15:00", CH, "Southampton", "Bolton Wanderers"),
+  makeFixture(20, "Sat 17 Oct 2026, 15:00", CH, "Swansea City", "West Ham United"),
+  makeFixture(21, "Sat 17 Oct 2026, 15:00", CH, "West Bromwich Albion", "Blackburn Rovers"),
+  makeFixture(22, "Sat 17 Oct 2026, 15:00", CH, "Wrexham", "Preston North End")
 
 ];
+
+
 /* =====================================================
    WEEK 8 FIXTURES
    23–25 OCTOBER 2026
@@ -585,379 +213,114 @@ const week7Fixtures = [
 
 const week8Fixtures = [
 
-  /*
-    PREMIER LEAGUE
-  */
+  // PREMIER LEAGUE
 
-  {
-    id: "1",
-    date: "Fri 23 Oct 2026, 20:00",
-    group: "Premier League",
-    home: "Ipswich Town",
-    away: "Nottingham Forest",
-    homeScore: null,
-    awayScore: null
-  },
+  makeFixture(1, "Fri 23 Oct 2026, 20:00", PL, "Ipswich Town", "Nottingham Forest"),
+  makeFixture(2, "Sat 24 Oct 2026, 12:30", PL, "Aston Villa", "Manchester City"),
+  makeFixture(3, "Sat 24 Oct 2026, 15:00", PL, "Arsenal", "Everton"),
+  makeFixture(4, "Sat 24 Oct 2026, 15:00", PL, "Coventry City", "Fulham"),
+  makeFixture(5, "Sat 24 Oct 2026, 17:30", PL, "Chelsea", "Tottenham Hotspur"),
+  makeFixture(6, "Sun 25 Oct 2026, 14:00", PL, "Crystal Palace", "Newcastle United"),
+  makeFixture(7, "Sun 25 Oct 2026, 14:00", PL, "Hull City", "Brentford"),
+  makeFixture(8, "Sun 25 Oct 2026, 14:00", PL, "Liverpool", "Brighton & Hove Albion"),
+  makeFixture(9, "Sun 25 Oct 2026, 14:00", PL, "Manchester United", "AFC Bournemouth"),
+  makeFixture(10, "Sun 25 Oct 2026, 16:30", PL, "Sunderland", "Leeds United"),
 
-  {
-    id: "2",
-    date: "Sat 24 Oct 2026, 12:30",
-    group: "Premier League",
-    home: "Aston Villa",
-    away: "Manchester City",
-    homeScore: null,
-    awayScore: null
-  },
+  // CHAMPIONSHIP
 
-  {
-    id: "3",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Arsenal",
-    away: "Everton",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "4",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Premier League",
-    home: "Coventry City",
-    away: "Fulham",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "5",
-    date: "Sat 24 Oct 2026, 17:30",
-    group: "Premier League",
-    home: "Chelsea",
-    away: "Tottenham Hotspur",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "6",
-    date: "Sun 25 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Crystal Palace",
-    away: "Newcastle United",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "7",
-    date: "Sun 25 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Hull City",
-    away: "Brentford",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "8",
-    date: "Sun 25 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Liverpool",
-    away: "Brighton & Hove Albion",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "9",
-    date: "Sun 25 Oct 2026, 14:00",
-    group: "Premier League",
-    home: "Manchester United",
-    away: "AFC Bournemouth",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "10",
-    date: "Sun 25 Oct 2026, 16:30",
-    group: "Premier League",
-    home: "Sunderland",
-    away: "Leeds United",
-    homeScore: null,
-    awayScore: null
-  },
-
-
-  /*
-    CHAMPIONSHIP
-  */
-
-  {
-    id: "11",
-    date: "Fri 23 Oct 2026, 20:00",
-    group: "Championship",
-    home: "Bolton Wanderers",
-    away: "Middlesbrough",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "12",
-    date: "Sat 24 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Charlton Athletic",
-    away: "Norwich City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "13",
-    date: "Sat 24 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Portsmouth",
-    away: "Millwall",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "14",
-    date: "Sat 24 Oct 2026, 12:30",
-    group: "Championship",
-    home: "Sheffield United",
-    away: "Derby County",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "15",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Blackburn Rovers",
-    away: "Wrexham",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "16",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Cardiff City",
-    away: "Birmingham City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "17",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Lincoln City",
-    away: "Burnley",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "18",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Preston North End",
-    away: "West Bromwich Albion",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "19",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Queens Park Rangers",
-    away: "Swansea City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "20",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Stoke City",
-    away: "Bristol City",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "21",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "West Ham United",
-    away: "Southampton",
-    homeScore: null,
-    awayScore: null
-  },
-
-  {
-    id: "22",
-    date: "Sat 24 Oct 2026, 15:00",
-    group: "Championship",
-    home: "Wolverhampton Wanderers",
-    away: "Watford",
-    homeScore: null,
-    awayScore: null
-  }
+  makeFixture(11, "Fri 23 Oct 2026, 20:00", CH, "Bolton Wanderers", "Middlesbrough"),
+  makeFixture(12, "Sat 24 Oct 2026, 12:30", CH, "Charlton Athletic", "Norwich City"),
+  makeFixture(13, "Sat 24 Oct 2026, 12:30", CH, "Portsmouth", "Millwall"),
+  makeFixture(14, "Sat 24 Oct 2026, 12:30", CH, "Sheffield United", "Derby County"),
+  makeFixture(15, "Sat 24 Oct 2026, 15:00", CH, "Blackburn Rovers", "Wrexham"),
+  makeFixture(16, "Sat 24 Oct 2026, 15:00", CH, "Cardiff City", "Birmingham City"),
+  makeFixture(17, "Sat 24 Oct 2026, 15:00", CH, "Lincoln City", "Burnley"),
+  makeFixture(18, "Sat 24 Oct 2026, 15:00", CH, "Preston North End", "West Bromwich Albion"),
+  makeFixture(19, "Sat 24 Oct 2026, 15:00", CH, "Queens Park Rangers", "Swansea City"),
+  makeFixture(20, "Sat 24 Oct 2026, 15:00", CH, "Stoke City", "Bristol City"),
+  makeFixture(21, "Sat 24 Oct 2026, 15:00", CH, "West Ham United", "Southampton"),
+  makeFixture(22, "Sat 24 Oct 2026, 15:00", CH, "Wolverhampton Wanderers", "Watford")
 
 ];
+
+
+/* =====================================================
+   WEEK 9 FIXTURES
+   30 OCTOBER – 2 NOVEMBER 2026
+
+   NEW PREDICTION ROUND
+===================================================== */
+
+const week9Fixtures = [
+
+  // PREMIER LEAGUE
+
+  makeFixture(1, "Sat 31 Oct 2026, 12:30", PL, "Chelsea", "Manchester United"),
+
+  makeFixture(2, "Sat 31 Oct 2026, 15:00", PL, "AFC Bournemouth", "Leeds United"),
+
+  makeFixture(3, "Sat 31 Oct 2026, 15:00", PL, "Brentford", "Nottingham Forest"),
+
+  makeFixture(4, "Sat 31 Oct 2026, 15:00", PL, "Coventry City", "Sunderland"),
+
+  makeFixture(5, "Sat 31 Oct 2026, 15:00", PL, "Hull City", "Ipswich Town"),
+
+  makeFixture(6, "Sat 31 Oct 2026, 15:00", PL, "Manchester City", "Brighton & Hove Albion"),
+
+  makeFixture(7, "Sat 31 Oct 2026, 17:30", PL, "Tottenham Hotspur", "Crystal Palace"),
+
+  makeFixture(8, "Sat 31 Oct 2026, 20:00", PL, "Aston Villa", "Fulham"),
+
+  makeFixture(9, "Sun 1 Nov 2026, 16:30", PL, "Liverpool", "Arsenal"),
+
+  makeFixture(10, "Mon 2 Nov 2026, 20:00", PL, "Newcastle United", "Everton"),
+
+
+  // CHAMPIONSHIP
+
+  // FRIDAY MATCH:
+  // Sheffield United v Wrexham.
+  // Void for entries from Friday at 8pm.
+
+  makeFixture(11, "Fri 30 Oct 2026, 20:00", CH, "Sheffield United", "Wrexham"),
+
+  makeFixture(12, "Sat 31 Oct 2026, 12:30", CH, "Lincoln City", "Birmingham City"),
+
+  makeFixture(13, "Sat 31 Oct 2026, 12:30", CH, "Norwich City", "Watford"),
+
+  makeFixture(14, "Sat 31 Oct 2026, 12:30", CH, "Stoke City", "Preston North End"),
+
+  makeFixture(15, "Sat 31 Oct 2026, 15:00", CH, "Bolton Wanderers", "Bristol City"),
+
+  makeFixture(16, "Sat 31 Oct 2026, 15:00", CH, "Burnley", "Portsmouth"),
+
+  makeFixture(17, "Sat 31 Oct 2026, 15:00", CH, "Middlesbrough", "Charlton Athletic"),
+
+  makeFixture(18, "Sat 31 Oct 2026, 15:00", CH, "Millwall", "Derby County"),
+
+  makeFixture(19, "Sat 31 Oct 2026, 15:00", CH, "Southampton", "Queens Park Rangers"),
+
+  makeFixture(20, "Sat 31 Oct 2026, 15:00", CH, "Swansea City", "Blackburn Rovers"),
+
+  makeFixture(21, "Sat 31 Oct 2026, 15:00", CH, "West Ham United", "West Bromwich Albion"),
+
+  makeFixture(22, "Sat 31 Oct 2026, 15:00", CH, "Wolverhampton Wanderers", "Cardiff City")
+
+];
+
+
+/* =====================================================
+   ACTIVE FIXTURES
+===================================================== */
+
+// Week 9 predictions.
+// Week 8 homepage results.
+
 const fixtures =
-  week8Fixtures;
-
-
-
-const week5HomePreviewFixtures = [
-
-  {
-    id: "1",
-    home: "Brentford",
-    away: "Chelsea"
-  },
-
-  {
-    id: "2",
-    home: "Tottenham Hotspur",
-    away: "Aston Villa"
-  },
-
-  {
-    id: "3",
-    home: "Brighton & Hove Albion",
-    away: "Arsenal"
-  },
-
-  {
-    id: "4",
-    home: "Everton",
-    away: "Ipswich Town"
-  },
-
-  {
-    id: "5",
-    home: "Newcastle United",
-    away: "Hull City"
-  },
-
-  {
-    id: "6",
-    home: "Nottingham Forest",
-    away: "Coventry City"
-  },
-
-  {
-    id: "7",
-    home: "AFC Bournemouth",
-    away: "Liverpool"
-  },
-
-  {
-    id: "8",
-    home: "Leeds United",
-    away: "Crystal Palace"
-  },
-
-  {
-    id: "9",
-    home: "Manchester City",
-    away: "Sunderland"
-  },
-
-  {
-    id: "10",
-    home: "Fulham",
-    away: "Manchester United"
-  },
-
-  {
-    id: "11",
-    home: "Bristol City",
-    away: "Watford"
-  },
-
-  {
-    id: "12",
-    home: "Cardiff City",
-    away: "Charlton Athletic"
-  },
-
-  {
-    id: "13",
-    home: "Millwall",
-    away: "West Ham United"
-  },
-
-  {
-    id: "14",
-    home: "Stoke City",
-    away: "Sheffield United"
-  },
-
-  {
-    id: "15",
-    home: "Birmingham City",
-    away: "Middlesbrough"
-  },
-
-  {
-    id: "16",
-    home: "Burnley",
-    away: "Derby County"
-  },
-
-  {
-    id: "17",
-    home: "Lincoln City",
-    away: "Swansea City"
-  },
-
-  {
-    id: "18",
-    home: "Norwich City",
-    away: "Bolton Wanderers"
-  },
-
-  {
-    id: "19",
-    home: "Portsmouth",
-    away: "Blackburn Rovers"
-  },
-
-  {
-    id: "20",
-    home: "Queens Park Rangers",
-    away: "Preston North End"
-  },
-
-  {
-    id: "21",
-    home: "Wrexham",
-    away: "Southampton"
-  },
-
-  {
-    id: "22",
-    home: "Wolverhampton Wanderers",
-    away: "West Bromwich Albion"
-  }
-
-];
+  week9Fixtures;
 
 const homePreviewFixtures =
-  week7Fixtures;
+  week8Fixtures;
 
 
 /* =====================================================
@@ -965,54 +328,34 @@ const homePreviewFixtures =
 ===================================================== */
 
 const homePage =
-  document.getElementById(
-    "homePage"
-  );
+  document.getElementById("homePage");
 
 const predictionsPage =
-  document.getElementById(
-    "predictionsPage"
-  );
+  document.getElementById("predictionsPage");
 
 const startGameBtn =
-  document.getElementById(
-    "startGameBtn"
-  );
+  document.getElementById("startGameBtn");
 
 const premierLeagueBtn =
-  document.getElementById(
-    "premierLeagueBtn"
-  );
+  document.getElementById("premierLeagueBtn");
 
 const dreamTeamBtn =
-  document.getElementById(
-    "dreamTeamBtn"
-  );
+  document.getElementById("dreamTeamBtn");
 
 const backHomeBtn =
-  document.getElementById(
-    "backHomeBtn"
-  );
+  document.getElementById("backHomeBtn");
 
 const fixturesContainer =
-  document.getElementById(
-    "fixturesContainer"
-  );
+  document.getElementById("fixturesContainer");
 
 const submitPredictionsBtn =
-  document.getElementById(
-    "submitPredictionsBtn"
-  );
+  document.getElementById("submitPredictionsBtn");
 
 const homeLeaderboardPreview =
-  document.getElementById(
-    "homeLeaderboardPreview"
-  );
+  document.getElementById("homeLeaderboardPreview");
 
 const homeFixturesPreview =
-  document.getElementById(
-    "homeFixturesPreview"
-  );
+  document.getElementById("homeFixturesPreview");
 
 
 /* =====================================================
@@ -1020,9 +363,7 @@ const homeFixturesPreview =
 ===================================================== */
 
 let username =
-  localStorage.getItem(
-    "scorecast24Username"
-  );
+  localStorage.getItem("scorecast24Username");
 
 
 function cleanUsername(name) {
@@ -1034,21 +375,18 @@ function cleanUsername(name) {
 }
 
 
-function getPredictionDocId(
-  username
-) {
+function getPredictionDocId(savedUsername) {
 
   const cleanRound =
     currentRound
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  const cleanUser =
-    cleanUsername(
-      username
-    );
-
-  return `${cleanUser}-${cleanRound}`;
+  return (
+    cleanUsername(savedUsername) +
+    "-" +
+    cleanRound
+  );
 }
 
 
@@ -1058,53 +396,29 @@ function getPredictionDocId(
 
 function showHome() {
 
-  if (
-    homePage
-  ) {
-
-    homePage.classList.remove(
-      "hidden"
-    );
+  if (homePage) {
+    homePage.classList.remove("hidden");
   }
 
-
-  if (
-    predictionsPage
-  ) {
-
-    predictionsPage.classList.add(
-      "hidden"
-    );
+  if (predictionsPage) {
+    predictionsPage.classList.add("hidden");
   }
 }
 
 
 function showPredictions() {
 
-  if (
-    homePage
-  ) {
-
-    homePage.classList.add(
-      "hidden"
-    );
+  if (homePage) {
+    homePage.classList.add("hidden");
   }
 
-
-  if (
-    predictionsPage
-  ) {
-
-    predictionsPage.classList.remove(
-      "hidden"
-    );
+  if (predictionsPage) {
+    predictionsPage.classList.remove("hidden");
   }
 }
 
 
-if (
-  backHomeBtn
-) {
+if (backHomeBtn) {
 
   backHomeBtn.addEventListener(
     "click",
@@ -1114,122 +428,179 @@ if (
 
 
 /* =====================================================
-   RENDER FIXTURES
+   RENDER PREDICTION FIXTURES
 ===================================================== */
 
 function renderFixtures() {
 
-  if (
-    !fixturesContainer
-  ) {
+  if (!fixturesContainer) {
     return;
   }
 
+  fixturesContainer.innerHTML = "";
 
-  fixturesContainer.innerHTML =
-    "";
+  fixtures.forEach((fixture) => {
 
+    const card =
+      document.createElement("div");
 
-  fixtures.forEach(
-    (fixture) => {
+    const isVoid =
+      fixtureIsVoid(fixture.id);
 
-      const card =
-        document.createElement(
-          "div"
-        );
+    card.className =
+      isVoid
+        ? "fixture-card fixture-void"
+        : "fixture-card";
 
+    card.dataset.fixtureId =
+      String(fixture.id);
 
-      const isVoid =
-        fixtureIsVoid(
-          fixture.id
-        );
+    card.innerHTML = `
+      <div class="fixture-teams">
 
-
-      card.className =
-        isVoid
-          ? "fixture-card fixture-void"
-          : "fixture-card";
-
-
-      card.innerHTML = `
-        <div class="fixture-teams">
-
-          <div class="team-name">
-            ${fixture.home}
-          </div>
-
-          ${
-            isVoid
-              ? `
-                <div class="void-score">
-                  ✕
-                </div>
-              `
-              : `
-                <input
-                  class="score-input"
-                  type="number"
-                  min="0"
-                  id="home-${fixture.id}"
-                  placeholder="0"
-                >
-              `
-          }
-
-          <div class="vs">
-            v
-          </div>
-
-          ${
-            isVoid
-              ? `
-                <div class="void-score">
-                  ✕
-                </div>
-              `
-              : `
-                <input
-                  class="score-input"
-                  type="number"
-                  min="0"
-                  id="away-${fixture.id}"
-                  placeholder="0"
-                >
-              `
-          }
-
-          <div class="team-name">
-            ${fixture.away}
-          </div>
-
+        <div class="team-name">
+          ${fixture.home}
         </div>
 
-        <div class="fixture-date">
+        ${
+          isVoid
+            ? `
+              <div class="void-score">✕</div>
+            `
+            : `
+              <input
+                class="score-input"
+                type="number"
+                min="0"
+                id="home-${fixture.id}"
+                placeholder="0"
+              >
+            `
+        }
 
-          ${fixture.date}
-          ·
-          ${fixture.group}
+        <div class="vs">v</div>
 
-          ${
-            isVoid
-              ? `
-                ·
-                <strong class="void-label">
-                  VOID FOR LATE ENTRIES
-                </strong>
-              `
-              : ""
-          }
+        ${
+          isVoid
+            ? `
+              <div class="void-score">✕</div>
+            `
+            : `
+              <input
+                class="score-input"
+                type="number"
+                min="0"
+                id="away-${fixture.id}"
+                placeholder="0"
+              >
+            `
+        }
 
+        <div class="team-name">
+          ${fixture.away}
         </div>
-      `;
+
+      </div>
+
+      <div class="fixture-date">
+
+        ${fixture.date}
+        ·
+        ${fixture.group}
+
+        ${
+          isVoid
+            ? `
+              ·
+              <strong class="void-label">
+                VOID FOR LATE ENTRIES
+              </strong>
+            `
+            : ""
+        }
+
+      </div>
+    `;
+
+    fixturesContainer.appendChild(card);
+  });
+}
 
 
-      fixturesContainer.appendChild(
-        card
-      );
+/* =====================================================
+   UPDATE FRIDAY VOID ON OPEN FORMS
+===================================================== */
+
+// If somebody opens the entry form before
+// Friday at 8pm and leaves it open,
+// automatically change Sheffield United
+// to VOID when 8pm arrives.
+//
+// Other entered scores are left untouched.
+
+function updateVisibleFridayFixture() {
+
+  if (!fixtureIsVoid(fridayVoidFixtureId)) {
+    return;
+  }
+
+  const card =
+    document.querySelector(
+      `.fixture-card[data-fixture-id="${fridayVoidFixtureId}"]`
+    );
+
+  if (!card) {
+    return;
+  }
+
+  if (card.classList.contains("fixture-void")) {
+    return;
+  }
+
+  card.classList.add("fixture-void");
+
+  const homeInput =
+    document.getElementById(
+      `home-${fridayVoidFixtureId}`
+    );
+
+  const awayInput =
+    document.getElementById(
+      `away-${fridayVoidFixtureId}`
+    );
+
+  [homeInput, awayInput].forEach((input) => {
+
+    if (!input) {
+      return;
     }
-  );
+
+    const cross =
+      document.createElement("div");
+
+    cross.className = "void-score";
+    cross.textContent = "✕";
+
+    input.replaceWith(cross);
+  });
+
+  const dateBox =
+    card.querySelector(".fixture-date");
+
+  if (
+    dateBox &&
+    !dateBox.querySelector(".void-label")
+  ) {
+
+    const label =
+      document.createElement("strong");
+
+    label.className = "void-label";
+    label.textContent =
+      " · VOID FOR LATE ENTRIES";
+
+    dateBox.appendChild(label);
+  }
 }
 
 
@@ -1237,125 +608,83 @@ function renderFixtures() {
    ENTRY CHECK
 ===================================================== */
 
-async function hasAlreadySubmitted(
-  savedUsername
-) {
+async function hasAlreadySubmitted(savedUsername) {
 
   if (
     !savedUsername ||
     savedUsername.trim().length < 2
   ) {
-
     return false;
   }
-
 
   const predictionRef =
     doc(
       db,
       "scorecast24_predictions",
-      getPredictionDocId(
-        savedUsername
-      )
+      getPredictionDocId(savedUsername)
     );
-
 
   const predictionSnap =
-    await getDoc(
-      predictionRef
-    );
-
+    await getDoc(predictionRef);
 
   return predictionSnap.exists();
 }
 
 
-function entryCheckTimeout(
-  ms = 12000
-) {
+function entryCheckTimeout(ms = 12000) {
 
-  return new Promise(
-    (_, reject) => {
+  return new Promise((_, reject) => {
 
-      setTimeout(
-        () => {
+    setTimeout(() => {
 
-          reject(
-            new Error(
-              "Entry check timed out"
-            )
-          );
-
-        },
-        ms
+      reject(
+        new Error("Entry check timed out")
       );
-    }
-  );
+
+    }, ms);
+  });
 }
 
 
 /* =====================================================
-   READ PREDICTIONS FROM PAGE
+   READ PREDICTIONS FROM FORM
 ===================================================== */
 
 function getPredictionsFromPage() {
 
   const predictions = [];
 
+  for (const fixture of fixtures) {
 
-  for (
-    const fixture of fixtures
-  ) {
-
-    if (
-      fixtureIsVoid(
-        fixture.id
-      )
-    ) {
+    if (fixtureIsVoid(fixture.id)) {
 
       predictions.push({
 
-        fixtureId:
-          fixture.id,
+        fixtureId: fixture.id,
+        home: fixture.home,
+        away: fixture.away,
 
-        home:
-          fixture.home,
+        predictedHome: null,
+        predictedAway: null,
 
-        away:
-          fixture.away,
-
-        predictedHome:
-          null,
-
-        predictedAway:
-          null,
-
-        void:
-          true
+        void: true
 
       });
 
-
       continue;
     }
-
 
     const homeInput =
       document.getElementById(
         `home-${fixture.id}`
       );
 
-
     const awayInput =
       document.getElementById(
         `away-${fixture.id}`
       );
 
-
-    if (
-      !homeInput ||
-      !awayInput
-    ) {
+    if (!homeInput || !awayInput) {
 
       alert(
         "The prediction form could not be read."
@@ -1363,7 +692,6 @@ function getPredictionsFromPage() {
 
       return null;
     }
-
 
     if (
       homeInput.value === "" ||
@@ -1377,54 +705,56 @@ function getPredictionsFromPage() {
       return null;
     }
 
+    const homeValue =
+      Number(homeInput.value);
+
+    const awayValue =
+      Number(awayInput.value);
+
+    if (
+      !Number.isInteger(homeValue) ||
+      !Number.isInteger(awayValue) ||
+      homeValue < 0 ||
+      awayValue < 0
+    ) {
+
+      alert(
+        `Please enter valid non-negative whole-number scores for ${fixture.home} v ${fixture.away}`
+      );
+
+      return null;
+    }
 
     predictions.push({
 
-      fixtureId:
-        fixture.id,
+      fixtureId: fixture.id,
 
-      home:
-        fixture.home,
+      home: fixture.home,
+      away: fixture.away,
 
-      away:
-        fixture.away,
+      predictedHome: homeValue,
+      predictedAway: awayValue,
 
-      predictedHome:
-        Number(
-          homeInput.value
-        ),
-
-      predictedAway:
-        Number(
-          awayInput.value
-        ),
-
-      void:
-        false
+      void: false
 
     });
   }
-
 
   return predictions;
 }
 
 
 /* =====================================================
-   SUBMIT PREDICTIONS
+   SUBMIT WEEK 9 PREDICTIONS
 ===================================================== */
 
-if (
-  submitPredictionsBtn
-) {
+if (submitPredictionsBtn) {
 
   submitPredictionsBtn.addEventListener(
     "click",
     async () => {
 
-      if (
-        predictionsAreClosed()
-      ) {
+      if (predictionsAreClosed()) {
 
         alert(
           `${currentRound} predictions are now closed.`
@@ -1433,12 +763,10 @@ if (
         return;
       }
 
-
       username =
         localStorage.getItem(
           "scorecast24Username"
         );
-
 
       if (
         !username ||
@@ -1455,36 +783,26 @@ if (
         return;
       }
 
-
-      submitPredictionsBtn.disabled =
-        true;
+      submitPredictionsBtn.disabled = true;
 
       submitPredictionsBtn.textContent =
         "Checking entry...";
 
-
       try {
 
         const alreadySubmitted =
-          await hasAlreadySubmitted(
-            username
-          );
+          await hasAlreadySubmitted(username);
 
-
-        if (
-          alreadySubmitted
-        ) {
+        if (alreadySubmitted) {
 
           localStorage.setItem(
             submittedStorageKey,
             "true"
           );
 
-
           alert(
-            "You have already submitted predictions for This Week ."
+            "You have already submitted predictions for Week 9."
           );
-
 
           window.location.href =
             "leaderboard.html";
@@ -1492,38 +810,34 @@ if (
           return;
         }
 
-
         const predictions =
           getPredictionsFromPage();
 
+        if (!predictions) {
+          return;
+        }
 
-        if (
-          !predictions
-        ) {
+        // Check the deadline again before
+        // writing to Firestore.
 
-          submitPredictionsBtn.disabled =
-            false;
+        if (predictionsAreClosed()) {
 
-          submitPredictionsBtn.textContent =
-            "Submit Predictions";
+          alert(
+            "Week 9 predictions have now closed."
+          );
 
           return;
         }
 
-
         submitPredictionsBtn.textContent =
           "Submitting...";
-
 
         const predictionRef =
           doc(
             db,
             "scorecast24_predictions",
-            getPredictionDocId(
-              username
-            )
+            getPredictionDocId(username)
           );
-
 
         await setDoc(
           predictionRef,
@@ -1533,8 +847,7 @@ if (
 
             predictions,
 
-            round:
-              currentRound,
+            round: currentRound,
 
             submittedAt:
               serverTimestamp(),
@@ -1542,27 +855,22 @@ if (
             status:
               "Score pending match results",
 
-            points:
-              null
+            points: null
 
           }
         );
-
 
         localStorage.setItem(
           submittedStorageKey,
           "true"
         );
 
-
         alert(
-          "Current Week predictions submitted!"
+          "Week 9 predictions submitted!"
         );
-
 
         window.location.href =
           "leaderboard.html";
-
 
       } catch (error) {
 
@@ -1571,17 +879,14 @@ if (
           error
         );
 
-
         alert(
           "Submission failed:\n\n" +
           error.message
         );
 
-
       } finally {
 
-        submitPredictionsBtn.disabled =
-          false;
+        submitPredictionsBtn.disabled = false;
 
         submitPredictionsBtn.textContent =
           "Submit Predictions";
@@ -1592,7 +897,7 @@ if (
 
 
 /* =====================================================
-   LIVE RESULTS FROM FIRESTORE
+   LIVE WEEK 8 RESULTS FROM FIRESTORE
 ===================================================== */
 
 let homeLiveResults = {};
@@ -1601,7 +906,6 @@ let homeLiveResults = {};
 async function loadHomeLiveResults() {
 
   homeLiveResults = {};
-
 
   const resultsQuery =
     query(
@@ -1616,18 +920,13 @@ async function loadHomeLiveResults() {
       )
     );
 
-
   const resultsSnap =
-    await getDocs(
-      resultsQuery
-    );
-
+    await getDocs(resultsQuery);
 
   console.log(
-    "Week 5 result documents found:",
+    "Week 8 result documents found:",
     resultsSnap.size
   );
-
 
   const finishedStatuses =
     new Set([
@@ -1636,92 +935,53 @@ async function loadHomeLiveResults() {
       "PEN"
     ]);
 
+  resultsSnap.forEach((docSnap) => {
 
-  resultsSnap.forEach(
-    (docSnap) => {
+    const data =
+      docSnap.data();
 
-      const data =
-        docSnap.data();
+    const fixtureId =
+      String(data.fixtureId || "").trim();
 
-
-      const fixtureId =
-        String(
-          data.fixtureId || ""
-        ).trim();
-
-
-      if (!fixtureId) {
-        return;
-      }
-
-
-      const status =
-        String(
-          data.status || ""
-        )
-          .trim()
-          .toUpperCase();
-
-
-      const isFinished =
-        finishedStatuses.has(
-          status
-        );
-
-
-      console.log(
-        "HOME LIVE RESULT:",
-        {
-          document:
-            docSnap.id,
-
-          fixtureId,
-
-          status,
-
-          isFinished,
-
-          homeScore:
-            data.homeScore,
-
-          awayScore:
-            data.awayScore
-        }
-      );
-
-
-      homeLiveResults[
-        fixtureId
-      ] = {
-
-        homeScore:
-          isFinished
-            ? data.homeScore ?? null
-            : null,
-
-        awayScore:
-          isFinished
-            ? data.awayScore ?? null
-            : null,
-
-        status
-
-      };
-
+    if (!fixtureId) {
+      return;
     }
-  );
 
+    const status =
+      String(data.status || "")
+        .trim()
+        .toUpperCase();
+
+    const isFinished =
+      finishedStatuses.has(status);
+
+    homeLiveResults[fixtureId] = {
+
+      homeScore:
+        isFinished
+          ? data.homeScore ?? null
+          : null,
+
+      awayScore:
+        isFinished
+          ? data.awayScore ?? null
+          : null,
+
+      status
+
+    };
+  });
 
   console.log(
-    "Week 5 home live results:",
+    "Week 8 home live results:",
     homeLiveResults
   );
 }
 
-/* =====================================================
-   MERGED RESULTS
-===================================================== */
 
+/* =====================================================
+   MERGE WEEK 8 RESULTS
+===================================================== */
 
 function getHomeRoundResults() {
 
@@ -1740,14 +1000,14 @@ function getHomeRoundResults() {
         result?.awayScore != null
       ) {
 
-        mergedResults[fixtureId] = result;
+        mergedResults[fixtureId] =
+          result;
 
       } else if (!(fixtureId in mergedResults)) {
 
-        mergedResults[fixtureId] = result;
-
+        mergedResults[fixtureId] =
+          result;
       }
-
     }
   );
 
@@ -1755,31 +1015,25 @@ function getHomeRoundResults() {
 }
 
 
-
 /* =====================================================
    SCORING SYSTEM
 ===================================================== */
 
-function getResultType(
-  home,
-  away
-) {
+// Exact score = 5.
+// Correct draw = 3.
+// Correct away win = 2.
+// Correct home win = 1.
+// Incorrect = 0.
 
-  if (
-    home > away
-  ) {
+function getResultType(home, away) {
 
+  if (home > away) {
     return "home";
   }
 
-
-  if (
-    away > home
-  ) {
-
+  if (away > home) {
     return "away";
   }
-
 
   return "draw";
 }
@@ -1791,32 +1045,19 @@ function calculatePoints(
   scoringRound = currentRound
 ) {
 
-  if (
-    prediction.void === true
-  ) {
-
+  if (prediction.void === true) {
     return null;
   }
 
-
   const roundResults =
-    scoringRound ===
-    homePreviewRound
+    scoringRound === homePreviewRound
       ? getHomeRoundResults()
       : (
-          resultsByRound[
-            scoringRound
-          ] || {}
+          resultsByRound[scoringRound] || {}
         );
 
-
   const result =
-    roundResults[
-      String(
-        fixture.id
-      )
-    ];
-
+    roundResults[String(fixture.id)];
 
   const actualHome =
     result?.homeScore;
@@ -1824,48 +1065,31 @@ function calculatePoints(
   const actualAway =
     result?.awayScore;
 
-
   if (
     actualHome == null ||
     actualAway == null
   ) {
-
     return null;
   }
 
-
   const predictedHome =
-    Number(
-      prediction.predictedHome
-    );
-
+    Number(prediction.predictedHome);
 
   const predictedAway =
-    Number(
-      prediction.predictedAway
-    );
-
+    Number(prediction.predictedAway);
 
   const realHome =
-    Number(
-      actualHome
-    );
-
+    Number(actualHome);
 
   const realAway =
-    Number(
-      actualAway
-    );
-
+    Number(actualAway);
 
   if (
     predictedHome === realHome &&
     predictedAway === realAway
   ) {
-
     return 5;
   }
-
 
   const predictedResult =
     getResultType(
@@ -1873,40 +1097,32 @@ function calculatePoints(
       predictedAway
     );
 
-
   const actualResult =
     getResultType(
       realHome,
       realAway
     );
 
-
   if (
     predictedResult === "draw" &&
     actualResult === "draw"
   ) {
-
     return 3;
   }
-
 
   if (
     predictedResult === "away" &&
     actualResult === "away"
   ) {
-
     return 2;
   }
-
 
   if (
     predictedResult === "home" &&
     actualResult === "home"
   ) {
-
     return 1;
   }
-
 
   return 0;
 }
@@ -1916,25 +1132,17 @@ function calculatePoints(
    SCORE PREDICTION BUTTON
 ===================================================== */
 
-if (
-  startGameBtn
-) {
+if (startGameBtn) {
 
   startGameBtn.addEventListener(
     "click",
     async () => {
 
-      if (
-        !requireLogin()
-      ) {
-
+      if (!requireLogin()) {
         return;
       }
 
-
-      if (
-        predictionsAreClosed()
-      ) {
+      if (predictionsAreClosed()) {
 
         alert(
           `${currentRound} predictions are now closed.`
@@ -1943,12 +1151,10 @@ if (
         return;
       }
 
-
       username =
         localStorage.getItem(
           "scorecast24Username"
         );
-
 
       if (
         !username ||
@@ -1961,42 +1167,32 @@ if (
         return;
       }
 
-
-      startGameBtn.disabled =
-        true;
+      startGameBtn.disabled = true;
 
       startGameBtn.textContent =
         "Checking your entry...";
-
 
       try {
 
         const alreadySubmitted =
           await Promise.race([
 
-            hasAlreadySubmitted(
-              username
-            ),
+            hasAlreadySubmitted(username),
 
             entryCheckTimeout()
 
           ]);
 
-
-        if (
-          alreadySubmitted
-        ) {
+        if (alreadySubmitted) {
 
           localStorage.setItem(
             submittedStorageKey,
             "true"
           );
 
-
           alert(
-            "You have already submitted your this week's predictions."
+            "You have already submitted your Week 9 predictions."
           );
-
 
           window.location.href =
             "leaderboard.html";
@@ -2004,11 +1200,9 @@ if (
           return;
         }
 
-
         renderFixtures();
 
         showPredictions();
-
 
       } catch (error) {
 
@@ -2017,16 +1211,13 @@ if (
           error
         );
 
-
         alert(
           "We could not check your existing entry. Please check your connection and try again."
         );
 
-
       } finally {
 
-        startGameBtn.disabled =
-          false;
+        startGameBtn.disabled = false;
 
         startGameBtn.textContent =
           "Submit Your Score Predictions Now!";
@@ -2040,21 +1231,15 @@ if (
    OTHER GAME BUTTONS
 ===================================================== */
 
-if (
-  premierLeagueBtn
-) {
+if (premierLeagueBtn) {
 
   premierLeagueBtn.addEventListener(
     "click",
     () => {
 
-      if (
-        !requireLogin()
-      ) {
-
+      if (!requireLogin()) {
         return;
       }
-
 
       window.location.href =
         "index2.html";
@@ -2063,18 +1248,13 @@ if (
 }
 
 
-if (
-  dreamTeamBtn
-) {
+if (dreamTeamBtn) {
 
   dreamTeamBtn.addEventListener(
     "click",
     () => {
 
-      if (
-        !requireLogin()
-      ) {
-
+      if (!requireLogin()) {
         return;
       }
     }
@@ -2083,152 +1263,120 @@ if (
 
 
 /* =====================================================
-   HOME LEADERBOARD PREVIEW
+   HOME LEADERBOARD — WEEK 8
 ===================================================== */
 
 async function renderHomeLeaderboardPreview() {
 
-  if (
-    !homeLeaderboardPreview
-  ) {
-
+  if (!homeLeaderboardPreview) {
     return;
   }
-
 
   homeLeaderboardPreview.innerHTML =
     "Loading standings...";
 
-
   try {
 
-    const predictionsSnap =
-      await getDocs(
+    // Only retrieve Week 8 predictions.
+
+    const predictionsQuery =
+      query(
         collection(
           db,
           "scorecast24_predictions"
+        ),
+        where(
+          "round",
+          "==",
+          homePreviewStoredRound
         )
       );
 
+    const predictionsSnap =
+      await getDocs(predictionsQuery);
 
     const rows = [];
 
+    predictionsSnap.forEach((docSnap) => {
 
-    predictionsSnap.forEach(
-      (docSnap) => {
+      const data =
+        docSnap.data();
 
-        const data =
-          docSnap.data();
+      let totalPoints = 0;
+      let exactScores = 0;
+      let hasScoredFixture = false;
 
+      if (
+        Array.isArray(data.predictions)
+      ) {
 
-        if (
-          data.round !==
-          homePreviewStoredRound
-        ) {
+        data.predictions.forEach(
+          (prediction) => {
 
-          return;
-        }
+            const fixture = {
+              id: String(
+                prediction.fixtureId
+              )
+            };
 
+            const points =
+              calculatePoints(
+                prediction,
+                fixture,
+                homePreviewRound
+              );
 
-        let totalPoints = 0;
+            if (points !== null) {
 
-        let exactScores = 0;
+              totalPoints += points;
 
-        let hasScoredFixture =
-          false;
+              hasScoredFixture = true;
 
-
-        if (
-          Array.isArray(
-            data.predictions
-          )
-        ) {
-
-          data.predictions.forEach(
-            (prediction) => {
-
-      const fixture = {
-  id:
-    String(
-      prediction.fixtureId
-    )
-};
-
-
-              const points =
-                calculatePoints(
-                  prediction,
-                  fixture,
-                  homePreviewRound
-                );
-
-
-              if (
-                points !== null
-              ) {
-
-                totalPoints +=
-                  points;
-
-                hasScoredFixture =
-                  true;
-
-
-                if (
-                  points === 5
-                ) {
-
-                  exactScores += 1;
-                }
+              if (points === 5) {
+                exactScores += 1;
               }
             }
-          );
-        }
-
-
-        rows.push({
-
-          username:
-            data.username ||
-            "?????",
-
-          points:
-            hasScoredFixture
-              ? totalPoints
-              : null,
-
-          exactScores,
-
-          submittedAtMillis:
-            data.submittedAt?.toMillis
-              ? data.submittedAt.toMillis()
-              : (
-                  typeof data.submittedAt?.seconds ===
-                    "number"
-                    ? data.submittedAt.seconds *
-                      1000
-                    : null
-                ),
-
-          status:
-            hasScoredFixture
-              ? `${totalPoints} pts`
-              : "Pending"
-
-        });
+          }
+        );
       }
-    );
 
+      rows.push({
 
-    if (
-      rows.length === 0
-    ) {
+        username:
+          data.username || "?????",
+
+        points:
+          hasScoredFixture
+            ? totalPoints
+            : null,
+
+        exactScores,
+
+        submittedAtMillis:
+          data.submittedAt?.toMillis
+            ? data.submittedAt.toMillis()
+            : (
+                typeof data.submittedAt?.seconds ===
+                  "number"
+                  ? data.submittedAt.seconds * 1000
+                  : null
+              ),
+
+        status:
+          hasScoredFixture
+            ? `${totalPoints} pts`
+            : "Pending"
+
+      });
+    });
+
+    if (rows.length === 0) {
 
       homeLeaderboardPreview.innerHTML = `
         <div class="preview-row">
 
           <span>
-            No Week 6 entries
+            No Week 8 entries
           </span>
 
           <span class="preview-points">
@@ -2241,102 +1389,49 @@ async function renderHomeLeaderboardPreview() {
       return;
     }
 
+    // Ranking:
+    // 1. Total points
+    // 2. Exact scores
+    // 3. Earliest submission
 
-    rows.sort(
-      (a, b) => {
+    rows.sort((a, b) => {
 
-        if (
-          a.points == null &&
-          b.points != null
-        ) {
+      if (
+        a.points == null &&
+        b.points != null
+      ) {
+        return 1;
+      }
 
-          return 1;
-        }
+      if (
+        a.points != null &&
+        b.points == null
+      ) {
+        return -1;
+      }
 
+      if (
+        a.points != null &&
+        b.points != null &&
+        b.points !== a.points
+      ) {
+        return b.points - a.points;
+      }
 
-        if (
-          a.points != null &&
-          b.points == null
-        ) {
+      if (
+        b.exactScores !== a.exactScores
+      ) {
+        return b.exactScores - a.exactScores;
+      }
 
-          return -1;
-        }
-
-
-        if (
-          a.points == null &&
-          b.points == null
-        ) {
-
-          if (
-            a.submittedAtMillis != null &&
-            b.submittedAtMillis != null &&
-            a.submittedAtMillis !==
-              b.submittedAtMillis
-          ) {
-
-            return (
-              a.submittedAtMillis -
-              b.submittedAtMillis
-            );
-          }
-
-
-          if (
-            a.submittedAtMillis != null &&
-            b.submittedAtMillis == null
-          ) {
-
-            return -1;
-          }
-
-
-          if (
-            a.submittedAtMillis == null &&
-            b.submittedAtMillis != null
-          ) {
-
-            return 1;
-          }
-
-
-          return (
-            a.username.localeCompare(
-              b.username
-            )
-          );
-        }
-
+      if (
+        a.submittedAtMillis != null &&
+        b.submittedAtMillis != null
+      ) {
 
         if (
-          b.points !==
-          a.points
-        ) {
-
-          return (
-            b.points -
-            a.points
-          );
-        }
-
-
-        if (
-          b.exactScores !==
-          a.exactScores
-        ) {
-
-          return (
-            b.exactScores -
-            a.exactScores
-          );
-        }
-
-
-        if (
-          a.submittedAtMillis != null &&
-          b.submittedAtMillis != null &&
           a.submittedAtMillis !==
-            b.submittedAtMillis
+          b.submittedAtMillis
         ) {
 
           return (
@@ -2344,90 +1439,64 @@ async function renderHomeLeaderboardPreview() {
             b.submittedAtMillis
           );
         }
+      }
 
+      if (
+        a.submittedAtMillis != null &&
+        b.submittedAtMillis == null
+      ) {
+        return -1;
+      }
 
-        if (
-          a.submittedAtMillis != null &&
-          b.submittedAtMillis == null
-        ) {
+      if (
+        a.submittedAtMillis == null &&
+        b.submittedAtMillis != null
+      ) {
+        return 1;
+      }
 
-          return -1;
-        }
+      return a.username.localeCompare(
+        b.username
+      );
+    });
 
+    homeLeaderboardPreview.innerHTML = "";
 
-        if (
-          a.submittedAtMillis == null &&
-          b.submittedAtMillis != null
-        ) {
+    rows.slice(0, 3).forEach(
+      (row, index) => {
 
-          return 1;
-        }
+        const div =
+          document.createElement("div");
 
+        div.className = "preview-row";
 
-        return (
-          a.username.localeCompare(
-            b.username
-          )
+        div.style.cursor = "pointer";
+
+        div.innerHTML = `
+          <span>
+            ${index + 1}.
+            ${row.username}
+          </span>
+
+          <span class="preview-points">
+            ${row.status}
+          </span>
+        `;
+
+        div.addEventListener(
+          "click",
+          () => {
+
+            window.location.href =
+              "leaderboard.html";
+          }
+        );
+
+        homeLeaderboardPreview.appendChild(
+          div
         );
       }
     );
-
-
-    homeLeaderboardPreview.innerHTML =
-      "";
-
-
-    rows
-      .slice(
-        0,
-        3
-      )
-      .forEach(
-        (row, index) => {
-
-          const div =
-            document.createElement(
-              "div"
-            );
-
-
-          div.className =
-            "preview-row";
-
-
-          div.style.cursor =
-            "pointer";
-
-
-          div.innerHTML = `
-            <span>
-              ${index + 1}.
-              ${row.username}
-            </span>
-
-            <span class="preview-points">
-              ${row.status}
-            </span>
-          `;
-
-
-          div.addEventListener(
-            "click",
-            () => {
-
-              window.location.href =
-                "leaderboard.html";
-            }
-          );
-
-
-          homeLeaderboardPreview
-            .appendChild(
-              div
-            );
-        }
-      );
-
 
   } catch (error) {
 
@@ -2435,7 +1504,6 @@ async function renderHomeLeaderboardPreview() {
       "Home leaderboard preview failed:",
       error
     );
-
 
     homeLeaderboardPreview.innerHTML = `
       <div class="preview-row">
@@ -2455,52 +1523,40 @@ async function renderHomeLeaderboardPreview() {
 
 
 /* =====================================================
-   HOME FIXTURES PREVIEW
+   HOME FIXTURE RESULTS — WEEK 8
 ===================================================== */
 
 function renderHomeFixturesPreview() {
 
-  if (
-    !homeFixturesPreview
-  ) {
-
+  if (!homeFixturesPreview) {
     return;
   }
 
-
-  homeFixturesPreview.innerHTML =
-    "";
-
+  homeFixturesPreview.innerHTML = "";
 
   const roundResults =
     getHomeRoundResults();
 
-
   const latestResults =
-  homePreviewFixtures
+    homePreviewFixtures
 
-      .map(
-        (fixture) => {
+      .map((fixture) => {
 
-          const result =
-            roundResults[
-              fixture.id
-            ];
+        const result =
+          roundResults[fixture.id];
 
+        return {
 
-          return {
+          ...fixture,
 
-            ...fixture,
+          homeScore:
+            result?.homeScore,
 
-            homeScore:
-              result?.homeScore,
+          awayScore:
+            result?.awayScore
 
-            awayScore:
-              result?.awayScore
-
-          };
-        }
-      )
+        };
+      })
 
       .filter(
         (fixture) =>
@@ -2510,23 +1566,12 @@ function renderHomeFixturesPreview() {
 
       .sort(
         (a, b) =>
-          Number(
-            b.id
-          ) -
-          Number(
-            a.id
-          )
+          Number(b.id) - Number(a.id)
       )
 
-      .slice(
-        0,
-        3
-      );
+      .slice(0, 3);
 
-
-  if (
-    latestResults.length === 0
-  ) {
+  if (latestResults.length === 0) {
 
     homeFixturesPreview.innerHTML = `
       <div class="preview-row">
@@ -2535,9 +1580,7 @@ function renderHomeFixturesPreview() {
           No results yet
         </span>
 
-        <span>
-          —
-        </span>
+        <span>—</span>
 
       </div>
     `;
@@ -2545,23 +1588,15 @@ function renderHomeFixturesPreview() {
     return;
   }
 
-
   latestResults.forEach(
     (fixture, index) => {
 
       const div =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
+      div.className = "preview-row";
 
-      div.className =
-        "preview-row";
-
-
-      div.style.cursor =
-        "pointer";
-
+      div.style.cursor = "pointer";
 
       div.innerHTML = `
         <span>
@@ -2579,7 +1614,6 @@ function renderHomeFixturesPreview() {
         </span>
       `;
 
-
       div.addEventListener(
         "click",
         () => {
@@ -2589,10 +1623,7 @@ function renderHomeFixturesPreview() {
         }
       );
 
-
-      homeFixturesPreview.appendChild(
-        div
-      );
+      homeFixturesPreview.appendChild(div);
     }
   );
 }
@@ -2603,21 +1634,13 @@ function renderHomeFixturesPreview() {
 ===================================================== */
 
 const menuToggle =
-  document.getElementById(
-    "menuToggle"
-  );
-
+  document.getElementById("menuToggle");
 
 const dropdownMenu =
-  document.getElementById(
-    "dropdownMenu"
-  );
+  document.getElementById("dropdownMenu");
 
 
-if (
-  menuToggle &&
-  dropdownMenu
-) {
+if (menuToggle && dropdownMenu) {
 
   menuToggle.addEventListener(
     "click",
@@ -2629,18 +1652,13 @@ if (
     }
   );
 
-
   document.addEventListener(
     "click",
     (event) => {
 
       if (
-        !menuToggle.contains(
-          event.target
-        ) &&
-        !dropdownMenu.contains(
-          event.target
-        )
+        !menuToggle.contains(event.target) &&
+        !dropdownMenu.contains(event.target)
       ) {
 
         dropdownMenu.classList.add(
@@ -2653,10 +1671,15 @@ if (
 
 
 /* =====================================================
-   PREDICTIONS STATUS
+   WEEK 9 PREDICTION STATUS
 ===================================================== */
 
 function updatePredictionsCountdown() {
+
+  // Check whether the Friday fixture
+  // needs to change to VOID.
+
+  updateVisibleFridayFixture();
 
   const countdownBox =
     document.getElementById(
@@ -2671,12 +1694,14 @@ function updatePredictionsCountdown() {
 
     countdownBox.innerHTML = `
       <strong>
-        Week Eight predictions are now closed.
+        Week Nine predictions are now closed.
       </strong>
     `;
 
     if (startGameBtn) {
+
       startGameBtn.disabled = true;
+
       startGameBtn.textContent =
         "Predictions Closed";
     }
@@ -2688,34 +1713,50 @@ function updatePredictionsCountdown() {
     return;
   }
 
+  const fridayMatchVoided =
+    fixtureIsVoid(fridayVoidFixtureId);
+
   countdownBox.innerHTML = `
     <strong>
-      Week Eight predictions are now open!
+      Week Nine predictions are now open!
     </strong>
 
     <br><br>
 
     Predict all Premier League and
     Championship matches for
-    23–25 October 2026.
+    30 October – 2 November 2026.
 
     <br><br>
 
     <strong>
       Final entries close Saturday
-      24 October at 12:30pm.
+      31 October at 12:30pm.
     </strong>
 
     <br><br>
 
-    Friday's Premier League and
-    Championship fixtures will be
-    void for entries submitted
-    after 8pm Friday.
+    ${
+      fridayMatchVoided
+        ? `
+          <strong>
+            Sheffield United v Wrexham
+            is now VOID for new entries.
+          </strong>
+        `
+        : `
+          Friday's Sheffield United
+          v Wrexham match will be
+          void for entries submitted
+          after 8pm Friday.
+        `
+    }
   `;
 
   if (startGameBtn) {
+
     startGameBtn.disabled = false;
+
     startGameBtn.textContent =
       "Submit Your Score Predictions Now!";
   }
@@ -2739,53 +1780,35 @@ window.addEventListener(
 
     event.preventDefault();
 
-
-    deferredPrompt =
-      event;
-
+    deferredPrompt = event;
 
     const installBtn =
       document.getElementById(
         "installBtn"
       );
 
-
-    if (
-      !installBtn
-    ) {
-
+    if (!installBtn) {
       return;
     }
 
-
-    installBtn.style.display =
-      "block";
-
+    installBtn.style.display = "block";
 
     installBtn.addEventListener(
       "click",
       async () => {
 
-        if (
-          !deferredPrompt
-        ) {
-
+        if (!deferredPrompt) {
           return;
         }
 
-
         deferredPrompt.prompt();
-
 
         await deferredPrompt.userChoice;
 
+        deferredPrompt = null;
 
-        deferredPrompt =
-          null;
+        installBtn.style.display = "none";
 
-
-        installBtn.style.display =
-          "none";
       },
       {
         once: true
@@ -2805,12 +1828,9 @@ async function refreshHomeLiveData() {
 
     await loadHomeLiveResults();
 
-
     await renderHomeLeaderboardPreview();
 
-
     renderHomeFixturesPreview();
-
 
   } catch (error) {
 
@@ -2819,10 +1839,7 @@ async function refreshHomeLiveData() {
       error
     );
 
-
-    if (
-      homeLeaderboardPreview
-    ) {
+    if (homeLeaderboardPreview) {
 
       homeLeaderboardPreview.innerHTML = `
         <div class="preview-row">
@@ -2848,16 +1865,23 @@ async function refreshHomeLiveData() {
 
 showHome();
 
-
 updatePredictionsCountdown();
 
-
 refreshHomeLiveData();
+
+
+// Check entry status and Friday voids
+// every 30 seconds.
 
 setInterval(
   updatePredictionsCountdown,
   30000
 );
+
+
+// Refresh Week 8 homepage standings
+// and results every 60 seconds.
+
 setInterval(
   refreshHomeLiveData,
   60000

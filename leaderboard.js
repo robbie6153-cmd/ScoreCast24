@@ -63,7 +63,7 @@ const englishLeagueRounds = [
     storedRound: "English League Week Four",
     resultsRound: "English League Week 3"
   },
-  ...[4, 5, 6, 7, 8].map(week => ({
+  ...[4, 5, 6, 7, 8, 9].map(week => ({
     id: `English League Week ${week}`,
     label: `Week ${week}`,
     storedRound: `English League Week ${week}`,
@@ -78,7 +78,7 @@ const englishLeagueRounds = [
    Week 8 also contributes to season totals.
 ===================================================== */
 
-const currentRound = "English League Week 8";
+const currentRound = "English League Week 9";
 
 const currentLeaderboardRound = "English League Week 8";
 
