@@ -9,7 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 // Updated version to load latest manual results
-import { resultsByRound } from "./results.js?v=4";
+import { resultsByRound } from "./results.js?v=5";
 
 /* =====================================================
    PAGE ELEMENTS
@@ -80,7 +80,7 @@ const englishLeagueRounds = [
 
 const currentRound = "English League Week 9";
 
-const currentLeaderboardRound = "English League Week 8";
+const currentLeaderboardRound = "English League Week 9";
 
 let selectedRound = currentLeaderboardRound;
 let activeLeaderboard = "week";
