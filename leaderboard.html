@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -69,7 +70,6 @@
 
     </header>
 
-
     <main class="leaderboard-page">
 
       <h1>
@@ -80,7 +80,6 @@
         Tap a player to view their predictions.
       </p>
 
-
       <div class="round-tabs">
 
         <button
@@ -88,9 +87,8 @@
           class="round-tab active"
           type="button"
         >
-          Current Leaderboard
+          Weekly Leaderboard
         </button>
-
 
         <button
           id="seasonLeaderboardTab"
@@ -99,7 +97,6 @@
         >
           Season Leaderboard
         </button>
-
 
         <a
           href="score-mini-leagues.html"
@@ -110,9 +107,14 @@
 
       </div>
 
-
       <!-- =========================
            WEEK SELECTOR
+
+           Automatically populated by
+           leaderboard.js.
+
+           Week 10 appears first.
+           Week 9 selected by default.
       ========================== -->
 
       <div
@@ -131,24 +133,9 @@
           id="weekSelector"
           class="week-selector"
         >
-
-          <option
-            value="English League Week One"
-          >
-            Week One
-          </option>
-
-          <option
-            value="English League Week Two"
-            selected
-          >
-            Week Two
-          </option>
-
         </select>
 
       </div>
-
 
       <!-- =========================
            LEADERBOARD
@@ -157,7 +144,6 @@
       <div id="leaderboardContainer">
         Loading leaderboard...
       </div>
-
 
       <a
         href="index.html"
@@ -170,10 +156,15 @@
 
   </div>
 
+  <!-- =========================
+       LEADERBOARD JAVASCRIPT V13
+
+       Cache version updated to 32.
+  ========================== -->
 
   <script
     type="module"
-    src="leaderboard.js?v=30"
+    src="leaderboard.js?v=32"
   ></script>
 
 </body>
