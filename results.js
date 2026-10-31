@@ -689,11 +689,11 @@ export const resultsByRound = {
 
 "English League Week 9": {
   1:  { homeScore: 2, awayScore: 0 },
-  2:  { homeScore: null, awayScore: null },
-  3:  { homeScore: null, awayScore: null },
-  4:  { homeScore: null, awayScore: null },
-  5:  { homeScore: null, awayScore: null },
-  6:  { homeScore: null, awayScore: null },
+  2:  { homeScore: 2, awayScore: 0 },
+  3:  { homeScore: 2, awayScore: 0 },
+  4:  { homeScore: 3, awayScore: 1 },
+  5:  { homeScore: 2, awayScore: 2 },
+  6:  { homeScore: 0, awayScore: 1 },
   7:  { homeScore: null, awayScore: null },
   8:  { homeScore: null, awayScore: null },
   9:  { homeScore: null, awayScore: null },
@@ -702,14 +702,14 @@ export const resultsByRound = {
   12: { homeScore: 1, awayScore: 3 },
   13: { homeScore: 3, awayScore: 2 },
   14: { homeScore: 2, awayScore: 0 },
-  15: { homeScore: null, awayScore: null },
-  16: { homeScore: null, awayScore: null },
-  17: { homeScore: null, awayScore: null },
-  18: { homeScore: null, awayScore: null },
-  19: { homeScore: null, awayScore: null },
-  20: { homeScore: null, awayScore: null },
-  21: { homeScore: null, awayScore: null },
-  22: { homeScore: null, awayScore: null }
+  15: { homeScore: 2, awayScore: 3 },
+  16: { homeScore: 0, awayScore: 0 },
+  17: { homeScore: 3, awayScore: 0 },
+  18: { homeScore: 4, awayScore: 1 },
+  19: { homeScore: 4, awayScore: 1 },
+  20: { homeScore: 4, awayScore: 0 },
+  21: { homeScore: 1, awayScore: 3 },
+  22: { homeScore: 3, awayScore: 0 }
 }
 
 
