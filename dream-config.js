@@ -1,3 +1,4 @@
+
 export const DREAM_CONFIG = {
   /*
     Core selection rules
@@ -7,15 +8,16 @@ export const DREAM_CONFIG = {
   maxRating: 888,
   maxFromOneClub: 2,
 
-
   /*
     Manual gameweek controls
+
+    Week 9: 30 October - 2 November 2026
   */
 
-  manualLock: false,
+  manualLock: true,
 
-currentRoundId: "2026-week-05",
-previousRoundId: "2026-week-04",
+  currentRoundId: "2026-week-09",
+  previousRoundId: "2026-week-08",
 
   /*
     Player database files
