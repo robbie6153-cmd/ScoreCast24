@@ -719,7 +719,7 @@ export const resultsByRound = {
 
   "English League Week 10": {
     1:  { homeScore: 3, awayScore: 1 },
-    2:  { homeScore: null, awayScore: null },
+    2:  { homeScore: 1, awayScore: 0 },
     3:  { homeScore: null, awayScore: null },
     4:  { homeScore: null, awayScore: null },
     5:  { homeScore: null, awayScore: null },
@@ -729,9 +729,9 @@ export const resultsByRound = {
     9:  { homeScore: null, awayScore: null },
     10: { homeScore: null, awayScore: null },
     11: { homeScore: 3, awayScore: 1 },
-    12: { homeScore: null, awayScore: null },
-    13: { homeScore: null, awayScore: null },
-    14: { homeScore: null, awayScore: null },
+    12: { homeScore: 0, awayScore: 5 },
+    13: { homeScore: 1, awayScore: 2 },
+    14: { homeScore: 1, awayScore: 1 },
     15: { homeScore: null, awayScore: null },
     16: { homeScore: null, awayScore: null },
     17: { homeScore: null, awayScore: null },
