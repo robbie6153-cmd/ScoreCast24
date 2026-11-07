@@ -25,8 +25,11 @@ function makeFixture(id, date, group, home, away) {
   return { id: String(id), date, group, home, away, homeScore: null, awayScore: null };
 }
 
-// Week 11 — Premier League, 21–23 November 2026. All times are GMT.
+
+// Week 11 — Premier League and Championship, 21–23 November 2026.
+// All kick-off times are GMT.
 const fixtures = [
+  // PREMIER LEAGUE
   makeFixture(1, "Sat 21 Nov 2026, 12:30", PL, "Manchester City", "Fulham"),
   makeFixture(2, "Sat 21 Nov 2026, 15:00", PL, "AFC Bournemouth", "Nottingham Forest"),
   makeFixture(3, "Sat 21 Nov 2026, 15:00", PL, "Aston Villa", "Sunderland"),
@@ -36,7 +39,21 @@ const fixtures = [
   makeFixture(7, "Sat 21 Nov 2026, 17:30", PL, "Newcastle United", "Arsenal"),
   makeFixture(8, "Sun 22 Nov 2026, 14:00", PL, "Hull City", "Brighton & Hove Albion"),
   makeFixture(9, "Sun 22 Nov 2026, 16:30", PL, "Liverpool", "Manchester United"),
-  makeFixture(10, "Mon 23 Nov 2026, 20:00", PL, "Brentford", "Everton")
+  makeFixture(10, "Mon 23 Nov 2026, 20:00", PL, "Brentford", "Everton"),
+
+  // CHAMPIONSHIP
+  makeFixture(11, "Sat 21 Nov 2026, 12:30", CH, "Millwall", "Queens Park Rangers"),
+  makeFixture(12, "Sat 21 Nov 2026, 12:30", CH, "Norwich City", "Cardiff City"),
+  makeFixture(13, "Sat 21 Nov 2026, 12:30", CH, "Southampton", "Derby County"),
+  makeFixture(14, "Sat 21 Nov 2026, 15:00", CH, "Bolton Wanderers", "Portsmouth"),
+  makeFixture(15, "Sat 21 Nov 2026, 15:00", CH, "Lincoln City", "Wrexham"),
+  makeFixture(16, "Sat 21 Nov 2026, 15:00", CH, "Middlesbrough", "Bristol City"),
+  makeFixture(17, "Sat 21 Nov 2026, 15:00", CH, "Sheffield United", "Watford"),
+  makeFixture(18, "Sat 21 Nov 2026, 15:00", CH, "Stoke City", "Birmingham City"),
+  makeFixture(19, "Sat 21 Nov 2026, 15:00", CH, "Swansea City", "West Bromwich Albion"),
+  makeFixture(20, "Sat 21 Nov 2026, 15:00", CH, "West Ham United", "Preston North End"),
+  makeFixture(21, "Sat 21 Nov 2026, 15:00", CH, "Wolverhampton Wanderers", "Charlton Athletic"),
+  makeFixture(22, "Sun 22 Nov 2026, 12:00", CH, "Burnley", "Blackburn Rovers")
 ];
 
 // Week 10 — homepage results. IDs match the original Week 10 entries.
