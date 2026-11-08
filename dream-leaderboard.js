@@ -1,6 +1,6 @@
 
 import { auth, db } from "./firebase.js?v=108";
-import { DREAM_CONFIG } from "./dream-config.js?v=8";
+import { DREAM_CONFIG } from "./dream-config.js?v=9";
 
 import {
   collection,
