@@ -1,4 +1,4 @@
-console.log("leaderboard.js loaded English League v14");
+console.log("leaderboard.js loaded English League v15");
 
 import { db } from "./firebase.js?v=107";
 
@@ -58,7 +58,7 @@ const englishLeagueRounds = [
     storedRound: "English League Week Four",
     resultsRound: "English League Week 3"
   },
-  ...[4, 5, 6, 7, 8, 9, 10, 11].map(week => ({
+  ...[4, 5, 6, 7, 8, 9, 10, 11, 12].map(week => ({
     id: `English League Week ${week}`,
     label: `Week ${week}`,
     storedRound: `English League Week ${week}`,
@@ -66,8 +66,8 @@ const englishLeagueRounds = [
   }))
 ];
 
-const currentRound = "English League Week 11";
-const currentLeaderboardRound = "English League Week 10";
+const currentRound = "English League Week 12";
+const currentLeaderboardRound = "English League Week 11";
 
 let selectedRound = currentLeaderboardRound;
 let activeLeaderboard = "week";
@@ -599,8 +599,8 @@ async function initialiseLeaderboard() {
       currentRound,
       selectedRound,
       entries: predictionDocuments.length,
-      week10Results: getResultsForLogicalRound("English League Week 10"),
-      week11Results: getResultsForLogicalRound("English League Week 11")
+  week11Results: getResultsForLogicalRound("English League Week 11"),
+week12Results: getResultsForLogicalRound("English League Week 12")
     });
   } catch (error) {
     console.error("Leaderboard error:", error);

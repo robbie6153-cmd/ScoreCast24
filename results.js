@@ -740,5 +740,34 @@ export const resultsByRound = {
     20: { homeScore: 2, awayScore: 1 },
     21: { homeScore: 0, awayScore: 0 },
     22: { homeScore: 3, awayScore: 0 }
-  }
+  },
+
+  /* ==========================================
+   ENGLISH LEAGUE WEEK 11
+   ========================================== */
+
+"English League Week 11": {
+  1:  { homeScore: 1, awayScore: 1 },
+  2:  { homeScore: 2, awayScore: 0 },
+  3:  { homeScore: 0, awayScore: 0 },
+  4:  { homeScore: 1, awayScore: 4 },
+  5:  { homeScore: 3, awayScore: 2 },
+  6:  { homeScore: 2, awayScore: 0 },
+  7:  { homeScore: null, awayScore: null },
+  8:  { homeScore: null, awayScore: null },
+  9:  { homeScore: null, awayScore: null },
+  10: { homeScore: null, awayScore: null },
+  11: { homeScore: 0, awayScore: 1 },
+  12: { homeScore: 2, awayScore: 1 },
+  13: { homeScore: 2, awayScore: 0 },
+  14: { homeScore: 1, awayScore: 1 },
+  15: { homeScore: 0, awayScore: 1 },
+  16: { homeScore: 2, awayScore: 0 },
+  17: { homeScore: 4, awayScore: 0 },
+  18: { homeScore: 1, awayScore: 0 },
+  19: { homeScore: 2, awayScore: 2 },
+  20: { homeScore: 1, awayScore: 1 },
+  21: { homeScore: 2, awayScore: 1 },
+  22: { homeScore: null, awayScore: null }
+}
 };
