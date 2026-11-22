@@ -768,6 +768,6 @@ export const resultsByRound = {
   19: { homeScore: 2, awayScore: 2 },
   20: { homeScore: 1, awayScore: 1 },
   21: { homeScore: 2, awayScore: 1 },
-  22: { homeScore: null, awayScore: null }
+  22: { homeScore: 2, awayScore: 2 }
 }
 };
