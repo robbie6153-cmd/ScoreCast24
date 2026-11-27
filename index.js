@@ -16,19 +16,26 @@ const currentRound = "English League Week 12";
 const homePreviewRound = "English League Week 11";
 const submittedStorageKey = `scorecast24Submitted-${currentRound}`;
 const roundClosed = false;
-const predictionDeadline = new Date("2026-11-27T20:00:00+00:00");
+const predictionDeadline = new Date("2026-11-28T12:30:00+00:00");
+const fridayDeadline = new Date("2026-11-27T20:00:00+00:00");
 
 const PL = "Premier League";
 const CH = "Championship";
 
 function makeFixture(id, date, group, home, away) {
-  return { id: String(id), date, group, home, away, homeScore: null, awayScore: null };
+  return {
+    id: String(id),
+    date,
+    group,
+    home,
+    away,
+    homeScore: null,
+    awayScore: null
+  };
 }
 
-// Week 12 — Premier League and Championship, 27–29 November 2026.
-// All kick-off times are GMT.
+// WEEK 12 FIXTURES
 const fixtures = [
-  // PREMIER LEAGUE
   makeFixture(1, "Fri 27 Nov 2026, 20:00", PL, "Nottingham Forest", "Chelsea"),
   makeFixture(2, "Sat 28 Nov 2026, 15:00", PL, "Leeds United", "Coventry City"),
   makeFixture(3, "Sat 28 Nov 2026, 15:00", PL, "Manchester United", "Brentford"),
@@ -40,7 +47,6 @@ const fixtures = [
   makeFixture(9, "Sun 29 Nov 2026, 14:05", PL, "Sunderland", "Tottenham Hotspur"),
   makeFixture(10, "Sun 29 Nov 2026, 16:30", PL, "Arsenal", "Manchester City"),
 
-  // CHAMPIONSHIP
   makeFixture(11, "Fri 27 Nov 2026, 20:00", CH, "Southampton", "Middlesbrough"),
   makeFixture(12, "Sat 28 Nov 2026, 12:30", CH, "Blackburn Rovers", "Charlton Athletic"),
   makeFixture(13, "Sat 28 Nov 2026, 12:30", CH, "Lincoln City", "Wolverhampton Wanderers"),
@@ -55,7 +61,7 @@ const fixtures = [
   makeFixture(22, "Sun 29 Nov 2026, 12:00", CH, "Swansea City", "Cardiff City")
 ];
 
-// Week 11 — homepage results. Original fixture IDs preserved.
+// WEEK 11 HOMEPAGE RESULTS
 const homePreviewFixtures = [
   makeFixture(1, "Sat 21 Nov 2026, 12:30", PL, "Manchester City", "Fulham"),
   makeFixture(2, "Sat 21 Nov 2026, 15:00", PL, "AFC Bournemouth", "Nottingham Forest"),
@@ -100,10 +106,20 @@ function predictionsAreClosed() {
   return roundClosed || new Date() >= predictionDeadline;
 }
 
+function fixtureIsLocked(fixture) {
+  return predictionsAreClosed() ||
+    (fixture.date.startsWith("Fri") && new Date() >= fridayDeadline);
+}
+
 function getPredictionRef(username) {
   const cleanUsername = username.trim().toLowerCase().replace(/\s+/g, "-");
   const cleanRound = currentRound.toLowerCase().replace(/\s+/g, "-");
-  return doc(db, "scorecast24_predictions", `${cleanUsername}-${cleanRound}`);
+
+  return doc(
+    db,
+    "scorecast24_predictions",
+    `${cleanUsername}-${cleanRound}`
+  );
 }
 
 function escapeHtml(value) {
@@ -127,14 +143,42 @@ function showPredictions() {
 
 backHomeBtn?.addEventListener("click", showHome);
 
+function updateFixtureLocks() {
+  if (!fixturesContainer) return;
+
+  for (const fixture of fixtures) {
+    const card = fixturesContainer.querySelector(
+      `[data-fixture-id="${fixture.id}"]`
+    );
+
+    if (!card || !fixtureIsLocked(fixture)) continue;
+
+    card.querySelectorAll(".score-input").forEach(input => {
+      input.disabled = true;
+      input.value = "";
+      input.placeholder = "—";
+    });
+
+    const label = card.querySelector(".fixture-date");
+
+    if (label && !label.dataset.locked) {
+      label.append(" · 🔒 Predictions closed");
+      label.dataset.locked = "true";
+    }
+  }
+}
+
 function renderFixtures() {
   if (!fixturesContainer) return;
+
   fixturesContainer.innerHTML = "";
 
-  fixtures.forEach((fixture) => {
+  fixtures.forEach(fixture => {
     const card = document.createElement("div");
+
     card.className = "fixture-card";
     card.dataset.fixtureId = fixture.id;
+
     card.innerHTML = `
       <div class="fixture-teams">
         <div class="team-name">${escapeHtml(fixture.home)}</div>
@@ -149,8 +193,11 @@ function renderFixtures() {
         ${escapeHtml(fixture.date)} · ${escapeHtml(fixture.group)}
       </div>
     `;
+
     fixturesContainer.appendChild(card);
   });
+
+  updateFixtureLocks();
 }
 
 async function hasAlreadySubmitted(predictionRef) {
@@ -160,7 +207,10 @@ async function hasAlreadySubmitted(predictionRef) {
 
 function entryCheckTimeout(ms = 12000) {
   return new Promise((_, reject) => {
-    setTimeout(() => reject(new Error("Entry check timed out")), ms);
+    setTimeout(
+      () => reject(new Error("Entry check timed out")),
+      ms
+    );
   });
 }
 
@@ -174,6 +224,19 @@ function getPredictionsFromPage() {
   const predictions = [];
 
   for (const fixture of fixtures) {
+    if (fixtureIsLocked(fixture)) {
+      predictions.push({
+        fixtureId: fixture.id,
+        home: fixture.home,
+        away: fixture.away,
+        predictedHome: null,
+        predictedAway: null,
+        void: true
+      });
+
+      continue;
+    }
+
     const homeInput = document.getElementById(`home-${fixture.id}`);
     const awayInput = document.getElementById(`away-${fixture.id}`);
 
@@ -222,6 +285,7 @@ startGameBtn?.addEventListener("click", async () => {
   }
 
   const username = localStorage.getItem("scorecast24Username");
+
   if (!username || username.trim().length < 2) {
     window.location.href = "username.html";
     return;
@@ -249,9 +313,11 @@ startGameBtn?.addEventListener("click", async () => {
 
     renderFixtures();
     showPredictions();
+
   } catch (error) {
     console.error("Entry check failed:", error);
     alert("We could not check your existing entry. Please check your connection and try again.");
+
   } finally {
     checkingEntry = false;
     updatePredictionsCountdown();
@@ -267,6 +333,7 @@ submitPredictionsBtn?.addEventListener("click", async () => {
   }
 
   const username = localStorage.getItem("scorecast24Username");
+
   if (!username || username.trim().length < 2) {
     alert("Please create your ScoreCast24 username first.");
     window.location.href = "username.html";
@@ -279,12 +346,19 @@ submitPredictionsBtn?.addEventListener("click", async () => {
 
   try {
     const predictionRef = getPredictionRef(username);
+
     if (await hasAlreadySubmitted(predictionRef)) {
       redirectToExistingEntry();
       return;
     }
 
+    if (predictionsAreClosed()) {
+      alert("Week 12 predictions have now closed.");
+      return;
+    }
+
     const predictions = getPredictionsFromPage();
+
     if (!predictions) return;
 
     if (predictionsAreClosed()) {
@@ -293,6 +367,7 @@ submitPredictionsBtn?.addEventListener("click", async () => {
     }
 
     submitPredictionsBtn.textContent = "Submitting...";
+
     await setDoc(predictionRef, {
       username,
       predictions,
@@ -305,9 +380,11 @@ submitPredictionsBtn?.addEventListener("click", async () => {
     localStorage.setItem(submittedStorageKey, "true");
     alert("Week 12 predictions submitted!");
     window.location.href = "leaderboard.html";
+
   } catch (error) {
     console.error("Submission failed:", error);
     alert("Submission failed:\n\n" + error.message);
+
   } finally {
     submittingEntry = false;
     submitPredictionsBtn.textContent = "Submit Predictions";
@@ -324,7 +401,6 @@ dreamTeamBtn?.addEventListener("click", () => {
   if (!requireLogin()) return;
 });
 
-// Week 11 homepage results and standings.
 async function loadHomeLiveResults() {
   const resultsQuery = query(
     collection(db, "scorecast24_results"),
@@ -335,13 +411,15 @@ async function loadHomeLiveResults() {
   const finishedStatuses = new Set(["FT", "AET", "PEN"]);
   const liveResults = {};
 
-  resultsSnap.forEach((docSnap) => {
+  resultsSnap.forEach(docSnap => {
     const data = docSnap.data();
     const fixtureId = String(data.fixtureId || "").trim();
+
     if (!fixtureId) return;
 
     const status = String(data.status || "").trim().toUpperCase();
     const isFinished = finishedStatuses.has(status);
+
     liveResults[fixtureId] = {
       homeScore: isFinished ? data.homeScore ?? null : null,
       awayScore: isFinished ? data.awayScore ?? null : null,
@@ -396,6 +474,7 @@ function calculatePoints(prediction, result) {
 
 async function renderHomeLeaderboardPreview() {
   if (!homeLeaderboardPreview) return;
+
   homeLeaderboardPreview.innerHTML = "Loading standings...";
 
   try {
@@ -408,14 +487,15 @@ async function renderHomeLeaderboardPreview() {
     const roundResults = getHomeRoundResults();
     const rows = [];
 
-    predictionsSnap.forEach((docSnap) => {
+    predictionsSnap.forEach(docSnap => {
       const data = docSnap.data();
+
       let totalPoints = 0;
       let exactScores = 0;
       let hasScoredFixture = false;
 
       if (Array.isArray(data.predictions)) {
-        data.predictions.forEach((prediction) => {
+        data.predictions.forEach(prediction => {
           const points = calculatePoints(
             prediction,
             roundResults[String(prediction.fixtureId)]
@@ -424,6 +504,7 @@ async function renderHomeLeaderboardPreview() {
           if (points !== null) {
             totalPoints += points;
             hasScoredFixture = true;
+
             if (points === 5) exactScores += 1;
           }
         });
@@ -435,9 +516,11 @@ async function renderHomeLeaderboardPreview() {
         exactScores,
         submittedAtMillis: data.submittedAt?.toMillis
           ? data.submittedAt.toMillis()
-          : (typeof data.submittedAt?.seconds === "number"
-              ? data.submittedAt.seconds * 1000
-              : null)
+          : (
+              typeof data.submittedAt?.seconds === "number"
+                ? data.submittedAt.seconds * 1000
+                : null
+            )
       });
     });
 
@@ -459,19 +542,27 @@ async function renderHomeLeaderboardPreview() {
     );
 
     homeLeaderboardPreview.innerHTML = "";
+
     rows.slice(0, 3).forEach((row, index) => {
       const div = document.createElement("div");
+
       div.className = "preview-row";
       div.style.cursor = "pointer";
+
       div.innerHTML = `
         <span>${index + 1}. ${escapeHtml(row.username)}</span>
-        <span class="preview-points">${row.points == null ? "Pending" : `${row.points} pts`}</span>
+        <span class="preview-points">
+          ${row.points == null ? "Pending" : `${row.points} pts`}
+        </span>
       `;
+
       div.addEventListener("click", () => {
         window.location.href = "leaderboard.html";
       });
+
       homeLeaderboardPreview.appendChild(div);
     });
+
   } catch (error) {
     console.error("Home leaderboard preview failed:", error);
     showHomeLeaderboardError();
@@ -480,6 +571,7 @@ async function renderHomeLeaderboardPreview() {
 
 function showHomeLeaderboardError() {
   if (!homeLeaderboardPreview) return;
+
   homeLeaderboardPreview.innerHTML = `
     <div class="preview-row">
       <span>Could not load</span>
@@ -490,16 +582,21 @@ function showHomeLeaderboardError() {
 
 function renderHomeFixturesPreview() {
   if (!homeFixturesPreview) return;
+
   homeFixturesPreview.innerHTML = "";
 
   const roundResults = getHomeRoundResults();
+
   const latestResults = homePreviewFixtures
-    .map((fixture) => ({
+    .map(fixture => ({
       ...fixture,
       homeScore: roundResults[fixture.id]?.homeScore,
       awayScore: roundResults[fixture.id]?.awayScore
     }))
-    .filter((fixture) => fixture.homeScore != null && fixture.awayScore != null)
+    .filter(fixture =>
+      fixture.homeScore != null &&
+      fixture.awayScore != null
+    )
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 3);
 
@@ -515,8 +612,10 @@ function renderHomeFixturesPreview() {
 
   latestResults.forEach((fixture, index) => {
     const div = document.createElement("div");
+
     div.className = "preview-row";
     div.style.cursor = "pointer";
+
     div.innerHTML = `
       <span>
         ${escapeHtml(fixture.home)}
@@ -525,9 +624,11 @@ function renderHomeFixturesPreview() {
       </span>
       <span>${index === 0 ? "Latest" : "›"}</span>
     `;
+
     div.addEventListener("click", () => {
       window.location.href = "leaderboard.html";
     });
+
     homeFixturesPreview.appendChild(div);
   });
 }
@@ -540,8 +641,11 @@ if (menuToggle && dropdownMenu) {
     dropdownMenu.classList.toggle("hidden");
   });
 
-  document.addEventListener("click", (event) => {
-    if (!menuToggle.contains(event.target) && !dropdownMenu.contains(event.target)) {
+  document.addEventListener("click", event => {
+    if (
+      !menuToggle.contains(event.target) &&
+      !dropdownMenu.contains(event.target)
+    ) {
       dropdownMenu.classList.add("hidden");
     }
   });
@@ -550,6 +654,7 @@ if (menuToggle && dropdownMenu) {
 function updatePredictionsCountdown() {
   const countdownBox = document.getElementById("weekOneCountdown");
   const closed = predictionsAreClosed();
+  const fridayClosed = new Date() >= fridayDeadline;
 
   if (countdownBox) {
     countdownBox.innerHTML = closed
@@ -557,14 +662,19 @@ function updatePredictionsCountdown() {
       : `
         <strong>Week Twelve predictions are now open!</strong>
         <br><br>
-        Predict all 22 Premier League and Championship matches for 27–29 November 2026.
+        Predict ${fridayClosed ? "the remaining 20" : "all 22"}
+        Premier League and Championship matches for 27–29 November 2026.
         <br><br>
-        <strong>Final entries close Friday 27 November at 8pm GMT.</strong>
+        <strong>Final entries close Saturday 28 November at 12:30pm GMT.</strong>
+        ${fridayClosed
+          ? "<br><br>Friday fixtures are now locked and void for new entries."
+          : ""}
       `;
   }
 
   if (startGameBtn) {
     startGameBtn.disabled = closed || checkingEntry;
+
     if (!checkingEntry || closed) {
       startGameBtn.textContent = closed
         ? "Predictions Closed"
@@ -575,18 +685,22 @@ function updatePredictionsCountdown() {
   if (submitPredictionsBtn) {
     submitPredictionsBtn.disabled = closed || submittingEntry;
   }
+
+  updateFixtureLocks();
 }
 
 let deferredPrompt;
 
-window.addEventListener("beforeinstallprompt", (event) => {
+window.addEventListener("beforeinstallprompt", event => {
   event.preventDefault();
   deferredPrompt = event;
 
   const installBtn = document.getElementById("installBtn");
+
   if (!installBtn) return;
 
   installBtn.style.display = "block";
+
   installBtn.addEventListener("click", async () => {
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
@@ -600,6 +714,7 @@ async function refreshHomeLiveData() {
     await loadHomeLiveResults();
     await renderHomeLeaderboardPreview();
     renderHomeFixturesPreview();
+
   } catch (error) {
     console.error("Home live update failed:", error);
     showHomeLeaderboardError();
