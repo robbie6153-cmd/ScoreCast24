@@ -3,10 +3,10 @@ export const DREAM_CONFIG = {
   maxRating: 888,
   maxFromOneClub: 2,
 
-  // Week 10: 6–9 November 2026
-  manualLock: true,
-  currentRoundId: "2026-week-10",
-  previousRoundId: "2026-week-09",
+// Week 11: 21–23 November 2026
+manualLock: true,
+currentRoundId: "2026-week-11",
+previousRoundId: "2026-week-10",
 
   playerFiles: [
     "./goalkeepers.json?v=3",
