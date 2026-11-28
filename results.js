@@ -777,8 +777,8 @@ export const resultsByRound = {
 
   "English League Week 12": {
     1: { homeScore: 3, awayScore: 2 },
-    2: { homeScore: null, awayScore: null },
-    3: { homeScore: null, awayScore: null },
+    2: { homeScore: 3, awayScore: 0 },
+    3: { homeScore: 0, awayScore: 4 },
     4: { homeScore: null, awayScore: null },
     5: { homeScore: null, awayScore: null },
     6: { homeScore: null, awayScore: null },
@@ -790,13 +790,13 @@ export const resultsByRound = {
     12: { homeScore: 1, awayScore: 0 },
     13: { homeScore: 0, awayScore: 0 },
     14: { homeScore: 1, awayScore: 1 },
-    15: { homeScore: null, awayScore: null },
-    16: { homeScore: null, awayScore: null },
-    17: { homeScore: null, awayScore: null },
-    18: { homeScore: null, awayScore: null },
-    19: { homeScore: null, awayScore: null },
-    20: { homeScore: null, awayScore: null },
-    21: { homeScore: null, awayScore: null },
+    15: { homeScore: 2, awayScore: 4 },
+    16: { homeScore: 0, awayScore: 0 },
+    17: { homeScore: 0, awayScore: 1 },
+    18: { homeScore: 1, awayScore: 1 },
+    19: { homeScore: 1, awayScore: 0 },
+    20: { homeScore: 1, awayScore: 0 },
+    21: { homeScore: 1, awayScore: 0 },
     22: { homeScore: null, awayScore: null }
   }
 };

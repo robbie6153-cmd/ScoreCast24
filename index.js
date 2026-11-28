@@ -13,7 +13,7 @@ import {
 import { resultsByRound } from "./results.js?v=5";
 
 const currentRound = "English League Week 12";
-const homePreviewRound = "English League Week 11";
+const homePreviewRound = "English League Week 12";
 const submittedStorageKey = `scorecast24Submitted-${currentRound}`;
 const roundClosed = false;
 const predictionDeadline = new Date("2026-11-28T12:30:00+00:00");
