@@ -1,4 +1,4 @@
-console.log("leaderboard.js loaded English League v15");
+console.log("leaderboard.js loaded English League v16");
 
 import { db } from "./firebase.js?v=107";
 
@@ -58,7 +58,7 @@ const englishLeagueRounds = [
     storedRound: "English League Week Four",
     resultsRound: "English League Week 3"
   },
-  ...[4, 5, 6, 7, 8, 9, 10, 11, 12].map(week => ({
+  ...[4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(week => ({
     id: `English League Week ${week}`,
     label: `Week ${week}`,
     storedRound: `English League Week ${week}`,
@@ -66,8 +66,8 @@ const englishLeagueRounds = [
   }))
 ];
 
-const currentRound = "English League Week 12";
-const currentLeaderboardRound = "English League Week 11";
+const currentRound = "English League Week 13";
+const currentLeaderboardRound = "English League Week 12";
 
 let selectedRound = currentLeaderboardRound;
 let activeLeaderboard = "week";
@@ -169,12 +169,17 @@ async function loadPredictionDocuments() {
       username: data.username || "Unknown",
       round: data.round,
       logicalRound,
-      predictions: Array.isArray(data.predictions) ? data.predictions : [],
+      predictions: Array.isArray(data.predictions)
+        ? data.predictions
+        : [],
       submittedAtMillis: timestampToMillis(data.submittedAt)
     });
   });
 
-  console.log("Prediction documents loaded:", predictionDocuments.length);
+  console.log(
+    "Prediction documents loaded:",
+    predictionDocuments.length
+  );
 }
 
 async function loadLiveResults() {
@@ -209,6 +214,7 @@ async function loadLiveResults() {
 
 function getResultsForLogicalRound(logicalRound) {
   const config = getRoundConfig(logicalRound);
+
   if (!config) return {};
 
   const mergedResults = {
@@ -265,11 +271,14 @@ function calculateRoundStats(predictions = [], logicalRound) {
   }
 
   const roundResults = getResultsForLogicalRound(logicalRound);
+
   let totalPoints = 0;
   let exactScores = 0;
   let hasAnyResult = false;
 
   predictions.forEach(prediction => {
+
+    // Fixtures missed by late entrants do not score.
     if (prediction.void === true) return;
 
     const fixtureId = String(prediction.fixtureId ?? "");
@@ -300,14 +309,29 @@ function calculateRoundStats(predictions = [], logicalRound) {
 
     hasAnyResult = true;
 
-    if (predictedHome === actualHome && predictedAway === actualAway) {
+    if (
+      predictedHome === actualHome &&
+      predictedAway === actualAway
+    ) {
       totalPoints += 5;
       exactScores += 1;
-    } else if (predictedHome === predictedAway && actualHome === actualAway) {
+
+    } else if (
+      predictedHome === predictedAway &&
+      actualHome === actualAway
+    ) {
       totalPoints += 3;
-    } else if (predictedHome < predictedAway && actualHome < actualAway) {
+
+    } else if (
+      predictedHome < predictedAway &&
+      actualHome < actualAway
+    ) {
       totalPoints += 2;
-    } else if (predictedHome > predictedAway && actualHome > actualAway) {
+
+    } else if (
+      predictedHome > predictedAway &&
+      actualHome > actualAway
+    ) {
       totalPoints += 1;
     }
   });
@@ -378,13 +402,17 @@ function displayLeaderboard(rows, heading) {
     return;
   }
 
-  leaderboardContainer.innerHTML = `<h2>${escapeHtml(heading)} 🏆</h2>`;
+  leaderboardContainer.innerHTML = `
+    <h2>${escapeHtml(heading)} 🏆</h2>
+  `;
 
   rows.forEach((row, index) => {
     const div = document.createElement("div");
     const isMe = normaliseUsername(row.username) === myUsername;
 
-    div.className = isMe ? "leaderboard-row my-row" : "leaderboard-row";
+    div.className = isMe
+      ? "leaderboard-row my-row"
+      : "leaderboard-row";
 
     div.innerHTML = `
       <div>#${index + 1}</div>
@@ -397,7 +425,9 @@ function displayLeaderboard(rows, heading) {
         }
       </div>
       <div class="leaderboard-points">
-        ${row.points == null ? "Score pending match results" : `${row.points} pts`}
+        ${row.points == null
+          ? "Score pending match results"
+          : `${row.points} pts`}
       </div>
     `;
 
@@ -407,11 +437,17 @@ function displayLeaderboard(rows, heading) {
         localStorage.setItem("viewPredictionUsername", row.username);
 
         if (row.viewRound) {
-          localStorage.setItem("viewPredictionRound", row.viewRound);
+          localStorage.setItem(
+            "viewPredictionRound",
+            row.viewRound
+          );
         }
 
         if (row.viewLogicalRound) {
-          localStorage.setItem("viewPredictionLogicalRound", row.viewLogicalRound);
+          localStorage.setItem(
+            "viewPredictionLogicalRound",
+            row.viewLogicalRound
+          );
         }
 
         window.location.href = "view-predictions.html";
@@ -432,7 +468,10 @@ function buildWeekLeaderboard(logicalRound) {
   predictionDocuments.forEach(entry => {
     if (entry.logicalRound !== logicalRound) return;
 
-    const stats = calculateRoundStats(entry.predictions, logicalRound);
+    const stats = calculateRoundStats(
+      entry.predictions,
+      logicalRound
+    );
 
     weekLeaderboardRows.push({
       id: entry.id,
@@ -492,7 +531,11 @@ function buildSeasonLeaderboard() {
     }
 
     const player = playerMap.get(usernameKey);
-    const stats = calculateRoundStats(entry.predictions, entry.logicalRound);
+
+    const stats = calculateRoundStats(
+      entry.predictions,
+      entry.logicalRound
+    );
 
     if (stats.points !== null) {
       player.totalPoints += stats.points;
@@ -512,7 +555,8 @@ function buildSeasonLeaderboard() {
 
     if (
       !player.viewLogicalRound ||
-      getRoundNumber(entry.logicalRound) > getRoundNumber(player.viewLogicalRound)
+      getRoundNumber(entry.logicalRound) >
+      getRoundNumber(player.viewLogicalRound)
     ) {
       player.viewId = entry.id;
       player.viewRound = entry.round;
@@ -556,7 +600,10 @@ seasonLeaderboardTab?.addEventListener("click", () => {
   activeLeaderboard = "season";
   setActiveTab(seasonLeaderboardTab);
   hideWeekSelector();
-  displayLeaderboard(seasonLeaderboardRows, "Season Leaderboard");
+  displayLeaderboard(
+    seasonLeaderboardRows,
+    "Season Leaderboard"
+  );
 });
 
 /* =====================================================
@@ -569,7 +616,12 @@ function refreshDisplayedLeaderboard() {
   if (activeLeaderboard === "season") {
     hideWeekSelector();
     setActiveTab(seasonLeaderboardTab);
-    displayLeaderboard(seasonLeaderboardRows, "Season Leaderboard");
+
+    displayLeaderboard(
+      seasonLeaderboardRows,
+      "Season Leaderboard"
+    );
+
   } else {
     showWeekSelector();
     setActiveTab(weekLeaderboardTab);
@@ -583,7 +635,8 @@ async function initialiseLeaderboard() {
     return;
   }
 
-  leaderboardContainer.textContent = "Loading English League leaderboard...";
+  leaderboardContainer.textContent =
+    "Loading English League leaderboard...";
 
   try {
     await loadPredictionDocuments();
@@ -599,9 +652,14 @@ async function initialiseLeaderboard() {
       currentRound,
       selectedRound,
       entries: predictionDocuments.length,
-  week11Results: getResultsForLogicalRound("English League Week 11"),
-week12Results: getResultsForLogicalRound("English League Week 12")
+      week12Results: getResultsForLogicalRound(
+        "English League Week 12"
+      ),
+      week13Results: getResultsForLogicalRound(
+        "English League Week 13"
+      )
     });
+
   } catch (error) {
     console.error("Leaderboard error:", error);
 
@@ -624,6 +682,7 @@ async function refreshLeaderboardData() {
       "ScoreCast leaderboard refreshed:",
       new Date().toLocaleTimeString()
     );
+
   } catch (error) {
     console.error("Live leaderboard refresh failed:", error);
   }

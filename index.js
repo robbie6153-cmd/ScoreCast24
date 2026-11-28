@@ -12,30 +12,66 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 import { resultsByRound } from "./results.js?v=5";
 
-const currentRound = "English League Week 12";
+const currentRound = "English League Week 13";
 const homePreviewRound = "English League Week 12";
 const submittedStorageKey = `scorecast24Submitted-${currentRound}`;
 const roundClosed = false;
-const predictionDeadline = new Date("2026-11-28T12:30:00+00:00");
-const fridayDeadline = new Date("2026-11-27T20:00:00+00:00");
 
 const PL = "Premier League";
 const CH = "Championship";
 
-function makeFixture(id, date, group, home, away) {
+function makeFixture(id, date, group, home, away, kickoff = null) {
   return {
     id: String(id),
     date,
     group,
     home,
     away,
+    kickoff,
     homeScore: null,
     awayScore: null
   };
 }
 
-// WEEK 12 FIXTURES
+// WEEK 13 FIXTURES
+
 const fixtures = [
+  // MIDWEEK FIXTURES
+
+  makeFixture(1, "Tue 1 Dec 2026, 20:00", PL, "Coventry City", "Ipswich Town", "2026-12-01T20:00:00Z"),
+
+  makeFixture(2, "Wed 2 Dec 2026, 19:30", PL, "Chelsea", "Crystal Palace", "2026-12-02T19:30:00Z"),
+  makeFixture(3, "Wed 2 Dec 2026, 19:30", PL, "Hull City", "Nottingham Forest", "2026-12-02T19:30:00Z"),
+  makeFixture(4, "Wed 2 Dec 2026, 19:30", PL, "Liverpool", "Sunderland", "2026-12-02T19:30:00Z"),
+  makeFixture(5, "Wed 2 Dec 2026, 19:30", PL, "Manchester City", "Leeds United", "2026-12-02T19:30:00Z"),
+
+  makeFixture(6, "Wed 2 Dec 2026, 20:15", PL, "AFC Bournemouth", "Brighton & Hove Albion", "2026-12-02T20:15:00Z"),
+  makeFixture(7, "Wed 2 Dec 2026, 20:15", PL, "Aston Villa", "Everton", "2026-12-02T20:15:00Z"),
+  makeFixture(8, "Wed 2 Dec 2026, 20:15", PL, "Brentford", "Arsenal", "2026-12-02T20:15:00Z"),
+  makeFixture(9, "Wed 2 Dec 2026, 20:15", PL, "Newcastle United", "Manchester United", "2026-12-02T20:15:00Z"),
+
+  makeFixture(10, "Thu 3 Dec 2026, 20:00", PL, "Tottenham Hotspur", "Fulham", "2026-12-03T20:00:00Z"),
+
+  // WEEKEND FIXTURES
+
+  makeFixture(11, "Sat 5 Dec 2026, 12:30", PL, "Chelsea", "Liverpool", "2026-12-05T12:30:00Z"),
+
+  makeFixture(12, "Sat 5 Dec 2026, 15:00", PL, "Aston Villa", "Crystal Palace", "2026-12-05T15:00:00Z"),
+  makeFixture(13, "Sat 5 Dec 2026, 15:00", PL, "AFC Bournemouth", "Hull City", "2026-12-05T15:00:00Z"),
+  makeFixture(14, "Sat 5 Dec 2026, 15:00", PL, "Manchester United", "Coventry City", "2026-12-05T15:00:00Z"),
+  makeFixture(15, "Sat 5 Dec 2026, 15:00", PL, "Leeds United", "Ipswich Town", "2026-12-05T15:00:00Z"),
+
+  makeFixture(16, "Sat 5 Dec 2026, 17:30", PL, "Nottingham Forest", "Brighton & Hove Albion", "2026-12-05T17:30:00Z"),
+  makeFixture(17, "Sat 5 Dec 2026, 20:00", PL, "Brentford", "Manchester City", "2026-12-05T20:00:00Z"),
+
+  makeFixture(18, "Sun 6 Dec 2026, 14:00", PL, "Everton", "Fulham", "2026-12-06T14:00:00Z"),
+  makeFixture(19, "Sun 6 Dec 2026, 14:00", PL, "Newcastle United", "Sunderland", "2026-12-06T14:00:00Z"),
+  makeFixture(20, "Sun 6 Dec 2026, 16:30", PL, "Tottenham Hotspur", "Arsenal", "2026-12-06T16:30:00Z")
+];
+
+// WEEK 12 HOMEPAGE RESULTS
+
+const homePreviewFixtures = [
   makeFixture(1, "Fri 27 Nov 2026, 20:00", PL, "Nottingham Forest", "Chelsea"),
   makeFixture(2, "Sat 28 Nov 2026, 15:00", PL, "Leeds United", "Coventry City"),
   makeFixture(3, "Sat 28 Nov 2026, 15:00", PL, "Manchester United", "Brentford"),
@@ -61,32 +97,6 @@ const fixtures = [
   makeFixture(22, "Sun 29 Nov 2026, 12:00", CH, "Swansea City", "Cardiff City")
 ];
 
-// WEEK 11 HOMEPAGE RESULTS
-const homePreviewFixtures = [
-  makeFixture(1, "Sat 21 Nov 2026, 12:30", PL, "Manchester City", "Fulham"),
-  makeFixture(2, "Sat 21 Nov 2026, 15:00", PL, "AFC Bournemouth", "Nottingham Forest"),
-  makeFixture(3, "Sat 21 Nov 2026, 15:00", PL, "Aston Villa", "Sunderland"),
-  makeFixture(4, "Sat 21 Nov 2026, 15:00", PL, "Chelsea", "Leeds United"),
-  makeFixture(5, "Sat 21 Nov 2026, 15:00", PL, "Coventry City", "Crystal Palace"),
-  makeFixture(6, "Sat 21 Nov 2026, 15:00", PL, "Tottenham Hotspur", "Ipswich Town"),
-  makeFixture(7, "Sat 21 Nov 2026, 17:30", PL, "Newcastle United", "Arsenal"),
-  makeFixture(8, "Sun 22 Nov 2026, 14:00", PL, "Hull City", "Brighton & Hove Albion"),
-  makeFixture(9, "Sun 22 Nov 2026, 16:30", PL, "Liverpool", "Manchester United"),
-  makeFixture(10, "Mon 23 Nov 2026, 20:00", PL, "Brentford", "Everton"),
-  makeFixture(11, "Sat 21 Nov 2026, 12:30", CH, "Millwall", "Queens Park Rangers"),
-  makeFixture(12, "Sat 21 Nov 2026, 12:30", CH, "Norwich City", "Cardiff City"),
-  makeFixture(13, "Sat 21 Nov 2026, 12:30", CH, "Southampton", "Derby County"),
-  makeFixture(14, "Sat 21 Nov 2026, 15:00", CH, "Bolton Wanderers", "Portsmouth"),
-  makeFixture(15, "Sat 21 Nov 2026, 15:00", CH, "Lincoln City", "Wrexham"),
-  makeFixture(16, "Sat 21 Nov 2026, 15:00", CH, "Middlesbrough", "Bristol City"),
-  makeFixture(17, "Sat 21 Nov 2026, 15:00", CH, "Sheffield United", "Watford"),
-  makeFixture(18, "Sat 21 Nov 2026, 15:00", CH, "Stoke City", "Birmingham City"),
-  makeFixture(19, "Sat 21 Nov 2026, 15:00", CH, "Swansea City", "West Bromwich Albion"),
-  makeFixture(20, "Sat 21 Nov 2026, 15:00", CH, "West Ham United", "Preston North End"),
-  makeFixture(21, "Sat 21 Nov 2026, 15:00", CH, "Wolverhampton Wanderers", "Charlton Athletic"),
-  makeFixture(22, "Sun 22 Nov 2026, 12:00", CH, "Burnley", "Blackburn Rovers")
-];
-
 const homePage = document.getElementById("homePage");
 const predictionsPage = document.getElementById("predictionsPage");
 const startGameBtn = document.getElementById("startGameBtn");
@@ -102,13 +112,13 @@ let checkingEntry = false;
 let submittingEntry = false;
 let homeLiveResults = {};
 
-function predictionsAreClosed() {
-  return roundClosed || new Date() >= predictionDeadline;
+function fixtureIsLocked(fixture) {
+  return roundClosed ||
+    Date.now() >= new Date(fixture.kickoff).getTime();
 }
 
-function fixtureIsLocked(fixture) {
-  return predictionsAreClosed() ||
-    (fixture.date.startsWith("Fri") && new Date() >= fridayDeadline);
+function predictionsAreClosed() {
+  return roundClosed || fixtures.every(fixtureIsLocked);
 }
 
 function getPredictionRef(username) {
@@ -174,6 +184,20 @@ function renderFixtures() {
   fixturesContainer.innerHTML = "";
 
   fixtures.forEach(fixture => {
+
+    if (fixture.id === "1" || fixture.id === "11") {
+      const heading = document.createElement("h2");
+
+      heading.textContent = fixture.id === "1"
+        ? "Midweek Fixtures — 1–3 December"
+        : "Weekend Fixtures — 5–6 December";
+
+      heading.style.textAlign = "center";
+      heading.style.margin = "25px 0 15px";
+
+      fixturesContainer.appendChild(heading);
+    }
+
     const card = document.createElement("div");
 
     card.className = "fixture-card";
@@ -216,7 +240,9 @@ function entryCheckTimeout(ms = 12000) {
 
 function redirectToExistingEntry() {
   localStorage.setItem(submittedStorageKey, "true");
-  alert("You have already submitted predictions for Week 12.");
+
+  alert("You have already submitted predictions for Week 13.");
+
   window.location.href = "leaderboard.html";
 }
 
@@ -224,6 +250,7 @@ function getPredictionsFromPage() {
   const predictions = [];
 
   for (const fixture of fixtures) {
+
     if (fixtureIsLocked(fixture)) {
       predictions.push({
         fixtureId: fixture.id,
@@ -307,7 +334,26 @@ startGameBtn?.addEventListener("click", async () => {
     }
 
     if (predictionsAreClosed()) {
-      alert("Week 12 predictions have now closed.");
+      alert("Week 13 predictions have now closed.");
+      return;
+    }
+
+    alert(
+      "IMPORTANT — WEEK 13\n\n" +
+      "As there are no Championship fixtures in this period, " +
+      "Week 13 combines two rounds of Premier League matches " +
+      "into one competition.\n\n" +
+      "There are 20 matches across the midweek and weekend fixtures " +
+      "from 1–6 December.\n\n" +
+      "Each fixture closes at its individual kick-off time. " +
+      "Late entrants can still predict the remaining matches, " +
+      "but missed fixtures will be void.\n\n" +
+      "Please remember that you can only submit one entry, " +
+      "so enter all your available predictions together."
+    );
+
+    if (predictionsAreClosed()) {
+      alert("Week 13 predictions have now closed.");
       return;
     }
 
@@ -316,7 +362,11 @@ startGameBtn?.addEventListener("click", async () => {
 
   } catch (error) {
     console.error("Entry check failed:", error);
-    alert("We could not check your existing entry. Please check your connection and try again.");
+
+    alert(
+      "We could not check your existing entry. " +
+      "Please check your connection and try again."
+    );
 
   } finally {
     checkingEntry = false;
@@ -353,7 +403,7 @@ submitPredictionsBtn?.addEventListener("click", async () => {
     }
 
     if (predictionsAreClosed()) {
-      alert("Week 12 predictions have now closed.");
+      alert("Week 13 predictions have now closed.");
       return;
     }
 
@@ -362,11 +412,35 @@ submitPredictionsBtn?.addEventListener("click", async () => {
     if (!predictions) return;
 
     if (predictionsAreClosed()) {
-      alert("Week 12 predictions have now closed.");
+      alert("Week 13 predictions have now closed.");
+      return;
+    }
+
+    if (!predictions.some(prediction => !prediction.void)) {
+      alert("There are no remaining fixtures available.");
       return;
     }
 
     submitPredictionsBtn.textContent = "Submitting...";
+
+    // Recheck kick-off times immediately before submission.
+
+    for (const prediction of predictions) {
+      const fixture = fixtures.find(
+        item => item.id === prediction.fixtureId
+      );
+
+      if (fixture && fixtureIsLocked(fixture)) {
+        prediction.predictedHome = null;
+        prediction.predictedAway = null;
+        prediction.void = true;
+      }
+    }
+
+    if (!predictions.some(prediction => !prediction.void)) {
+      alert("All remaining fixtures have now closed.");
+      return;
+    }
 
     await setDoc(predictionRef, {
       username,
@@ -378,7 +452,9 @@ submitPredictionsBtn?.addEventListener("click", async () => {
     });
 
     localStorage.setItem(submittedStorageKey, "true");
-    alert("Week 12 predictions submitted!");
+
+    alert("Week 13 predictions submitted!");
+
     window.location.href = "leaderboard.html";
 
   } catch (error) {
@@ -454,14 +530,26 @@ function getResultType(home, away) {
 
 function calculatePoints(prediction, result) {
   if (prediction.void === true) return null;
-  if (result?.homeScore == null || result?.awayScore == null) return null;
+
+  if (
+    prediction.predictedHome == null ||
+    prediction.predictedAway == null
+  ) return null;
+
+  if (
+    result?.homeScore == null ||
+    result?.awayScore == null
+  ) return null;
 
   const predictedHome = Number(prediction.predictedHome);
   const predictedAway = Number(prediction.predictedAway);
   const realHome = Number(result.homeScore);
   const realAway = Number(result.awayScore);
 
-  if (predictedHome === realHome && predictedAway === realAway) return 5;
+  if (
+    predictedHome === realHome &&
+    predictedAway === realAway
+  ) return 5;
 
   const predictedResult = getResultType(predictedHome, predictedAway);
   const actualResult = getResultType(realHome, realAway);
@@ -469,6 +557,7 @@ function calculatePoints(prediction, result) {
   if (predictedResult !== actualResult) return 0;
   if (actualResult === "draw") return 3;
   if (actualResult === "away") return 2;
+
   return 1;
 }
 
@@ -527,7 +616,7 @@ async function renderHomeLeaderboardPreview() {
     if (rows.length === 0) {
       homeLeaderboardPreview.innerHTML = `
         <div class="preview-row">
-          <span>No Week 11 entries</span>
+          <span>No Week 12 entries</span>
           <span class="preview-points">Pending</span>
         </div>
       `;
@@ -537,7 +626,8 @@ async function renderHomeLeaderboardPreview() {
     rows.sort((a, b) =>
       (b.points ?? -1) - (a.points ?? -1) ||
       b.exactScores - a.exactScores ||
-      (a.submittedAtMillis ?? Infinity) - (b.submittedAtMillis ?? Infinity) ||
+      (a.submittedAtMillis ?? Infinity) -
+      (b.submittedAtMillis ?? Infinity) ||
       a.username.localeCompare(b.username)
     );
 
@@ -653,21 +743,34 @@ if (menuToggle && dropdownMenu) {
 
 function updatePredictionsCountdown() {
   const countdownBox = document.getElementById("weekOneCountdown");
+
   const closed = predictionsAreClosed();
-  const fridayClosed = new Date() >= fridayDeadline;
+
+  const remainingFixtures = fixtures.filter(
+    fixture => !fixtureIsLocked(fixture)
+  ).length;
+
+  const lockedFixtures = fixtures.length - remainingFixtures;
 
   if (countdownBox) {
     countdownBox.innerHTML = closed
-      ? "<strong>Week Twelve predictions are now closed.</strong>"
+      ? "<strong>Week Thirteen predictions are now closed.</strong>"
       : `
-        <strong>Week Twelve predictions are now open!</strong>
+        <strong>Week Thirteen predictions are now open!</strong>
         <br><br>
-        Predict ${fridayClosed ? "the remaining 20" : "all 22"}
-        Premier League and Championship matches for 27–29 November 2026.
+        Special double Premier League round:
+        1–6 December 2026.
         <br><br>
-        <strong>Final entries close Saturday 28 November at 12:30pm GMT.</strong>
-        ${fridayClosed
-          ? "<br><br>Friday fixtures are now locked and void for new entries."
+        Predict ${remainingFixtures === 20
+          ? "all 20"
+          : `the remaining ${remainingFixtures}`}
+        Premier League matches.
+        <br><br>
+        <strong>Each match closes at kick-off.</strong>
+        <br>
+        Late entries are welcome.
+        ${lockedFixtures > 0
+          ? `<br><br>${lockedFixtures} fixtures are now locked and void for new entries.`
           : ""}
       `;
   }
@@ -725,5 +828,5 @@ showHome();
 updatePredictionsCountdown();
 refreshHomeLiveData();
 
-setInterval(updatePredictionsCountdown, 30000);
+setInterval(updatePredictionsCountdown, 1000);
 setInterval(refreshHomeLiveData, 60000);
